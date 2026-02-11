@@ -169,10 +169,15 @@
   "No file selected to change project context.": "No file selected to change project context.",
   "Failed to change context for {0}: {1}": "Failed to change context for {0}: {1}",
   "Select project context": "Select project context",
-  "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
-    "message": "Initializing dotnet-trace...",
+  "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
+  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
+  "Capture Dumps With Trace": "Capture Dumps With Trace",
+  "Optionally select dump(s) to capture before and after the trace": "Optionally select dump(s) to capture before and after the trace",
+  "Save Trace and Logs": "Save Trace and Logs",
+  "Folder for trace file {0} does not exist/{0} is the folder path": {
+    "message": "Folder for trace file {0} does not exist",
     "comment": [
-      "dotnet-trace is a command name and should not be localized"
+      "{0} is the folder path"
     ]
   },
   "Failed to execute dotnet-trace command: {0}/dotnet-trace is a command name and should not be localized": {
@@ -181,50 +186,76 @@
       "dotnet-trace is a command name and should not be localized"
     ]
   },
-  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
-  "Save Trace": "Save Trace",
-  "Save C# Trace and Logs": "Save C# Trace and Logs",
-  "Folder for trace file {0} does not exist": "Folder for trace file {0} does not exist",
-  "Enter dotnet-trace arguments/dotnet-trace is a command name and should not be localized": {
-    "message": "Enter dotnet-trace arguments",
+  "Open Folder": "Open Folder",
+  "C# logs saved successfully.": "C# logs saved successfully.",
+  "Verifying dotnet-trace.../dotnet-trace is a command name and should not be localized": {
+    "message": "Verifying dotnet-trace...",
     "comment": [
       "dotnet-trace is a command name and should not be localized"
     ]
   },
-  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
+  "Required dump tools could not be installed.": "Required dump tools could not be installed.",
   "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
   "Creating archive...": "Creating archive...",
-  "Open Folder": "Open Folder",
-  "C# logs saved successfully.": "C# logs saved successfully.",
-  "Failed to save C# trace: {0}/{0} is the error message": {
-    "message": "Failed to save C# trace: {0}",
+  "Collecting memory dump...": "Collecting memory dump...",
+  "Collecting GC dump...": "Collecting GC dump...",
+  "Memory Dump": "Memory Dump",
+  "Process memory dump using dotnet-dump": "Process memory dump using dotnet-dump",
+  "GC Dump": "GC Dump",
+  "Garbage collector heap dump using dotnet-gcdump": "Garbage collector heap dump using dotnet-gcdump",
+  "{0} Arguments/{0} is the tool name and should not be localized": {
+    "message": "{0} Arguments",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "Enter {0} arguments/{0} is the tool name and should not be localized": {
+    "message": "Enter {0} arguments",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
+  "Install": "Install",
+  "{0} not found, run \"{1}\" to install it?/{0} is the tool name and should not be localized{1} is the install command": {
+    "message": "{0} not found, run \"{1}\" to install it?",
+    "comment": [
+      "{0} is the tool name and should not be localized",
+      "{1} is the install command"
+    ]
+  },
+  "Installing {0}.../{0} is the tool name and should not be localized": {
+    "message": "Installing {0}...",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "Failed to install {0}, it may need to be manually installed. See C# output for details./{0} is the tool name and should not be localized": {
+    "message": "Failed to install {0}, it may need to be manually installed. See C# output for details.",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "Select Dump Type": "Select Dump Type",
+  "Choose dump type(s) to collect": "Choose dump type(s) to collect",
+  "Save Dump": "Save Dump",
+  "Folder for dump file {0} does not exist/{0} is the folder path": {
+    "message": "Folder for dump file {0} does not exist",
+    "comment": [
+      "{0} is the folder path"
+    ]
+  },
+  "Collect Dump": "Collect Dump",
+  "Failed to collect dump: {0}/{0} is the error message": {
+    "message": "Failed to collect dump: {0}",
     "comment": [
       "{0} is the error message"
     ]
   },
-  "Install": "Install",
-  "dotnet-trace not found, run \"{0}\" to install it?/dotnet-trace is a command name and should not be localized": {
-    "message": "dotnet-trace not found, run \"{0}\" to install it?",
-    "comment": [
-      "dotnet-trace is a command name and should not be localized"
-    ]
-  },
-  "Installing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
-    "message": "Installing dotnet-trace...",
-    "comment": [
-      "dotnet-trace is a command name and should not be localized"
-    ]
-  },
-  "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details./dotnet-trace is a command name and should not be localized": {
-    "message": "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details.",
-    "comment": [
-      "dotnet-trace is a command name and should not be localized"
-    ]
-  },
-  "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
+  "Dump saved successfully.": "Dump saved successfully.",
+  "Verifying tools...": "Verifying tools...",
   "Capturing C# Logs": "Capturing C# Logs",
   "Save Logs": "Save Logs",
-  "Save C# Logs": "Save C# Logs",
   "Failed to save C# logs: {0}/{0} is the error message": {
     "message": "Failed to save C# logs: {0}",
     "comment": [

@@ -9,9 +9,17 @@ import * as vscode from 'vscode';
 import { EOL } from 'os';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
-import { execChildProcess } from '../../common';
-import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
-import { getDefaultSaveUri, createZipWithLogs } from '../logging/captureLogs';
+import { ObservableLogOutputChannel } from './observableLogOutputChannel';
+import {
+    verifyOrAcquireDotnetTool,
+    collectDumps,
+    createZipWithLogs,
+    getDefaultSaveUri,
+    selectDumpsWithArguments,
+    verifyDumpTools,
+    promptForToolArguments,
+    DumpRequest,
+} from './loggingUtils';
 
 const TraceTerminalName = 'dotnet-trace';
 
@@ -34,6 +42,13 @@ export function getProfilingEnvVars(outputChannel: vscode.LogOutputChannel): Nod
     return profilingEnvVars;
 }
 
+interface TraceResults {
+    traceFilePath: string;
+    dumpFiles: string[];
+    csharpLog: string;
+    lspLog: string;
+}
+
 export function registerTraceCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
@@ -42,6 +57,67 @@ export function registerTraceCommand(
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.recordLanguageServerTrace', async () => {
+            const processId = languageServer.processId;
+            if (!processId) {
+                showErrorMessageWithOptions(
+                    vscode,
+                    vscode.l10n.t('Language server process not found, ensure the server is running.'),
+                    { modal: true }
+                );
+                return;
+            }
+
+            // Step 1: Get trace arguments
+            const dotnetTraceArgs = `--process-id ${processId} --clreventlevel informational --providers "Microsoft-DotNETCore-SampleProfiler,Microsoft-Windows-DotNETRuntime,Microsoft-CodeAnalysis-General:0xFFFFFFFF:5,Microsoft-CodeAnalysis-Workspaces:0xFFFFFFFF:5,RoslynEventSource:0xFFFFFFFF:5"`;
+            const userArgs = await promptForToolArguments('dotnet-trace', dotnetTraceArgs);
+            if (userArgs === undefined) {
+                return; // User cancelled
+            }
+
+            // Step 2: Ask about optional dumps and get arguments
+            const dumpRequests = await selectDumpsWithArguments({
+                title: vscode.l10n.t('Capture Dumps With Trace'),
+                placeHolder: vscode.l10n.t('Optionally select dump(s) to capture before and after the trace'),
+                processId,
+                allowEmpty: true,
+            });
+            if (dumpRequests === undefined) {
+                return; // User cancelled
+            }
+
+            // Step 3: Ask for save location
+            const saveUri = await vscode.window.showSaveDialog({
+                defaultUri: getDefaultSaveUri('csharp-trace'),
+                filters: {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    'Zip files': ['zip'],
+                },
+                saveLabel: vscode.l10n.t('Save Trace and Logs'),
+                title: vscode.l10n.t('Save Trace and Logs'),
+            });
+            if (!saveUri) {
+                return; // User cancelled
+            }
+
+            const traceFolder = path.dirname(saveUri.fsPath);
+            if (!fs.existsSync(traceFolder)) {
+                showErrorMessageWithOptions(
+                    vscode,
+                    vscode.l10n.t({
+                        message: 'Folder for trace file {0} does not exist',
+                        args: [traceFolder],
+                        comment: ['{0} is the folder path'],
+                    }),
+                    { modal: true }
+                );
+                return;
+            }
+
+            // Step 4: Execute the trace with progress
+            let traceResults: TraceResults | undefined;
+            let resultUri: vscode.Uri | undefined;
+            let errorMessage: string | undefined;
+
             await vscode.window.withProgress(
                 {
                     location: vscode.ProgressLocation.Notification,
@@ -49,102 +125,119 @@ export function registerTraceCommand(
                     cancellable: true,
                 },
                 async (progress, token) => {
-                    progress.report({
-                        message: vscode.l10n.t({
-                            message: 'Initializing dotnet-trace...',
-                            comment: 'dotnet-trace is a command name and should not be localized',
-                        }),
-                    });
                     try {
-                        await executeDotNetTraceCommand(
-                            context,
+                        traceResults = await executeTraceCollection(
                             languageServer,
+                            userArgs,
+                            dumpRequests,
+                            traceFolder,
                             progress,
                             outputChannel,
                             traceChannel,
                             token
                         );
                     } catch (error) {
-                        const errorMessage = error instanceof Error ? error.message : String(error);
-                        showErrorMessageWithOptions(
-                            vscode,
-                            vscode.l10n.t({
-                                message: 'Failed to execute dotnet-trace command: {0}',
-                                args: [errorMessage],
-                                comment: 'dotnet-trace is a command name and should not be localized',
-                            }),
-                            { modal: true }
-                        );
+                        errorMessage = error instanceof Error ? error.message : String(error);
                     }
                 }
             );
+
+            if (errorMessage) {
+                showErrorMessageWithOptions(
+                    vscode,
+                    vscode.l10n.t({
+                        message: 'Failed to execute dotnet-trace command: {0}',
+                        args: [errorMessage],
+                        comment: 'dotnet-trace is a command name and should not be localized',
+                    }),
+                    { modal: true }
+                );
+                return;
+            }
+
+            if (!traceResults) {
+                return;
+            }
+
+            // After the trace is stopped (via cancellation or natural completion), we need a new progress
+            // notification since the original one may have been dismissed by cancellation.
+            await vscode.window.withProgress(
+                {
+                    location: vscode.ProgressLocation.Notification,
+                    title: 'dotnet-trace',
+                    cancellable: false,
+                },
+                async (progress) => {
+                    try {
+                        resultUri = await saveTraceResults(
+                            traceResults!,
+                            context,
+                            dumpRequests,
+                            traceFolder,
+                            saveUri,
+                            progress,
+                            outputChannel,
+                            traceChannel
+                        );
+                    } catch (error) {
+                        errorMessage = error instanceof Error ? error.message : String(error);
+                    }
+                }
+            );
+
+            if (resultUri) {
+                const openFolder = vscode.l10n.t('Open Folder');
+                const result = await vscode.window.showInformationMessage(
+                    vscode.l10n.t('C# logs saved successfully.'),
+                    openFolder
+                );
+                if (result === openFolder) {
+                    await vscode.commands.executeCommand('revealFileInOS', resultUri);
+                }
+            }
         })
     );
 }
 
-async function executeDotNetTraceCommand(
-    context: vscode.ExtensionContext,
+/**
+ * Executes the trace collection and archiving.
+ */
+async function executeTraceCollection(
     languageServer: RoslynLanguageServer,
-    progress: vscode.Progress<{
-        message?: string;
-        increment?: number;
-    }>,
+    userArgs: string,
+    dumpRequests: DumpRequest[],
+    traceFolder: string,
+    progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
     cancellationToken: vscode.CancellationToken
-): Promise<void> {
-    const processId = languageServer.processId;
-
-    if (!processId) {
-        throw new Error(vscode.l10n.t('Language server process not found, ensure the server is running.'));
-    }
-
-    // Prompt the user for save location first
-    const saveUri = await vscode.window.showSaveDialog({
-        defaultUri: getDefaultSaveUri('csharp-trace'),
-        filters: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            'Zip files': ['zip'],
-        },
-        saveLabel: vscode.l10n.t('Save Trace'),
-        title: vscode.l10n.t('Save C# Trace and Logs'),
-    });
-
-    if (!saveUri) {
-        // User cancelled the save dialog
-        return;
-    }
-
-    // Get the folder for temporary trace file output
-    const traceFolder = path.dirname(saveUri.fsPath);
-
-    if (!fs.existsSync(traceFolder)) {
-        throw new Error(vscode.l10n.t(`Folder for trace file {0} does not exist`, traceFolder));
-    }
-
-    const dotnetTraceArgs = `--process-id ${processId} --clreventlevel informational --providers "Microsoft-DotNETCore-SampleProfiler,Microsoft-Windows-DotNETRuntime,Microsoft-CodeAnalysis-General:0xFFFFFFFF:5,Microsoft-CodeAnalysis-Workspaces:0xFFFFFFFF:5,RoslynEventSource:0xFFFFFFFF:5"`;
-
-    // Show an input box pre-populated with the default dotnet trace arguments
-    const userArgs = await vscode.window.showInputBox({
-        value: dotnetTraceArgs,
-        placeHolder: vscode.l10n.t({
-            message: 'Enter dotnet-trace arguments',
+): Promise<TraceResults | undefined> {
+    // Verify dotnet-trace is installed
+    progress.report({
+        message: vscode.l10n.t({
+            message: 'Verifying dotnet-trace...',
             comment: 'dotnet-trace is a command name and should not be localized',
         }),
-        prompt: vscode.l10n.t('You can modify the default arguments if needed'),
     });
-    if (userArgs === undefined) {
-        // User cancelled the input box
-        return;
-    }
 
-    const dotnetTraceInstalled = await verifyOrAcquireDotnetTrace(traceFolder, progress, outputChannel);
+    const dotnetTraceInstalled = await verifyOrAcquireDotnetTool('dotnet-trace', traceFolder, progress, outputChannel);
     if (!dotnetTraceInstalled) {
-        // Cancelled or unable to install dotnet-trace
-        return;
+        return undefined;
     }
 
-    // Create observers to collect log messages during capture
+    const allDumpFiles: string[] = [];
+
+    // Verify dump tools if needed
+    if (dumpRequests.length > 0) {
+        const toolsVerified = await verifyDumpTools(dumpRequests, traceFolder, progress, outputChannel);
+        if (!toolsVerified) {
+            throw new Error(vscode.l10n.t('Required dump tools could not be installed.'));
+        }
+
+        const startDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'before-trace');
+        allDumpFiles.push(...startDumps);
+    }
+
     const csharpLogObserver = outputChannel.observe();
     const traceLogObserver = traceChannel.observe();
 
@@ -158,44 +251,16 @@ async function executeDotNetTraceCommand(
 
         progress.report({ message: vscode.l10n.t('Recording logs... Click Cancel to stop and save.') });
         const traceFilePath = await runDotnetTrace(args, terminal, traceFolder, cancellationToken);
-
-        progress.report({
-            message: vscode.l10n.t('Creating archive...'),
-        });
-
-        // Get formatted log content from observers
-        const csharpLogContent = csharpLogObserver.getLog();
-        const traceLogContent = traceLogObserver.getLog();
-
-        try {
-            await createZipWithLogs(
-                context,
-                outputChannel,
-                traceChannel,
-                csharpLogContent,
-                traceLogContent,
-                saveUri.fsPath,
-                traceFilePath
-            );
-
-            const openFolder = vscode.l10n.t('Open Folder');
-            const result = await vscode.window.showInformationMessage(
-                vscode.l10n.t('C# logs saved successfully.'),
-                openFolder
-            );
-            if (result === openFolder) {
-                await vscode.commands.executeCommand('revealFileInOS', saveUri);
-            }
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            await vscode.window.showErrorMessage(
-                vscode.l10n.t({
-                    message: 'Failed to save C# trace: {0}',
-                    args: [errorMessage],
-                    comment: ['{0} is the error message'],
-                })
-            );
+        if (!traceFilePath) {
+            return undefined;
         }
+
+        return {
+            traceFilePath,
+            dumpFiles: allDumpFiles,
+            csharpLog: csharpLogObserver.getLog(),
+            lspLog: traceLogObserver.getLog(),
+        };
     } finally {
         // Always clean up observers and restore log levels
         csharpLogObserver.dispose();
@@ -204,65 +269,38 @@ async function executeDotNetTraceCommand(
     }
 }
 
-async function verifyOrAcquireDotnetTrace(
-    folder: string,
-    progress: vscode.Progress<{
-        message?: string;
-        increment?: number;
-    }>,
-    channel: ObservableLogOutputChannel
-): Promise<boolean> {
-    try {
-        await execChildProcess('dotnet-trace --version', folder, process.env);
-        return true; // If the command succeeds, dotnet-trace is installed.
-    } catch (error) {
-        channel.debug(`Failed to execute dotnet-trace --version with error: ${error}`);
-    }
-
-    const confirmAction = {
-        title: vscode.l10n.t('Install'),
-    };
-    const installCommand = 'dotnet tool install --global dotnet-trace';
-    const confirmResult = await vscode.window.showInformationMessage(
-        vscode.l10n.t({
-            message: 'dotnet-trace not found, run "{0}" to install it?',
-            args: [installCommand],
-            comment: 'dotnet-trace is a command name and should not be localized',
-        }),
-        {
-            modal: true,
-        },
-        confirmAction
-    );
-
-    if (confirmResult !== confirmAction) {
-        return false;
+async function saveTraceResults(
+    traceResults: TraceResults,
+    context: vscode.ExtensionContext,
+    dumpRequests: DumpRequest[],
+    traceFolder: string,
+    saveUri: vscode.Uri,
+    progress: vscode.Progress<{ message?: string; increment?: number }>,
+    outputChannel: ObservableLogOutputChannel,
+    traceChannel: ObservableLogOutputChannel
+): Promise<vscode.Uri | undefined> {
+    // Collect dumps after trace if any selected
+    if (dumpRequests.length > 0) {
+        const endDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'after-trace');
+        traceResults.dumpFiles.push(...endDumps);
     }
 
     progress.report({
-        message: vscode.l10n.t({
-            message: 'Installing dotnet-trace...',
-            comment: 'dotnet-trace is a command name and should not be localized',
-        }),
+        message: vscode.l10n.t('Creating archive...'),
     });
 
-    try {
-        await execChildProcess(installCommand, folder, process.env);
-        return true;
-    } catch (error) {
-        channel.error(`Failed to install dotnet-trace with error: ${error}`);
-        await vscode.window.showErrorMessage(
-            vscode.l10n.t({
-                message:
-                    'Failed to install dotnet-trace, it may need to be manually installed. See C# output for details.',
-                comment: 'dotnet-trace is a command name and should not be localized',
-            }),
-            {
-                modal: true,
-            }
-        );
-        return false;
-    }
+    await createZipWithLogs(
+        context,
+        outputChannel,
+        traceChannel,
+        traceResults.csharpLog,
+        traceResults.lspLog,
+        saveUri.fsPath,
+        traceResults.traceFilePath,
+        traceResults.dumpFiles
+    );
+
+    return saveUri;
 }
 
 async function runDotnetTrace(

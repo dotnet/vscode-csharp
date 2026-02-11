@@ -65,7 +65,7 @@ import {
     showInformationMessage,
 } from '../../shared/observers/utils/showMessage';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
-import { getProfilingEnvVars } from '../profiling/profiling';
+import { getProfilingEnvVars } from '../logging/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
@@ -684,12 +684,22 @@ export class RoslynLanguageServer {
             args.push('--debug');
         }
 
+        // Pass the client process ID to the server so the server can monitor the
+        // client and exit if the client exits. This ensures we don't end up with
+        // orphaned server processes.
+        args.push('--clientProcessId', process.pid.toString());
+
         // Get the initial log level from the channel.
         // Changes to the channel log level will be picked up by the server after
         // LSP finishes initializing and we're able to pick up the new value.
         const logLevel = this.GetServerLogLevel(channel.logLevel);
         if (logLevel) {
             args.push('--logLevel', logLevel);
+        }
+
+        const sourceGeneratorExecution = languageServerOptions.sourceGeneratorExecution;
+        if (sourceGeneratorExecution) {
+            args.push('--sourceGeneratorExecutionPreference', sourceGeneratorExecution);
         }
 
         let razorComponentPath = '';
@@ -773,6 +783,12 @@ export class RoslynLanguageServer {
         env = { ...env, ...profilingEnvVars };
 
         channel.trace(`Profiling environment variables: ${JSON.stringify(profilingEnvVars)}`);
+
+        const customEnvVars = languageServerOptions.environmentVariables;
+        if (Object.keys(customEnvVars).length > 0) {
+            env = { ...env, ...customEnvVars };
+            channel.info(`Custom environment variables: ${JSON.stringify(customEnvVars)}`);
+        }
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
