@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.122.x
+* Use the package.json to gather all defined settings (PR: [#8954](https://github.com/dotnet/vscode-csharp/pull/8954))
 * Consolidate duplicate log collection sections in SUPPORT.md (PR: [#8974](https://github.com/dotnet/vscode-csharp/pull/8974))
 * Add crashDumpPath to settings that trigger restart prompt and standardize restart descriptions (PR: [#8973](https://github.com/dotnet/vscode-csharp/pull/8973))
 * Add command to collect memory and GC dumps (PR: [#8966](https://github.com/dotnet/vscode-csharp/pull/8966))
