@@ -10,7 +10,7 @@ import { createZipWithLogs, getDefaultSaveUri, RazorLogObserver } from './loggin
 import { RazorLogger } from '../../razor/src/razorLogger';
 
 /**
- * Registers the command to capture C# log output.
+ * Registers the command to capture log output.
  */
 export function registerCaptureLogsCommand(
     context: vscode.ExtensionContext,
@@ -40,6 +40,9 @@ async function captureLogsToZip(
 
     // Set log levels to Trace for capture and get the restore function
     const restoreLogLevels = await languageServer.setLogLevelsForCapture();
+    razorLogger.traceEnabled = true;
+    razorLogger.debugEnabled = true;
+    razorLogger.infoEnabled = true;
 
     try {
         await vscode.window.withProgress(
@@ -117,6 +120,7 @@ async function captureLogsToZip(
         csharpLogObserver.dispose();
         traceLogObserver.dispose();
         await restoreLogLevels();
+        await razorLogger.updateLogLevelAsync();
     }
 }
 
