@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ObservableLogOutputChannel } from './observableLogOutputChannel';
-import { createZipWithLogs, getDefaultSaveUri } from './loggingUtils';
+import { createZipWithLogs, getDefaultSaveUri, RazorLogObserver } from './loggingUtils';
 import { RazorLogger } from '../../razor/src/razorLogger';
 
 /**
@@ -36,6 +36,7 @@ async function captureLogsToZip(
     // Create observers to collect log messages during capture
     const csharpLogObserver = outputChannel.observe();
     const traceLogObserver = traceChannel.observe();
+    const razorLogObserver = new RazorLogObserver(razorLogger);
 
     // Set log levels to Trace for capture and get the restore function
     const restoreLogLevels = await languageServer.setLogLevelsForCapture();
@@ -62,6 +63,7 @@ async function captureLogsToZip(
                 // Get formatted log content from observers
                 const csharpLogContent = csharpLogObserver.getLog();
                 const traceLogContent = traceLogObserver.getLog();
+                const razorLogContent = razorLogObserver.getLog();
 
                 // Prompt user for save location
                 const saveUri = await vscode.window.showSaveDialog({
@@ -87,6 +89,7 @@ async function captureLogsToZip(
                         razorLogger,
                         csharpLogContent,
                         traceLogContent,
+                        razorLogContent,
                         saveUri.fsPath
                     );
                     const openFolder = vscode.l10n.t('Open Folder');

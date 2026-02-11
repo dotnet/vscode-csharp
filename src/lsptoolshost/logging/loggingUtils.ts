@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import archiver from 'archiver';
 import { execChildProcess } from '../../common';
-import { ObservableLogOutputChannel } from './observableLogOutputChannel';
+import { Message, ObservableLogOutputChannel } from './observableLogOutputChannel';
 import { RazorLogger } from '../../razor/src/razorLogger';
 
 /**
@@ -336,6 +336,7 @@ export async function createZipWithLogs(
     razorLogger: RazorLogger,
     csharpActivityLogContent: string,
     traceActivityLogContent: string,
+    razorActivityLogContent: string,
     outputPath: string,
     traceFilePath?: string,
     additionalFiles?: string[]
@@ -411,8 +412,15 @@ export async function createZipWithLogs(
         }
 
         // Add captured activity logs to the archive
-        archive.append(csharpActivityLogContent, { name: 'csharp.activity.log' });
-        archive.append(traceActivityLogContent, { name: 'csharp-lsp-trace.activity.log' });
+        if (csharpActivityLogContent !== '') {
+            archive.append(csharpActivityLogContent, { name: 'csharp.activity.log' });
+        }
+        if (traceActivityLogContent !== '') {
+            archive.append(traceActivityLogContent, { name: 'csharp-lsp-trace.activity.log' });
+        }
+        if (razorActivityLogContent !== '') {
+            archive.append(razorActivityLogContent, { name: 'razor.activity.log' });
+        }
 
         // Add current settings to the archive
         const settingsContent = gatherCurrentSettings();
@@ -521,4 +529,44 @@ export function getDefaultSaveUri(filePrefix: string = 'csharp-logs'): vscode.Ur
 
     // Fallback to just the filename (system will use default location)
     return vscode.Uri.file(fileName);
+}
+
+/**
+ * Observes log messages from an RazorLogger and collects them until disposed.
+ */
+export class RazorLogObserver {
+    private readonly _messages: Message[] = [];
+    private readonly _subscription: vscode.Disposable;
+
+    constructor(logger: RazorLogger) {
+        this._subscription = logger.onLog((message) => {
+            this._messages.push({ message, timestamp: new Date() });
+        });
+    }
+
+    /**
+     * Returns the collected messages as a formatted string suitable for a log file.
+     */
+    public getLog(): string {
+        return RazorLogObserver.formatLogMessages(this._messages);
+    }
+
+    /**
+     * Disposes the subscription and stops observing log messages.
+     */
+    public dispose(): void {
+        this._subscription.dispose();
+    }
+
+    /**
+     * Formats an array of log messages into a string suitable for a log file.
+     */
+    public static formatLogMessages(messages: Message[]): string {
+        return messages
+            .map((msg) => {
+                const timestamp = msg.timestamp.toISOString();
+                return `[${timestamp}] ${msg.message}`;
+            })
+            .join('\n');
+    }
 }

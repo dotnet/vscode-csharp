@@ -168,6 +168,7 @@ async function executeDumpCollection(
         razorLogger,
         '', // No activity log content for dump command
         '', // No activity log content for dump command
+        '', // No activity log content for dump command
         saveUri.fsPath,
         undefined, // No trace file
         collectedDumps // Dump files as additional files (will be cleaned up)
