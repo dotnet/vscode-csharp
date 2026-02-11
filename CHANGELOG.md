@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.123.x
+
 # 2.122.x
 * Use the package.json to gather all defined settings (PR: [#8954](https://github.com/dotnet/vscode-csharp/pull/8954))
 * Consolidate duplicate log collection sections in SUPPORT.md (PR: [#8974](https://github.com/dotnet/vscode-csharp/pull/8974))
