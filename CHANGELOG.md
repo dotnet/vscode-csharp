@@ -4,11 +4,6 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.122.x
-* Update roslyn to 5.5.0-2.26103.6 (PR: [#8956](https://github.com/dotnet/vscode-csharp/pull/8956))
-* Bump @isaacs/brace-expansion from 5.0.0 to 5.0.1 (PR: [#8965](https://github.com/dotnet/vscode-csharp/pull/8965))
-* When tagging a release checkout the builds source branch (PR: [#8963](https://github.com/dotnet/vscode-csharp/pull/8963))
-* Update CHANGELOG for prerelease (PR: [#8960](https://github.com/dotnet/vscode-csharp/pull/8960))
-* Add upadte roslyn skill (PR: [#8957](https://github.com/dotnet/vscode-csharp/pull/8957))
 * Use the package.json to gather all defined settings (PR: [#8954](https://github.com/dotnet/vscode-csharp/pull/8954))
 * Consolidate duplicate log collection sections in SUPPORT.md (PR: [#8974](https://github.com/dotnet/vscode-csharp/pull/8974))
 * Add crashDumpPath to settings that trigger restart prompt and standardize restart descriptions (PR: [#8973](https://github.com/dotnet/vscode-csharp/pull/8973))
