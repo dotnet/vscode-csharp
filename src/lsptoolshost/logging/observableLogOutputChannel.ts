@@ -5,13 +5,16 @@
 
 import * as vscode from 'vscode';
 
+export interface Message {
+    message: string;
+    timestamp: Date;
+}
+
 /**
  * Represents a logged message with its level and content.
  */
-export interface LogMessage {
+export interface LogMessage extends Message {
     level: 'trace' | 'debug' | 'info' | 'warn' | 'error';
-    message: string;
-    timestamp: Date;
 }
 
 /**

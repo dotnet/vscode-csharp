@@ -37,8 +37,10 @@ When investigating issues, the C# extension provides a command to capture trace-
    - The saved archive contains:
      - `csharp.log` - The existing C# log file
      - `csharp-lsp-trace.log` - The existing LSP trace log file
+     - `razor.log` - The existing Razor log file
      - `csharp.activity.log` - Captured C# log activity during the recording session
      - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the recording session
+     - `razor.activity.log` - Captured Razor log activity during the recording session
      - `csharp-settings.json` - Current C# extension settings
    - Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
 
@@ -50,7 +52,7 @@ When investigating issues, the C# extension provides a command to capture trace-
 If you need to set the trace level manually:
 
 - **In the C# output window** (`View` -> `Output`), set the log level to `Trace`.
-  
+
   ![c# output window showing trace option](./docs/images/csharp_trace.png)
 
 - **In the C# LSP Trace Logs output window**, set the log level to `Trace`.
@@ -151,8 +153,10 @@ The saved archive contains:
 - The `.nettrace` file from dotnet-trace
 - `csharp.log` - The existing C# log file
 - `csharp-lsp-trace.log` - The existing LSP trace log file
+- `razor.log` - The existing Razor log file
 - `csharp.activity.log` - Captured C# log activity during the trace session
 - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the trace session
+- `razor.activity.log` - Captured Razor log activity during the trace session
 - `csharp-settings.json` - Current C# extension settings
 - Any memory dumps (`.dmp`) or GC dumps (`.gcdump`) captured before/after the trace
 

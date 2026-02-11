@@ -19,7 +19,9 @@ import {
     verifyDumpTools,
     promptForToolArguments,
     DumpRequest,
+    RazorLogObserver,
 } from './loggingUtils';
+import { RazorLogger } from '../../razor/src/razorLogger';
 
 const TraceTerminalName = 'dotnet-trace';
 
@@ -47,13 +49,15 @@ interface TraceResults {
     dumpFiles: string[];
     csharpLog: string;
     lspLog: string;
+    razorLog: string;
 }
 
 export function registerTraceCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.recordLanguageServerTrace', async () => {
@@ -134,6 +138,7 @@ export function registerTraceCommand(
                             progress,
                             outputChannel,
                             traceChannel,
+                            razorLogger,
                             token
                         );
                     } catch (error) {
@@ -177,7 +182,8 @@ export function registerTraceCommand(
                             saveUri,
                             progress,
                             outputChannel,
-                            traceChannel
+                            traceChannel,
+                            razorLogger
                         );
                     } catch (error) {
                         errorMessage = error instanceof Error ? error.message : String(error);
@@ -210,6 +216,7 @@ async function executeTraceCollection(
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger,
     cancellationToken: vscode.CancellationToken
 ): Promise<TraceResults | undefined> {
     // Verify dotnet-trace is installed
@@ -240,9 +247,13 @@ async function executeTraceCollection(
 
     const csharpLogObserver = outputChannel.observe();
     const traceLogObserver = traceChannel.observe();
+    const razorLogObserver = new RazorLogObserver(razorLogger);
 
     // Set log levels to Trace for capture and get the restore function
     const restoreLogLevels = await languageServer.setLogLevelsForCapture();
+    razorLogger.traceEnabled = true;
+    razorLogger.debugEnabled = true;
+    razorLogger.infoEnabled = true;
 
     try {
         const terminal = await getOrCreateTerminal(traceFolder, outputChannel);
@@ -260,12 +271,14 @@ async function executeTraceCollection(
             dumpFiles: allDumpFiles,
             csharpLog: csharpLogObserver.getLog(),
             lspLog: traceLogObserver.getLog(),
+            razorLog: razorLogObserver.getLog(),
         };
     } finally {
         // Always clean up observers and restore log levels
         csharpLogObserver.dispose();
         traceLogObserver.dispose();
         await restoreLogLevels();
+        await razorLogger.updateLogLevelAsync();
     }
 }
 
@@ -277,7 +290,8 @@ async function saveTraceResults(
     saveUri: vscode.Uri,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): Promise<vscode.Uri | undefined> {
     // Collect dumps after trace if any selected
     if (dumpRequests.length > 0) {
@@ -293,8 +307,10 @@ async function saveTraceResults(
         context,
         outputChannel,
         traceChannel,
+        razorLogger,
         traceResults.csharpLog,
         traceResults.lspLog,
+        traceResults.razorLog,
         saveUri.fsPath,
         traceResults.traceFilePath,
         traceResults.dumpFiles
