@@ -77,7 +77,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Remplace le chemin d’accès au dossier du composant .roslynDevKit du serveur de langage",
   "configuration.dotnet.server.componentPaths.xamlTools": "Remplace le chemin d’accès du dossier pour le composant .xamlTools du serveur de langage",
   "configuration.dotnet.server.crashDumpPath": "Définit un chemin de dossier dans lequel les vidages sur incident sont écrits en cas de panne du serveur de langue.  Doit être accessible en écriture par l’utilisateur(-trice). (Nécessite le redémarrage de l’extension)",
-  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Requires extension restart)",
+  "configuration.dotnet.server.environmentVariables": "Variables d’environnement personnalisées à transmettre au processus du serveur de langage. Spécifiez-les sous forme de paires clé-valeur, par exemple : { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Nécessite le redémarrage de l’extension)",
   "configuration.dotnet.server.extensionPaths": "Remplacer le chemin d’accès au serveur de langage --extension arguments",
   "configuration.dotnet.server.path": "Spécifie le chemin absolu du fichier exécutable du serveur (LSP ou O#). Lorsqu’elle est laissée vide, la version épinglée à l’extension C# est utilisée. (Précédemment `omnisharp.path`) (Nécessite le redémarrage de l’extension)",
   "configuration.dotnet.server.sourceGeneratorExecution": "Contrôle le moment où les générateurs de source sont exécutés. (Nécessite le redémarrage de l’extension)",
