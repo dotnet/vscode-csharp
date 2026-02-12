@@ -1,6 +1,6 @@
 {
   "command.csharp.attachToProcess": ".NET 5+ 또는 .NET Core 프로세스에 연결",
-  "command.csharp.captureLogs": "C# 로그 출력 캡처",
+  "command.csharp.captureLogs": "Capture Log Output",
   "command.csharp.changeProjectContext": "활성 문서의 프로젝트 컨텍스트 변경",
   "command.csharp.changeProjectContextEditor": "프로젝트 컨텍스트 선택",
   "command.csharp.changeProjectContextFileExplorer": "프로젝트 컨텍스트 선택",
