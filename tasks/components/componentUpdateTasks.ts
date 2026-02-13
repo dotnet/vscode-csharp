@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
 import * as process from 'node:process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -15,8 +14,8 @@ import {
     createPullRequest,
     doesBranchExist,
     findPRByTitle,
-} from './gitTasks';
-import { updatePackageDependencies } from '../src/tools/updatePackageDependencies';
+} from '../gitTasks';
+import { updatePackageDependencies } from '../../src/tools/updatePackageDependencies';
 
 type Options = {
     userName?: string;
@@ -34,7 +33,7 @@ function extractVersion(fileName: string, pattern: RegExp): string | null {
     return match && match[1] ? match[1] : null;
 }
 
-gulp.task('publish roslyn copilot', async () => {
+export async function publishRoslynCopilotTask() {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
 
     if (!parsedArgs.stagingDirectory || !fs.existsSync(parsedArgs.stagingDirectory)) {
@@ -109,4 +108,4 @@ gulp.task('publish roslyn copilot', async () => {
     // Push branch and create PR
     await pushBranch(branch, pat, owner, repo);
     await createPullRequest(pat, owner, repo, branch, title, body);
-});
+}

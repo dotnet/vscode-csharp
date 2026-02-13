@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
+import { testIntegrationUntrustedTask } from './testTasks';
+import { runTask } from '../runTask';
 
-gulp.task('package:offline', gulp.series('vsix:release:package'));
-gulp.task('vsix:offline:package', gulp.series('vsix:release:package'));
+runTask(testIntegrationUntrustedTask);

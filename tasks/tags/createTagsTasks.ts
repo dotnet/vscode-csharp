@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
 import * as fs from 'fs';
 import minimist from 'minimist';
 import { Octokit } from '@octokit/rest';
-import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from './offlinePackagingTasks';
-import { PlatformInformation } from '../src/shared/platform';
+import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from '../packaging/offlinePackagingTasks';
+import { PlatformInformation } from '../../src/shared/platform';
 import path from 'path';
 
 interface CreateTagsOptions {
@@ -20,7 +19,7 @@ interface CreateTagsOptions {
     prerelease: string | null;
 }
 
-gulp.task('createTags:roslyn', async (): Promise<void> => {
+export async function createTagsRoslynTask(): Promise<void> {
     const options = minimist<CreateTagsOptions>(process.argv.slice(2));
 
     return createTagsAsync(
@@ -37,9 +36,9 @@ gulp.task('createTags:roslyn', async (): Promise<void> => {
             ];
         }
     );
-});
+}
 
-gulp.task('createTags:razor', async (): Promise<void> => {
+export async function createTagsRazorTask(): Promise<void> {
     const options = minimist<CreateTagsOptions>(process.argv.slice(2));
 
     return createTagsAsync(
@@ -56,9 +55,9 @@ gulp.task('createTags:razor', async (): Promise<void> => {
             ];
         }
     );
-});
+}
 
-gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
+export async function createTagsVSCodeCSharpTask(): Promise<void> {
     const options = minimist<CreateTagsOptions>(process.argv.slice(2));
 
     return createTagsAsync(
@@ -71,9 +70,13 @@ gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
         }
     );
-});
+}
 
-gulp.task('createTags', gulp.series('createTags:roslyn', 'createTags:razor', 'createTags:vscode-csharp'));
+export async function createTagsTask(): Promise<void> {
+    await createTagsRoslynTask();
+    await createTagsRazorTask();
+    await createTagsVSCodeCSharpTask();
+}
 
 async function createTagsAsync(
     options: CreateTagsOptions,

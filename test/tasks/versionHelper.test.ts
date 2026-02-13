@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getNextReleaseVersion } from '../../tasks/snapTasks';
+import { getNextReleaseVersion } from '../../tasks/snap/snapTasks';
 import { describe, test, expect } from '@jest/globals';
 
 describe('getNextReleaseVersion', () => {

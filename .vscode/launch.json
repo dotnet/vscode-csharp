@@ -177,10 +177,10 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug gulp task",
+            "name": "Debug task",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": ["${input:gulpTaskName}"],
+            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+            "args": ["tasks/${input:taskScript}"],
             "cwd": "${workspaceFolder}"
         },
         {
@@ -188,8 +188,8 @@
             "request": "launch",
             "name": "Update OmniSharp package dependencies",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": ["updatePackageDependencies"],
+            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+            "args": ["tasks/debugger/updatePackageDependencies.ts"],
             "env": {
                 "NEW_DEPS_ID": "OmniSharp",
                 "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x86.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64-net6.0.zip",
@@ -203,8 +203,8 @@
             "request": "launch",
             "name": "Update razor telemetry package dependencies",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": ["updatePackageDependencies"],
+            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+            "args": ["tasks/debugger/updatePackageDependencies.ts"],
             "env": {
                 "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/704e369c5905f9ece819ebce77fb78d8/devkittelemetry-linux-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4049a66147717a53860bbc969bf32faa/devkittelemetry-linux-musl-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/c75e84ff813be5c9833d96dc2066a364/devkittelemetry-linux-musl-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/f58cf629939f0df77d142be881f9e233/devkittelemetry-linux-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/1c912419ea45c8d95cfa28a8a04640dc/devkittelemetry-osx-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/36545ba0998f1fc380e877e38b2f35f1/devkittelemetry-osx-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/0a32698e8ba1ab93489d79f34f8ae8d0/devkittelemetry-platformagnostic-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4f16ff826fedd33ad80d265c5409588b/devkittelemetry-win-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/5a98d8f4e481dbb7ae3cdb3695b75c46/devkittelemetry-win-x64-7.0.0-preview.24178.4.zip",
                 "NEW_DEPS_VERSION": "7.0.0-preview.24178.4",
@@ -217,8 +217,8 @@
             "request": "launch",
             "name": "Generate debugger options schema",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": ["generateOptionsSchema"],
+            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+            "args": ["tasks/debugger/generateOptionsSchema.ts"],
             "cwd": "${workspaceFolder}"
         },
         {
@@ -226,8 +226,8 @@
             "request": "launch",
             "name": "Razor Cohost integration tests",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": ["test:integration:razor:cohost"],
+            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+            "args": ["tasks/tests/testIntegrationRazorCohost.ts"],
             "cwd": "${workspaceFolder}"
         }
     ],
@@ -239,8 +239,8 @@
             "options": ["singleCsproj", "RazorApp", "slnWithCsproj", "slnFilterWithCsproj", "slnWithGenerator"]
         },
         {
-            "id": "gulpTaskName",
-            "description": "The name of the gulp task to debug",
+            "id": "taskScript",
+            "description": "The task script path under tasks (ex. `tests/testUnit.ts`)",
             "type": "promptString"
         }
     ]

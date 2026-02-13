@@ -6,16 +6,15 @@
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as fsextra from 'fs-extra';
-import * as gulp from 'gulp';
 import * as nbgv from 'nerdbank-gitversioning';
-import { Logger } from '../src/logger';
-import { PlatformInformation } from '../src/shared/platform';
-import { CsharpLoggerObserver } from '../src/shared/observers/csharpLoggerObserver';
-import { EventStream } from '../src/eventStream';
-import NetworkSettings from '../src/networkSettings';
-import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
-import { getRuntimeDependenciesPackages } from '../src/tools/runtimeDependencyPackageUtils';
-import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
+import { Logger } from '../../src/logger';
+import { PlatformInformation } from '../../src/shared/platform';
+import { CsharpLoggerObserver } from '../../src/shared/observers/csharpLoggerObserver';
+import { EventStream } from '../../src/eventStream';
+import NetworkSettings from '../../src/networkSettings';
+import { downloadAndInstallPackages } from '../../src/packageManager/downloadAndInstallPackages';
+import { getRuntimeDependenciesPackages } from '../../src/tools/runtimeDependencyPackageUtils';
+import { getAbsolutePathPackagesToInstall } from '../../src/packageManager/getAbsolutePathPackagesToInstall';
 import {
     codeExtensionPath,
     packedVsixOutputRoot,
@@ -25,15 +24,12 @@ import {
     devKitDependenciesDirectory,
     xamlToolsDirectory,
     razorExtensionDirectory,
-} from '../tasks/projectPaths';
-import { getPackageJSON } from '../tasks/packageJson';
-import { createPackageAsync, generateVsixManifest } from '../tasks/vsceTasks';
-import { isValidDownload } from '../src/packageManager/isValidDownload';
+} from '../projectPaths';
+import { getPackageJSON } from '../packageJson';
+import { createPackageAsync, generateVsixManifest } from './vsceTasks';
+import { isValidDownload } from '../../src/packageManager/isValidDownload';
 import path from 'path';
 import { CancellationToken } from 'vscode';
-// There are no typings for this library.
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const argv = require('yargs').argv;
 
 interface VSIXPlatformInfo {
     vsceTarget: string;
@@ -102,7 +98,12 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
     },
 };
 
-const vsixTasks: string[] = [];
+interface PlatformEntry {
+    platformName: string;
+    vsixPlatform: VSIXPlatformInfo;
+}
+
+const platformEntries: PlatformEntry[] = [];
 for (const p of platformSpecificPackages) {
     let platformName: string;
     if (p.platformInfo.isWindows()) {
@@ -115,24 +116,33 @@ for (const p of platformSpecificPackages) {
         throw new Error(`Unexpected platform ${p.platformInfo.platform}`);
     }
 
-    const taskName = `vsix:release:package:${platformName}:${p.vsceTarget}`;
-    vsixTasks.push(taskName);
-    gulp.task(taskName, async () => {
-        await doPackageOffline(p);
-    });
+    platformEntries.push({ platformName, vsixPlatform: p });
 }
 
-gulp.task('vsix:release:package:windows', gulp.series(...vsixTasks.filter((t) => t.includes('windows'))));
-gulp.task('vsix:release:package:linux', gulp.series(...vsixTasks.filter((t) => t.includes('linux'))));
-gulp.task('vsix:release:package:darwin', gulp.series(...vsixTasks.filter((t) => t.includes('darwin'))));
+export async function vsixReleasePackageWindowsTask(prerelease: boolean): Promise<void> {
+    for (const entry of platformEntries.filter((e) => e.platformName === 'windows')) {
+        await doPackageOffline(entry.vsixPlatform, prerelease);
+    }
+}
+export async function vsixReleasePackageLinuxTask(prerelease: boolean): Promise<void> {
+    for (const entry of platformEntries.filter((e) => e.platformName === 'linux')) {
+        await doPackageOffline(entry.vsixPlatform, prerelease);
+    }
+}
+export async function vsixReleasePackageDarwinTask(prerelease: boolean): Promise<void> {
+    for (const entry of platformEntries.filter((e) => e.platformName === 'darwin')) {
+        await doPackageOffline(entry.vsixPlatform, prerelease);
+    }
+}
 
-gulp.task(
-    'vsix:release:package',
-    gulp.series('vsix:release:package:windows', 'vsix:release:package:linux', 'vsix:release:package:darwin')
-);
+export async function vsixReleasePackageTask(prerelease: boolean): Promise<void> {
+    for (const entry of platformEntries) {
+        await doPackageOffline(entry.vsixPlatform, prerelease);
+    }
+}
 
 // Downloads dependencies for local development.
-gulp.task('installDependencies', async () => {
+export async function installDependenciesTask(): Promise<void> {
     await cleanAsync();
 
     const packageJSON = getPackageJSON();
@@ -146,39 +156,34 @@ gulp.task('installDependencies', async () => {
         await acquireAndInstallAllNugetPackages(vsixPlatformInfo, packageJSON, true);
     } catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
-        // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
-        // stack trace of this line. So that seperates the two stack traces.
-        throw Error(`Failed to install packages for ${platform}. ${message}\n---`);
+        throw Error(`Failed to install packages for ${platform}. ${message}`);
     }
-});
+}
 
 // Defines a special task to acquire all the platform specific Roslyn packages.
 // All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
 // specific packages this only requires running the installDependencies tasks.  However for Roslyn packages
 // we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
-gulp.task(
-    'updateRoslynVersion',
-    // Run the fetch of all packages, and then also installDependencies after
-    gulp.series(async () => {
-        await updateNugetPackageVersion(allNugetPackages.roslyn);
+export async function updateRoslynVersionTask(): Promise<void> {
+    // Fetch all platform-specific packages, then also installDependencies after
+    await updateNugetPackageVersion(allNugetPackages.roslyn);
 
-        // Also pull in the Roslyn DevKit dependencies nuget package.
-        await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, getPackageJSON(), true);
-    }, 'installDependencies')
-);
+    // Also pull in the Roslyn DevKit dependencies nuget package.
+    await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, getPackageJSON(), true);
+
+    await installDependenciesTask();
+}
 
 // Defines a special task to acquire all the platform specific Razor packages.
 // All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
 // specific packages this only requires running the installDependencies tasks.  However for Razor packages
 // we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
-gulp.task(
-    'updateRazorVersion',
-    // Run the fetch of all packages, and then also installDependencies after
-    gulp.series(async () => {
-        // Pull in the .razorExtension code that gets loaded in the roslyn language server
-        await acquireNugetPackage(allNugetPackages.razorExtension, undefined, getPackageJSON(), true);
-    }, 'installDependencies')
-);
+export async function updateRazorVersionTask(): Promise<void> {
+    // Pull in the .razorExtension code that gets loaded in the roslyn language server
+    await acquireNugetPackage(allNugetPackages.razorExtension, undefined, getPackageJSON(), true);
+
+    await installDependenciesTask();
+}
 
 async function acquireAndInstallAllNugetPackages(
     platformInfo: VSIXPlatformInfo | undefined,
@@ -317,20 +322,17 @@ async function restoreNugetPackage(packageName: string, packageVersion: string, 
     return packageOutputPath;
 }
 
-async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
+async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined, prerelease: boolean) {
     await cleanAsync();
     // Set the package.json version based on the value in version.json.
     const versionInfo = await nbgv.getVersion();
     console.log(versionInfo.npmPackageVersion);
     await nbgv.setPackageVersion();
 
-    let prerelease: boolean;
-    if (argv.prerelease) {
+    if (prerelease) {
         console.log('Packaging prerelease version.');
-        prerelease = true;
     } else {
         console.log('Packaging release version.');
-        prerelease = false;
     }
 
     try {

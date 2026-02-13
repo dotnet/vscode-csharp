@@ -33,14 +33,22 @@ try {
         throw ".npmrc file not found in the current directory."
     }
 
-    Write-Host "`n[3/5] Installing project dependencies..." -ForegroundColor Cyan
+Write-Host "`n[1/4] Installing ado-npm-auth globally..." -ForegroundColor Cyan
+Run-Command "npm" @("install", "-g", "ado-npm-auth") "Failed to install ado-npm-auth."
+
+Write-Host "`n[2/4] Authenticating with Azure DevOps..." -ForegroundColor Cyan
+if (Test-Path ".npmrc") {
+Run-Command "ado-npm-auth" @("-c", ".npmrc") "Authentication failed."
+} else {
+Write-Host ".npmrc file not found in the current directory." -ForegroundColor Red
+throw ".npmrc file not found in the current directory."
+}
+
+Write-Host "`n[3/4] Installing project dependencies..." -ForegroundColor Cyan
     Run-Command "npm" @("install") "Failed to install project dependencies."
 
-    Write-Host "`n[4/5] Installing Gulp globally..." -ForegroundColor Cyan
-    Run-Command "npm" @("install", "-g", "gulp") "Failed to install Gulp globally."
-
-    Write-Host "`n[5/5] Running gulp installDependencies..." -ForegroundColor Cyan
-    Run-Command "gulp" @("installDependencies") "Failed to run 'gulp installDependencies'."
+    Write-Host "`n[4/4] Running installDependencies..." -ForegroundColor Cyan
+    Run-Command "node" @("run", "installDependencies") "Failed to run 'installDependencies'."
 
     Write-Host "`n✅ Setup complete." -ForegroundColor Green
 }

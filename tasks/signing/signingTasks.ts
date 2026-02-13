@@ -5,31 +5,30 @@
 
 import * as cp from 'child_process';
 import * as fs from 'fs';
-import * as gulp from 'gulp';
-import { rootPath } from './projectPaths';
+import { rootPath } from '../projectPaths';
 import path from 'path';
-import { verifySignature } from './vsceTasks';
+import { verifySignature } from '../packaging/vsceTasks';
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 //const argv = require('yargs').argv;
 
-gulp.task('signJs', async () => {
+export async function signJsTask(): Promise<void> {
     await signJs();
-});
+}
 
-gulp.task('signVsix', async () => {
+export async function signVsixTask(): Promise<void> {
     await signVsix();
-});
+}
 
-gulp.task('verifyVsix', async () => {
+export async function verifyVsixTask(): Promise<void> {
     await verifyVsix();
-});
+}
 
 // Development task to install the signing plugin locally.
 // Required to run test sigining tasks locally.
-gulp.task('installSignPlugin', async () => {
+export async function installSignPluginTask(): Promise<void> {
     await installSignPlugin();
-});
+}
 
 async function installSignPlugin(): Promise<void> {
     console.log(`Installing MicroBuild.Plugins.Signing`);

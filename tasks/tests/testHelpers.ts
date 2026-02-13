@@ -5,8 +5,8 @@
 
 import fs from 'fs';
 import * as path from 'path';
-import { rootPath, outPath } from './projectPaths';
-import { prepareVSCodeAndExecuteTests } from '../test/vscodeLauncher';
+import { rootPath, outPath } from '../projectPaths';
+import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher';
 
 export const basicSlnTestProject = 'slnWithCsproj';
 export const integrationTestProjects = [basicSlnTestProject];
