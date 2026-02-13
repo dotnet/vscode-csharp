@@ -4,6 +4,19 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.123.x
+* Update Roslyn to 5.5.0-2.26112.11 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Enable generate type for unresolved types in XML doc comment cref attributes (PR: [#82194](https://github.com/dotnet/roslyn/pull/82194))
+  * Add parsing of StateMachine GeneratedNames to StackFrameParser (PR: [#79073](https://github.com/dotnet/roslyn/pull/79073))
+  * Added selection clearing after moving between methods (PR: [#82284](https://github.com/dotnet/roslyn/pull/82284))
+  * Remove a delay busy loop when waiting for workspace changes (PR: [#82370](https://github.com/dotnet/roslyn/pull/82370))
+  * Adds a listener in the initialize handler for client process exit (PR: [#82348](https://github.com/dotnet/roslyn/pull/82348))
+  * don't crash the process if the stream disconnects (PR: [#82316](https://github.com/dotnet/roslyn/pull/82316))
+  * Implement `unsafe` snippet (PR: [#82245](https://github.com/dotnet/roslyn/pull/82245))
+  * Fix CFG for interpolation handler in object initializer without setter (PR: [#82303](https://github.com/dotnet/roslyn/pull/82303))
+  * Detect changes in non-Roslyn projects and report them as rude edits (PR: [#82225](https://github.com/dotnet/roslyn/pull/82225))
+  * MSBuildWorkspace: Load projects for languages that do not have a known command line parser (PR: [#82159](https://github.com/dotnet/roslyn/pull/82159))
+  * Remove legacy LSIF (Language Server Index Format) implementation (PR: [#82235](https://github.com/dotnet/roslyn/pull/82235))
+  * Fix sequence point and instrumentation issues with runtime async (PR: [#82236](https://github.com/dotnet/roslyn/pull/82236))
 
 # 2.122.x
 * Use the package.json to gather all defined settings (PR: [#8954](https://github.com/dotnet/vscode-csharp/pull/8954))
