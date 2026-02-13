@@ -1,6 +1,6 @@
 {
   "command.csharp.attachToProcess": ".NET 5 以降または .NET Core プロセスにアタッチする",
-  "command.csharp.captureLogs": "Capture Log Output",
+  "command.csharp.captureLogs": "ログ出力のキャプチャ",
   "command.csharp.changeProjectContext": "アクティブなドキュメントのプロジェクト コンテキストを変更する",
   "command.csharp.changeProjectContextEditor": "プロジェクト コンテキストの選択",
   "command.csharp.changeProjectContextFileExplorer": "プロジェクト コンテキストの選択",
