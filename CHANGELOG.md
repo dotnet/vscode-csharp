@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.123.x
-* Update Roslyn to 5.5.0-2.26112.11 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.5.0-2.26112.11 (PR: [#9003](https://github.com/dotnet/vscode-csharp/pull/9003))
   * Enable generate type for unresolved types in XML doc comment cref attributes (PR: [#82194](https://github.com/dotnet/roslyn/pull/82194))
   * Add parsing of StateMachine GeneratedNames to StackFrameParser (PR: [#79073](https://github.com/dotnet/roslyn/pull/79073))
   * Added selection clearing after moving between methods (PR: [#82284](https://github.com/dotnet/roslyn/pull/82284))
