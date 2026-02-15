@@ -157,9 +157,9 @@ stages:
     - pwsh: |
         Write-Host "Building VSIXs for channel $(channel)"
         if ("$(channel)" -eq "Release") {
-          npm run vsixReleasePackage
+          npm run vsix:release:package
         } else {
-          npm run vsixReleasePackage -- --prerelease
+          npm run vsix:release:package -- --prerelease
         }
       displayName: 'Build VSIXs'
       env:
