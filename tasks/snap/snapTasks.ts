@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { findTagsByVersion } from './gitTasks';
+import { findTagsByVersion } from '../gitTasks';
 import minimist from 'minimist';
+import { rootPath } from '../projectPaths';
 
 const execAsync = promisify(exec);
 
@@ -43,7 +43,7 @@ export function getNextReleaseVersion(currentVersion: string): string {
  * @returns The parsed version.json object
  */
 function readVersionJson(): { version: string; [key: string]: unknown } {
-    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
+    const versionFilePath = path.join(rootPath, 'version.json');
     const file = fs.readFileSync(versionFilePath, 'utf8');
     return JSON.parse(file);
 }
@@ -53,7 +53,7 @@ function readVersionJson(): { version: string; [key: string]: unknown } {
  * @param versionJson The version.json object to write
  */
 function writeVersionJson(versionJson: { version: string; [key: string]: unknown }): void {
-    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
+    const versionFilePath = path.join(rootPath, 'version.json');
     const newJson = JSON.stringify(versionJson, null, 4);
     console.log(`New json: ${newJson}`);
     fs.writeFileSync(versionFilePath, newJson);
@@ -67,7 +67,7 @@ function writeVersionJson(versionJson: { version: string; [key: string]: unknown
 function addChangelogSection(version: string, additionalLines?: string[]): void {
     console.log('Adding new version header to changelog');
 
-    const changelogPath = path.join(path.resolve(__dirname, '..'), 'CHANGELOG.md');
+    const changelogPath = path.join(rootPath, 'CHANGELOG.md');
     const changelogContent = fs.readFileSync(changelogPath, 'utf8');
     const changelogLines = changelogContent.split(os.EOL);
 
@@ -106,7 +106,7 @@ function addChangelogSection(version: string, additionalLines?: string[]): void 
     fs.writeFileSync(changelogPath, changelogLines.join(os.EOL));
 }
 
-gulp.task('incrementVersion', async (): Promise<void> => {
+export async function incrementVersionTask(): Promise<void> {
     const argv = minimist(process.argv.slice(2));
     const isReleaseCandidate = argv['releaseCandidate'] === true || argv['releaseCandidate'] === 'true';
 
@@ -130,13 +130,13 @@ gulp.task('incrementVersion', async (): Promise<void> => {
 
     // Add a new changelog section for the new version.
     addChangelogSection(newVersion);
-});
+}
 
-gulp.task('updateChangelog', async (): Promise<void> => {
+export async function updateChangelogTask(): Promise<void> {
     // Add a new changelog section for the new version.
     console.log('Determining version from CHANGELOG');
 
-    const changelogPath = path.join(path.resolve(__dirname, '..'), 'CHANGELOG.md');
+    const changelogPath = path.join(rootPath, 'CHANGELOG.md');
     const changelogContent = fs.readFileSync(changelogPath, 'utf8');
     const changelogLines = changelogContent.split(os.EOL);
 
@@ -194,7 +194,7 @@ gulp.task('updateChangelog', async (): Promise<void> => {
 
     changelogLines.splice(currentHeaderLine + 1, 0, ...newPrs);
     fs.writeFileSync(changelogPath, changelogLines.join(os.EOL));
-});
+}
 
 const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/;
 
@@ -247,7 +247,7 @@ async function generatePRList(startSHA: string, endSHA: string): Promise<string[
  * This task is used when snapping from prerelease to release.
  * It updates the version to round up to the next tens version (e.g., 2.74 -> 2.80).
  */
-gulp.task('updateVersionForStableRelease', async (): Promise<void> => {
+export async function updateVersionForStableReleaseTask(): Promise<void> {
     // Get the current version from version.json
     const versionJson = readVersionJson();
 
@@ -262,4 +262,4 @@ gulp.task('updateVersionForStableRelease', async (): Promise<void> => {
 
     // Add a new changelog section for the release version that references the prerelease
     addChangelogSection(releaseVersion, [`* See ${currentVersion}.x for full list of changes.`]);
-});
+}

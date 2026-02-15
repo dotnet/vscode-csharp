@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
 import * as process from 'node:process';
 import minimist from 'minimist';
 import { spawnSync } from 'node:child_process';
@@ -64,7 +63,7 @@ async function git(args: string[], printCommand = true): Promise<string> {
     return stdout;
 }
 
-gulp.task('publish localization content', async () => {
+export async function publishLocalizationContentTask() {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
     const localizationChanges = getAllPossibleLocalizationFiles();
     await git(['add'].concat(localizationChanges));
@@ -142,4 +141,4 @@ gulp.task('publish localization content', async () => {
     });
 
     console.log(`Created pull request: ${pullRequest.data.html_url}.`);
-});
+}
