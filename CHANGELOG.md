@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.123.x
-* Update Razor to 10.0.0-preview.26115.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 10.0.0-preview.26115.1 (PR: [#9007](https://github.com/dotnet/vscode-csharp/pull/9007))
   * Fix one formatting bug, and prevent another from crashing the formatter (PR: [#12786](https://github.com/dotnet/razor/pull/12786))
   * Fix indentation after complete tags (PR: [#12784](https://github.com/dotnet/razor/pull/12784))
   * Reduce string allocations in ParseUsingDeclaration by replacing LINQ + Concat(this WorkspaceEdit, WorkspaceEdit?) with StringBuilder loop (PR: [#12774](https://github.com/dotnet/razor/pull/12774))
