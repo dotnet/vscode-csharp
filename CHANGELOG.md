@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.123.x
+* Update Razor to 10.0.0-preview.26115.1 (PR: [#9007](https://github.com/dotnet/vscode-csharp/pull/9007))
+  * Fix one formatting bug, and prevent another from crashing the formatter (PR: [#12786](https://github.com/dotnet/razor/pull/12786))
+  * Fix indentation after complete tags (PR: [#12784](https://github.com/dotnet/razor/pull/12784))
+  * Handle VS Code newline behaviour (PR: [#12773](https://github.com/dotnet/razor/pull/12773))
+  * Fix indentation following self closing tag with lambda attribute (PR: [#12727](https://github.com/dotnet/razor/pull/12727))
+  * Fix breakpoint placement for code blocks in the middle of documents (PR: [#12741](https://github.com/dotnet/razor/pull/12741))
+  * Fix: Honor html.autoClosingTags setting in VS Code Cohosting (PR: [#12735](https://github.com/dotnet/razor/pull/12735))
 
 # 2.122.x
 * Use the package.json to gather all defined settings (PR: [#8954](https://github.com/dotnet/vscode-csharp/pull/8954))
