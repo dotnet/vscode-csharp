@@ -1,6 +1,6 @@
 {
   "command.csharp.attachToProcess": "連結至 .NET 5+ 或 .NET Core 程序",
-  "command.csharp.captureLogs": "擷取 C# 記錄輸出",
+  "command.csharp.captureLogs": "擷取記錄輸出",
   "command.csharp.changeProjectContext": "變更使用中文件的專案内容",
   "command.csharp.changeProjectContextEditor": "選取專案内容",
   "command.csharp.changeProjectContextFileExplorer": "選取專案内容",

@@ -23,6 +23,7 @@ import { registerCaptureLogsCommand } from './logging/captureLogs';
 import { registerTraceCommand } from './logging/profiling';
 import { registerDumpCommand } from './logging/dump';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
+import { RazorLogger } from '../razor/src/razorLogger';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -30,7 +31,8 @@ export function registerCommands(
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     csharpTraceChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter
+    reporter: TelemetryReporter,
+    razorLogger: RazorLogger
 ) {
     registerExtensionCommands(
         context,
@@ -38,7 +40,8 @@ export function registerCommands(
         hostExecutableResolver,
         outputChannel,
         csharpTraceChannel,
-        reporter
+        reporter,
+        razorLogger
     );
     registerWorkspaceCommands(context, languageServer);
     registerServerCommands(context, languageServer, outputChannel);
@@ -53,7 +56,8 @@ function registerExtensionCommands(
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     csharpTraceChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter
+    reporter: TelemetryReporter,
+    razorLogger: RazorLogger
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -90,7 +94,7 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
-    registerCaptureLogsCommand(context, languageServer, outputChannel, csharpTraceChannel);
-    registerTraceCommand(context, languageServer, outputChannel, csharpTraceChannel);
-    registerDumpCommand(context, languageServer, outputChannel, csharpTraceChannel);
+    registerCaptureLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
+    registerTraceCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
+    registerDumpCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
 }

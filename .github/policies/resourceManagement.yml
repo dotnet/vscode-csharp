@@ -63,5 +63,18 @@ configuration:
       - addLabel:
           label: untriaged
 
+    - description: Add "OmniSharp" label to issues filed with OmniSharp enabled
+      triggerOnOwnActions: false
+      if:
+      - payloadType: Issues
+      - isAction:
+          action: Opened
+      - bodyContains:
+          pattern: "**Using OmniSharp**: true"
+          isRegex: False
+      then:
+      - addLabel:
+          label: OmniSharp
+
 onFailure: 
 onSuccess:

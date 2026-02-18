@@ -103,7 +103,7 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         this.outputChannel.dispose();
     }
 
-    private async updateLogLevelAsync() {
+    public async updateLogLevelAsync() {
         this.processTraceLevel();
     }
 
