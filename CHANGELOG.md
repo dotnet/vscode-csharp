@@ -11,6 +11,7 @@
   * Fix `GetDeconstructionInfo` on converted deconstruction assignment (PR: [#82324](https://github.com/dotnet/roslyn/pull/82324))
   * Fix crash in simplify linq expression (PR: [#82392](https://github.com/dotnet/roslyn/pull/82392))
   * Do not suggest using with-element in pre-C# 15 (PR: [#82389](https://github.com/dotnet/roslyn/pull/82389))
+* Collect Razor logs (PR: [#8988](https://github.com/dotnet/vscode-csharp/pull/8988))
 * Update Razor to 10.0.0-preview.26115.1 (PR: [#9007](https://github.com/dotnet/vscode-csharp/pull/9007))
   * Fix one formatting bug, and prevent another from crashing the formatter (PR: [#12786](https://github.com/dotnet/razor/pull/12786))
   * Fix indentation after complete tags (PR: [#12784](https://github.com/dotnet/razor/pull/12784))
