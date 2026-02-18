@@ -18,14 +18,13 @@ function Run-Command($command, $arguments, $errorMsg) {
     }
 }
 
-
 Push-Location $PSScriptRoot
 
 try {
-    Write-Host "`n[1/5] Installing ado-npm-auth globally..." -ForegroundColor Cyan
+    Write-Host "`n[1/3] Installing ado-npm-auth globally..." -ForegroundColor Cyan
     Run-Command "npm" @("install", "-g", "ado-npm-auth") "Failed to install ado-npm-auth."
 
-    Write-Host "`n[2/5] Authenticating with Azure DevOps..." -ForegroundColor Cyan
+    Write-Host "`n[2/3] Authenticating with Azure DevOps..." -ForegroundColor Cyan
     if (Test-Path ".npmrc") {
         Run-Command "ado-npm-auth" @("-c", ".npmrc") "Authentication failed."
     } else {
@@ -33,22 +32,8 @@ try {
         throw ".npmrc file not found in the current directory."
     }
 
-Write-Host "`n[1/4] Installing ado-npm-auth globally..." -ForegroundColor Cyan
-Run-Command "npm" @("install", "-g", "ado-npm-auth") "Failed to install ado-npm-auth."
-
-Write-Host "`n[2/4] Authenticating with Azure DevOps..." -ForegroundColor Cyan
-if (Test-Path ".npmrc") {
-Run-Command "ado-npm-auth" @("-c", ".npmrc") "Authentication failed."
-} else {
-Write-Host ".npmrc file not found in the current directory." -ForegroundColor Red
-throw ".npmrc file not found in the current directory."
-}
-
-Write-Host "`n[3/4] Installing project dependencies..." -ForegroundColor Cyan
-    Run-Command "npm" @("install") "Failed to install project dependencies."
-
-    Write-Host "`n[4/4] Running installDependencies..." -ForegroundColor Cyan
-    Run-Command "node" @("run", "installDependencies") "Failed to run 'installDependencies'."
+    Write-Host "`n[3/3] Installing project dependencies..." -ForegroundColor Cyan
+    Run-Command "npm" @("ci") "Failed to install project dependencies."
 
     Write-Host "`n✅ Setup complete." -ForegroundColor Green
 }

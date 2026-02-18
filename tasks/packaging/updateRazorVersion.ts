@@ -17,5 +17,5 @@ async function updateRazorVersion(): Promise<void> {
     // Pull in the .razorExtension code that gets loaded in the roslyn language server
     await acquireNugetPackage(allNugetPackages.razorExtension, undefined, getPackageJSON(), true);
 
-    await installDependencies();
+    await installDependencies(/* clean */ true);
 }

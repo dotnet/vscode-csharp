@@ -39,7 +39,6 @@ Follow these steps to build, run, and test the repository:
 If you have the ability to run powershell, you can invoke "init.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
 
 1. Run `npm ci` - This command installs the project dependencies.
-2. Run `npm run installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
 
 **Note**: Authentication with `ado-npm-auth` is only required when adding new packages to the feeds. For regular development with existing dependencies, authentication is not necessary. See the [Updating NPM packages](#updating-npm-packages) section for details.
 

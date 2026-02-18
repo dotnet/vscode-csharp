@@ -25,5 +25,5 @@ async function updateRoslynVersion(): Promise<void> {
     // Also pull in the Roslyn DevKit dependencies nuget package.
     await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, getPackageJSON(), true);
 
-    await installDependencies();
+    await installDependencies(/* clean */ true);
 }

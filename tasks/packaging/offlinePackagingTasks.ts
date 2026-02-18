@@ -37,6 +37,8 @@ interface VSIXPlatformInfo {
     platformInfo: PlatformInformation;
 }
 
+const versionFileName = 'version.nfo';
+
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
 export const platformSpecificPackages: VSIXPlatformInfo[] = [
     { vsceTarget: 'win32-x64', rid: 'win-x64', platformInfo: new PlatformInformation('win32', 'x86_64') },
@@ -142,8 +144,10 @@ export async function vsixReleasePackageTask(prerelease: boolean): Promise<void>
 }
 
 // Downloads dependencies for local development.
-export async function installDependencies(): Promise<void> {
-    await cleanAsync();
+export async function installDependencies(clean: boolean = false): Promise<void> {
+    if (clean) {
+        await cleanAsync();
+    }
 
     const packageJSON = getPackageJSON();
 
@@ -167,8 +171,17 @@ async function acquireAndInstallAllNugetPackages(
 ) {
     for (const key in allNugetPackages) {
         const nugetPackage = allNugetPackages[key];
+        const packageName = nugetPackage.getPackageName(platformInfo);
+        const packageVersion = packageJSON.defaults[nugetPackage.packageJsonName];
+
+        if (hasNugetPackage(nugetPackage, packageName, packageVersion)) {
+            // Log required package version is already installed.
+            console.log(`Package ${packageName}@${packageVersion} is already installed, skipping installation.`);
+            continue;
+        }
+
         const packagePath = await acquireNugetPackage(nugetPackage, platformInfo, packageJSON, interactive);
-        await installNuGetPackage(packagePath, nugetPackage, platformInfo);
+        await installNuGetPackage(packagePath, nugetPackage, platformInfo, packageVersion);
     }
 }
 
@@ -184,10 +197,31 @@ export async function acquireNugetPackage(
     return packagePath;
 }
 
+function hasNugetPackage(nugetPackageInfo: NugetPackageInfo, packageName: string, packageVersion: string): boolean {
+    const outputPath = nugetPackageInfo.vsixOutputPath;
+    const versionFilePath = path.join(outputPath, versionFileName);
+    if (!fs.existsSync(versionFilePath)) {
+        return false;
+    }
+
+    const installedVersion = fs.readFileSync(versionFilePath, 'utf-8');
+    const versionFound = installedVersion === packageVersion;
+
+    if (!versionFound) {
+        console.log(`Removing outdated package ${packageName}@${installedVersion}`);
+        // Delete the existing content to prepare for the new package installation.
+        // This ensures we don't end up with a mix of old and new files.
+        fs.rmSync(outputPath, { recursive: true, force: true });
+    }
+
+    return versionFound;
+}
+
 async function installNuGetPackage(
     pathToPackage: string,
     nugetPackageInfo: NugetPackageInfo,
-    platformInfo: VSIXPlatformInfo | undefined
+    platformInfo: VSIXPlatformInfo | undefined,
+    packageVersion: string
 ) {
     // Get the directory containing the content.
     const pathToContentInNugetPackage = nugetPackageInfo.getPackageContentPath(platformInfo);
@@ -214,6 +248,11 @@ async function installNuGetPackage(
     if (numFilesToCopy !== numCopiedFiles) {
         throw new Error('Failed to copy all files from NuGet package');
     }
+
+    // Writes the nuget package version to a text file in the output directory,
+    // this is used to determine if we need to update the package.
+    const versionFilePath = path.join(outputPath, versionFileName);
+    fs.writeFileSync(versionFilePath, packageVersion);
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
@@ -264,7 +303,7 @@ async function restoreNugetPackage(packageName: string, packageVersion: string, 
     const packageOutputPath = path.join(nugetTempPath, packageName, packageVersion);
     if (fs.existsSync(packageOutputPath)) {
         // Package is already downloaded, no need to download again.
-        console.log(`Reusing existing download of ${packageName}.${packageVersion}`);
+        console.log(`Reusing existing download of ${packageName}@${packageVersion}`);
         return packageOutputPath;
     }
 
@@ -284,7 +323,7 @@ async function restoreNugetPackage(packageName: string, packageVersion: string, 
     await new Promise((resolve) => {
         process.on('exit', (exitCode, _) => {
             if (exitCode !== 0) {
-                throw new Error(`Failed to download nuget package ${packageName}.${packageVersion}`);
+                throw new Error(`Failed to download nuget package ${packageName}@${packageVersion}`);
             }
             resolve(undefined);
         });
@@ -338,13 +377,22 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined, prer
 }
 
 async function cleanAsync() {
-    const directoriesToDelete = ['install.*', '.omnisharp*', '.debugger', '.razorExtension'];
-    for (const key in allNugetPackages) {
-        directoriesToDelete.push(allNugetPackages[key].vsixOutputPath);
+    // Read the .gitignore file and remove all directories which are in the form `.{folder}}/`
+    const gitignorePath = path.join(rootPath, '.gitignore');
+    if (!fs.existsSync(gitignorePath)) {
+        return;
     }
 
-    for (const directory of directoriesToDelete) {
-        await fsextra.remove(directory);
+    const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
+    const directoryRegex = /^\.([a-zA-Z0-9_-]+)\/$/gm;
+    let match;
+    while ((match = directoryRegex.exec(gitignoreContent)) !== null) {
+        const directory = match[1];
+        const directoryPath = path.join(rootPath, `.${directory}`);
+        if (fs.existsSync(directoryPath)) {
+            console.log(`Removing directory ${directoryPath}`);
+            await fsextra.remove(directoryPath);
+        }
     }
 }
 

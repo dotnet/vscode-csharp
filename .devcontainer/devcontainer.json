@@ -56,5 +56,5 @@
       ]
     }
   },
-  "postCreateCommand": "npm ci && node run installDependencies"
+  "postCreateCommand": "npm ci"
 }
