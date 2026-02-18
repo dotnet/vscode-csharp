@@ -158,6 +158,10 @@ export class RoslynLanguageClient extends LanguageClient {
         }
 
         this._hasShownConnectionClose = true;
+        this.showCrashNotificationCore();
+    }
+
+    private showCrashNotificationCore() {
         showErrorMessageWithOptions(
             vscode,
             vscode.l10n.t('The C# language server has crashed. Restart extensions to re-enable C# functionality.'),
@@ -168,7 +172,11 @@ export class RoslynLanguageClient extends LanguageClient {
             },
             {
                 title: vscode.l10n.t('Report Issue'),
-                command: 'csharp.reportIssue',
+                action: async () => {
+                    vscode.commands.executeCommand('csharp.reportIssue');
+                    // Re-show the notification so the user can still restart extensions after reporting.
+                    this.showCrashNotificationCore();
+                },
             }
         );
     }
