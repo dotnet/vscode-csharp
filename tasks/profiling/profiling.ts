@@ -4,43 +4,40 @@
  *--------------------------------------------------------------------------------------------*/
 
 import fs from 'fs';
-import * as gulp from 'gulp';
 import * as path from 'path';
-import { basicSlnTestProject, runIntegrationTest } from './testHelpers';
-import { outPath } from './projectPaths';
+import { basicSlnTestProject, runIntegrationTest } from '../tests/testHelpers';
+import { outPath } from '../projectPaths';
 import { execSync } from 'child_process';
+import { runTask } from '../runTask';
 
-createProfilingTasks();
+const profilingOutputFolder = path.join(outPath, 'profiling');
 
-function createProfilingTasks() {
-    const profilingOutputFolder = path.join(outPath, 'profiling');
-    gulp.task(`profiling:csharp:${basicSlnTestProject}`, async () => {
-        // Ensure the profiling output folder exists, otherwise the outputs will not get written.
-        fs.mkdirSync(path.join(outPath, 'profiling'), { recursive: true });
+runTask(profiling);
 
-        await runIntegrationTest(
-            basicSlnTestProject,
-            path.join('lsptoolshost', 'integrationTests'),
-            `[C#][${basicSlnTestProject}]`,
-            undefined,
-            undefined,
-            {
-                ROSLYN_DOTNET_EventPipeOutputPath: path.join(profilingOutputFolder, 'csharp-trace.{pid}.nettrace'),
-            }
-        );
+async function profiling(): Promise<void> {
+    await profileCSharp();
+    await mergeTraces(profilingOutputFolder);
+}
 
-        const files = fs.readdirSync(profilingOutputFolder);
-        const nettraceFiles = files.filter((f) => f.endsWith('.nettrace'));
-        if (nettraceFiles.length === 0) {
-            throw new Error('No .nettrace files found in the profiling output folder.');
+async function profileCSharp(): Promise<void> {
+    fs.mkdirSync(path.join(outPath, 'profiling'), { recursive: true });
+
+    await runIntegrationTest(
+        basicSlnTestProject,
+        path.join('lsptoolshost', 'integrationTests'),
+        `[C#][${basicSlnTestProject}]`,
+        undefined,
+        undefined,
+        {
+            ROSLYN_DOTNET_EventPipeOutputPath: path.join(profilingOutputFolder, 'csharp-trace.{pid}.nettrace'),
         }
-    });
+    );
 
-    gulp.task('mergeTraces', async () => {
-        await mergeTraces(profilingOutputFolder);
-    });
-
-    gulp.task('profiling', gulp.series(`profiling:csharp:${basicSlnTestProject}`, 'mergeTraces'));
+    const files = fs.readdirSync(profilingOutputFolder);
+    const nettraceFiles = files.filter((f) => f.endsWith('.nettrace'));
+    if (nettraceFiles.length === 0) {
+        throw new Error('No .nettrace files found in the profiling output folder.');
+    }
 }
 
 async function mergeTraces(profilingOutputFolder: string) {

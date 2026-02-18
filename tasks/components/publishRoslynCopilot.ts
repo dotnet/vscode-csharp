@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
 import * as process from 'node:process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -15,26 +14,18 @@ import {
     createPullRequest,
     doesBranchExist,
     findPRByTitle,
-} from './gitTasks';
-import { updatePackageDependencies } from '../src/tools/updatePackageDependencies';
+} from '../gitTasks';
+import { updatePackageDependencies } from '../../src/tools/updatePackageDependencies';
+import { runTask } from '../runTask';
 
 type Options = {
     userName?: string;
     email?: string;
 };
 
-/**
- * Extract version from file name using a provided regex pattern
- * @param fileName - The file name to extract version from
- * @param pattern - The regex pattern to match and extract version (should have a capture group)
- * @returns The extracted version string or null if not found
- */
-function extractVersion(fileName: string, pattern: RegExp): string | null {
-    const match = fileName.match(pattern);
-    return match && match[1] ? match[1] : null;
-}
+runTask(publishRoslynCopilot);
 
-gulp.task('publish roslyn copilot', async () => {
+async function publishRoslynCopilot() {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
 
     if (!parsedArgs.stagingDirectory || !fs.existsSync(parsedArgs.stagingDirectory)) {
@@ -109,4 +100,15 @@ gulp.task('publish roslyn copilot', async () => {
     // Push branch and create PR
     await pushBranch(branch, pat, owner, repo);
     await createPullRequest(pat, owner, repo, branch, title, body);
-});
+}
+
+/**
+ * Extract version from file name using a provided regex pattern
+ * @param fileName - The file name to extract version from
+ * @param pattern - The regex pattern to match and extract version (should have a capture group)
+ * @returns The extracted version string or null if not found
+ */
+function extractVersion(fileName: string, pattern: RegExp): string | null {
+    const match = fileName.match(pattern);
+    return match && match[1] ? match[1] : null;
+}

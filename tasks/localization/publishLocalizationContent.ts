@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
 import * as process from 'node:process';
 import minimist from 'minimist';
 import { spawnSync } from 'node:child_process';
@@ -11,6 +10,7 @@ import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
 import { Octokit } from '@octokit/rest';
+import { runTask } from '../runTask';
 
 type Options = {
     userName?: string;
@@ -22,49 +22,9 @@ type Options = {
 
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
 
-function getAllPossibleLocalizationFiles(): string[] {
-    const files = [];
-    for (const lang of localizationLanguages) {
-        files.push('l10n' + path.sep + util.format('bundle.l10n.%s.json', lang));
-        files.push(util.format('package.nls.%s.json', lang));
-    }
-    // English
-    files.push(`l10n${path.sep}bundle.l10n.json`);
-    return files;
-}
+runTask(publishLocalizationContent);
 
-async function git_diff(args: string[]): Promise<string[]> {
-    const result = await git(['diff'].concat(args));
-    // Line ending from the stdout of git is '\n' even on Windows.
-    return result
-        .replaceAll('\n', EOL)
-        .split(EOL)
-        .map((fileName, _) => fileName.trim())
-        .filter((fileName) => fileName.length !== 0);
-}
-
-async function git(args: string[], printCommand = true): Promise<string> {
-    if (printCommand) {
-        console.log(`git ${args.join(' ')}`);
-    }
-
-    const git = spawnSync('git', args);
-    if (git.status != 0) {
-        const err = git.stderr.toString();
-        if (printCommand) {
-            console.log(`Failed to execute git ${args.join(' ')}.`);
-        }
-        throw err;
-    }
-
-    const stdout = git.stdout.toString();
-    if (printCommand) {
-        console.log(stdout);
-    }
-    return stdout;
-}
-
-gulp.task('publish localization content', async () => {
+async function publishLocalizationContent() {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
     const localizationChanges = getAllPossibleLocalizationFiles();
     await git(['add'].concat(localizationChanges));
@@ -142,4 +102,46 @@ gulp.task('publish localization content', async () => {
     });
 
     console.log(`Created pull request: ${pullRequest.data.html_url}.`);
-});
+}
+
+function getAllPossibleLocalizationFiles(): string[] {
+    const files = [];
+    for (const lang of localizationLanguages) {
+        files.push('l10n' + path.sep + util.format('bundle.l10n.%s.json', lang));
+        files.push(util.format('package.nls.%s.json', lang));
+    }
+    // English
+    files.push(`l10n${path.sep}bundle.l10n.json`);
+    return files;
+}
+
+async function git_diff(args: string[]): Promise<string[]> {
+    const result = await git(['diff'].concat(args));
+    // Line ending from the stdout of git is '\n' even on Windows.
+    return result
+        .replaceAll('\n', EOL)
+        .split(EOL)
+        .map((fileName, _) => fileName.trim())
+        .filter((fileName) => fileName.length !== 0);
+}
+
+async function git(args: string[], printCommand = true): Promise<string> {
+    if (printCommand) {
+        console.log(`git ${args.join(' ')}`);
+    }
+
+    const git = spawnSync('git', args);
+    if (git.status != 0) {
+        const err = git.stderr.toString();
+        if (printCommand) {
+            console.log(`Failed to execute git ${args.join(' ')}.`);
+        }
+        throw err;
+    }
+
+    const stdout = git.stdout.toString();
+    if (printCommand) {
+        console.log(stdout);
+    }
+    return stdout;
+}

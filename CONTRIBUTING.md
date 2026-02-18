@@ -38,9 +38,7 @@ Follow these steps to build, run, and test the repository:
 
 If you have the ability to run powershell, you can invoke "init.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
 
-1. Run `npm i` - This command installs the project dependencies.
-2. Run `npm i -g gulp` - This command installs Gulp globally.
-3. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+1. Run `npm ci` - This command installs the project dependencies.
 
 **Note**: Authentication with `ado-npm-auth` is only required when adding new packages to the feeds. For regular development with existing dependencies, authentication is not necessary. See the [Updating NPM packages](#updating-npm-packages) section for details.
 
@@ -164,7 +162,7 @@ To add new packages, you must authenticate by running:
 
 ## Creating VSIX Packages for the Extension
 
-To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the gulp command `gulp vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
+To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the command `npm run vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
 
 ## Updating the `Roslyn` Language Server Version
 
@@ -174,7 +172,7 @@ To update the version of the roslyn server used by the extension do the followin
 1.  Find the the Roslyn signed build you want from [here](https://dnceng.visualstudio.com/internal/_build?definitionId=327&_a=summary).  Typically the latest successful build of main is fine.
 2.  In the official build stage, look for the `Publish Assets` step.  In there you will see it publishing the `Microsoft.CodeAnalysis.LanguageServer.neutral` package with some version, e.g. `4.6.0-3.23158.4`.  Take note of that version number.
 3.  In the [package.json](package.json) inside the `defaults` section update the `roslyn` key to point to the version number you found above in step 2.
-4.  Ensure that version of the package is in the proper feeds by running `gulp updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
+4.  Ensure that version of the package is in the proper feeds by running `npm run updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
 5.  Build and test the change. If everything looks good, submit a PR.
 
 ## Updating the `Roslyn` Copilot Language Server version

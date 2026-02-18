@@ -17,18 +17,18 @@
 - **Build**: `npm run compile` (or use VS Code build task)
 - **Test**: `npm test` (runs Jest tests)
 - **Package**: `npm run package` (creates VSIX)
-- **Dependencies**: Use `gulp installDependencies` to fetch .NET/LS components
+- **Dependencies**: Use `npm run installDependencies` to fetch .NET/LS components
 - **Debugging**: See `docs/debugger/` for advanced .NET debugging, including runtime and external library debugging.
 - **Roslyn Copilot Language Server**: To update/test, see instructions in `CONTRIBUTING.md` (triggers pipeline, checks logs for install, etc.)
 
 ## Infrastructure Tasks
-- **Tasks Directory**: Build automation is in `tasks/` using Gulp. Key modules:
+- **Tasks Directory**: Build automation is in `tasks/` with one script per task under task-area folders such as `tasks/packaging/`, `tasks/tests/`, etc. Key modules:
   - `testTasks.ts`: Test orchestration for unit/integration tests across components
   - `offlinePackagingTasks.ts`: VSIX packaging for different platforms (`vsix:release:package:*`)
   - `componentUpdateTasks.ts`: Automated updates for Roslyn Copilot components
   - `snapTasks.ts`: Version bumping and changelog management for releases
   - `gitTasks.ts`: Git operations for automated PR creation and branch management
-- **Adding New Tasks**: Create `.ts` file in `tasks/`, define `gulp.task()` functions, require in `gulpfile.ts`
+- **Adding New Tasks**: Create a dedicated `.ts` entry script under the matching area in `tasks/` and matching scripts entry in the `package.json`
 - **Task Patterns**: Use `projectPaths.ts` for consistent path references, follow existing naming conventions (`test:integration:*`, `vsix:*`, etc.)
 
 ## Project Conventions & Patterns

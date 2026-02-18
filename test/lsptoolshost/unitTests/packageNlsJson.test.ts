@@ -22,7 +22,7 @@ describe('package.nls.json validation tests', () => {
                 try {
                     expect(packageNLSJson[key]).toContain('\u200b');
                 } catch (_) {
-                    throw "Missing \\u200b in example urls, please run 'gulp fixLocURLs' and check in those changes.";
+                    throw "Missing \\u200b in example urls, please run 'node run fixLocUrls' and check in those changes.";
                 }
             }
         });
