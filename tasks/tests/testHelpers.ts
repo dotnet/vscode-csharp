@@ -5,6 +5,8 @@
 
 import fs from 'fs';
 import * as path from 'path';
+import * as jest from 'jest';
+import { Config } from '@jest/types';
 import { rootPath, outPath } from '../projectPaths';
 import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher';
 
@@ -136,4 +138,23 @@ export async function runJestIntegrationTest(
 
 export function getJUnitFileName(logName: string) {
     return `${logName.replaceAll(' ', '_')}_junit.xml`;
+}
+
+export async function runJestTest(project: string) {
+    process.env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(project);
+    process.env.JEST_SUITE_NAME = project;
+    const configPath = path.join(rootPath, 'jest.config.ts');
+
+    const { results } = await jest.runCLI(
+        {
+            config: configPath,
+            selectProjects: [project],
+            verbose: true,
+        } as Config.Argv,
+        [project]
+    );
+
+    if (!results.success) {
+        throw new Error('Tests failed.');
+    }
 }

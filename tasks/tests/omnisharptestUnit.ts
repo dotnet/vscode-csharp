@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { omnisharpTestUnitTask } from './testTasks';
+import { omnisharpTestUnit } from './omnisharptestTasks';
 import { runTask } from '../runTask';
 
-runTask(omnisharpTestUnitTask);
+runTask(omnisharpTestUnit);

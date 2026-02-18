@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export function runTask(task: () => Promise<void>): void {
+export function runTask(task: () => Promise<void> | void): void {
     void (async () => {
         await task();
     })();

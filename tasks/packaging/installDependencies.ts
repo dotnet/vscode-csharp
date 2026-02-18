@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { installDependenciesTask } from './offlinePackagingTasks';
+import { installDependencies } from './offlinePackagingTasks';
 import { runTask } from '../runTask';
 
-runTask(installDependenciesTask);
+runTask(installDependencies);

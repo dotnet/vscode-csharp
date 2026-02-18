@@ -142,7 +142,7 @@ export async function vsixReleasePackageTask(prerelease: boolean): Promise<void>
 }
 
 // Downloads dependencies for local development.
-export async function installDependenciesTask(): Promise<void> {
+export async function installDependencies(): Promise<void> {
     await cleanAsync();
 
     const packageJSON = getPackageJSON();
@@ -160,31 +160,6 @@ export async function installDependenciesTask(): Promise<void> {
     }
 }
 
-// Defines a special task to acquire all the platform specific Roslyn packages.
-// All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
-// specific packages this only requires running the installDependencies tasks.  However for Roslyn packages
-// we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
-export async function updateRoslynVersionTask(): Promise<void> {
-    // Fetch all platform-specific packages, then also installDependencies after
-    await updateNugetPackageVersion(allNugetPackages.roslyn);
-
-    // Also pull in the Roslyn DevKit dependencies nuget package.
-    await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, getPackageJSON(), true);
-
-    await installDependenciesTask();
-}
-
-// Defines a special task to acquire all the platform specific Razor packages.
-// All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
-// specific packages this only requires running the installDependencies tasks.  However for Razor packages
-// we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
-export async function updateRazorVersionTask(): Promise<void> {
-    // Pull in the .razorExtension code that gets loaded in the roslyn language server
-    await acquireNugetPackage(allNugetPackages.razorExtension, undefined, getPackageJSON(), true);
-
-    await installDependenciesTask();
-}
-
 async function acquireAndInstallAllNugetPackages(
     platformInfo: VSIXPlatformInfo | undefined,
     packageJSON: any,
@@ -197,7 +172,7 @@ async function acquireAndInstallAllNugetPackages(
     }
 }
 
-async function acquireNugetPackage(
+export async function acquireNugetPackage(
     nugetPackageInfo: NugetPackageInfo,
     platformInfo: VSIXPlatformInfo | undefined,
     packageJSON: any,
@@ -397,7 +372,7 @@ function getPackageName(packageJSON: any, vscodePlatformId?: string) {
     }
 }
 
-async function updateNugetPackageVersion(packageInfo: NugetPackageInfo) {
+export async function updateNugetPackageVersion(packageInfo: NugetPackageInfo) {
     const packageJSON = getPackageJSON();
 
     // And now fetch each platform specific

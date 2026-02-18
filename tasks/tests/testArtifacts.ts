@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { testArtifactsTask } from './testTasks';
+import { testArtifacts } from './testTasks';
 import { runTask } from '../runTask';
 
-runTask(testArtifactsTask);
+runTask(testArtifacts);

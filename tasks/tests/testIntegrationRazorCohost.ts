@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { testIntegrationRazorCohostTask } from './testTasks';
+import { testIntegrationRazorCohost } from './testTasks';
 import { runTask } from '../runTask';
 
-runTask(testIntegrationRazorCohostTask);
+runTask(testIntegrationRazorCohost);

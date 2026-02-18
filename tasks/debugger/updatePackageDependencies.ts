@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { updatePackageDependenciesTask } from './debuggerTasks';
+import * as packageDependencyUpdater from '../../src/tools/updatePackageDependencies';
 import { runTask } from '../runTask';
 
-runTask(updatePackageDependenciesTask);
+runTask(packageDependencyUpdater.updatePackageDependencies);
