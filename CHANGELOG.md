@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.131.x
+
 # 2.123.x
 * Improve error reporting UX when server encounters an error (PR: [#8982](https://github.com/dotnet/vscode-csharp/pull/8982))
 * Update Roslyn to 5.5.0-2.26117.2 (PR: [#8982](https://github.com/dotnet/vscode-csharp/pull/8982))
