@@ -67,15 +67,12 @@ export function registerMiscellaneousFileNotifier(
 }
 
 async function isDeletedFile(document: vscode.TextDocument): Promise<boolean> {
-    if (document.uri.scheme === 'file') {
-        try {
-            await vscode.workspace.fs.stat(document.uri);
-            return false;
-        } catch {
-            return true;
-        }
+    try {
+        await vscode.workspace.fs.stat(document.uri);
+        return false;
+    } catch {
+        return true;
     }
-    return false;
 }
 
 function createHash(data: string): string {
