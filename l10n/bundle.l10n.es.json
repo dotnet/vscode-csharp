@@ -149,7 +149,7 @@
   "Reload C# Extension": "Recargar la extensión de C#",
   "Reload Window": "Recargar ventana",
   "Replace existing build and debug assets?": "¿Quiere reemplazar los recursos de compilación y depuración existentes?",
-  "Report Issue": "Report Issue",
+  "Report Issue": "Notificar incidencia",
   "Report Razor Issue": "Notificar problema de Razor",
   "Report a Razor issue": "Notificar un problema de Razor",
   "Required assets to build and debug are missing from '{0}'. Add them?": "Faltan los recursos en '{0}' necesarios para compilar y depurar. ¿Quiere agregarlos?",
