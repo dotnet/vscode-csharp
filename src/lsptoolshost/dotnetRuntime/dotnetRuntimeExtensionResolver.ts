@@ -72,9 +72,6 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 rejectPreviews: false,
             });
             if (toolingRuntimeHostInfo) {
-                this.channel.appendLine(
-                    `Using tooling runtime at ${toolingRuntimeHostInfo.path} specified by dotnet.toolingRuntimePath setting.`
-                );
                 this.hostInfo = toolingRuntimeHostInfo;
                 return toolingRuntimeHostInfo;
             }
@@ -111,6 +108,10 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             return undefined;
         }
 
+        this.channel.appendLine(
+            `Validating runtime override dotnet.toolingRuntimePath which is set to "${toolingRuntimePath}".`
+        );
+
         if (!path.isAbsolute(toolingRuntimePath) || !existsSync(toolingRuntimePath)) {
             this.channel.appendLine(
                 "The path specified in dotnet.toolingRuntimePath is not absolute or doesn't exist. Falling back to normal runtime acquisition."
@@ -125,6 +126,8 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             );
             return undefined;
         }
+
+        this.channel.appendLine('Using runtime override specified in dotnet.toolingRuntimePath.');
 
         return {
             version: '' /* We don't need to know the version - we've already downloaded the correct one */,
