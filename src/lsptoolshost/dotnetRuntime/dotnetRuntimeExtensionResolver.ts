@@ -51,6 +51,17 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         // If we're using devkit, acquire aspnetcore as well - this avoids two separate acquisitions (devkit requires aspnetcore).
         const runtimeMode: DotnetInstallMode = usingDevkit ? 'aspnetcore' : 'runtime';
 
+        if (usingDevkit) {
+            const toolingRuntimeHostInfo = this.tryGetToolingRuntimeHostInfo();
+            if (toolingRuntimeHostInfo) {
+                this.channel.appendLine(
+                    `Using tooling runtime at ${toolingRuntimeHostInfo.path} specified by dotnet.toolingRuntimePath setting.`
+                );
+                this.hostInfo = toolingRuntimeHostInfo;
+                return toolingRuntimeHostInfo;
+            }
+        }
+
         this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
         const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
         const findPathRequest: IDotnetFindPathContext = {
@@ -84,6 +95,24 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         };
         this.hostInfo = hostInfo;
         return hostInfo;
+    }
+
+    private tryGetToolingRuntimeHostInfo(): HostExecutableInformation | undefined {
+        // get vscode setting value for dotnet.toolingRuntimePath
+        const toolingRuntimePath = languageServerOptions.toolingRuntimePath;
+        if (
+            toolingRuntimePath.length === 0 ||
+            !path.isAbsolute(toolingRuntimePath) ||
+            !existsSync(toolingRuntimePath)
+        ) {
+            return undefined;
+        }
+
+        return {
+            version: '' /* We don't need to know the version - we've already downloaded the correct one */,
+            path: toolingRuntimePath,
+            env: this.getEnvironmentVariables(toolingRuntimePath),
+        };
     }
 
     private getEnvironmentVariables(dotnetExecutablePath: string): NodeJS.ProcessEnv {
