@@ -20,6 +20,7 @@ import {
 } from './dotnetRuntimeExtensionApi';
 import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { execChildProcess } from '../../common';
 
 const DotNetMajorVersion = '10';
 const DotNetMinorVersion = '0';
@@ -50,20 +51,9 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         const usingDevkit = getCSharpDevKit() !== undefined;
         // If we're using devkit, acquire aspnetcore as well - this avoids two separate acquisitions (devkit requires aspnetcore).
         const runtimeMode: DotnetInstallMode = usingDevkit ? 'aspnetcore' : 'runtime';
-
-        if (usingDevkit) {
-            const toolingRuntimeHostInfo = this.tryGetToolingRuntimeHostInfo();
-            if (toolingRuntimeHostInfo) {
-                this.channel.appendLine(
-                    `Using tooling runtime at ${toolingRuntimeHostInfo.path} specified by dotnet.toolingRuntimePath setting.`
-                );
-                this.hostInfo = toolingRuntimeHostInfo;
-                return toolingRuntimeHostInfo;
-            }
-        }
+        const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
 
         this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
-        const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
         const findPathRequest: IDotnetFindPathContext = {
             acquireContext: {
                 version: DotNetRuntimeVersion,
@@ -75,6 +65,21 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             // Reject previews because we are not setting `DOTNET_ROLL_FORWARD_TO_PRERELEASE` when starting the server.
             rejectPreviews: true,
         };
+
+        if (usingDevkit) {
+            const toolingRuntimeHostInfo = await this.tryGetToolingRuntimeHostInfo({
+                ...findPathRequest,
+                rejectPreviews: false,
+            });
+            if (toolingRuntimeHostInfo) {
+                this.channel.appendLine(
+                    `Using tooling runtime at ${toolingRuntimeHostInfo.path} specified by dotnet.toolingRuntimePath setting.`
+                );
+                this.hostInfo = toolingRuntimeHostInfo;
+                return toolingRuntimeHostInfo;
+            }
+        }
+
         let acquireResult = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
             'dotnet.findPath',
             findPathRequest
@@ -97,7 +102,9 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         return hostInfo;
     }
 
-    private tryGetToolingRuntimeHostInfo(): HostExecutableInformation | undefined {
+    private async tryGetToolingRuntimeHostInfo(
+        findPathRequest: IDotnetFindPathContext
+    ): Promise<HostExecutableInformation | undefined> {
         // get vscode setting value for dotnet.toolingRuntimePath
         const toolingRuntimePath = languageServerOptions.toolingRuntimePath;
         if (toolingRuntimePath.length === 0) {
@@ -111,11 +118,82 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             return undefined;
         }
 
+        const hasValidRuntime = await this.verifyRuntimeVersion(toolingRuntimePath, findPathRequest);
+        if (!hasValidRuntime) {
+            this.channel.appendLine(
+                `The path specified in dotnet.toolingRuntimePath is not version "${findPathRequest.acquireContext.version}" or higher. Falling back to normal runtime acquisition.`
+            );
+            return undefined;
+        }
+
         return {
             version: '' /* We don't need to know the version - we've already downloaded the correct one */,
             path: toolingRuntimePath,
             env: this.getEnvironmentVariables(toolingRuntimePath),
         };
+    }
+
+    private async verifyRuntimeVersion(
+        dotnetExecutablePath: string,
+        findPathRequest: IDotnetFindPathContext
+    ): Promise<boolean> {
+        if (findPathRequest.versionSpecRequirement !== 'greater_than_or_equal') {
+            throw new Error(
+                `Only greater_than_or_equal versionSpecRequirement is supported in verifyRuntimeVersion, but got ${findPathRequest.versionSpecRequirement}`
+            );
+        }
+
+        const [requestedMajor, requestedMinor, requestedPatch] = findPathRequest.acquireContext.version
+            .split('.')
+            .map(Number);
+
+        // Pass the architecture so we only get possibly valid matches.
+        const output = await execChildProcess(
+            `"${dotnetExecutablePath}" --list-runtimes --arch ${findPathRequest.acquireContext.architecture}`,
+            undefined,
+            process.env
+        );
+
+        // Construct a regex that will only find the runtime type we are looking for.
+        const runtimeType =
+            findPathRequest.acquireContext.mode === 'aspnetcore' ? 'Microsoft.AspNetCore.App' : 'Microsoft.NETCore.App';
+        const runtimeRegex = new RegExp(`^${runtimeType}\\s+(\\d+)\\.(\\d+)\\.(\\d+)(-.*)?\\s+\\[(.*)\\]$`);
+
+        const lines = output.split('\n');
+        for (const line of lines) {
+            const match = runtimeRegex.exec(line);
+            if (match) {
+                const major = Number(match[1]);
+                const minor = Number(match[2]);
+                const patch = Number(match[3]);
+                const prerelease = match[4] ?? '';
+
+                const isPrerelease = prerelease.length > 0;
+
+                // Keep searching if we are rejecting previews.
+                if (findPathRequest.rejectPreviews && isPrerelease) {
+                    continue;
+                }
+
+                // Prerelease versions are only acceptable if they are higher than the requested version.
+                const isAnyVersionPartHigher =
+                    major > requestedMajor || minor > requestedMinor || patch > requestedPatch;
+
+                // We only support greater_than_or_equal
+                if (
+                    major >= requestedMajor &&
+                    minor >= requestedMinor &&
+                    patch >= requestedPatch &&
+                    (!isPrerelease || isAnyVersionPartHigher)
+                ) {
+                    // We don't need to figure out which runtime version will be used just find one that
+                    // satifies the requirement.
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private getEnvironmentVariables(dotnetExecutablePath: string): NodeJS.ProcessEnv {
