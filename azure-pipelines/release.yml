@@ -156,7 +156,6 @@ extends:
           clean: true
           submodules: false
           fetchTags: false
-          fetchDepth: 1
         - pwsh: |
             git checkout $(resources.pipeline.officialBuildCI.sourceCommit)
           displayName: 'Checkout build source branch'
