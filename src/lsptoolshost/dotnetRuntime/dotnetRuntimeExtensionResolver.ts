@@ -100,11 +100,14 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     private tryGetToolingRuntimeHostInfo(): HostExecutableInformation | undefined {
         // get vscode setting value for dotnet.toolingRuntimePath
         const toolingRuntimePath = languageServerOptions.toolingRuntimePath;
-        if (
-            toolingRuntimePath.length === 0 ||
-            !path.isAbsolute(toolingRuntimePath) ||
-            !existsSync(toolingRuntimePath)
-        ) {
+        if (toolingRuntimePath.length === 0) {
+            return undefined;
+        }
+
+        if (!path.isAbsolute(toolingRuntimePath) || !existsSync(toolingRuntimePath)) {
+            this.channel.appendLine(
+                "The path specified in dotnet.toolingRuntimePath is not absolute or doesn't exist. Falling back to normal runtime acquisition."
+            );
             return undefined;
         }
 
