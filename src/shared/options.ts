@@ -84,6 +84,7 @@ export interface LanguageServerOptions {
     readonly reportInformationAsHint: boolean;
     readonly environmentVariables: { [key: string]: string };
     readonly sourceGeneratorExecution: string;
+    readonly toolingRuntimePath: string;
 }
 
 export interface RazorOptions {
@@ -425,6 +426,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get sourceGeneratorExecution() {
         return readOption<string>('dotnet.server.sourceGeneratorExecution', 'Balanced');
     }
+    public get toolingRuntimePath() {
+        return readOption<string>('dotnet.toolingRuntimePath', '');
+    }
 }
 
 class RazorOptionsImpl implements RazorOptions {
@@ -523,4 +527,5 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'environmentVariables',
     'sourceGeneratorExecution',
     'crashDumpPath',
+    'toolingRuntimePath',
 ];
