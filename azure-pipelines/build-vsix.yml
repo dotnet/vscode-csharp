@@ -22,75 +22,6 @@ stages:
   displayName: 'Build VSIXs'
   dependsOn: []
   jobs:
-  - job: SetRunVariables
-    displayName: 'Set Run Variables'
-    pool:
-      ${{ if eq(parameters.isOfficial, true) }}:
-        name: netcore1espool-internal
-        image: 1es-ubuntu-2204
-      ${{ else }}:
-        name: NetCore-Public
-        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      os: linux
-    steps:
-    - pwsh: |
-        $isPrerelease = $true
-        if ("${{ parameters.channel }}" -eq "release") {
-          Write-Host "Channel override set to release, using release channel."
-          $isPrerelease = $false
-        } elseif ("${{ parameters.channel }}" -eq "prerelease") {
-          Write-Host "Channel override set to prerelease, using prerelease channel."
-          $isPrerelease = $true
-        } else {
-          Write-Host "Channel override is ${{ parameters.channel }}, using branch configuration to determine release channel."
-          Write-Host "Detected branch $(Build.SourceBranchName)"
-          if ("$(Build.SourceBranchName)" -eq "release") {
-            Write-Host "Branch is release, using release channel."
-            $isPrerelease = $false
-          } else {
-            Write-Host "Branch is not release, using prerelease channel."
-            $isPrerelease = $true
-          }
-        }
-
-        if ( $isPrerelease ) {
-          Write-Host "Setting pipeline channel variable to Prerelease."
-          Write-Host "##vso[task.setvariable variable=channel;isoutput=true]Prerelease"
-        } else {
-          Write-Host "Setting pipeline channel variable to Release."
-          Write-Host "##vso[task.setvariable variable=channel;isoutput=true]Release"
-        }
-      name: passChannel
-      displayName: Set Channel Variable
-
-    - pwsh: |
-        $signType = "test"
-        if ("${{ parameters.isOfficial }}" -ne "true") {
-          Write-Host "Not an official build, test signing"
-          $signType = "test"
-        } elseif ("${{ parameters.signType }}"  -eq "test") {
-          Write-Host "Sign type override set to ${{ parameters.signType }}"
-          $signType = "test"
-        } elseif ("${{ parameters.signType }}"  -eq "real") {
-          Write-Host "Sign type override set to ${{ parameters.signType }}"
-          $signType = "real"
-        } else {
-          Write-Host "Sign type override is ${{ parameters.signType }}, using branch configuration to determine sign type"
-          Write-Host "Detected branch $(Build.SourceBranchName)"
-          if ( ("$(Build.SourceBranchName)" -eq "release") -or ("$(Build.SourceBranchName)" -eq "prerelease")) {
-            Write-Host "Branch is a release branch, using real sign type."
-            $signType = 'real'
-          } else {
-            Write-Host "Branch is test branch, using test sign type."
-            $signType = 'test'
-          }
-        }
-
-        Write-Host "Setting pipeline signType variable to " $signType
-        Write-Host "##vso[task.setvariable variable=signType;isoutput=true]$signType"
-      name: passSignType
-      displayName: Set Sign Type
-
   - job: 'Build_vsixs'
     displayName: 'Build VSIXs'
     pool:
@@ -101,10 +32,7 @@ stages:
         name: NetCore-Public
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
       os: linux
-    dependsOn: SetRunVariables
     variables:
-      channel: $[ dependencies.SetRunVariables.outputs['passChannel.channel'] ]
-      signType: $[ dependencies.SetRunVariables.outputs['passSignType.signType'] ]
       teamName: DotNetCore
     ${{ if eq(parameters.isOfficial, true) }}:
       templateContext:
@@ -123,6 +51,13 @@ stages:
       submodules: true
       fetchTags: false
       fetchDepth: 0
+
+    - template: /azure-pipelines/set-run-variables.yml@self
+      parameters:
+        isOfficial: ${{ parameters.isOfficial }}
+        channel: ${{ parameters.channel }}
+        signType: ${{ parameters.signType }}
+
     - template: /azure-pipelines/prereqs.yml@self
       parameters:
         versionNumberOverride: ${{ parameters.versionNumberOverride }}
