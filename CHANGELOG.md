@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
-* Update Razor to 10.0.0-preview.26121.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 10.0.0-preview.26121.1 (PR: [#9025](https://github.com/dotnet/vscode-csharp/pull/9025))
   * Fix formatting incorrect for void tag helpers (PR: [#12802](https://github.com/dotnet/razor/pull/12802))
   * Fix RZ1000 error for UTF-8 string literals in Razor files (PR: [#12783](https://github.com/dotnet/razor/pull/12783))
   * Add theme info for leading whitespace to a comment (PR: [#12791](https://github.com/dotnet/razor/pull/12791))
