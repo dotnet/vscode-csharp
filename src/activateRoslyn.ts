@@ -86,6 +86,7 @@ export function activateRoslyn(
         getComponentFolder: (componentName) => {
             return getComponentFolder(componentName, languageServerOptions);
         },
+        tryToUseVSDbgForMono: BlazorDebugConfigurationProvider.tryToUseVSDbgForMono,
     };
 
     return exports;
