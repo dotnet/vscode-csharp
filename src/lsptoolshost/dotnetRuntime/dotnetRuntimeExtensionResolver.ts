@@ -38,7 +38,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         private getServerPath: (platform: PlatformInformation) => string,
         private channel: vscode.OutputChannel,
         private extensionPath: string
-    ) { }
+    ) {}
 
     private hostInfo: HostExecutableInformation | undefined;
 
