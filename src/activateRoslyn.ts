@@ -12,7 +12,7 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer';
 import { CSharpDevKitExports } from './csharpDevKitExports';
 import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents';
-import { activateRoslynLanguageServer } from './lsptoolshost/activate';
+import { activateRoslynLanguageServer, createCaptureActivityLogs } from './lsptoolshost/activate';
 import Descriptors from './lsptoolshost/solutionSnapshot/descriptors';
 import { getBrokeredServiceContainer } from './lsptoolshost/serviceBroker/brokeredServicesHosting';
 import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
@@ -87,6 +87,10 @@ export function activateRoslyn(
             return getComponentFolder(componentName, languageServerOptions);
         },
         languageServerProcessId: () => RoslynLanguageServer.processId,
+        captureActivityLogs: async () => {
+            const languageServer = await roslynLanguageServerStartedPromise;
+            return createCaptureActivityLogs(languageServer, razorLogger);
+        },
     };
 
     return exports;

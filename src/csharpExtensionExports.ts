@@ -24,6 +24,10 @@ export interface OmnisharpExtensionExports {
     logDirectory: string;
 }
 
+export interface ActivityLogCapture extends vscode.Disposable {
+    getActivityLogs(): { csharpLog: string; lspTraceLog: string; razorLog: string };
+}
+
 export interface CSharpExtensionExports {
     isLimitedActivation: false;
     initializationFinished: () => Promise<void>;
@@ -33,6 +37,7 @@ export interface CSharpExtensionExports {
     experimental: CSharpExtensionExperimentalExports;
     getComponentFolder: (componentName: string) => string;
     languageServerProcessId: () => number | undefined;
+    captureActivityLogs: () => Promise<ActivityLogCapture>;
 }
 
 export interface CSharpExtensionExperimentalExports {
