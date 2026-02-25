@@ -31,6 +31,8 @@ import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
+import { ActivityLogCapture } from '../csharpExtensionExports';
+import { RazorLogObserver } from './logging/loggingUtils';
 
 let _channel: ObservableLogOutputChannel;
 let _traceChannel: ObservableLogOutputChannel;
@@ -173,4 +175,37 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
     }
 
     return pathWithExtension;
+}
+
+/**
+ * Creates an activity log capture that collects logs from the C#, LSP trace, and Razor channels.
+ * Sets log levels to Trace for capture. Call dispose() to stop capturing and restore log levels.
+ */
+export async function createCaptureActivityLogs(
+    languageServer: RoslynLanguageServer,
+    razorLogger: RazorLogger
+): Promise<ActivityLogCapture> {
+    const csharpLogObserver = _channel.observe();
+    const traceLogObserver = _traceChannel.observe();
+    const razorLogObserver = new RazorLogObserver(razorLogger);
+
+    const restoreLogLevels = await languageServer.setLogLevelsForCapture();
+    razorLogger.traceEnabled = true;
+    razorLogger.debugEnabled = true;
+    razorLogger.infoEnabled = true;
+
+    return {
+        getActivityLogs: () => ({
+            csharpLog: csharpLogObserver.getLog(),
+            lspTraceLog: traceLogObserver.getLog(),
+            razorLog: razorLogObserver.getLog(),
+        }),
+        dispose: async () => {
+            csharpLogObserver.dispose();
+            traceLogObserver.dispose();
+            razorLogObserver.dispose();
+            await restoreLogLevels();
+            await razorLogger.updateLogLevelAsync();
+        },
+    };
 }
