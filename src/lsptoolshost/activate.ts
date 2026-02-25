@@ -32,7 +32,7 @@ import { registerRazorEndpoints } from './razor/razorEndpoints';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
 import { ActivityLogCapture } from '../csharpExtensionExports';
-import { RazorLogObserver } from './logging/loggingUtils';
+import { createActivityLogCapture } from './logging/loggingUtils';
 
 let _channel: ObservableLogOutputChannel;
 let _traceChannel: ObservableLogOutputChannel;
@@ -185,27 +185,5 @@ export async function createCaptureActivityLogs(
     languageServer: RoslynLanguageServer,
     razorLogger: RazorLogger
 ): Promise<ActivityLogCapture> {
-    const csharpLogObserver = _channel.observe();
-    const traceLogObserver = _traceChannel.observe();
-    const razorLogObserver = new RazorLogObserver(razorLogger);
-
-    const restoreLogLevels = await languageServer.setLogLevelsForCapture();
-    razorLogger.traceEnabled = true;
-    razorLogger.debugEnabled = true;
-    razorLogger.infoEnabled = true;
-
-    return {
-        getActivityLogs: () => ({
-            csharpLog: csharpLogObserver.getLog(),
-            lspTraceLog: traceLogObserver.getLog(),
-            razorLog: razorLogObserver.getLog(),
-        }),
-        dispose: async () => {
-            csharpLogObserver.dispose();
-            traceLogObserver.dispose();
-            razorLogObserver.dispose();
-            await restoreLogLevels();
-            await razorLogger.updateLogLevelAsync();
-        },
-    };
+    return createActivityLogCapture(languageServer, _channel, _traceChannel, razorLogger);
 }
