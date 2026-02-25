@@ -130,10 +130,6 @@ export class RoslynLanguageServer {
         return RoslynLanguageServer._processId;
     }
 
-    public static get currentProcessId(): number | undefined {
-        return RoslynLanguageServer._processId;
-    }
-
     private registerOutputChannelsChangeHandlers() {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
