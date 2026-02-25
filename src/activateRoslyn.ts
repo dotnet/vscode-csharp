@@ -86,7 +86,7 @@ export function activateRoslyn(
         getComponentFolder: (componentName) => {
             return getComponentFolder(componentName, languageServerOptions);
         },
-        languageServerPID: () => RoslynLanguageServer.currentProcessId,
+        languageServerProcessId: () => RoslynLanguageServer.processId,
     };
 
     return exports;
