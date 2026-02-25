@@ -1955,19 +1955,19 @@
         "command": "csharp.recordLanguageServerTrace",
         "title": "%command.csharp.recordLanguageServerTrace%",
         "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "csharp.captureLogs",
         "title": "%command.csharp.captureLogs%",
         "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "csharp.collectDump",
         "title": "%command.csharp.collectDump%",
         "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "extension.showRazorCSharpWindow",
