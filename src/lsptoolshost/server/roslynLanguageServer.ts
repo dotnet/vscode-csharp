@@ -126,7 +126,7 @@ export class RoslynLanguageServer {
         return this._state;
     }
 
-    public get processId(): number | undefined {
+    public static get processId(): number | undefined {
         return RoslynLanguageServer._processId;
     }
 
