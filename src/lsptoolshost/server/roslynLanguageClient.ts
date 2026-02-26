@@ -163,7 +163,7 @@ export class RoslynLanguageClient extends LanguageClient {
         }
 
         this._hasShownConnectionClose = true;
-        this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ClientServerCrash);
+        this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ServerCrash);
         this.showCrashNotificationCore();
     }
 

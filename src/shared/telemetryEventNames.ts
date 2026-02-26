@@ -25,8 +25,8 @@ export enum TelemetryEventNames {
     ClientConnected = 'roslyn/clientConnected',
     // Roslyn client and server have fully initialized via LSP.
     ClientServerReady = 'roslyn/clientServerReady',
-    // Roslyn client observed that the server process crashed.
-    ClientServerCrash = 'roslyn/clientServerCrash',
+    // Roslyn language server process crashed.
+    ServerCrash = 'roslyn/serverCrash',
 
     // Events recording which entry point was used to change the project context.
     ProjectContextChangeFileExplorer = 'roslyn/projectContextChangeFileExplorer',

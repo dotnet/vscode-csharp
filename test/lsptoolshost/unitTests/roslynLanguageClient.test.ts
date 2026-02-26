@@ -28,7 +28,7 @@ describe('RoslynLanguageClient', () => {
         client.showCrashNotification();
 
         expect(sendTelemetryEvent).toHaveBeenCalledTimes(1);
-        expect(sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.ClientServerCrash);
+        expect(sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.ServerCrash);
         expect(showCrashNotificationCore).toHaveBeenCalledTimes(1);
     });
 });
