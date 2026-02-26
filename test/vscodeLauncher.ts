@@ -69,24 +69,7 @@ export async function prepareVSCodeAndExecuteTests(
 
 async function installExtensions(extensionIds: string[], vscodeCli: string, vscodeArgs: string[]): Promise<void> {
     for (const extensionId of extensionIds) {
-        // Workaround for https://github.com/microsoft/vscode/issues/256031 to retry installing the extension with a delay.
-        let installError: any | undefined = undefined;
-        let installSucceeded = false;
-        for (let attempts = 0; attempts < 5; attempts++) {
-            try {
-                await installExtension(extensionId, vscodeCli, vscodeArgs);
-                installSucceeded = true;
-                break;
-            } catch (error) {
-                console.warn(`Failed to install extension ${extensionId}; retrying: ${error}`);
-                installError = error;
-                await new Promise((resolve) => setTimeout(resolve, 2000));
-            }
-        }
-
-        if (!installSucceeded) {
-            throw installError;
-        }
+        await installExtension(extensionId, vscodeCli, vscodeArgs);
     }
 
     console.log();
