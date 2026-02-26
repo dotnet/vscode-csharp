@@ -10,7 +10,7 @@ import archiver from 'archiver';
 import { execChildProcess } from '../../common';
 import { Message, ObservableLogOutputChannel } from './observableLogOutputChannel';
 import { RazorLogger } from '../../razor/src/razorLogger';
-import { ActivityLogCapture } from '../../csharpExtensionExports';
+import { ActivityLogCapture, ActivityLogResult } from '../../csharpExtensionExports';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 
 /**
@@ -171,32 +171,6 @@ export async function selectDumpsWithArguments(options: SelectDumpsOptions): Pro
 }
 
 /**
- * Verifies that all dump tools are installed for the given requests.
- * @param dumpRequests The dump requests to verify tools for
- * @param folder The folder to run tool verification in
- * @param progress Progress reporter
- * @param outputChannel Output channel for logging
- * @returns True if all tools are installed, false if cancelled or failed
- */
-export async function verifyDumpTools(
-    dumpRequests: DumpRequest[],
-    folder: string,
-    progress: vscode.Progress<{ message?: string; increment?: number }>,
-    outputChannel: ObservableLogOutputChannel
-): Promise<boolean> {
-    // Get unique tool names to avoid verifying the same tool twice
-    const toolNames = new Set(dumpRequests.map((r) => getDumpConfig(r.type).toolName));
-
-    for (const toolName of toolNames) {
-        const toolInstalled = await verifyOrAcquireDotnetTool(toolName, folder, progress, outputChannel);
-        if (!toolInstalled) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
  * Prompts the user for tool arguments with customizable defaults.
  * @param toolName The name of the tool (displayed in the input box title)
  * @param defaultArgs The default arguments to pre-populate
@@ -336,9 +310,7 @@ export async function createZipWithLogs(
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
     razorLogger: RazorLogger,
-    csharpActivityLogContent: string,
-    traceActivityLogContent: string,
-    razorActivityLogContent: string,
+    activityLogs: ActivityLogResult | undefined,
     outputPath: string,
     traceFilePath?: string,
     additionalFiles?: string[]
@@ -414,14 +386,10 @@ export async function createZipWithLogs(
         }
 
         // Add captured activity logs to the archive
-        if (csharpActivityLogContent !== '') {
-            archive.append(csharpActivityLogContent, { name: 'csharp.activity.log' });
-        }
-        if (traceActivityLogContent !== '') {
-            archive.append(traceActivityLogContent, { name: 'csharp-lsp-trace.activity.log' });
-        }
-        if (razorActivityLogContent !== '') {
-            archive.append(razorActivityLogContent, { name: 'razor.activity.log' });
+        if (activityLogs) {
+            archive.append(activityLogs.csharpLog, { name: 'csharp.activity.log' });
+            archive.append(activityLogs.lspTraceLog, { name: 'csharp-lsp-trace.activity.log' });
+            archive.append(activityLogs.razorLog, { name: 'razor.activity.log' });
         }
 
         // Add current settings to the archive
