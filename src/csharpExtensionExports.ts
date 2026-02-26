@@ -37,6 +37,7 @@ export interface CSharpExtensionExports {
     experimental: CSharpExtensionExperimentalExports;
     getComponentFolder: (componentName: string) => string;
     captureActivityLogs: () => Promise<ActivityLogCapture>;
+    getSettings: () => string;
 }
 
 export interface CSharpExtensionExperimentalExports {
