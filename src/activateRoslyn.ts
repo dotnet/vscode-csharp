@@ -86,6 +86,7 @@ export function activateRoslyn(
         getComponentFolder: (componentName) => {
             return getComponentFolder(componentName, languageServerOptions);
         },
+        languageServerProcessId: () => RoslynLanguageServer.processId,
         captureActivityLogs: async () => {
             const languageServer = await roslynLanguageServerStartedPromise;
             return createCaptureActivityLogs(languageServer, razorLogger);

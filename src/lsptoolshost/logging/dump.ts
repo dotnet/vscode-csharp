@@ -28,7 +28,7 @@ export function registerDumpCommand(
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.collectDump', async () => {
-            const processId = languageServer.processId;
+            const processId = RoslynLanguageServer.processId;
             if (!processId) {
                 showErrorMessageWithOptions(
                     vscode,

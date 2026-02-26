@@ -36,6 +36,7 @@ export interface CSharpExtensionExports {
     determineBrowserType: () => Promise<string | undefined>;
     experimental: CSharpExtensionExperimentalExports;
     getComponentFolder: (componentName: string) => string;
+    languageServerProcessId: () => number | undefined;
     captureActivityLogs: () => Promise<ActivityLogCapture>;
 }
 
