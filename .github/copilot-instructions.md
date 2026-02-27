@@ -43,6 +43,7 @@
   - Use `test/*/integrationTests/integrationHelpers.ts` for test setup utilities
   - Tests use Jest with VS Code test environment and require workspace test assets
   - Run with `npm run test:integration:*` commands (e.g., `npm run test:integration:csharp`)
+- **Comments**: Prefer why comments over what comments. For complex logic, include references to related files or documentation. Do not remove existing comments unless they are clearly outdated or incorrect.
 
 ## Integration Points
 - **GitHub Copilot**: Extension registers C# context and related files providers if Copilot/Copilot Chat extensions are present.
