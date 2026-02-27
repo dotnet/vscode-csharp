@@ -44,6 +44,12 @@ export async function runDotnetTraceInTerminal(
     outputChannel: ObservableLogOutputChannel,
     token: vscode.CancellationToken
 ): Promise<string | undefined> {
+    // Use a terminal to execute the dotnet-trace.  This is much simpler and more reliable than executing dotnet-trace
+    // directly via the child_process module as dotnet-trace relies on shell input in order to stop the trace.
+    // Without using a psuedo-terminal, it is extremely difficult to send the correct signal to stop the trace.
+    //
+    // Luckily, VSCode allows us to use the built in terminal (a psuedo-terminal) to execute commands, which also provides a way to send input to it.
+
     const terminal = await getOrCreateTerminal(folder, outputChannel);
     terminal.show();
 
@@ -54,22 +60,24 @@ export async function runDotnetTraceInTerminal(
         await new Promise<number>((resolve, _) => {
             const execution = shellIntegration.executeCommand(command);
 
+            // If the progress is cancelled, we need to send a Ctrl+C to the terminal to stop the command.
             const cancelDisposable = token.onCancellationRequested(() => {
                 terminal.sendText('^C');
             });
 
             vscode.window.onDidEndTerminalShellExecution((e) => {
                 if (e.execution === execution) {
-                    cancelDisposable.dispose();
-                    resolve(e.exitCode ?? 1);
+                    cancelDisposable.dispose(); // Clean up the cancellation listener.
+                    resolve(e.exitCode ?? 1); // If exitCode is undefined, assume failure (1).
                 }
             });
         });
     } else {
-        // Without shell integration we can't listen for the command to finish.
-        // Fire and forget the command; the user can interact with the terminal directly.
+        // Without shell integration we can't listen for the command to finish.  We can't execute it as a child process either (see above).
+        // Instead we fire and forget the command.  The user can stop the trace collection by interacting with the terminal directly.
         terminal.sendText(command);
 
+        // Wait for cancellation since we can't detect when the command finishes
         await new Promise<void>((resolve) => {
             if (token.isCancellationRequested) {
                 resolve();
@@ -82,6 +90,7 @@ export async function runDotnetTraceInTerminal(
         });
     }
 
+    // Find the most recent .nettrace file in the trace folder
     return findLatestNettraceFile(folder);
 }
 
@@ -97,7 +106,7 @@ async function getOrCreateTerminal(
         }
     }
 
-    existing?.dispose();
+    existing?.dispose(); // Dispose of the existing terminal if it exists but is for a different folder.
 
     const options: vscode.TerminalOptions = {
         name: TraceTerminalName,
@@ -112,6 +121,12 @@ async function waitForTerminalReady(
     terminal: vscode.Terminal,
     outputChannel: ObservableLogOutputChannel
 ): Promise<vscode.Terminal> {
+    // The shell integration feature is required for us to be able to see the result of a command in the terminal.
+    // However the shell integration feature has a couple of special behaviors:
+    //    1.  It is not available immediately after the terminal is created, we must wait to see if it is available.
+    //    2.  Shell integration is not available in all scenarios (e.g. cmd on windows) and may never be set.
+
+    // Subscribe to the terminal shell integration change event to see if it ever gets set.
     const terminalPromise = new Promise<boolean>((resolve) => {
         vscode.window.onDidChangeTerminalShellIntegration((e) => {
             if (e.terminal === terminal) {
@@ -124,6 +139,7 @@ async function waitForTerminalReady(
         }
     });
 
+    // Race with a promise that resolves after a timeout to ensure we don't wait indefinitely for a terminal that may never have shell integration.
     const timeout = new Promise<boolean>((resolve) => {
         setTimeout((_) => resolve(false), 3000);
     });
