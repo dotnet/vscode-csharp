@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
+* Update Roslyn to 5.6.0-2.26127.2 (PR: [#9034](https://github.com/dotnet/vscode-csharp/pull/))
+  * Fix signature help crash when invoked through extension property (PR: [#82537](https://github.com/dotnet/roslyn/pull/82537))
+  * Fix ReflectionTypeLoadException in CodeStyleHostLanguageServices MEF composition (PR: [#82442](https://github.com/dotnet/roslyn/pull/82442))
+  * Parallelize loading solution-level analyzers (PR: [#82447](https://github.com/dotnet/roslyn/pull/82447))
+  * Reduce allocations under CodeFixService.GetShouldIncludeDiagnosticPredicate (PR: [#82492](https://github.com/dotnet/roslyn/pull/82492))
+  * Extensions: fix crash with targeted attribute on extension block (PR: [#82463](https://github.com/dotnet/roslyn/pull/82463))
+  * Improve navigate-to filtering to avoid scanning documents unnecessarily. (PR: [#82431](https://github.com/dotnet/roslyn/pull/82431))
+  * Remove `IQueueItem` abstraction and standardize CLSP queue pipeline on `QueueItem` (PR: [#82410](https://github.com/dotnet/roslyn/pull/82410))
+  * Remove error reporting out of clasp and rely on host to report errors (PR: [#82435](https://github.com/dotnet/roslyn/pull/82435))
+  * Report unnecessary imports diagnostics in Razor generated files (PR: [#82419](https://github.com/dotnet/roslyn/pull/82419))
 * Update Razor to 10.0.0-preview.26121.1 (PR: [#9025](https://github.com/dotnet/vscode-csharp/pull/9025))
   * Fix formatting incorrect for void tag helpers (PR: [#12802](https://github.com/dotnet/razor/pull/12802))
   * Add theme info for leading whitespace to a comment (PR: [#12791](https://github.com/dotnet/razor/pull/12791))
