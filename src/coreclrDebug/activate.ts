@@ -115,9 +115,16 @@ export async function activate(
             new BaseVsDbgConfigurationProvider(platformInformation, csharpOutputChannel)
         )
     );
+    context.subscriptions.push(
+        vscode.debug.registerDebugConfigurationProvider(
+            'coreclr_mobile',
+            new BaseVsDbgConfigurationProvider(platformInformation, csharpOutputChannel)
+        )
+    );
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('monovsdbg', factory));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr_mobile', factory));
 
     context.subscriptions.push(disposables);
 }
