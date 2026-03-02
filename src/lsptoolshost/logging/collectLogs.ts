@@ -188,7 +188,7 @@ async function selectAdditionalLogs(): Promise<LogsToCollect | undefined> {
         canPickMany: true,
     });
 
-    if (!selected || selected.length === 0) {
+    if (!selected) {
         return undefined;
     }
 
