@@ -648,7 +648,7 @@ export function generateReadmeContent(options: LogsToCollect, archivePath: strin
         lines.push('### Memory Dump');
         lines.push('');
         lines.push(
-            'One or more `.dmp` files captured using `dotnet-dump`. These contain a full process memory dump of the language server.'
+            'One or more `.dmp` files captured using `dotnet-dump`. These contain a process memory dump of the language server.'
         );
         lines.push('');
         lines.push(
