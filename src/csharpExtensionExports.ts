@@ -25,7 +25,13 @@ export interface OmnisharpExtensionExports {
 }
 
 export interface ActivityLogCapture extends vscode.Disposable {
-    getActivityLogs(): { csharpLog: string; lspTraceLog: string; razorLog: string };
+    getActivityLogs(): ActivityLogResult;
+}
+
+export interface ActivityLogResult {
+    csharpLog: string;
+    lspTraceLog: string;
+    razorLog: string;
 }
 
 export interface CSharpExtensionExports {

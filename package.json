@@ -1952,20 +1952,8 @@
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
-        "command": "csharp.recordLanguageServerTrace",
-        "title": "%command.csharp.recordLanguageServerTrace%",
-        "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
-      },
-      {
-        "command": "csharp.captureLogs",
-        "title": "%command.csharp.captureLogs%",
-        "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
-      },
-      {
-        "command": "csharp.collectDump",
-        "title": "%command.csharp.collectDump%",
+        "command": "csharp.collectLogs",
+        "title": "%command.csharp.collectLogs%",
         "category": "CSharp",
         "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
       },
