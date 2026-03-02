@@ -81,12 +81,12 @@ Update the `defaults.razor` field in `package.json`:
 }
 ```
 
-### Step 4: Run gulp updateRazorVersion
+### Step 4: Run updateRazorVersion
 
 This step acquires the new Razor extension package and ensures it is in the proper feeds:
 
 ```powershell
-gulp updateRazorVersion
+npm run updateRazorVersion
 ```
 
 This task:
@@ -97,7 +97,7 @@ This task:
 
 ### Step 5: Get the Previous Razor Commit SHA
 
-The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `gulp updateRazorVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
+The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `npm run updateRazorVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
 
 **To get the old version's commit SHA:**
 
@@ -119,7 +119,7 @@ The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet pa
 
 ### Step 6: Get the New Razor Commit SHA
 
-After running `gulp updateRazorVersion`, the new version's package is already cached. Extract the commit SHA:
+After running `npm run updateRazorVersion`, the new version's package is already cached. Extract the commit SHA:
 
 ```powershell
 Get-Content "C:\Users\<username>\source\repos\vscode-csharp\out\.nuget\microsoft.visualstudiocode.razorextension\<new-version>\microsoft.visualstudiocode.razorextension.nuspec" | Select-String -Pattern "commit"
@@ -228,7 +228,7 @@ For updating from `10.0.0-preview.26075.11` to `10.0.0-preview.26081.1`:
 1. Discover latest version via `az pipelines build list` (or use a provided version)
 2. Branch: `update/razor-10-0-0-preview-26081-1`
 3. package.json change: `"razor": "10.0.0-preview.26081.1"`
-4. Run `gulp updateRazorVersion`
+4. Run `npm run updateRazorVersion`
 5. Find old commit from nuspec for version `10.0.0-preview.26075.11`
 6. Find new commit from nuspec for version `10.0.0-preview.26081.1`
 7. Run pr-finder in razor repo
@@ -249,7 +249,7 @@ See [PR #8914](https://github.com/dotnet/vscode-csharp/pull/8914) as an example 
 
 ## Troubleshooting
 
-### Authentication Issues with gulp updateRazorVersion
+### Authentication Issues with updateRazorVersion
 
 If you encounter authentication errors:
 1. Install Azure Artifacts Credential Provider
@@ -267,7 +267,7 @@ Ensure:
 
 The commit SHAs are embedded in the nuspec files inside the downloaded NuGet packages:
 
-1. After running `gulp updateRazorVersion`, packages are cached in `out/.nuget/`
+1. After running `npm run updateRazorVersion`, packages are cached in `out/.nuget/`
 2. To get the old version's commit, you may need to explicitly download it first:
    ```powershell
    dotnet restore "msbuild\server" /p:PackageName=Microsoft.VisualStudioCode.RazorExtension /p:PackageVersion=<old-version> --interactive
