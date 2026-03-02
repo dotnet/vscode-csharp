@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import archiver from 'archiver';
-import { execChildProcess } from '../../common';
+import { execFileChildProcess } from '../../common';
 import { Message, ObservableLogOutputChannel } from './observableLogOutputChannel';
 import { RazorLogger } from '../../razor/src/razorLogger';
 import { ActivityLogCapture, ActivityLogResult } from '../../csharpExtensionExports';
@@ -62,6 +62,7 @@ export interface DumpRequest {
 /**
  * Collects dumps based on the provided requests.
  * @param dumpRequests The dump requests with arguments
+ * @param dotnetPath The path to the dotnet executable
  * @param folder The folder to save dumps to
  * @param progress Progress reporter
  * @param outputChannel Output channel for logging
@@ -70,6 +71,7 @@ export interface DumpRequest {
  */
 export async function collectDumps(
     dumpRequests: DumpRequest[],
+    dotnetPath: string,
     folder: string,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
@@ -89,6 +91,7 @@ export async function collectDumps(
                 config.toolName,
                 config.fileExtension,
                 request.args,
+                dotnetPath,
                 folder,
                 outputChannel,
                 filePrefix
@@ -194,81 +197,11 @@ export async function promptForToolArguments(toolName: string, defaultArgs: stri
 }
 
 /**
- * Verifies that a dotnet global tool is installed, and prompts the user to install it if not.
- * @param toolName The name of the dotnet tool (e.g., 'dotnet-trace', 'dotnet-dump', 'dotnet-gcdump')
- * @param folder The folder to run the command in
- * @param progress The progress reporter to update during installation
- * @param channel The output channel for logging
- * @returns True if the tool is installed (or was successfully installed), false otherwise
- */
-export async function verifyOrAcquireDotnetTool(
-    toolName: string,
-    folder: string,
-    progress: vscode.Progress<{
-        message?: string;
-        increment?: number;
-    }>,
-    channel: ObservableLogOutputChannel
-): Promise<boolean> {
-    try {
-        await execChildProcess(`${toolName} --version`, folder, process.env);
-        return true; // If the command succeeds, the tool is installed.
-    } catch (error) {
-        channel.debug(`Failed to execute ${toolName} --version with error: ${error}`);
-    }
-
-    const confirmAction = {
-        title: vscode.l10n.t('Install'),
-    };
-    const installCommand = `dotnet tool install --global ${toolName}`;
-    const confirmResult = await vscode.window.showInformationMessage(
-        vscode.l10n.t({
-            message: '{0} not found, run "{1}" to install it?',
-            args: [toolName, installCommand],
-            comment: ['{0} is the tool name and should not be localized', '{1} is the install command'],
-        }),
-        {
-            modal: true,
-        },
-        confirmAction
-    );
-
-    if (confirmResult !== confirmAction) {
-        return false;
-    }
-
-    progress.report({
-        message: vscode.l10n.t({
-            message: 'Installing {0}...',
-            args: [toolName],
-            comment: ['{0} is the tool name and should not be localized'],
-        }),
-    });
-
-    try {
-        await execChildProcess(installCommand, folder, process.env);
-        return true;
-    } catch (error) {
-        channel.error(`Failed to install ${toolName} with error: ${error}`);
-        await vscode.window.showErrorMessage(
-            vscode.l10n.t({
-                message: 'Failed to install {0}, it may need to be manually installed. See C# output for details.',
-                args: [toolName],
-                comment: ['{0} is the tool name and should not be localized'],
-            }),
-            {
-                modal: true,
-            }
-        );
-        return false;
-    }
-}
-
-/**
  * Collects a dump using a dotnet diagnostic tool.
  * @param toolName The name of the dotnet tool (e.g., 'dotnet-dump', 'dotnet-gcdump')
  * @param fileExtension The file extension for the dump file (e.g., 'dmp', 'gcdump')
  * @param userArgs The user-provided arguments for the tool
+ * @param dotnetPath The path to the dotnet executable
  * @param dumpFolder The folder to write the dump file to
  * @param channel The output channel for logging
  * @param filePrefix Optional prefix for the dump file name (defaults to 'csharp-lsp')
@@ -278,6 +211,7 @@ export async function collectDumpWithTool(
     toolName: string,
     fileExtension: string,
     userArgs: string,
+    dotnetPath: string,
     dumpFolder: string,
     channel: ObservableLogOutputChannel,
     filePrefix: string = 'csharp-lsp'
@@ -285,12 +219,12 @@ export async function collectDumpWithTool(
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     const dumpFileName = `${filePrefix}-${timestamp}.${fileExtension}`;
     const dumpFilePath = path.join(dumpFolder, dumpFileName);
-
-    const command = `${toolName} collect ${userArgs} --output "${dumpFilePath}"`;
-    channel.info(`Executing: ${command}`);
+    const args = [`dnx`, `--yes`, toolName, `collect`, userArgs, `--output`, dumpFilePath];
 
     try {
-        const output = await execChildProcess(command, dumpFolder, process.env);
+        channel.info(`Executing: dotnet ${args.join(' ')}`);
+
+        const output = await execFileChildProcess(dotnetPath, args, dumpFolder, process.env);
         channel.info(`${toolName} output: ${output}`);
 
         return fs.existsSync(dumpFilePath) ? dumpFilePath : undefined;
@@ -574,4 +508,12 @@ export async function createActivityLogCapture(
             await razorLogger.updateLogLevelAsync();
         },
     };
+}
+
+/** Describes which additional logs were selected for collection. */
+export interface LogsToCollect {
+    activityLogs: boolean;
+    performanceTrace: boolean;
+    memoryDump: boolean;
+    gcDump: boolean;
 }
