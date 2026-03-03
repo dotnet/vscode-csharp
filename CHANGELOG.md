@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
+* Update Razor to 10.0.0-preview.26152.1 (PR: [#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+  * Fade unused directives, add "Remove unnecessary" code action and support Remove and Sort commands (PR: [#12831](https://github.com/dotnet/razor/pull/12831))
+  * Add Remove and Sort Usings command handling (PR: [#12834](https://github.com/dotnet/razor/pull/12834))
+  * Create "Sort and Consolidate Usings" code action (PR: [#12824](https://github.com/dotnet/razor/pull/12824))
+  * Fix formatting of wrapped CSS (PR: [#12823](https://github.com/dotnet/razor/pull/12823))
+  * Format (or don't!) pre tags like textarea tags (PR: [#12813](https://github.com/dotnet/razor/pull/12813))
+  * Fix formatting of ternary expressions (and others?) (PR: [#12808](https://github.com/dotnet/razor/pull/12808))
+  * Fix formatting of multiline `@if` statements (PR: [#12814](https://github.com/dotnet/razor/pull/12814))
 * Update Roslyn to 5.6.0-2.26127.2 (PR: [#9034](https://github.com/dotnet/vscode-csharp/pull/))
   * Fix signature help crash when invoked through extension property (PR: [#82537](https://github.com/dotnet/roslyn/pull/82537))
   * Fix ReflectionTypeLoadException in CodeStyleHostLanguageServices MEF composition (PR: [#82442](https://github.com/dotnet/roslyn/pull/82442))
