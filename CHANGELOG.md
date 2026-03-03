@@ -5,16 +5,10 @@
 
 # 2.131.x
 * Update Razor to 10.0.0-preview.26152.1 (PR: [#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
-  * [Sonic] Remove DesignTime ability and suppression from source generator (PR: [#12847](https://github.com/dotnet/razor/pull/12847))
-  * Fix fault event names (PR: [#12844](https://github.com/dotnet/razor/pull/12844))
   * Fade unused directives, add "Remove unnecessary" code action and support Remove and Sort commands (PR: [#12831](https://github.com/dotnet/razor/pull/12831))
   * Add Remove and Sort Usings command handling (PR: [#12834](https://github.com/dotnet/razor/pull/12834))
   * Create "Sort and Consolidate Usings" code action (PR: [#12824](https://github.com/dotnet/razor/pull/12824))
-  * Better handle an odd opening scenario (PR: [#12825](https://github.com/dotnet/razor/pull/12825))
-  * Fix @section directive incorrectly allowed in .razor files (PR: [#12478](https://github.com/dotnet/razor/pull/12478))
   * Fix formatting of wrapped CSS (PR: [#12823](https://github.com/dotnet/razor/pull/12823))
-  * Fix `@@` escape handling in component attribute values (PR: [#12754](https://github.com/dotnet/razor/pull/12754))
-  * Don't show error bars during format on paste (PR: [#12806](https://github.com/dotnet/razor/pull/12806))
   * Format (or don't!) pre tags like textarea tags (PR: [#12813](https://github.com/dotnet/razor/pull/12813))
   * Fix formatting of ternary expressions (and others?) (PR: [#12808](https://github.com/dotnet/razor/pull/12808))
   * Fix formatting of multiline `@if` statements (PR: [#12814](https://github.com/dotnet/razor/pull/12814))
