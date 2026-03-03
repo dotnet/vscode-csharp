@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
-* Update Razor to 10.0.0-preview.26152.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 10.0.0-preview.26152.1 (PR: [#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
   * [Sonic] Remove DesignTime ability and suppression from source generator (PR: [#12847](https://github.com/dotnet/razor/pull/12847))
   * Fix fault event names (PR: [#12844](https://github.com/dotnet/razor/pull/12844))
   * Fade unused directives, add "Remove unnecessary" code action and support Remove and Sort commands (PR: [#12831](https://github.com/dotnet/razor/pull/12831))
