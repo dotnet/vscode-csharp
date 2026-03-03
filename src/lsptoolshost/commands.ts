@@ -92,5 +92,12 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
-    registerCollectLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
+    registerCollectLogsCommand(
+        context,
+        languageServer,
+        hostExecutableResolver,
+        outputChannel,
+        csharpTraceChannel,
+        razorLogger
+    );
 }

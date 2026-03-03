@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { EOL } from 'os';
@@ -32,6 +31,7 @@ export function getProfilingEnvVars(outputChannel: vscode.LogOutputChannel): Nod
 
 /**
  * Runs dotnet-trace in a VS Code terminal and returns the path to the .nettrace file.
+ * @param dotnetPath The path to the dotnet executable
  * @param args The arguments to pass to `dotnet-trace collect`
  * @param folder The working directory for the terminal
  * @param outputChannel The output channel for logging
@@ -39,6 +39,7 @@ export function getProfilingEnvVars(outputChannel: vscode.LogOutputChannel): Nod
  * @returns The path to the generated .nettrace file, or undefined if not found
  */
 export async function runDotnetTraceInTerminal(
+    dotnetPath: string,
     args: string[],
     folder: string,
     outputChannel: ObservableLogOutputChannel,
@@ -50,21 +51,36 @@ export async function runDotnetTraceInTerminal(
     //
     // Luckily, VSCode allows us to use the built in terminal (a psuedo-terminal) to execute commands, which also provides a way to send input to it.
 
-    const terminal = await getOrCreateTerminal(folder, outputChannel);
+    const dotnetFolder = path.dirname(dotnetPath);
+    const dotnetExecutableName = path.basename(dotnetPath);
+
+    // Generate an output file name in the form <appname>_<yyyyMMdd>_<HHmmss>.nettrace
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const outputFileName = `Microsoft.CodeAnalysis.LanguageServer_${timestamp}.nettrace`;
+    const outputFilePath = path.join(folder, outputFileName);
+
+    // We create the terminal in the dotnet folder so that we can launch dotnet
+    // without having to quote the path which could create shell specific issues.
+    const terminal = await getOrCreateTerminal(dotnetFolder, outputChannel);
     terminal.show();
 
-    const command = `dotnet-trace collect ${args.join(' ')}`;
     const shellIntegration = terminal.shellIntegration;
 
     if (shellIntegration) {
         await new Promise<number>((resolve, _) => {
-            const execution = shellIntegration.executeCommand(command);
-
+            const execution = shellIntegration.executeCommand(dotnetPath, [
+                'dnx',
+                '--yes',
+                'dotnet-trace',
+                'collect',
+                '-o',
+                outputFilePath,
+                ...args,
+            ]);
             // If the progress is cancelled, we need to send a Ctrl+C to the terminal to stop the command.
             const cancelDisposable = token.onCancellationRequested(() => {
                 terminal.sendText('^C');
             });
-
             vscode.window.onDidEndTerminalShellExecution((e) => {
                 if (e.execution === execution) {
                     cancelDisposable.dispose(); // Clean up the cancellation listener.
@@ -73,6 +89,11 @@ export async function runDotnetTraceInTerminal(
             });
         });
     } else {
+        // We use `./dotnet` since `dotnet` may use the system install instead of the local one.
+        const command = `.${
+            path.sep
+        }${dotnetExecutableName} dnx --yes dotnet-trace collect -o ${outputFilePath} ${args.join(' ')}`;
+
         // Without shell integration we can't listen for the command to finish.  We can't execute it as a child process either (see above).
         // Instead we fire and forget the command.  The user can stop the trace collection by interacting with the terminal directly.
         terminal.sendText(command);
@@ -90,8 +111,7 @@ export async function runDotnetTraceInTerminal(
         });
     }
 
-    // Find the most recent .nettrace file in the trace folder
-    return findLatestNettraceFile(folder);
+    return outputFilePath;
 }
 
 async function getOrCreateTerminal(
@@ -150,25 +170,4 @@ async function waitForTerminalReady(
     }
 
     return terminal;
-}
-
-/**
- * Finds the most recently created .nettrace file in the specified folder.
- */
-function findLatestNettraceFile(folder: string): string | undefined {
-    try {
-        const files = fs.readdirSync(folder);
-        const nettraceFiles = files
-            .filter((f) => f.endsWith('.nettrace'))
-            .map((f) => {
-                const fullPath = path.join(folder, f);
-                const stats = fs.statSync(fullPath);
-                return { path: fullPath, mtime: stats.mtime };
-            })
-            .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
-
-        return nettraceFiles.length > 0 ? nettraceFiles[0].path : undefined;
-    } catch {
-        return undefined;
-    }
 }

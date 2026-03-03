@@ -78,6 +78,29 @@ ${stderr}`)
     });
 }
 
+export async function execFileChildProcess(
+    file: string,
+    args: string[],
+    workingDirectory: string | undefined,
+    env: NodeJS.ProcessEnv
+): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        cp.execFile(file, args, { cwd: workingDirectory, maxBuffer: 500 * 1024, env: env }, (error, stdout, stderr) => {
+            if (error) {
+                reject(
+                    new Error(`${error}
+${stdout}
+${stderr}`)
+                );
+            } else if (stderr && !stderr.includes('screen size is bogus')) {
+                reject(new Error(stderr));
+            } else {
+                resolve(stdout);
+            }
+        });
+    });
+}
+
 export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
         cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) => {

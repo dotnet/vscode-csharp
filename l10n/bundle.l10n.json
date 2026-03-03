@@ -190,26 +190,6 @@
     ]
   },
   "You can modify the default arguments if needed": "You can modify the default arguments if needed",
-  "Install": "Install",
-  "{0} not found, run \"{1}\" to install it?/{0} is the tool name and should not be localized{1} is the install command": {
-    "message": "{0} not found, run \"{1}\" to install it?",
-    "comment": [
-      "{0} is the tool name and should not be localized",
-      "{1} is the install command"
-    ]
-  },
-  "Installing {0}.../{0} is the tool name and should not be localized": {
-    "message": "Installing {0}...",
-    "comment": [
-      "{0} is the tool name and should not be localized"
-    ]
-  },
-  "Failed to install {0}, it may need to be manually installed. See C# output for details./{0} is the tool name and should not be localized": {
-    "message": "Failed to install {0}, it may need to be manually installed. See C# output for details.",
-    "comment": [
-      "{0} is the tool name and should not be localized"
-    ]
-  },
   "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
   "Failed to collect logs: {0}/{0} is the error message": {
     "message": "Failed to collect logs: {0}",
@@ -229,24 +209,6 @@
   "Captures managed heap information for investigating memory issues.": "Captures managed heap information for investigating memory issues.",
   "Collect C# Logs": "Collect C# Logs",
   "Select additional logging to collect": "Select additional logging to collect",
-  "Verifying dotnet-trace.../dotnet-trace is a command name and should not be localized": {
-    "message": "Verifying dotnet-trace...",
-    "comment": [
-      "dotnet-trace is a command name and should not be localized"
-    ]
-  },
-  "Verifying dotnet-dump.../dotnet-dump is a command name and should not be localized": {
-    "message": "Verifying dotnet-dump...",
-    "comment": [
-      "dotnet-dump is a command name and should not be localized"
-    ]
-  },
-  "Verifying dotnet-gcdump.../dotnet-gcdump is a command name and should not be localized": {
-    "message": "Verifying dotnet-gcdump...",
-    "comment": [
-      "dotnet-gcdump is a command name and should not be localized"
-    ]
-  },
   "Save Logs": "Save Logs",
   "Output folder {0} does not exist/{0} is the folder path": {
     "message": "Output folder {0} does not exist",

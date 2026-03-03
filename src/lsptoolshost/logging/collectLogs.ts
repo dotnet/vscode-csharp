@@ -11,17 +11,18 @@ import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMe
 import { ObservableLogOutputChannel } from './observableLogOutputChannel';
 import {
     DumpRequest,
+    LogsToCollect,
     collectDumps,
     createZipWithLogs,
     getDefaultSaveUri,
     getDumpConfig,
     promptForToolArguments,
-    verifyOrAcquireDotnetTool,
     DumpType,
     createActivityLogCapture,
 } from './loggingUtils';
 import { runDotnetTraceInTerminal } from './profiling';
 import { RazorLogger } from '../../razor/src/razorLogger';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 
 /** Represents the types of data the user can choose to collect */
 type CollectOption = 'activityLogs' | 'performanceTrace' | 'memoryDump' | 'gcDump';
@@ -30,26 +31,27 @@ interface CollectOptionQuickPickItem extends vscode.QuickPickItem {
     option: CollectOption;
 }
 
-interface LogsToCollect {
-    activityLogs: boolean;
-    performanceTrace: boolean;
-    memoryDump: boolean;
-    gcDump: boolean;
-}
-
 /**
  * Registers the unified collect logs command.
  */
 export function registerCollectLogsCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
+    hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
     razorLogger: RazorLogger
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.collectLogs', async () => {
-            await collectLogs(context, languageServer, outputChannel, traceChannel, razorLogger);
+            await collectLogs(
+                context,
+                languageServer,
+                hostExecutableResolver,
+                outputChannel,
+                traceChannel,
+                razorLogger
+            );
         })
     );
 }
@@ -57,6 +59,7 @@ export function registerCollectLogsCommand(
 async function collectLogs(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
+    hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
     razorLogger: RazorLogger
@@ -83,14 +86,18 @@ async function collectLogs(
         }
     }
 
-    // Step 2: Verify tools and let the user customize arguments for each selected tool
+    // Step 2: Resolve the dotnet path and let the user customize arguments for each selected tool
+
+    // We use the resolved dotnet path instead of relying on an install being available from
+    // the PATH because the resolved one is guarenteed to support `dotnet dnx` which will allow
+    // us to not worry about whether the tools are already installed.
+
+    const hostInfo = await hostExecutableResolver.getHostExecutableInfo();
+    const dotnetPath = hostInfo.path;
     const defaultSaveUri = getDefaultSaveUri('csharp-logs');
-    const toolFolder = path.dirname(defaultSaveUri.fsPath);
 
     const toolConfigs = await prepareTools(
         processId,
-        toolFolder,
-        outputChannel,
         selectedLogs.performanceTrace,
         selectedLogs.memoryDump,
         selectedLogs.gcDump
@@ -117,6 +124,7 @@ async function collectLogs(
                   selectedLogs,
                   dumpSelected,
                   toolConfigs.dumpConfigs,
+                  dotnetPath,
                   zipFile.parentFolder,
                   zipFile.uri,
                   toolConfigs.traceArgs
@@ -127,6 +135,7 @@ async function collectLogs(
                   traceChannel,
                   razorLogger,
                   toolConfigs.dumpConfigs,
+                  dotnetPath,
                   zipFile.parentFolder,
                   zipFile.uri
               );
@@ -142,7 +151,10 @@ async function collectLogs(
             }),
             { modal: true }
         );
-    } else if (archiveResult.uri) {
+        return;
+    }
+
+    if (archiveResult.uri) {
         const openFolder = vscode.l10n.t('Open Folder');
         const result = await vscode.window.showInformationMessage(
             vscode.l10n.t('C# logs saved successfully.'),
@@ -203,8 +215,6 @@ async function selectAdditionalLogs(): Promise<LogsToCollect | undefined> {
 
 async function prepareTools(
     processId: number,
-    toolFolder: string,
-    outputChannel: ObservableLogOutputChannel,
     performanceTrace: boolean,
     memoryDump: boolean,
     gcDump: boolean
@@ -215,81 +225,41 @@ async function prepareTools(
       }
     | undefined
 > {
-    let toolsReady = true;
+    let userCanceled = false;
     let traceArgs: string | undefined;
     const dumpConfigs: DumpRequest[] = [];
 
-    await collectingWithProgress(/* cancellable */ false, async (progress) => {
-        if (performanceTrace) {
-            progress.report({
-                message: vscode.l10n.t({
-                    message: 'Verifying dotnet-trace...',
-                    comment: 'dotnet-trace is a command name and should not be localized',
-                }),
-            });
-
-            const installed = await verifyOrAcquireDotnetTool('dotnet-trace', toolFolder, progress, outputChannel);
-            if (!installed) {
-                toolsReady = false;
-                return;
-            }
-
-            const defaultTraceArgs = `--process-id ${processId} --clreventlevel informational --providers "Microsoft-DotNETCore-SampleProfiler,Microsoft-Windows-DotNETRuntime,Microsoft-CodeAnalysis-General:0xFFFFFFFF:5,Microsoft-CodeAnalysis-Workspaces:0xFFFFFFFF:5,RoslynEventSource:0xFFFFFFFF:5"`;
-            traceArgs = await promptForToolArguments('dotnet-trace', defaultTraceArgs);
-            if (traceArgs === undefined) {
-                toolsReady = false;
-                return;
-            }
+    if (performanceTrace) {
+        const defaultTraceArgs = `--process-id ${processId} --clreventlevel informational --providers "Microsoft-DotNETCore-SampleProfiler,Microsoft-Windows-DotNETRuntime,Microsoft-CodeAnalysis-General:0xFFFFFFFF:5,Microsoft-CodeAnalysis-Workspaces:0xFFFFFFFF:5,RoslynEventSource:0xFFFFFFFF:5"`;
+        traceArgs = await promptForToolArguments('dotnet-trace', defaultTraceArgs);
+        if (traceArgs === undefined) {
+            userCanceled = true;
         }
+    }
 
-        if (memoryDump) {
-            progress.report({
-                message: vscode.l10n.t({
-                    message: 'Verifying dotnet-dump...',
-                    comment: 'dotnet-dump is a command name and should not be localized',
-                }),
-            });
-            const installed = await verifyOrAcquireDotnetTool('dotnet-dump', toolFolder, progress, outputChannel);
-            if (!installed) {
-                toolsReady = false;
-                return;
-            }
-
-            const config = getDumpConfig('memory');
-            const defaultArgs = config.defaultArgs.replace('{processId}', processId.toString());
-            const args = await promptForToolArguments(config.toolName, defaultArgs);
-            if (args === undefined) {
-                toolsReady = false;
-                return;
-            }
+    if (!userCanceled && memoryDump) {
+        const config = getDumpConfig('memory');
+        const defaultArgs = config.defaultArgs.replace('{processId}', processId.toString());
+        const args = await promptForToolArguments(config.toolName, defaultArgs);
+        if (args === undefined) {
+            userCanceled = true;
+        } else {
             dumpConfigs.push({ type: 'memory' as DumpType, args });
         }
+    }
 
-        if (gcDump) {
-            progress.report({
-                message: vscode.l10n.t({
-                    message: 'Verifying dotnet-gcdump...',
-                    comment: 'dotnet-gcdump is a command name and should not be localized',
-                }),
-            });
-            const installed = await verifyOrAcquireDotnetTool('dotnet-gcdump', toolFolder, progress, outputChannel);
-            if (!installed) {
-                toolsReady = false;
-                return;
-            }
-
-            const config = getDumpConfig('gc');
-            const defaultArgs = config.defaultArgs.replace('{processId}', processId.toString());
-            const args = await promptForToolArguments(config.toolName, defaultArgs);
-            if (args === undefined) {
-                toolsReady = false;
-                return;
-            }
+    if (!userCanceled && gcDump) {
+        const config = getDumpConfig('gc');
+        const defaultArgs = config.defaultArgs.replace('{processId}', processId.toString());
+        const args = await promptForToolArguments(config.toolName, defaultArgs);
+        if (args === undefined) {
+            userCanceled = true;
+        } else {
             dumpConfigs.push({ type: 'gc' as DumpType, args });
         }
-    });
+    }
 
-    if (!toolsReady) {
+    if (userCanceled) {
         return undefined;
     }
 
@@ -341,6 +311,7 @@ async function archiveDumps(
     traceChannel: ObservableLogOutputChannel,
     razorLogger: RazorLogger,
     dumpConfigs: DumpRequest[],
+    dotnetPath: string,
     outputFolder: string,
     saveUri: vscode.Uri
 ): Promise<{ uri: vscode.Uri | undefined; errorMessage: string | undefined }> {
@@ -349,7 +320,7 @@ async function archiveDumps(
 
     await collectingWithProgress(/* cancellable */ false, async (progress) => {
         try {
-            const collectedDumps = await collectDumps(dumpConfigs, outputFolder, progress, outputChannel);
+            const collectedDumps = await collectDumps(dumpConfigs, dotnetPath, outputFolder, progress, outputChannel);
 
             progress.report({ message: vscode.l10n.t('Creating archive...') });
             await createZipWithLogs(
@@ -384,6 +355,7 @@ async function archiveActivity(
     selectedLogs: LogsToCollect,
     dumpSelected: boolean,
     dumpConfigs: DumpRequest[],
+    dotnetPath: string,
     outputFolder: string,
     saveUri: vscode.Uri,
     traceArgs: string | undefined
@@ -399,7 +371,14 @@ async function archiveActivity(
 
         if (dumpSelected) {
             await collectingWithProgress(/* cancellable */ false, async (progress) => {
-                const startDumps = await collectDumps(dumpConfigs, outputFolder, progress, outputChannel, 'before');
+                const startDumps = await collectDumps(
+                    dumpConfigs,
+                    dotnetPath,
+                    outputFolder,
+                    progress,
+                    outputChannel,
+                    'before'
+                );
                 dumpFiles.push(...startDumps);
             });
         }
@@ -409,7 +388,7 @@ async function archiveActivity(
             : vscode.l10n.t('Recording logs... Click Cancel to stop and save.');
         const collectTask = selectedLogs.performanceTrace
             ? async (token: vscode.CancellationToken) =>
-                  runDotnetTraceInTerminal(traceArgs!.split(' '), outputFolder, outputChannel, token)
+                  runDotnetTraceInTerminal(dotnetPath, traceArgs!.split(' '), outputFolder, outputChannel, token)
             : async (token: vscode.CancellationToken) => await waitForCancellation(token);
 
         await collectingWithProgress(/* cancellable */ true, async (progress, token) => {
@@ -433,7 +412,14 @@ async function archiveActivity(
         await collectingWithProgress(/* cancellable */ false, async (progress) => {
             try {
                 if (dumpSelected) {
-                    const afterDumps = await collectDumps(dumpConfigs, outputFolder, progress, outputChannel, 'after');
+                    const afterDumps = await collectDumps(
+                        dumpConfigs,
+                        dotnetPath,
+                        outputFolder,
+                        progress,
+                        outputChannel,
+                        'after'
+                    );
                     dumpFiles.push(...afterDumps);
                 }
 
