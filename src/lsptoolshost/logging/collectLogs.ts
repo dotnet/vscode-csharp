@@ -19,6 +19,8 @@ import {
     verifyOrAcquireDotnetTool,
     DumpType,
     createActivityLogCapture,
+    generateReadmeContent,
+    LogsToCollect,
 } from './loggingUtils';
 import { runDotnetTraceInTerminal } from './profiling';
 import { RazorLogger } from '../../razor/src/razorLogger';
@@ -28,13 +30,6 @@ type CollectOption = 'activityLogs' | 'performanceTrace' | 'memoryDump' | 'gcDum
 
 interface CollectOptionQuickPickItem extends vscode.QuickPickItem {
     option: CollectOption;
-}
-
-interface LogsToCollect {
-    activityLogs: boolean;
-    performanceTrace: boolean;
-    memoryDump: boolean;
-    gcDump: boolean;
 }
 
 /**
@@ -142,15 +137,29 @@ async function collectLogs(
             }),
             { modal: true }
         );
-    } else if (archiveResult.uri) {
-        const openFolder = vscode.l10n.t('Open Folder');
-        const result = await vscode.window.showInformationMessage(
-            vscode.l10n.t('C# logs saved successfully.'),
-            openFolder
-        );
-        if (result === openFolder) {
-            await vscode.commands.executeCommand('revealFileInOS', archiveResult.uri);
-        }
+        return;
+    }
+
+    if (archiveResult.uri) {
+        await showReadme(selectedLogs, archiveResult.uri.fsPath);
+        await showSuccessPopup(archiveResult.uri);
+    }
+}
+
+async function showReadme(selectedLogs: LogsToCollect, archivePath: string) {
+    const readmeContent = generateReadmeContent(selectedLogs, archivePath);
+    const document = await vscode.workspace.openTextDocument({
+        content: readmeContent,
+        language: 'markdown',
+    });
+    await vscode.commands.executeCommand('markdown.showPreview', document.uri);
+}
+
+async function showSuccessPopup(uri: vscode.Uri) {
+    const openFolder = vscode.l10n.t('Open Folder');
+    const result = await vscode.window.showInformationMessage(vscode.l10n.t('C# logs saved successfully.'), openFolder);
+    if (result === openFolder) {
+        await vscode.commands.executeCommand('revealFileInOS', uri);
     }
 }
 
