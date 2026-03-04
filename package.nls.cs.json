@@ -3,7 +3,7 @@
   "command.csharp.changeProjectContext": "Změna kontextu projektu aktivního dokumentu",
   "command.csharp.changeProjectContextEditor": "Vybrat kontext projektu",
   "command.csharp.changeProjectContextFileExplorer": "Vybrat kontext projektu",
-  "command.csharp.collectLogs": "Collect C# Logs",
+  "command.csharp.collectLogs": "Shromáždit protokoly C#",
   "command.csharp.downloadDebugger": "Stáhnout ladicí program .NET Core",
   "command.csharp.listProcess": "Vypsat proces pro připojení",
   "command.csharp.listRemoteDockerProcess": "Výpis procesů v připojení Dockeru",
