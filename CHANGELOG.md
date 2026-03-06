@@ -3,6 +3,56 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.140.x
+
+This update brings improvements to C# language support, language server startup performance, and significant enhancements to Razor editing including unused directive detection and new code actions.
+
+## C# Language Support
+
+### Fixed signature help crash with extension properties
+
+Signature help no longer crashes when invoked through an extension property. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+
+### Fixed crash with targeted attributes on extension blocks
+
+Placing a targeted attribute (e.g., `[return: Obsolete]`) on an extension block no longer causes a compiler crash. The error message for unsupported attributes on extension blocks is now more informative. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+
+### Fixed MEF composition error in code style services
+
+A `ReflectionTypeLoadException` that could occur during MEF composition of code style host language services is now handled correctly. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+
+## Performance
+
+### Faster language server startup
+
+Solution-level analyzers now load in parallel, significantly reducing language server initialization time — especially on Windows. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+
+### Reduced allocations in code fix processing
+
+Memory allocations in the code fix service have been reduced, improving responsiveness when applying code fixes. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+
+### Improved navigate-to filtering
+
+Navigate-to (Go to Symbol) now avoids scanning documents unnecessarily, resulting in faster symbol search. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+
+## Razor
+
+### Unused directive detection and removal
+
+Unused `@using` directives in Razor and MVC files, and unused `@addTagHelper` directives in legacy files, are now faded to indicate they are unnecessary. A new "Remove unnecessary directives" code action is available to clean them up. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+
+### Remove and Sort Usings commands
+
+The "Remove and Sort Usings" and "Sort and Consolidate Usings" commands now work in Razor files. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+
+### Formatting fixes
+
+- Fixed formatting of wrapped CSS in Razor files. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+- Fixed formatting of `<pre>` tags — they are now treated like `<textarea>` tags and their content is not reformatted. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+- Fixed formatting of ternary expressions inside Razor blocks. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+- Fixed formatting of multiline `@if` statements. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+- Fixed incorrect indentation caused by void tag helpers (e.g., `<input asp-for="...">`). ([vscode-csharp#9025](https://github.com/dotnet/vscode-csharp/pull/9025))
+
 # 2.120.x
 * See 2.115.x for full list of changes.
 
