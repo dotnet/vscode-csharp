@@ -3,6 +3,54 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.130.x
+
+This release includes improvements across the language server, diagnostics and logging, source generators, and Razor.
+
+## Better language server reliability and diagnostics
+
+We made several improvements to help the C# language server behave more predictably and surface problems more clearly when something goes wrong.
+
+- Improved error reporting when the server encounters unrecoverable failures, making it easier to understand when the language server has stopped functioning.
+- Added support for collecting richer logs during troubleshooting, including capturing more of the activity around server traces.
+- Added commands to collect memory and GC dumps, which can help diagnose hangs, crashes, or excessive memory use.
+- Added support for custom environment variables for the language server process, making it easier to experiment with configuration and investigate environment-specific issues.
+- The extension now passes along the extension host process ID when starting the server, which improves shutdown behavior and helps avoid orphaned background processes.
+
+## Source generators: improved performance with more predictable updates
+
+Source generator execution has been improved to reduce background work and make large projects feel more responsive.
+
+A new balanced execution approach focuses source generator work on explicit actions such as saves, builds, and manual refreshes, instead of constantly re-running generators in the background. This can improve overall language server responsiveness, especially in solutions that use many generators.
+
+At the same time, diagnostics refresh behavior and generator coordination were improved so that updates remain accurate when source-generated content changes.
+
+## Razor
+
+Razor editing got a number of quality improvements, especially around formatting, indentation, and debugging support.
+
+### Formatting and indentation
+
+Razor formatting is now more reliable in several tricky scenarios:
+
+- Fixed formatter crashes in some cases and improved overall formatter resilience.
+- Improved indentation after completed tags.
+- Improved handling of VS Code newline behavior.
+- Fixed indentation after self-closing tags with lambda attributes.
+
+### Editor behavior and settings integration
+
+Razor now better respects editor configuration and workspace behavior:
+
+- Honors the VS Code `html.autoClosingTags` setting in cohosting scenarios.
+- Improved log collection for Razor to make troubleshooting easier.
+
+### Debugging and code navigation
+
+Razor debugging behavior was improved in mixed-content documents:
+
+- Fixed breakpoint placement for code blocks in the middle of Razor documents.
+
 # 2.120.x
 * See 2.115.x for full list of changes.
 
