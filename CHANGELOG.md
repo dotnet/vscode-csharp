@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
+* Update Roslyn to 5.6.0-2.26159.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Reduce allocations during source text diffing (PR: [#82462](https://github.com/dotnet/roslyn/pull/82462))
+  * Don't log named pipe connection failures as errors in BuildServerConnection (PR: [#82609](https://github.com/dotnet/roslyn/pull/82609))
+  * Fix resx source generator for less common resx metadata and locations (PR: [#81994](https://github.com/dotnet/roslyn/pull/81994))
+  * Ensure that lambdas are not cached in runtime async (PR: [#82559](https://github.com/dotnet/roslyn/pull/82559))
+  * Ensure that a double-dispose of CPSProject doesn't throw (PR: [#82557](https://github.com/dotnet/roslyn/pull/82557))
+  * Add support for nullable with runtime async (PR: [#82516](https://github.com/dotnet/roslyn/pull/82516))
+  * Fix invalid `csharp_space_around_declaration_statements` option value (PR: [#80996](https://github.com/dotnet/roslyn/pull/80996))
+  * Avoid eliding nested pointer-to-ref conversions (PR: [#82263](https://github.com/dotnet/roslyn/pull/82263))
 * Update Razor to 10.0.0-preview.26152.1 (PR: [#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
   * Fade unused directives, add "Remove unnecessary" code action and support Remove and Sort commands (PR: [#12831](https://github.com/dotnet/razor/pull/12831))
   * Add Remove and Sort Usings command handling (PR: [#12834](https://github.com/dotnet/razor/pull/12834))
