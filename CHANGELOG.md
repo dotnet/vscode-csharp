@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
+* Update Razor to 10.0.0-preview.26155.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Remove the old language server (PR: [#12871](https://github.com/dotnet/razor/pull/12871))
+  * Don't offer to remove directives when not on a single line directive (PR: [#12862](https://github.com/dotnet/razor/pull/12862))
+  * Fix snippet population (PR: [#12856](https://github.com/dotnet/razor/pull/12856))
 * Update Razor to 10.0.0-preview.26152.1 (PR: [#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
   * Fade unused directives, add "Remove unnecessary" code action and support Remove and Sort commands (PR: [#12831](https://github.com/dotnet/razor/pull/12831))
   * Add Remove and Sort Usings command handling (PR: [#12834](https://github.com/dotnet/razor/pull/12834))
