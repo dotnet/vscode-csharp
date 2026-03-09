@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
+* Update Razor to 10.0.0-preview.26155.3 (PR: [#9056](https://github.com/dotnet/vscode-csharp/pull/9056))
+  * Don't offer to remove directives when not on a single line directive (PR: [#12862](https://github.com/dotnet/razor/pull/12862))
 * Update Roslyn to 5.6.0-2.26159.3 (PR: [#9057](https://github.com/dotnet/vscode-csharp/pull/9057))
   * Reduce allocations during source text diffing (PR: [#82462](https://github.com/dotnet/roslyn/pull/82462))
   * Don't log named pipe connection failures as errors in BuildServerConnection (PR: [#82609](https://github.com/dotnet/roslyn/pull/82609))
