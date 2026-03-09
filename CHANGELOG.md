@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
-* Update Roslyn to 5.6.0-2.26159.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.6.0-2.26159.3 (PR: [#9057](https://github.com/dotnet/vscode-csharp/pull/9057))
   * Reduce allocations during source text diffing (PR: [#82462](https://github.com/dotnet/roslyn/pull/82462))
   * Don't log named pipe connection failures as errors in BuildServerConnection (PR: [#82609](https://github.com/dotnet/roslyn/pull/82609))
   * Fix resx source generator for less common resx metadata and locations (PR: [#81994](https://github.com/dotnet/roslyn/pull/81994))
