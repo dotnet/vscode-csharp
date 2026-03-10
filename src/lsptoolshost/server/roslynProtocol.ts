@@ -28,6 +28,7 @@ import { ProjectConfigurationMessage } from '../../shared/projectConfiguration';
 export interface VSProjectContextList {
     _vs_projectContexts: VSProjectContext[];
     _vs_defaultIndex: number;
+    _vs_key: string;
 }
 
 export interface VSProjectContext {
@@ -98,6 +99,8 @@ export interface OnAutoInsertResponseItem {
      */
     command?: Command;
 }
+
+export type ProjectContextRegistrationOptions = TextDocumentRegistrationOptions;
 
 /**
  * OnAutoInsert options.
@@ -227,9 +230,8 @@ export interface RestoreParams extends WorkDoneProgressParams, PartialResultPara
     projectFilePaths: string[];
 }
 
-export interface RestorePartialResult {
-    stage: string;
-    message: string;
+export interface RestoreResult {
+    success: boolean;
 }
 
 export interface ProjectNeedsRestoreName {
@@ -237,15 +239,6 @@ export interface ProjectNeedsRestoreName {
      * The set of projects that have unresolved dependencies and require a restore.
      */
     projectFilePaths: string[];
-}
-
-export interface CopilotRelatedDocumentsParams extends WorkDoneProgressParams, PartialResultParams {
-    _vs_textDocument: TextDocumentIdentifier;
-    position: Position;
-}
-
-export interface CopilotRelatedDocumentsReport {
-    _vs_file_paths?: string[];
 }
 
 export interface SourceGeneratorGetRequestParams {
@@ -256,6 +249,10 @@ export interface SourceGeneratorGetRequestParams {
 export interface SourceGeneratedDocumentText {
     text?: string;
     resultId?: string;
+}
+
+export interface RefreshSourceGeneratorsParams {
+    forceRegeneration: boolean;
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
@@ -280,6 +277,18 @@ export namespace VSGetProjectContextsRequest {
     export const method = 'textDocument/_vs_getProjectContexts';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType<VSGetProjectContextParams, VSProjectContextList, void>(method);
+}
+
+export namespace ProjectContextRefreshRequest {
+    export const method = 'workspace/projectContext/_vs_refresh';
+    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
+    export const type = new RequestType0(method);
+}
+
+export namespace FeatureProvidersRefreshNotification {
+    export const method = 'workspace/featureProviders/_vs_refresh';
+    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
+    export const type = new NotificationType<object>(method);
 }
 
 export namespace ProjectInitializationCompleteNotification {
@@ -345,37 +354,13 @@ export namespace CodeActionFixAllResolveRequest {
 export namespace RestoreRequest {
     export const method = 'workspace/_roslyn_restore';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new ProtocolRequestType<
-        RestoreParams,
-        RestorePartialResult[],
-        RestorePartialResult,
-        void,
-        void
-    >(method);
+    export const type = new RequestType<RestoreParams, RestoreResult, void>(method);
 }
 
 export namespace RestorableProjects {
     export const method = 'workspace/_roslyn_restorableProjects';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType0<string[], void>(method);
-}
-
-export namespace ProjectNeedsRestoreRequest {
-    export const method = 'workspace/_roslyn_projectNeedsRestore';
-    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
-    export const type = new RequestType<ProjectNeedsRestoreName, void, void>(method);
-}
-
-export namespace CopilotRelatedDocumentsRequest {
-    export const method = 'copilot/_related_documents';
-    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new ProtocolRequestType<
-        CopilotRelatedDocumentsParams,
-        CopilotRelatedDocumentsReport[],
-        CopilotRelatedDocumentsReport[],
-        void,
-        void
-    >(method);
 }
 
 export namespace SourceGeneratorGetTextRequest {
@@ -388,4 +373,22 @@ export namespace RefreshSourceGeneratedDocumentNotification {
     export const method = 'workspace/refreshSourceGeneratedDocument';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
     export const type = new NotificationType(method);
+}
+
+export namespace RefreshSourceGeneratorsNotification {
+    export const method = 'workspace/_roslyn_refreshSourceGenerators';
+    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
+    export const type = new NotificationType<RefreshSourceGeneratorsParams>(method);
+}
+
+export namespace RoslynLspErrorCodes {
+    /**
+     * Indicates that the server could not process the request, but that the failure shouldn't be surfaced to the user.
+     * (It's expected that the failure is still logged, however.)
+     *
+     * This is only meant to be used under conditions where we can't fulfill the request, but we think that the failure
+     * is unlikely to be significant to the user (i.e. surface as an actual editor feature failing to function properly.)
+     * For example, if pull diagnostics are requested for a virtual document that was already closed.
+     */
+    export const nonFatalRequestFailure = -30099;
 }

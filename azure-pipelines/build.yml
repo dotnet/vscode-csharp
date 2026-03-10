@@ -1,6 +1,6 @@
 parameters:
-- name: dotnetVersion
-  type: string
+- name: installDotNet
+  type: boolean
 
 steps:
 - checkout: self
@@ -10,7 +10,7 @@ steps:
   fetchDepth: 0
 - template: /azure-pipelines/prereqs.yml@self
   parameters:
-    dotnetVersion: ${{ parameters.dotnetVersion}}
+    installDotNet: ${{ parameters.installDotNet }}
 
 - pwsh: npm run package
   displayName: 'Build'

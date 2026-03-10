@@ -8,7 +8,7 @@ import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './sha
 import { EventStream } from './eventStream';
 import { getRuntimeDependenciesPackages } from './tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';
-import IInstallDependencies from './packageManager/IInstallDependencies';
+import { DependencyInstallationStatus, IInstallDependencies } from './packageManager/IInstallDependencies';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
 
 export async function installRuntimeDependencies(
@@ -19,26 +19,39 @@ export async function installRuntimeDependencies(
     platformInfo: PlatformInformation,
     useFramework: boolean,
     requiredPackageIds: string[]
-): Promise<boolean> {
+): Promise<DependencyInstallationStatus> {
     const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     const packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, extensionPath);
+
+    // PackagesToInstall will only return packages that are not already installed. However,
+    // we need to return the installation status of all required packages, so we need to
+    // track which required packages are already installed, so that we can return true for them.
+    const installedPackages = requiredPackageIds.filter(
+        (id) => packagesToInstall.find((pkg) => pkg.id === id) === undefined
+    );
+    const installedPackagesResults = installedPackages.reduce((acc, id) => ({ ...acc, [id]: true }), {});
+
     const filteredPackages = filterOmniSharpPackage(packagesToInstall, useFramework);
     const filteredRequiredPackages = filteredRequiredPackage(requiredPackageIds, filteredPackages);
 
-    if (filteredRequiredPackages.length > 0) {
-        eventStream.post(new PackageInstallation('C# dependencies'));
-        // Display platform information and RID
-        eventStream.post(new LogPlatformInfo(platformInfo));
-
-        if (await installDependencies(filteredRequiredPackages)) {
-            eventStream.post(new InstallationSuccess());
-        } else {
-            return false;
-        }
+    if (filteredRequiredPackages.length === 0) {
+        return installedPackagesResults;
     }
 
-    //All the required packages are already downloaded and installed
-    return true;
+    eventStream.post(new PackageInstallation('C# dependencies'));
+    // Display platform information and RID
+    eventStream.post(new LogPlatformInfo(platformInfo));
+
+    const installationResults = await installDependencies(filteredRequiredPackages);
+
+    const failedPackages = Object.entries(installationResults)
+        .filter(([, installed]) => !installed)
+        .map(([name]) => name);
+    if (failedPackages.length === 0) {
+        eventStream.post(new InstallationSuccess());
+    }
+
+    return { ...installedPackagesResults, ...installationResults };
 }
 
 function filterOmniSharpPackage(packages: AbsolutePathPackage[], useFramework: boolean) {

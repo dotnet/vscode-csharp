@@ -58,7 +58,7 @@ export function safeLength<T>(arr: T[] | undefined) {
 
 export async function execChildProcess(
     command: string,
-    workingDirectory: string,
+    workingDirectory: string | undefined,
     env: NodeJS.ProcessEnv
 ): Promise<string> {
     return new Promise<string>((resolve, reject) => {

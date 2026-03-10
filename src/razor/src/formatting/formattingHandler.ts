@@ -4,84 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType } from 'vscode-jsonrpc';
-import { RazorDocumentManager } from '../document/razorDocumentManager';
-import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
-import { RazorLanguageServerClient } from '../razorLanguageServerClient';
-import { RazorLogger } from '../razorLogger';
 import { convertTextEditToSerializable, SerializableTextEdit } from '../rpc/serializableTextEdit';
-import { SerializableFormattingParams } from './serializableFormattingParams';
 import { SerializableFormattingResponse } from './serializableFormattingResponse';
-import { SerializableOnTypeFormattingParams } from './serializableOnTypeFormattingParams';
 import { SerializablePosition } from '../rpc/serializablePosition';
 
 export class FormattingHandler {
-    private static readonly provideFormattingEndpoint = 'razor/htmlFormatting';
-    private static readonly provideOnTypeFormattingEndpoint = 'razor/htmlOnTypeFormatting';
-    private formattingRequestType: RequestType<SerializableFormattingParams, SerializableFormattingResponse, any> =
-        new RequestType(FormattingHandler.provideFormattingEndpoint);
-    private onTypeFormattingRequestType: RequestType<
-        SerializableOnTypeFormattingParams,
-        SerializableFormattingResponse,
-        any
-    > = new RequestType(FormattingHandler.provideOnTypeFormattingEndpoint);
     private static emptyFormattingResponse = new SerializableFormattingResponse();
 
-    constructor(
-        private readonly documentManager: RazorDocumentManager,
-        private readonly documentSynchronizer: RazorDocumentSynchronizer,
-        private readonly serverClient: RazorLanguageServerClient,
-        private readonly logger: RazorLogger
-    ) {}
-
-    public async register() {
-        await this.serverClient.onRequestWithParams<SerializableFormattingParams, SerializableFormattingResponse, any>(
-            this.formattingRequestType,
-            async (request, token) => this.provideFormatting(request, token)
-        );
-        await this.serverClient.onRequestWithParams<
-            SerializableOnTypeFormattingParams,
-            SerializableFormattingResponse,
-            any
-        >(this.onTypeFormattingRequestType, async (request, token) => this.provideOnTypeFormatting(request, token));
-    }
-
-    private async provideFormatting(
-        formattingParams: SerializableFormattingParams,
-        cancellationToken: vscode.CancellationToken
-    ) {
-        try {
-            const razorDocumentUri = vscode.Uri.parse(formattingParams.textDocument.uri);
-            const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
-            if (razorDocument === undefined) {
-                return FormattingHandler.emptyFormattingResponse;
-            }
-
-            const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
-                textDocument,
-                razorDocument.htmlDocument,
-                formattingParams.hostDocumentVersion,
-                cancellationToken
-            );
-            if (!synchronized) {
-                return FormattingHandler.emptyFormattingResponse;
-            }
-
-            const virtualHtmlUri = razorDocument.htmlDocument.uri;
-            const htmlDocContent = razorDocument.htmlDocument.getContent();
-
-            return await FormattingHandler.getHtmlFormattingResult(
-                virtualHtmlUri,
-                htmlDocContent,
-                formattingParams.options
-            );
-        } catch (error) {
-            this.logger.logWarning(`${FormattingHandler.provideFormattingEndpoint} failed with ${error}`);
-        }
-
-        return FormattingHandler.emptyFormattingResponse;
-    }
+    constructor() {}
 
     public static async getHtmlFormattingResult(
         virtualHtmlUri: vscode.Uri,
@@ -136,45 +66,6 @@ export class FormattingHandler {
         const serializableTextEdits = FormattingHandler.sanitizeTextEdits(htmlDocContent, textEdits);
 
         return new SerializableFormattingResponse(serializableTextEdits);
-    }
-
-    private async provideOnTypeFormatting(
-        formattingParams: SerializableOnTypeFormattingParams,
-        cancellationToken: vscode.CancellationToken
-    ) {
-        try {
-            const razorDocumentUri = vscode.Uri.parse(formattingParams.textDocument.uri);
-            const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
-            if (razorDocument === undefined) {
-                return FormattingHandler.emptyFormattingResponse;
-            }
-
-            const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
-                textDocument,
-                razorDocument.csharpDocument,
-                formattingParams.hostDocumentVersion,
-                cancellationToken
-            );
-            if (!synchronized) {
-                return FormattingHandler.emptyFormattingResponse;
-            }
-
-            const virtualHtmlUri = razorDocument.htmlDocument.uri;
-            const htmlDocContent = razorDocument.htmlDocument.getContent();
-
-            return await FormattingHandler.getHtmlOnTypeFormattingResult(
-                virtualHtmlUri,
-                htmlDocContent,
-                formattingParams.position,
-                formattingParams.ch,
-                formattingParams.options
-            );
-        } catch (error) {
-            this.logger.logWarning(`${FormattingHandler.provideFormattingEndpoint} failed with ${error}`);
-        }
-
-        return FormattingHandler.emptyFormattingResponse;
     }
 
     private static sanitizeTextEdits(htmlDocText: string, textEdits: vscode.TextEdit[]) {

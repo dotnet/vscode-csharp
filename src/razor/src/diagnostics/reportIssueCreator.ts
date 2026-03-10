@@ -7,8 +7,6 @@ import * as cp from 'child_process';
 import * as os from 'os';
 import * as vscodeAdapter from '../vscodeAdapter';
 import * as vscode from 'vscode';
-import { IRazorDocument } from '../document/IRazorDocument';
-import { IRazorDocumentManager } from '../document/IRazorDocumentManager';
 import { razorExtensionId } from '../razorExtensionId';
 import { IReportIssueDataCollectionResult } from './IReportIssueDataCollectionResult';
 import { HtmlDocumentManager } from '../../../lsptoolshost/razor/htmlDocumentManager';
@@ -19,9 +17,8 @@ import { RoslynLanguageServer } from '../../../lsptoolshost/server/roslynLanguag
 export class ReportIssueCreator {
     constructor(
         private readonly vscodeApi: vscodeAdapter.api,
-        private readonly documentManager?: IRazorDocumentManager,
-        private readonly cohostingDocumentManager?: HtmlDocumentManager,
-        private readonly roslynLanguageServer?: RoslynLanguageServer
+        private readonly cohostingDocumentManager: HtmlDocumentManager,
+        private readonly roslynLanguageServer: RoslynLanguageServer
     ) {}
 
     public async create(collectionResult: IReportIssueDataCollectionResult) {
@@ -36,25 +33,19 @@ export class ReportIssueCreator {
         if (collectionResult.document) {
             razorContent = await this.getRazor(collectionResult.document);
 
-            if (this.documentManager) {
-                const razorDocument = await this.documentManager.getDocument(collectionResult.document.uri);
-                csharpContent = await this.getProjectedCSharp(razorDocument);
-                htmlContent = await this.getProjectedHtml(razorDocument);
-            } else if (this.cohostingDocumentManager) {
-                try {
-                    csharpContent = await ShowGeneratedDocumentCommand.getGeneratedDocumentContent(
-                        collectionResult.document.uri,
-                        GeneratedDocumentKind.CSharp,
-                        this.roslynLanguageServer!
-                    );
-                } catch (e: any) {
-                    csharpContent = vscode.l10n.t('Could not determine CSharp content: {0}', e.toString());
-                }
+            try {
+                csharpContent = await ShowGeneratedDocumentCommand.getGeneratedDocumentContent(
+                    collectionResult.document.uri,
+                    GeneratedDocumentKind.CSharp,
+                    this.roslynLanguageServer!
+                );
+            } catch (e: any) {
+                csharpContent = vscode.l10n.t('Could not determine CSharp content: {0}', e.toString());
+            }
 
-                const htmlDocument = await this.cohostingDocumentManager.getDocument(collectionResult.document.uri);
-                if (htmlDocument) {
-                    htmlContent = htmlDocument.getContent();
-                }
+            const htmlDocument = await this.cohostingDocumentManager.getDocument(collectionResult.document.uri);
+            if (htmlDocument) {
+                htmlContent = htmlDocument.getContent();
             }
         }
 
@@ -192,8 +183,7 @@ ${extensionTable}
 </details>`;
     }
 
-    // Protected for testing
-    protected sanitize(content: string) {
+    private sanitize(content: string) {
         const user = process.env.USERNAME === undefined ? process.env.USER : process.env.USERNAME;
 
         if (user === undefined) {
@@ -206,72 +196,13 @@ ${extensionTable}
         return sanitizedContent;
     }
 
-    // Protected for testing
-    protected async getRazor(document: vscodeAdapter.TextDocument) {
+    private async getRazor(document: vscodeAdapter.TextDocument) {
         const content = document.getText();
 
         return content;
     }
 
-    // Protected for testing
-    protected async getProjectedCSharp(razorDocument: IRazorDocument) {
-        const projectedCSharpHeaderFooter = vscode.l10n.t('Projected CSharp as seen by extension');
-
-        let csharpContent = `////////////////////// ${projectedCSharpHeaderFooter} ///////////////////////
-${razorDocument.csharpDocument.getContent()}
-
-
-////////////////////// ${projectedCSharpHeaderFooter} ///////////////////////`;
-
-        const errorSuffix = vscode.l10n.t("Unable to resolve VSCode's version of CSharp");
-        try {
-            const csharpTextDocument = await this.vscodeApi.workspace.openTextDocument(
-                razorDocument.csharpDocument.uri
-            );
-            if (csharpTextDocument) {
-                csharpContent = `${csharpContent}
-${csharpTextDocument.getText()}`;
-            } else {
-                csharpContent = `${csharpContent}
-${errorSuffix}`;
-            }
-        } catch (_) {
-            csharpContent = `${csharpContent}
-${errorSuffix}`;
-        }
-
-        return csharpContent;
-    }
-
-    // Protected for testing
-    protected async getProjectedHtml(razorDocument: IRazorDocument) {
-        const projectedHTmlHeaderFooter = vscode.l10n.t('Projected Html as seen by extension');
-        let htmlContent = `////////////////////// ${projectedHTmlHeaderFooter} ///////////////////////
-${razorDocument.htmlDocument.getContent()}
-
-
-////////////////////// ${projectedHTmlHeaderFooter} ///////////////////////`;
-
-        const errorSuffix = vscode.l10n.t("Unable to resolve VSCode's version of Html");
-        try {
-            const htmlTextDocument = await this.vscodeApi.workspace.openTextDocument(razorDocument.htmlDocument.uri);
-            if (htmlTextDocument) {
-                htmlContent = `${htmlContent}
-${htmlTextDocument.getText()}`;
-            } else {
-                htmlContent = `${htmlContent}
-${errorSuffix}`;
-            }
-        } catch (_) {
-            htmlContent = `${htmlContent}
-${errorSuffix}`;
-        }
-
-        return htmlContent;
-    }
-
-    // Protected for testing
-    protected getExtensionVersion(): string {
+    private getExtensionVersion(): string {
         const extension = this.vscodeApi.extensions.getExtension(razorExtensionId);
         if (!extension) {
             return vscode.l10n.t('Unable to find Razor extension version.');
@@ -279,8 +210,7 @@ ${errorSuffix}`;
         return extension.packageJSON.version;
     }
 
-    // Protected for testing
-    protected getInstalledExtensions() {
+    private getInstalledExtensions() {
         const extensions: Array<vscodeAdapter.Extension<any>> = this.vscodeApi.extensions.all.filter(
             (extension) => extension.packageJSON.isBuiltin === false
         );
@@ -290,8 +220,7 @@ ${errorSuffix}`;
         );
     }
 
-    // Protected for testing
-    protected generateExtensionTable() {
+    private generateExtensionTable() {
         const extensions = this.getInstalledExtensions();
         if (extensions.length <= 0) {
             return 'none';

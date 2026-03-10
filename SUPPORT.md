@@ -13,43 +13,67 @@ For help and questions about using this project, please see the [README](https:/
 ### How to file an issue
 
 We highly recommend using the C# extension's built-in command, `CSharp: Report an issue` (`csharp.reportIssue`) to create a pre-filled issue template.  This will include helpful details such as local dotnet installations, installed extensions, and other information.
+
 ![csharp.reportIssue command](./docs/images/report_issue.png)
 
-#### Collecting General Logs
+#### Capturing activity trace logging
 
-The template has a section to include the `C#` output window logs. These logs are not automatically included as they may contain personal information (such as full file paths and project names), but they are key to resolving problems.
+When investigating issues, the C# extension provides a command to collect logs, activity logs, traces, and dumps. This is the recommended way to collect diagnostic information as it automatically captures all relevant files in a single archive.
 
-1. **Set the Log Level to Trace**:
-   - Open the `C#` output window (`View` -> `Output`).
-   - Set the log level to `Trace`.
+1. **Invoke the Collect Logs Command**:
+   - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+   - Search for and select `CSharp: Collect C# Logs` (`csharp.collectLogs`).
 
-     ![c# output window showing trace option](./docs/images/csharp_trace.png)
+   ![alt text](docs/images/collect_logs.png)
+2. **Select Additional Logs to Collect**:
+   - You will be presented with a multi-select picker. Choose from:
+     - **Record Activity** - Capture live C#, LSP trace, and Razor log output
+     - **Performance Trace** - Record a dotnet-trace of the language server
+     - **Memory Dump** - Process memory dump using dotnet-dump
+     - **GC Dump** - Garbage collector heap dump using dotnet-gcdump
 
-2. **Reproduce the Issue**:
-   - Perform the actions that reproduce the issue.
+   ![alt text](docs/images/choose_additional_logs.png)
+3. **Customize Arguments**:
+   - For each selected tool (dotnet-trace, dotnet-dump, dotnet-gcdump), you will be prompted to review and customize the arguments.
+4. **Choose Where to Save**:
+   - You will be prompted to choose a save location for the log archive. Choose a location to save the `.zip` file.
+4. **Reproduce the Issue**:
+   - If you selected Record Activity or Performance Trace, a notification will appear indicating that recording is in progress.
+   - While the notification is visible, perform the actions that reproduce the issue.
+   - The extension automatically sets the log level to `Trace` during capture to collect detailed information.
+   - Click the `Cancel` button on the notification to stop recording.
+5. **Zip File is Saved**:
+   - You will be notified that the archive has been saved and a button is provided to open the containing folder.
+6. **Share the Logs**:
+   - The saved archive may contain (depending on selections):
+     - `csharp.log` - The existing C# log file
+     - `csharp-lsp-trace.log` - The existing LSP trace log file
+     - `razor.log` - The existing Razor log file
+     - `csharp.activity.log` - Captured C# log activity during the recording session
+     - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the recording session
+     - `razor.activity.log` - Captured Razor log activity during the recording session
+     - `csharp-settings.json` - Current C# extension settings
+     - `.nettrace` file from dotnet-trace (if Performance Trace selected)
+     - `.dmp` memory dump files (if Memory Dump selected)
+     - `.gcdump` GC dump files (if GC Dump selected)
+   - Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
 
-3. **Copy the Logs**:
-   - In the `C#` output window, select all the logs (e.g., `Ctrl+A`) and copy them.
-   - Paste the logs into the issue template under the "C# Log" section.
-   - If necessary, redact sensitive information (e.g., file paths, project names).
+> [!WARNING]
+> The logs may contain file paths, project names, and other workspace information. Review the contents before sharing publicly.
 
-4. **Reset the Log Level**:
-   - After collecting the logs, reset the log level to `Info`.
+##### Setting Trace Levels Manually
 
-**Note**: If the issue occurs during extension startup, you can set `Trace` as the default log level, restart VSCode, and the trace logs will be captured automatically.
+If you need to set the trace level manually:
 
-##### C# LSP Trace Logs
-- To capture detailed requests sent to the Roslyn language server:
-  1. Open the `C# LSP Trace Logs` output window.
-  2. Set the output window log level to `Trace`.
-  3. Reproduce the issue.
-  4. Copy the contents of the `C# LSP Trace Logs` output window.
-  5.  After collecting the logs, reset the log level to `Info`.
+- **In the C# output window** (`View` -> `Output`), set the log level to `Trace`.
 
+  ![c# output window showing trace option](./docs/images/csharp_trace.png)
 
-##### Other Ways to Set the Log Level
-1. When launching VSCode from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
-2. Invoke the `Developer: Set Log Level` command from the VSCode command palette, find the `C#` entry, and set the level.
+- **In the C# LSP Trace Logs output window**, set the log level to `Trace`.
+
+**Other Ways to Set the Log Level**:
+- When launching VS Code from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
+- Invoke the `Developer: Set Log Level` command from the VS Code command palette, find the `C#` entry, and set the level.
 
 #### Collecting Razor Logs
 For issues with Razor, the Razor Log output window can contain useful information.
@@ -74,7 +98,7 @@ For issues with Razor, the Razor Log output window can contain useful informatio
 Missing language features are often caused by a failure to load the project(s) or solution. To diagnose and resolve these issues, follow these steps:
 
 1. **Provide General Logs**:
-   - Include the information from the issue template and the general logs (see the "Collecting General Logs" section above). These logs are essential for troubleshooting.
+   - Include the information from the issue template and the general logs (see the "Capturing activity trace logging" section above). These logs are essential for troubleshooting.
 
 2. **Check the Active Project Context**:
    - Verify that the file is associated with the correct project in the language server.
@@ -105,9 +129,10 @@ If you encounter issues with document classification (e.g., incorrect syntax hig
 ### Diagnostics problems
 
 For issues with diagnostics, please provide values of the background analysis scope options, `dotnet.backgroundAnalysis.analyzerDiagnosticsScope` and `dotnet.backgroundAnalysis.compilerDiagnosticsScope`
+
 ![background analysis settings](./docs/images/background_analysis.png)
 
-#### Language server crashing
+### Language server crashing
 
 If the language server crashes, general logs are often helpful for diagnosing the issue. However, in some cases, logs alone may not provide enough information and we may need a crash dump. Follow these steps to collect a crash dump:
 - Set the `dotnet.server.crashDumpPath` setting in VSCode to a user-writable folder where crash dumps can be saved.
@@ -115,22 +140,18 @@ If the language server crashes, general logs are often helpful for diagnosing th
 - When the server crashes, a dump in the specified folder will be created.
 
 > [!WARNING]
-> The dump can contain detailed information on the project - generally we will provide an email so that it can be shared privately
+> The dump will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
 
-#### Recording a language server trace
+### Sharing information privately
+Detailed logs, dumps, traces, and other information can sometimes contain private information that you do not wish to share publicly on GitHub (for example file paths and file contents).  Instead, you can utilize the Developer Community page to share these privately to Microsoft.
 
-When investigating performance issues, we may request a performance trace of the language server to diagnose what is causing the problem.  These are typically taken via [dotnet-trace](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace) (a cross platform tool to collect performance traces of .NET processes)
+1.  Go to https://developercommunity.visualstudio.com/dotnet/report
+2.  Fill in the issue title, reference the GitHub issue in the description, and upload the attachments.  Note that there is a 2 GB limit on attached files.  Dumps can often be larger than that, so we recommend compressing them to a `.zip` before uploading.
 
-The C# extension has a built in command, `csharp.recordLanguageServerTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool and invoke it against the language server.
+![developer community feedback page](docs/images/developer_community_feedback.png)
+4.  Once created, a comment on the GitHub issue a link to the new Developer Community ticket.
 
-1.  Invoke the record language server trace command
-![alt text](docs/images/recordTraceCommand.png)
-2.  Select the folder to save the trace.
-3.  Accept the default trace arguments, or change them if requested
-![alt text](docs/images/recordTraceArgs.png)
-4.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the peformance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace
-![alt text](docs/images/recordTraceTerminal.png)
-5.  Share the trace.  Note that the trace may contain PII, so generally we will provide an email or other confidential way to share the trace with us.
+
 
 ## Microsoft Support Policy
 
