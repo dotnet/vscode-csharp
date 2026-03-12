@@ -57,14 +57,14 @@ function createUnitTestSubTasks() {
 function createIntegrationTestSubTasks() {
     for (const projectName of integrationTestProjects) {
         gulp.task(`test:integration:csharp:${projectName}`, async () =>
-            runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `[C#][${projectName}]`)
+            runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `CSharp-Integration-${projectName}`)
         );
 
         gulp.task(`test:integration:devkit:${projectName}`, async () =>
             runDevKitIntegrationTests(
                 projectName,
                 path.join('lsptoolshost', 'integrationTests'),
-                `[DevKit][${projectName}]`
+                `DevKit-Integration-${projectName}`
             )
         );
     }
