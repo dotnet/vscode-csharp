@@ -23,7 +23,7 @@ import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 const DotNetMajorVersion = '10';
 const DotNetMinorVersion = '0';
-const DotNetPatchVersion = '0';
+const DotNetPatchVersion = '5';
 export const DotNetRuntimeVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}.${DotNetPatchVersion}`;
 
 /**
