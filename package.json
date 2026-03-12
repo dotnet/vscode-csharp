@@ -1955,7 +1955,7 @@
         "command": "csharp.collectLogs",
         "title": "%command.csharp.collectLogs%",
         "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "extension.showRazorCSharpWindow",
