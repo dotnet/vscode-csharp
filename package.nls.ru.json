@@ -48,7 +48,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Включает поддержку отображения неимпортированных типов и неимпортированных методов расширения в списках завершения. При фиксации соответствующая директива использования будет добавлена в начало текущего файла. (Ранее — \"omnisharp.enableImportCompletion\")",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Выполните автоматическое завершение имен объектов для выбранных элементов.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Автоматически показывать список завершения в списках аргументов",
-  "configuration.dotnet.defaultSolution.description": "Путь к решению по умолчанию, которое будет открыто в рабочей области. Или задайте значение \"Отключить\", чтобы пропустить его. (Ранее — \"omnisharp.defaultLaunchSolution\")",
+  "configuration.dotnet.defaultSolution.description": "Путь к решению по умолчанию, которое будет открыто в рабочей области. Или задайте значение \"Отключить\", чтобы пропустить его.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Включите этот параметр, чтобы уменьшить количество визуальных отвлекающих факторов в редакторе. Информационные проблемы будут отображаться в виде подсказок и видны только при открытии всплывающего окна действий кода. (Требуется перезапуск расширения)",
   "configuration.dotnet.enableXamlTools": "Включает инструменты XAML при использовании C# Dev Kit. (Требуется перезапуск расширения)",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Указывает, следует ли группировать и сортировать директивы \"using\" во время форматирования документов. (Ранее — \"omnisharp.organizeImportsOnFormat\")",
