@@ -22,7 +22,7 @@ export async function testIntegrationCSharp(): Promise<void> {
             projectName,
             path.join('lsptoolshost', 'integrationTests'),
             `CSharp-Integration-${projectName}`
-        )
+        );
     }
 }
 
