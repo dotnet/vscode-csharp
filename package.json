@@ -145,7 +145,7 @@
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
     "@vscode/l10n-dev": "^0.0.35",
-    "@vscode/test-electron": "2.3.8",
+    "@vscode/test-electron": "2.5.2",
     "@vscode/vsce": "3.7.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.43.0",
