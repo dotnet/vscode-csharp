@@ -710,7 +710,7 @@
     "onLanguage:csharp",
     "onCommand:o.showOutput",
     "onCommand:omnisharp.registerLanguageMiddleware",
-    "workspaceContains:**/*.{csproj,csx,cake}"
+    "workspaceContains:**/*.{csproj,csx,cake,sln,slnx,slnf}"
   ],
   "contributes": {
     "themes": [
