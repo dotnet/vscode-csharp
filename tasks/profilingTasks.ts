@@ -21,7 +21,7 @@ function createProfilingTasks() {
         await runIntegrationTest(
             basicSlnTestProject,
             path.join('lsptoolshost', 'integrationTests'),
-            `CSharp-Profiling-${basicSlnTestProject}`,
+            `CSharp-${basicSlnTestProject}`,
             undefined,
             undefined,
             {
