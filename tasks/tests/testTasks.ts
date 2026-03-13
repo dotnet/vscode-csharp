@@ -21,7 +21,7 @@ export async function testIntegrationCSharp(): Promise<void> {
         await runIntegrationTest(
             projectName,
             path.join('lsptoolshost', 'integrationTests'),
-            `CSharp-Integration-${projectName}`
+            `CSharp-${projectName}`
         );
     }
 }
@@ -31,7 +31,7 @@ export async function testIntegrationDevkit(): Promise<void> {
         await runDevKitIntegrationTests(
             projectName,
             path.join('lsptoolshost', 'integrationTests'),
-            `DevKit-Integration-${projectName}`
+            `DevKit-${projectName}`
         );
     }
 }
