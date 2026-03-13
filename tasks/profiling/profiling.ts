@@ -25,7 +25,7 @@ async function profileCSharp(): Promise<void> {
     await runIntegrationTest(
         basicSlnTestProject,
         path.join('lsptoolshost', 'integrationTests'),
-        `[C#][${basicSlnTestProject}]`,
+        `CSharp-Profiling-${basicSlnTestProject}`,
         undefined,
         undefined,
         {

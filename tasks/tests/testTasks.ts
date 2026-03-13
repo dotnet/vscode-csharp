@@ -18,7 +18,11 @@ export async function testArtifacts(): Promise<void> {
 
 export async function testIntegrationCSharp(): Promise<void> {
     for (const projectName of integrationTestProjects) {
-        await runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `[C#][${projectName}]`);
+        await runIntegrationTest(
+            projectName,
+            path.join('lsptoolshost', 'integrationTests'),
+            `CSharp-Integration-${projectName}`
+        )
     }
 }
 
@@ -27,7 +31,7 @@ export async function testIntegrationDevkit(): Promise<void> {
         await runDevKitIntegrationTests(
             projectName,
             path.join('lsptoolshost', 'integrationTests'),
-            `[DevKit][${projectName}]`
+            `DevKit-Integration-${projectName}`
         );
     }
 }
