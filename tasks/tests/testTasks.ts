@@ -18,11 +18,7 @@ export async function testArtifacts(): Promise<void> {
 
 export async function testIntegrationCSharp(): Promise<void> {
     for (const projectName of integrationTestProjects) {
-        await runIntegrationTest(
-            projectName,
-            path.join('lsptoolshost', 'integrationTests'),
-            `CSharp-${projectName}`
-        );
+        runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `CSharp-${projectName}`);
     }
 }
 
