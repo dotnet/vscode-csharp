@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
+* Update Razor to 10.0.0-preview.26163.2 (PR: [#9067](https://github.com/dotnet/vscode-csharp/pull/9067))
+  * Treat unmapped directive spans as Razor for code actions (PR: [#12893](https://github.com/dotnet/razor/pull/12893))
 * Update Razor to 10.0.0-preview.26155.3 (PR: [#9056](https://github.com/dotnet/vscode-csharp/pull/9056))
   * Don't offer to remove directives when not on a single line directive (PR: [#12862](https://github.com/dotnet/razor/pull/12862))
 * Update Roslyn to 5.6.0-2.26159.3 (PR: [#9057](https://github.com/dotnet/vscode-csharp/pull/9057))
