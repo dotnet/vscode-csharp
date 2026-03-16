@@ -6,10 +6,8 @@
 # 2.131.x
 * Update Roslyn to 5.6.0-2.26163.11 (PR: [#9068](https://github.com/dotnet/vscode-csharp/pull/9068))
   * Reduce allocations in normal elfie usage (PR: [#82743](https://github.com/dotnet/roslyn/pull/82743))
-  * Exclude implement interface/abstract member fixes from code cleanup (PR: [#82703](https://github.com/dotnet/roslyn/pull/82703))
   * Reduce allocations in GetEscapedMetadataName (PR: [#82716](https://github.com/dotnet/roslyn/pull/82716))
   * Update AutoLoad so LSP can read defaultSolution from .vscode/settings.json (PR: [#82690](https://github.com/dotnet/roslyn/pull/82690))
-  * Proposal Adjuster - Keep line endings in line with original source text (PR: [#82611](https://github.com/dotnet/roslyn/pull/82611))
   * Cache diagnostics for method body compilation. (PR: [#82667](https://github.com/dotnet/roslyn/pull/82667))
   * Unsafe evolution: handle `new()` constraint (PR: [#82647](https://github.com/dotnet/roslyn/pull/82647))
   * Unsafe evolution: add LangVersion error for updated memory safety rules (PR: [#82687](https://github.com/dotnet/roslyn/pull/82687))
