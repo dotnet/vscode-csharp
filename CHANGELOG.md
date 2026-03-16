@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.131.x
-* Update Roslyn to 5.6.0-2.26163.11 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.6.0-2.26163.11 (PR: [#9068](https://github.com/dotnet/vscode-csharp/pull/9068))
   * Reduce allocations in normal elfie usage (PR: [#82743](https://github.com/dotnet/roslyn/pull/82743))
   * Exclude implement interface/abstract member fixes from code cleanup (PR: [#82703](https://github.com/dotnet/roslyn/pull/82703))
   * Reduce allocations in GetEscapedMetadataName (PR: [#82716](https://github.com/dotnet/roslyn/pull/82716))
