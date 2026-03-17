@@ -45,12 +45,12 @@ Update the `defaults.roslyn` field in `package.json`:
 }
 ```
 
-### Step 3: Run gulp updateRoslynVersion
+### Step 3: Run updateRoslynVersion
 
 This step acquires the new Roslyn packages and ensures they are in the proper feeds:
 
 ```powershell
-gulp updateRoslynVersion
+npm run updateRoslynVersion
 ```
 
 This task:
@@ -62,7 +62,7 @@ This task:
 
 ### Step 4: Get the Previous Roslyn Commit SHA
 
-The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `gulp updateRoslynVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
+The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `npm run updateRoslynVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
 
 **To get the old version's commit SHA:**
 
@@ -82,7 +82,7 @@ The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet pa
 
 ### Step 5: Get the New Roslyn Commit SHA
 
-After running `gulp updateRoslynVersion`, the new version's package is already cached. Extract the commit SHA:
+After running `npm run updateRoslynVersion`, the new version's package is already cached. Extract the commit SHA:
 
 ```powershell
 Get-Content "C:\Users\<username>\source\repos\vscode-csharp\out\.nuget\roslyn-language-server.osx-arm64\<new-version>\roslyn-language-server.osx-arm64.nuspec" | Select-String -Pattern "commit"
@@ -183,7 +183,7 @@ For updating from `5.4.0-2.26077.7` to `5.5.0-2.26080.10`:
 4. Find new commit from package metadata for version `5.5.0-2.26080.10`
 5. Run pr-finder in roslyn repo
 6. Update CHANGELOG.md with the output
-7. Run `gulp updateRoslynVersion`
+7. Run `npm run updateRoslynVersion`
 8. Create PR titled "Update roslyn to 5.5.0-2.26080.10"
 9. Update changelog with PR number
 
@@ -198,7 +198,7 @@ See [PR #8941](https://github.com/dotnet/vscode-csharp/pull/8941) as an example 
 
 ## Troubleshooting
 
-### Authentication Issues with gulp updateRoslynVersion
+### Authentication Issues with updateRoslynVersion
 
 If you encounter authentication errors:
 1. Install Azure Artifacts Credential Provider
@@ -216,7 +216,7 @@ Ensure:
 
 The commit SHAs are embedded in the nuspec files inside the downloaded NuGet packages:
 
-1. After running `gulp updateRoslynVersion`, packages are cached in `out/.nuget/`
+1. After running `npm run updateRoslynVersion`, packages are cached in `out/.nuget/`
 2. To get the old version's commit, you may need to explicitly download it first:
    ```powershell
    dotnet restore "msbuild\server" /p:PackageName=roslyn-language-server.osx-arm64 /p:PackageVersion=<old-version> --interactive

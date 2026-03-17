@@ -66,7 +66,6 @@ extends:
           fetchDepth: 0
         - pwsh: |
             npm install
-            npm install -g gulp --globalconfig $(Build.SourcesDirectory)/.npmrc
           displayName: 'Install tools'
         - pwsh: npm run compile
           displayName: 'Compile'
@@ -87,7 +86,7 @@ extends:
             LclPackageId: 'LCL-JUNO-PROD-VSCODECS'
         - pwsh: npm run l10nDevImportXlf
           displayName: 'Import xlf to json.'
-        - pwsh: gulp 'publish localization content' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
+        - pwsh: npm run publishLocalizationContent -- --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
           displayName: 'Create PR in GitHub.'
           env:
             GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)

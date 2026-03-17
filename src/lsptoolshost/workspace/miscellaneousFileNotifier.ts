@@ -17,7 +17,7 @@ export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer
 ) {
-    languageServer._projectContextService.onActiveFileContextChanged((e) => {
+    languageServer._projectContextService.onActiveFileContextChanged(async (e) => {
         // Only warn for C# miscellaneous files when the workspace is fully initialized.
         if (
             e.document.uri.scheme !== 'file' ||
@@ -43,6 +43,12 @@ export function registerMiscellaneousFileNotifier(
             return;
         }
 
+        const isDeleted = await isDeletedFile(e.document);
+        if (isDeleted) {
+            // Don't show the toast for deleted files - by definition they cannot be part of the workspace.
+            return;
+        }
+
         NotifiedDocuments.add(hash);
 
         const message = vscode.l10n.t(
@@ -58,6 +64,15 @@ export function registerMiscellaneousFileNotifier(
         };
         showWarningMessage(vscode, message, dismissItem, disableWorkspace);
     });
+}
+
+async function isDeletedFile(document: vscode.TextDocument): Promise<boolean> {
+    try {
+        await vscode.workspace.fs.stat(document.uri);
+        return false;
+    } catch {
+        return true;
+    }
 }
 
 function createHash(data: string): string {
