@@ -53,6 +53,9 @@
 * Add captureLogs command which will record C# and C# LSP log activity (PR: [#8942](https://github.com/dotnet/vscode-csharp/pull/8942))
 * Bump Razor to 10.0.0-preview.26081.1 (PR: [#8940](https://github.com/dotnet/vscode-csharp/pull/8940))
 
+# 2.120.x
+* See 2.115.x for full list of changes.
+
 # 2.115.x
 * Update Roslyn to 5.5.0-2.26080.10 (PR: [#8941](https://github.com/dotnet/vscode-csharp/pull/8941))
   * LSP: Tolerate non-mutating requests where we are unable to determine the language (PR: [#81660](https://github.com/dotnet/roslyn/pull/81660))
@@ -142,6 +145,9 @@
   * Update C# code when Razor components are renamed (PR: [#12534](https://github.com/dotnet/razor/pull/12534))
   * Ensure formatting can't change string literal contents (PR: [#12556](https://github.com/dotnet/razor/pull/12556))
 
+# 2.110.x
+* See 2.103.x for full list of changes.
+
 # 2.103.x
 * include roslyn event source configs in profiling command (PR: [#8808](https://github.com/dotnet/vscode-csharp/pull/8808))
 * Revise SUPPORT.md for clarity on sharing information (PR: [#8807](https://github.com/dotnet/vscode-csharp/pull/8807))
@@ -212,6 +218,10 @@
   * Default the cohosting option in the generator to on. (PR: [#12446](https://github.com/dotnet/razor/pull/12446))
   * Add UnboundDirectiveAttributeAddUsingCodeActionProvider for directive attributes (PR: [#12404](https://github.com/dotnet/razor/pull/12404))
   * Fix edit in one project not being reflected in consuming project (PR: [#12439](https://github.com/dotnet/razor/pull/12439))
+
+# 2.100.x
+* Fix issue refreshing colorization after project loads (PR: [#8787](https://github.com/dotnet/vscode-csharp/pull/8787))
+* See 2.97.x for full list of changes.
 
 # 2.97.x
 * Add integration test for restore of file-based programs (PR: [#8470](https://github.com/dotnet/vscode-csharp/pull/8470))
@@ -462,6 +472,7 @@
   * Ensure unique file paths for non-file Uris (PR: [#12037](https://github.com/dotnet/razor/pull/12037))
   * Fix completion of hyphenated items (PR: [#12035](https://github.com/dotnet/razor/pull/12035))
   * Allow completion items to add using directives (PR: [#12034](https://github.com/dotnet/razor/pull/12034))
+* Default `dotnet.projects.enableFileBasedPrograms` to `true` (PR: [#8587](https://github.com/dotnet/vscode-csharp/pull/8587)
 
 # 2.86.x
 * Bump Roslyn to 5.0.0-1.25361.2 (PR: [#8416](https://github.com/dotnet/vscode-csharp/pull/8416))
@@ -613,6 +624,9 @@
   * Add new shared SelectXXXAsArray helpers (#11796) (PR: [#11796](https://github.com/dotnet/razor/pull/11796))
 
 # 2.76.x
+* Bump Roslyn to 5.0.0-1.25263.2 (PR: [#8286](https://github.com/dotnet/vscode-csharp/pull/8286))
+  * [release/vscode] Gracefully handle span mapping failing(PR: [#78562](https://github.com/dotnet/roslyn/pull/78562))
+  * Fix razor redirect(PR: [#78448](https://github.com/dotnet/roslyn/pull/78448))
 * Bump Roslyn to 5.0.0-1.25257.6 (PR: [#8264](https://github.com/dotnet/vscode-csharp/pull/8264))
   * Do not parse URIs during LSP serialization/deserialization (PR: [#76691](https://github.com/dotnet/roslyn/pull/76691))
   * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation (PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
@@ -689,6 +703,8 @@
 * Acquire aspnetcore runtime when using Dev Kit to avoid double acquisition (PR: [#8132](https://github.com/dotnet/vscode-csharp/pull/8132))
 
 # 2.72.x
+* Bump Razor to 9.0.0-preview.25211.4 (PR: [#8181](https://github.com/dotnet/vscode-csharp/pull/8181))
+  * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
 * Revert xamlTools to 17.14.35913.250 (PR: [#8121](https://github.com/dotnet/vscode-csharp/pull/8121))
 * Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
   * Merge `null conditional assignment` to main (PR: [#77867](https://github.com/dotnet/roslyn/pull/77867))
