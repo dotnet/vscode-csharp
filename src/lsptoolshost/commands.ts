@@ -19,14 +19,20 @@ import {
 } from './projectContext/projectContextCommands';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
+import { registerCaptureLogsCommand } from './logging/captureLogs';
+import { registerTraceCommand } from './logging/profiling';
+import { registerDumpCommand } from './logging/dump';
+import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
+import { RazorLogger } from '../razor/src/razorLogger';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel,
-    reporter: TelemetryReporter
+    outputChannel: ObservableLogOutputChannel,
+    csharpTraceChannel: ObservableLogOutputChannel,
+    reporter: TelemetryReporter,
+    razorLogger: RazorLogger
 ) {
     registerExtensionCommands(
         context,
@@ -34,7 +40,8 @@ export function registerCommands(
         hostExecutableResolver,
         outputChannel,
         csharpTraceChannel,
-        reporter
+        reporter,
+        razorLogger
     );
     registerWorkspaceCommands(context, languageServer);
     registerServerCommands(context, languageServer, outputChannel);
@@ -47,9 +54,10 @@ function registerExtensionCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel,
-    reporter: TelemetryReporter
+    outputChannel: ObservableLogOutputChannel,
+    csharpTraceChannel: ObservableLogOutputChannel,
+    reporter: TelemetryReporter,
+    razorLogger: RazorLogger
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -86,4 +94,7 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
+    registerCaptureLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
+    registerTraceCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
+    registerDumpCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
 }

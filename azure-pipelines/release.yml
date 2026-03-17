@@ -157,6 +157,9 @@ extends:
           submodules: false
           fetchTags: false
           fetchDepth: 1
+        - pwsh: |
+            git checkout $(resources.pipeline.officialBuildCI.sourceCommit)
+          displayName: 'Checkout build source branch'
         - template: /azure-pipelines/install-node.yml@self
         - pwsh: |
             npm ci

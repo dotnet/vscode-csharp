@@ -82,6 +82,9 @@ export interface LanguageServerOptions {
     readonly suppressMiscellaneousFilesToasts: boolean;
     readonly useServerGC: boolean;
     readonly reportInformationAsHint: boolean;
+    readonly environmentVariables: { [key: string]: string };
+    readonly sourceGeneratorExecution: string;
+    readonly toolingRuntimePath: string;
 }
 
 export interface RazorOptions {
@@ -417,6 +420,15 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get reportInformationAsHint() {
         return readOption<boolean>('dotnet.diagnostics.reportInformationAsHint', true);
     }
+    public get environmentVariables() {
+        return readOption<{ [key: string]: string }>('dotnet.server.environmentVariables', {});
+    }
+    public get sourceGeneratorExecution() {
+        return readOption<string>('dotnet.server.sourceGeneratorExecution', 'Balanced');
+    }
+    public get toolingRuntimePath() {
+        return readOption<string>('dotnet.toolingRuntimePath', '');
+    }
 }
 
 class RazorOptionsImpl implements RazorOptions {
@@ -512,4 +524,8 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'enableXamlTools',
     'useServerGC',
     'reportInformationAsHint',
+    'environmentVariables',
+    'sourceGeneratorExecution',
+    'crashDumpPath',
+    'toolingRuntimePath',
 ];
