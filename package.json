@@ -40,9 +40,9 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.5.0-2.26080.10",
+    "roslyn": "5.5.0-2.26117.2",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.26075.11",
+    "razor": "10.0.0-preview.26115.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.4.11427.62"
   },
@@ -1495,6 +1495,27 @@
             "default": true,
             "description": "%configuration.dotnet.server.useServerGC%"
           },
+          "dotnet.server.environmentVariables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "description": "%configuration.dotnet.server.environmentVariables%"
+          },
+          "dotnet.server.sourceGeneratorExecution": {
+            "type": "string",
+            "enum": [
+              "Balanced",
+              "Automatic"
+            ],
+            "default": "Balanced",
+            "markdownEnumDescriptions": [
+              "%configuration.dotnet.server.sourceGeneratorExecution.balanced%",
+              "%configuration.dotnet.server.sourceGeneratorExecution.automatic%"
+            ],
+            "markdownDescription": "%configuration.dotnet.server.sourceGeneratorExecution%"
+          },
           "dotnet.enableXamlTools": {
             "scope": "machine-overridable",
             "type": "boolean",
@@ -1875,6 +1896,12 @@
         "when": "false"
       },
       {
+        "command": "csharp.rerunSourceGenerators",
+        "title": "%command.csharp.rerunSourceGenerators%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+      },
+      {
         "command": "csharp.listProcess",
         "title": "%command.csharp.listProcess%",
         "category": "CSharp",
@@ -1913,6 +1940,18 @@
       {
         "command": "csharp.recordLanguageServerTrace",
         "title": "%command.csharp.recordLanguageServerTrace%",
+        "category": "CSharp",
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+      },
+      {
+        "command": "csharp.captureLogs",
+        "title": "%command.csharp.captureLogs%",
+        "category": "CSharp",
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+      },
+      {
+        "command": "csharp.collectDump",
+        "title": "%command.csharp.collectDump%",
         "category": "CSharp",
         "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
       },
