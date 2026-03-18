@@ -34,11 +34,7 @@ export async function testIntegrationDevkit(): Promise<void> {
 
 export async function testIntegrationRazorCohost(): Promise<void> {
     for (const projectName of razorIntegrationTestProjects) {
-        await runIntegrationTest(
-            projectName,
-            path.join('razor', 'razorIntegrationTests'),
-            `Razor Test Integration ${projectName}`
-        );
+        await runIntegrationTest(projectName, path.join('razor', 'razorIntegrationTests'), `Razor-${projectName}`);
     }
 }
 
