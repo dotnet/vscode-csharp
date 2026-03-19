@@ -130,7 +130,7 @@
     "vscode-languageserver-protocol": "3.17.6-next.15",
     "vscode-languageserver-textdocument": "1.0.12",
     "vscode-languageserver-types": "3.17.6-next.6",
-    "yauzl": "2.10.0"
+    "yauzl": "3.2.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.6.2",
