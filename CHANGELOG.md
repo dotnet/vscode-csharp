@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.132.x
+* Update Razor to 10.0.0-preview.26163.2 (PR: [#9067](https://github.com/dotnet/vscode-csharp/pull/9067))
+  * Treat unmapped directive spans as Razor for code actions (PR: [#12893](https://github.com/dotnet/razor/pull/12893))
 
 # 2.131.x
 * Update Roslyn to 5.6.0-2.26163.11 (PR: [#9068](https://github.com/dotnet/vscode-csharp/pull/9068))
