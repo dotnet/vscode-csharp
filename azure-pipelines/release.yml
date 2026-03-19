@@ -156,6 +156,9 @@ extends:
           clean: true
           submodules: false
           fetchTags: false
+          # fetchDepth is defaulted to 1 in the pipeline definition. Passing 0 here ensures we get
+          # all the history including the officialBuildCI.sourceCommit.
+          fetchDepth: 0
         - pwsh: |
             git checkout $(resources.pipeline.officialBuildCI.sourceCommit)
           displayName: 'Checkout build source branch'
