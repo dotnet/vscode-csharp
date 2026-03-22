@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.132.x
+* Update Razor to 10.0.0-preview.26171.1 (PR: [#9090](https://github.com/dotnet/vscode-csharp/pull/9090))
+  * Don't squiggle unused directives in VS Code (PR: [#12932](https://github.com/dotnet/razor/pull/12932))
+  * Fix block bodied lambda attribute formatting (PR: [#12913](https://github.com/dotnet/razor/pull/12913))
+  * Fix NRE when remote call fails (PR: [#12912](https://github.com/dotnet/razor/pull/12912))
 * Update Razor to 10.0.0-preview.26163.2 (PR: [#9067](https://github.com/dotnet/vscode-csharp/pull/9067))
   * Treat unmapped directive spans as Razor for code actions (PR: [#12893](https://github.com/dotnet/razor/pull/12893))
 
