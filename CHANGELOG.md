@@ -9,6 +9,10 @@
   * Fix block bodied lambda attribute formatting (PR: [#12913](https://github.com/dotnet/razor/pull/12913))
 * Update Razor to 10.0.0-preview.26163.2 (PR: [#9067](https://github.com/dotnet/vscode-csharp/pull/9067))
   * Treat unmapped directive spans as Razor for code actions (PR: [#12893](https://github.com/dotnet/razor/pull/12893))
+* Update xamlTools to 18.6.11622.36 (PR: [#9091](https://github.com/dotnet/vscode-csharp/pull/9091))
+  * Implicit XML namespaces for MAUI improvements, full support (PR: AzDO#708533)
+  * Fix unhandled null reference exception in XAML Language Servce (PR: AzDO#719778)
+  * Disable legacy XAML Hot Reload if SourceGen is active (PR: AzDO#715789)
 
 # 2.131.x
 * Update Roslyn to 5.6.0-2.26163.11 (PR: [#9068](https://github.com/dotnet/vscode-csharp/pull/9068))
