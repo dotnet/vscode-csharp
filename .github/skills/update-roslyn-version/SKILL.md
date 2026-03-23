@@ -22,7 +22,53 @@ This skill describes how to update the Roslyn language server version in the vsc
 
 ## Input Required
 
-- **New Roslyn Version**: The new version to update to (e.g., `5.5.0-2.26080.10`)
+- **New Roslyn Version** (optional): The new version to update to (e.g., `5.5.0-2.26080.10`). If not provided, the version will be auto-discovered from the latest passing `dotnet-roslyn-official` pipeline build on main. See [Version Auto-Discovery](#version-auto-discovery) below.
+
+## Version Auto-Discovery
+
+If the user does not provide a specific Roslyn version, follow these steps to discover the latest version from the official Roslyn build pipeline.
+
+### Prerequisites
+
+1. The Azure Developer CLI (`azd`) must be installed:
+   ```powershell
+   winget install Microsoft.Azd --accept-source-agreements --accept-package-agreements
+   ```
+2. You must be authenticated:
+   ```powershell
+   azd auth login
+   ```
+
+### Discovery Steps
+
+1. **Get an Azure DevOps bearer token:**
+   ```powershell
+   $tokenJson = azd auth token --scope "499b84ac-1321-427f-aa17-267ca6975798/.default" --output json
+   $token = ($tokenJson | ConvertFrom-Json).token
+   $headers = @{ Authorization = "Bearer $token" }
+   ```
+
+2. **Find the latest passing main build** (pipeline definition ID `327` = `dotnet-roslyn-official`):
+   ```powershell
+   $latest = Invoke-RestMethod -Uri "https://dnceng.visualstudio.com/internal/_apis/build/builds?definitions=327&branchName=refs/heads/main&statusFilter=completed&resultFilter=succeeded&`$top=1&api-version=7.0" -Headers $headers
+   $buildId = $latest.value[0].id
+   ```
+
+3. **Find the "Publish Assets" task log ID from the build timeline:**
+   ```powershell
+   $timeline = Invoke-RestMethod -Uri "https://dnceng.visualstudio.com/internal/_apis/build/builds/$buildId/timeline?api-version=7.0" -Headers $headers
+   $publishAssets = $timeline.records | Where-Object { $_.name -eq "Publish Assets" -and $_.type -eq "Task" }
+   $logUrl = $publishAssets.log.url
+   ```
+
+4. **Fetch the log and extract the NuGet package version:**
+   ```powershell
+   $log = Invoke-RestMethod -Uri $logUrl -Headers $headers
+   $match = ($log | Select-String -Pattern "Microsoft\.CodeAnalysis\.(\d+\.\d+\.\d+-[\w\.]+)\.nupkg" | Select-Object -First 1).Matches[0].Groups[1].Value
+   Write-Host "Discovered version: $match"
+   ```
+
+The extracted version (e.g., `5.6.0-2.26173.1`) is the value to use as the new Roslyn version for the rest of the process.
 
 ## Process
 
