@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.132.x
-* Update Roslyn to 5.6.0-2.26173.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.6.0-2.26173.1 (PR: [#9093](https://github.com/dotnet/vscode-csharp/pull/9093))
   * Optimize annotation search to avoid unnecessary red node creation (PR: [#82816](https://github.com/dotnet/roslyn/pull/82816))
   * Reduce allocations in MergedNamespaceDeclaration.addNamespacesToChildren (PR: [#82819](https://github.com/dotnet/roslyn/pull/82819))
   * Put binder for object initializers in the binder map (PR: [#82543](https://github.com/dotnet/roslyn/pull/82543))
