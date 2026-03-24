@@ -23,7 +23,7 @@ import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 const DotNetMajorVersion = '10';
 const DotNetMinorVersion = '0';
-const DotNetPatchVersion = '0';
+const DotNetPatchVersion = '5';
 export const DotNetRuntimeVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}.${DotNetPatchVersion}`;
 
 /**
@@ -66,10 +66,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         };
 
         if (usingDevkit) {
-            const toolingRuntimeHostInfo = await this.tryGetToolingRuntimeHostInfo({
-                ...findPathRequest,
-                rejectPreviews: false,
-            });
+            const toolingRuntimeHostInfo = await this.tryGetToolingRuntimeHostInfo();
             if (toolingRuntimeHostInfo) {
                 this.hostInfo = toolingRuntimeHostInfo;
                 return toolingRuntimeHostInfo;
@@ -98,9 +95,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         return hostInfo;
     }
 
-    private async tryGetToolingRuntimeHostInfo(
-        findPathRequest: IDotnetFindPathContext
-    ): Promise<HostExecutableInformation | undefined> {
+    private async tryGetToolingRuntimeHostInfo(): Promise<HostExecutableInformation | undefined> {
         // get vscode setting value for dotnet.toolingRuntimePath
         const toolingRuntimePath = languageServerOptions.toolingRuntimePath;
         if (toolingRuntimePath.length === 0) {

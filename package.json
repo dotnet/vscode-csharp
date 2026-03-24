@@ -40,9 +40,9 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.6.0-2.26159.3",
+    "roslyn": "5.6.0-2.26163.11",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.26155.3",
+    "razor": "10.0.0-preview.26171.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.4.11427.62"
   },
@@ -88,7 +88,9 @@
     "publishRoslynCopilot": "npx ts-node tasks/components/publishRoslynCopilot.ts",
     "signJs": "npx ts-node tasks/signing/signJs.ts",
     "signVsix": "npx ts-node tasks/signing/signVsix.ts",
+    "test": "npm run test:unit && npm run test:artifacts",
     "test:artifacts": "npm run compileDev && npx ts-node tasks/tests/testArtifacts.ts",
+    "test:integration": "npm run test:integration:csharp && npm run test:integration:devkit && npm run test:integration:razor:cohost && npm run test:integration:untrusted",
     "test:integration:csharp": "npm run packageDev && npx ts-node tasks/tests/testIntegrationCsharp.ts",
     "test:integration:devkit": "npm run packageDev && npx ts-node tasks/tests/testIntegrationDevkit.ts",
     "test:integration:razor:cohost": "npm run packageDev && npx ts-node tasks/tests/testIntegrationRazorCohost.ts",
@@ -128,7 +130,7 @@
     "vscode-languageserver-protocol": "3.17.6-next.15",
     "vscode-languageserver-textdocument": "1.0.12",
     "vscode-languageserver-types": "3.17.6-next.6",
-    "yauzl": "2.10.0"
+    "yauzl": "3.2.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.6.2",
@@ -145,7 +147,7 @@
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
     "@vscode/l10n-dev": "^0.0.35",
-    "@vscode/test-electron": "2.3.8",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "3.7.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.43.0",
@@ -1956,7 +1958,7 @@
         "command": "csharp.collectLogs",
         "title": "%command.csharp.collectLogs%",
         "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "extension.showRazorCSharpWindow",
