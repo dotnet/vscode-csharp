@@ -1560,10 +1560,10 @@
               "preview"
             ]
           },
-          "dotnet.projects.enableFileBasedProgramsAutomaticDiscovery": {
+          "dotnet.fileBasedApps.enableAutomaticDiscovery": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.projects.enableFileBasedProgramsAutomaticDiscovery%",
+            "description": "%configuration.dotnet.fileBasedApps.AutomaticDiscovery%",
             "tags": [
               "preview"
             ]
