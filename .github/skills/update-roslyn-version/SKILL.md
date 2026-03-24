@@ -30,42 +30,39 @@ If the user does not provide a specific Roslyn version, follow these steps to di
 
 ### Prerequisites
 
-1. The Azure Developer CLI (`azd`) must be installed:
-   ```powershell
-   winget install Microsoft.Azd --accept-source-agreements --accept-package-agreements
-   ```
+1. The Azure Developer CLI (`azd`) must be installed. See https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd for platform-specific instructions.
 2. You must be authenticated:
-   ```powershell
+   ```shell
    azd auth login
    ```
 
 ### Discovery Steps
 
 1. **Get an Azure DevOps bearer token:**
-   ```powershell
-   $tokenJson = azd auth token --scope "499b84ac-1321-427f-aa17-267ca6975798/.default" --output json
-   $token = ($tokenJson | ConvertFrom-Json).token
-   $headers = @{ Authorization = "Bearer $token" }
+   ```shell
+   TOKEN=$(azd auth token --scope "499b84ac-1321-427f-aa17-267ca6975798/.default" --output json | jq -r '.token')
    ```
 
 2. **Find the latest passing main build** (pipeline definition ID `327` = `dotnet-roslyn-official`):
-   ```powershell
-   $latest = Invoke-RestMethod -Uri "https://dnceng.visualstudio.com/internal/_apis/build/builds?definitions=327&branchName=refs/heads/main&statusFilter=completed&resultFilter=succeeded&`$top=1&api-version=7.0" -Headers $headers
-   $buildId = $latest.value[0].id
+   ```shell
+   BUILD_ID=$(curl -s -H "Authorization: Bearer $TOKEN" \
+     "https://dnceng.visualstudio.com/internal/_apis/build/builds?definitions=327&branchName=refs/heads/main&statusFilter=completed&resultFilter=succeeded&\$top=1&api-version=7.0" \
+     | jq '.value[0].id')
    ```
 
-3. **Find the "Publish Assets" task log ID from the build timeline:**
-   ```powershell
-   $timeline = Invoke-RestMethod -Uri "https://dnceng.visualstudio.com/internal/_apis/build/builds/$buildId/timeline?api-version=7.0" -Headers $headers
-   $publishAssets = $timeline.records | Where-Object { $_.name -eq "Publish Assets" -and $_.type -eq "Task" }
-   $logUrl = $publishAssets.log.url
+3. **Find the "Publish Assets" task log URL from the build timeline:**
+   ```shell
+   LOG_URL=$(curl -s -H "Authorization: Bearer $TOKEN" \
+     "https://dnceng.visualstudio.com/internal/_apis/build/builds/$BUILD_ID/timeline?api-version=7.0" \
+     | jq -r '.records[] | select(.name == "Publish Assets" and .type == "Task") | .log.url')
    ```
 
 4. **Fetch the log and extract the NuGet package version:**
-   ```powershell
-   $log = Invoke-RestMethod -Uri $logUrl -Headers $headers
-   $match = ($log | Select-String -Pattern "Microsoft\.CodeAnalysis\.(\d+\.\d+\.\d+-[\w\.]+)\.nupkg" | Select-Object -First 1).Matches[0].Groups[1].Value
-   Write-Host "Discovered version: $match"
+   ```shell
+   VERSION=$(curl -s -H "Authorization: Bearer $TOKEN" "$LOG_URL" \
+     | grep -oP 'Microsoft\.CodeAnalysis\.\K\d+\.\d+\.\d+-[\w.]+(?=\.nupkg)' \
+     | head -1)
+   echo "Discovered version: $VERSION"
    ```
 
 The extracted version (e.g., `5.6.0-2.26173.1`) is the value to use as the new Roslyn version for the rest of the process.
