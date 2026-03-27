@@ -203,6 +203,13 @@ export function getFakeVsCode(): vscode.vscode {
             showErrorMessage: <T extends vscode.MessageItem>(_message: string, ..._items: T[]) => {
                 throw new Error('Not Implemented');
             },
+            onDidChangeActiveTextEditor: (
+                _listener: (e: vscode.TextEditor | undefined) => any,
+                _thisArgs?: any,
+                _disposables?: vscode.Disposable[]
+            ): vscode.Disposable => {
+                return { dispose: () => {} };
+            },
         },
         workspace: {
             workspaceFolders: undefined,
