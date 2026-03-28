@@ -1561,6 +1561,14 @@
             "tags": [
               "preview"
             ]
+          },
+          "dotnet.fileBasedApps.enableAutomaticDiscovery": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.fileBasedApps.AutomaticDiscovery%",
+            "tags": [
+              "preview"
+            ]
           }
         }
       },
