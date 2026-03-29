@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.132.x
-* Update Razor to 10.0.0-preview.26179.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 10.0.0-preview.26179.2 (PR: [#9115](https://github.com/dotnet/vscode-csharp/pull/9115))
   * Handle when there is non-whitespace content after the end of a Razor comment (PR: [#12961](https://github.com/dotnet/razor/pull/12961))
   * Create an indent cache for formatting (PR: [#12950](https://github.com/dotnet/razor/pull/12950))
   * Fix formatting of script tags that have/are tag helpers (PR: [#12922](https://github.com/dotnet/razor/pull/12922))
