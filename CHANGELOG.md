@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.132.x
+* Update Razor to 10.0.0-preview.26179.2 (PR: [#9115](https://github.com/dotnet/vscode-csharp/pull/9115))
+  * Handle when there is non-whitespace content after the end of a Razor comment (PR: [#12961](https://github.com/dotnet/razor/pull/12961))
+  * Fix formatting of script tags that have/are tag helpers (PR: [#12922](https://github.com/dotnet/razor/pull/12922))
+  * Fix attribute formatting for short Html tags (PR: [#12944](https://github.com/dotnet/razor/pull/12944))
 * Update Roslyn to 5.6.0-2.26173.1 (PR: [#9093](https://github.com/dotnet/vscode-csharp/pull/9093))
   * Optimize annotation search to avoid unnecessary red node creation (PR: [#82816](https://github.com/dotnet/roslyn/pull/82816))
   * Reduce allocations in MergedNamespaceDeclaration.addNamespacesToChildren (PR: [#82819](https://github.com/dotnet/roslyn/pull/82819))
