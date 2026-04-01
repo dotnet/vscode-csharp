@@ -82,13 +82,14 @@ export interface LanguageServerOptions {
     readonly suppressMiscellaneousFilesToasts: boolean;
     readonly useServerGC: boolean;
     readonly reportInformationAsHint: boolean;
+    readonly environmentVariables: { [key: string]: string };
+    readonly sourceGeneratorExecution: string;
+    readonly toolingRuntimePath: string;
 }
 
 export interface RazorOptions {
     readonly razorDevMode: boolean;
     readonly razorPluginPath: string;
-    readonly razorServerPath: string;
-    readonly cohostingEnabled: boolean;
 }
 
 class CommonOptionsImpl implements CommonOptions {
@@ -419,6 +420,15 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get reportInformationAsHint() {
         return readOption<boolean>('dotnet.diagnostics.reportInformationAsHint', true);
     }
+    public get environmentVariables() {
+        return readOption<{ [key: string]: string }>('dotnet.server.environmentVariables', {});
+    }
+    public get sourceGeneratorExecution() {
+        return readOption<string>('dotnet.server.sourceGeneratorExecution', 'Balanced');
+    }
+    public get toolingRuntimePath() {
+        return readOption<string>('dotnet.toolingRuntimePath', '');
+    }
 }
 
 class RazorOptionsImpl implements RazorOptions {
@@ -427,12 +437,6 @@ class RazorOptionsImpl implements RazorOptions {
     }
     public get razorPluginPath() {
         return readOption<string>('razor.plugin.path', '');
-    }
-    public get razorServerPath() {
-        return readOption<string>('razor.languageServer.directory', '');
-    }
-    public get cohostingEnabled() {
-        return readOption<boolean>('razor.languageServer.cohostingEnabled', false);
     }
 }
 
@@ -520,4 +524,8 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'enableXamlTools',
     'useServerGC',
     'reportInformationAsHint',
+    'environmentVariables',
+    'sourceGeneratorExecution',
+    'crashDumpPath',
+    'toolingRuntimePath',
 ];

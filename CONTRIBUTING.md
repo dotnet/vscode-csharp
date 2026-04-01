@@ -23,10 +23,10 @@ Setting up your local development environment for the vscode-csharp repository i
 
 Before you start, make sure you have the following software installed on your machine:
 
-* Node.js v20 ([v20.17.0 LTS](https://nodejs.org/en/blog/release/v20.17.0)).
+* Node.js v24 ([24.13.0 LTS](https://nodejs.org/en/blog/release/v24.13.0)).
   * Note - Building with higher major versions of Node.js is not advised - it may work but we do not test it.
 * Npm (The version shipped with node is fine)
-* .NET 8.0 SDK (dotnet should be on your path)
+* .NET 10.0 SDK (dotnet should be on your path)
 
 Once you have these installed, you can navigate to the cloned vscode-csharp repository to proceed with building, running, and testing the repository.
 
@@ -38,11 +38,9 @@ Follow these steps to build, run, and test the repository:
 
 If you have the ability to run powershell, you can invoke "init.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
 
-1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
-   a.  If you have already authenticated before, but the token expired, you may need to run `vsts-npm-auth -config .npmrc -f` instead.
-2. Run `npm i` - This command installs the project dependencies.
-3. Run `npm i -g gulp` - This command installs Gulp globally.
-4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+1. Run `npm ci` - This command installs the project dependencies.
+
+**Note**: Authentication with `ado-npm-auth` is only required when adding new packages to the feeds. For regular development with existing dependencies, authentication is not necessary. See the [Updating NPM packages](#updating-npm-packages) section for details.
 
 You can now run `code .` - This command opens the project in Visual Studio Code.
 
@@ -64,9 +62,9 @@ To debug unit tests locally, press <kbd>F5</kbd> in VS Code with the "Launch Tes
 To debug integration tests
 1.  Import the `csharp-test-profile.code-profile` in VSCode to setup a clean profile in which to run integration tests.  This must be imported at least once to use the launch configurations (ensure the extensions are updated in the profile).
 2.  Open any integration test file and <kbd>F5</kbd> launch with the correct launch configuration selected.
-    - For integration tests inside `test/lsptoolshost`, use either `Launch Current File slnWithCsproj Integration Tests` or `[DevKit] Launch Current File slnWithCsproj Integration Tests` (to run tests using C# + C# Dev Kit)
+    - For integration tests inside `test/lsptoolshost`, use either `[Roslyn] Run Current File Integration Test` or `[DevKit] Launch Current File Integration Tests` (to run tests using C# + C# Dev Kit)
     - For integration tests inside `test/razor`, use `[Razor] Run Current File Integration Test`
-    - For integration tests inside `test/omnisharp`, use one of the `Omnisharp:` current file profiles
+    - For integration tests inside `test/omnisharp`, use one of the `[O#] Run Current File Integration Test` current file profiles
 
 These will allow you to actually debug the test, but the 'Razor integration tests' configuration does not.
 
@@ -86,7 +84,7 @@ The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnal
 1. Clone the [Razor repository](https://github.com/dotnet/razor). This repository contains the Razor server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net9.0`.
+The extension is typically at `$razorRepoRoot/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0`.
 
 ### Debugging Local Language Servers
 
@@ -148,28 +146,23 @@ Or, in VSCode settings (`Ctrl+,`):
 Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with the actual path to your Razor repository.
 
 ```json
-"razor.languageServer.debug": true,
-"razor.languageServer.directory": "<razorRepoRoot>/artifacts/bin/rzls/Debug/net9.0",
-"razor.server.trace": "Debug"
+"dotnet.server.componentPaths": {
+    "razorExtension": "<razorRepoRoot>/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0"
+},
 ```
-
----
-
-Or, in VSCode settings (`Ctrl+,`):
-
-1. Search for `Razor`.
-2. Set `razor.languageServer.directory` to the path of your Razor DLL.
-3. Enable `razor.languageServer.debug`.
-4. Set `razor.server.trace` to `Debug`. This gives you more detailed log messages in the output window.
 
 ### Updating NPM packages
 We use the .NET eng AzDo artifacts feed https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet-public-npm/npm/registry/ with upstreams to the public npm registry.
-Auth is required in order to pull new packages from the upstream.  This can be done by running `vsts-npm-auth -config .npmrc`.
-If you need to renew authorization, you can force it via `vsts-npm-auth -config .npmrc -F`
+
+**Note**: Authentication is only required when adding new packages to the feeds. For installing existing dependencies during regular development, authentication is not necessary.
+
+To add new packages, you must authenticate by running:
+1. `npm install -g ado-npm-auth` (if not already installed)
+2. `ado-npm-auth -c .npmrc`
 
 ## Creating VSIX Packages for the Extension
 
-To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the gulp command `gulp vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
+To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the command `npm run vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
 
 ## Updating the `Roslyn` Language Server Version
 
@@ -179,7 +172,7 @@ To update the version of the roslyn server used by the extension do the followin
 1.  Find the the Roslyn signed build you want from [here](https://dnceng.visualstudio.com/internal/_build?definitionId=327&_a=summary).  Typically the latest successful build of main is fine.
 2.  In the official build stage, look for the `Publish Assets` step.  In there you will see it publishing the `Microsoft.CodeAnalysis.LanguageServer.neutral` package with some version, e.g. `4.6.0-3.23158.4`.  Take note of that version number.
 3.  In the [package.json](package.json) inside the `defaults` section update the `roslyn` key to point to the version number you found above in step 2.
-4.  Ensure that version of the package is in the proper feeds by running `gulp updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
+4.  Ensure that version of the package is in the proper feeds by running `npm run updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
 5.  Build and test the change. If everything looks good, submit a PR.
 
 ## Updating the `Roslyn` Copilot Language Server version
@@ -196,15 +189,25 @@ More details for this are [here] (https://devdiv.visualstudio.com/DevDiv/_git/Vi
 ## Snapping for releases
 Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.
 
+### Versioning Scheme
+The extension follows a specific versioning scheme for releases:
+- **Prerelease versions**: Use standard minor version increments (e.g., 2.74, 2.75, 2.76...)
+- **Stable release versions**: Use the next tens version (e.g., 2.74 prerelease becomes 2.80 stable)
+- **Main branch after RC snap**: Jumps to one above the next stable version (e.g., if snapping 2.74 as RC, main becomes 2.81)
+
 ### Snap main -> prerelease
 The snap is done via the "Branch snap" github action.  To run the snap from main -> prerelease, run the action via "Run workflow" and choose main as the base branch.
 ![branch snap action](./docs/images/main_snap.png)
+
+When running the snap action, you can optionally check the "Is this a release candidate snap" checkbox. If checked:
+- The prerelease branch will receive the snapped code with the current version (e.g., 2.74)
+- The main branch version will be updated to be higher than the next stable release (e.g., 2.81, since the next stable would be 2.80)
 
 This will generate two PRs that must be merged.  One merging the main branch into prerelease, and the other bumps the version in main.
 ![generated prs](./docs/images/generated_prs.png)
 
 ### Snap prerelease -> release
-To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a single PR merging from prerelease to release.
+To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a PR merging from prerelease to release, and automatically update the version to the next stable release version (e.g., 2.74 -> 2.80) on the merge branch before the PR is merged.
 
 ### Marketplace release
 The marketplace release is managed by an internal AzDo pipeline.  On the pipeline page, hit run pipeline.  This will bring up the pipeline parameters to fill out:

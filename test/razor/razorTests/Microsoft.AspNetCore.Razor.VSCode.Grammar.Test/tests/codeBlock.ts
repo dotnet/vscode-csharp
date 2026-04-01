@@ -241,5 +241,30 @@ export function RunCodeBlockSuite() {
 }`
             );
         });
+
+        it('If statement without braces followed by script block', async () => {
+            await assertMatchesSnapshot(
+                `@{
+    if (l == 1)
+        Console.WriteLine("test");
+}
+
+<script>
+$(document).on("ready", function() {
+    console.log("working");
+});
+</script>`
+            );
+        });
+
+        it('If statement without braces followed by HTML', async () => {
+            await assertMatchesSnapshot(
+                `@{
+    if (true)
+        Console.WriteLine("test");
+}
+<div>Hello World</div>`
+            );
+        });
     });
 }

@@ -5,7 +5,6 @@
 
 import * as vscode from 'vscode';
 import { CSharpExtensionExports } from './csharpExtensionExports';
-import { activateRazorExtension } from './razor/razor';
 import { PlatformInformation } from './shared/platform';
 import { Observable } from 'rxjs';
 import { EventStream } from './eventStream';
@@ -13,7 +12,7 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer';
 import { CSharpDevKitExports } from './csharpDevKitExports';
 import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents';
-import { activateRoslynLanguageServer } from './lsptoolshost/activate';
+import { activateRoslynLanguageServer, createCaptureActivityLogs } from './lsptoolshost/activate';
 import Descriptors from './lsptoolshost/solutionSnapshot/descriptors';
 import { getBrokeredServiceContainer } from './lsptoolshost/serviceBroker/brokeredServicesHosting';
 import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
@@ -41,25 +40,6 @@ export function activateRoslyn(
     context.subscriptions.push(roslynLanguageServerEvents);
 
     const razorLogger = new RazorLogger();
-
-    // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
-    // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
-    //
-    // Flow:
-    // Razor starts up and registers dynamic file info commands ->
-    // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
-    //     for dynamic file info once project system is ready ->
-    // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-    const razorLanguageServerStartedPromise = activateRazorExtension(
-        context,
-        context.extension.extensionPath,
-        eventStream,
-        reporter,
-        csharpDevkitExtension,
-        platformInfo,
-        /* useOmnisharpServer */ false,
-        razorLogger
-    );
 
     // Setup a listener for project initialization complete before we start the server.
     const projectInitializationCompletePromise = new Promise<void>((resolve, _) => {
@@ -90,7 +70,6 @@ export function activateRoslyn(
         isLimitedActivation: false,
         initializationFinished: async () => {
             await coreClrDebugPromise;
-            await razorLanguageServerStartedPromise;
             await roslynLanguageServerStartedPromise;
             await projectInitializationCompletePromise;
         },
@@ -108,6 +87,11 @@ export function activateRoslyn(
             return getComponentFolder(componentName, languageServerOptions);
         },
         tryToUseVSDbgForMono: BlazorDebugConfigurationProvider.tryToUseVSDbgForMono,
+        languageServerProcessId: () => RoslynLanguageServer.processId,
+        captureActivityLogs: async () => {
+            const languageServer = await roslynLanguageServerStartedPromise;
+            return createCaptureActivityLogs(languageServer, razorLogger);
+        },
     };
 
     return exports;

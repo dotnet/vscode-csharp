@@ -12,8 +12,9 @@ import { ServerState } from '../../../src/lsptoolshost/server/languageServerEven
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';
+import { WaitForAsyncOperationsRequest } from './testHooks';
 
-export async function activateCSharpExtension(): Promise<void> {
+export async function activateCSharpExtension(): Promise<CSharpExtensionExports> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
@@ -53,6 +54,8 @@ export async function activateCSharpExtension(): Promise<void> {
     if (shouldRestart) {
         await restartLanguageServer();
     }
+
+    return csharpExtension.exports;
 }
 
 export function usingDevKit(): boolean {
@@ -111,6 +114,25 @@ export function isRazorWorkspace(workspace: typeof vscode.workspace) {
 
 export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
     return isGivenSln(workspace, 'slnWithGenerator');
+}
+
+export async function getCompletionsAsync(
+    position: vscode.Position,
+    triggerCharacter: string | undefined,
+    completionsToResolve: number
+): Promise<vscode.CompletionList> {
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor) {
+        throw new Error('No active editor');
+    }
+
+    return await vscode.commands.executeCommand(
+        'vscode.executeCompletionItemProvider',
+        activeEditor.document.uri,
+        position,
+        triggerCharacter,
+        completionsToResolve
+    );
 }
 
 export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
@@ -278,6 +300,10 @@ export const testIfDevKit = testIf(usingDevKit());
 export const testIfNotMacOS = testIf(!isMacOS());
 export const testIfWindows = testIf(isWindows());
 
+const runFileBasedProgramsTests = process.env['ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS'] !== 'true';
+console.log(`process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: ${process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS}`);
+export const describeIfFileBasedPrograms = describeIf(runFileBasedProgramsTests);
+
 function describeIf(condition: boolean) {
     return condition ? describe : describe.skip;
 }
@@ -298,4 +324,9 @@ function isWindows() {
 
 function isLinux() {
     return !(isMacOS() || isWindows());
+}
+
+export async function waitForAllAsyncOperationsAsync(exports: CSharpExtensionExports): Promise<void> {
+    const source = new vscode.CancellationTokenSource();
+    await exports.experimental.sendServerRequest(WaitForAsyncOperationsRequest.type, { operations: [] }, source.token);
 }

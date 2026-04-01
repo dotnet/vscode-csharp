@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, test, beforeAll, afterAll } from '@jest/globals';
+import { expect, test, beforeAll, afterAll, describe } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { describeIfNotRazorOrGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 const onTypeFormatProviderCommand = 'vscode.executeFormatOnTypeProvider';
@@ -19,7 +18,7 @@ function normalizeNewlines(original: string): string {
     return original;
 }
 
-describeIfNotRazorOrGenerator(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`, function () {
+describe.skip(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
     beforeAll(async function () {

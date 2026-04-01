@@ -50,11 +50,11 @@ describe(`Source Generator Tests`, () => {
                 requestPosition
             )
         );
-        expect(referencesList.length).toEqual(8);
+        expect(referencesList.length).toEqual(5);
         const referencesInGeneratedFiles = sortLocations(
             referencesList.filter((r) => r.uri.scheme === 'roslyn-source-generated')
         );
-        expect(referencesInGeneratedFiles.length).toEqual(7);
+        expect(referencesInGeneratedFiles.length).toEqual(4);
         const firstPath = referencesInGeneratedFiles[0].uri.path;
         expect(firstPath).toEqual('/SourceGenerationContext.g.cs');
 

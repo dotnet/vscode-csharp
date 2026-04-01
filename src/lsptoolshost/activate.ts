@@ -16,7 +16,6 @@ import { registerUnitTestingCommands } from './testing/unitTesting';
 import { registerLanguageServerOptionChanges } from './options/optionChanges';
 import { Observable } from 'rxjs';
 import { RoslynLanguageServerEvents } from './server/languageServerEvents';
-import { registerRazorCommands } from './razor/razorCommands';
 import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction';
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
@@ -27,14 +26,16 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
-import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvider';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
-import { registerTraceCommand } from './profiling/profiling';
+import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
+import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
+import { ActivityLogCapture } from '../csharpExtensionExports';
+import { createActivityLogCapture } from './logging/loggingUtils';
 
-let _channel: vscode.LogOutputChannel;
-let _traceChannel: vscode.LogOutputChannel;
+let _channel: ObservableLogOutputChannel;
+let _traceChannel: ObservableLogOutputChannel;
 
 /**
  * Creates and activates the Roslyn language server.
@@ -50,9 +51,11 @@ export async function activateRoslynLanguageServer(
     razorLogger: RazorLogger
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
-    _channel = outputChannel;
+    // Wrap in ObservableLogOutputChannel to enable capturing logs regardless of UI log level.
+    _channel = new ObservableLogOutputChannel(outputChannel);
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
-    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
+    const traceOutputChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
+    _traceChannel = new ObservableLogOutputChannel(traceOutputChannel);
 
     reporter.sendTelemetryEvent(TelemetryEventNames.ClientInitialize);
 
@@ -75,19 +78,15 @@ export async function activateRoslynLanguageServer(
         _traceChannel
     );
 
-    registerTraceCommand(context, languageServer, outputChannel);
-
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
-    registerCopilotRelatedFilesProvider(context, languageServer, _channel);
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel);
+    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel, reporter, razorLogger);
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
-    registerRazorCommands(context, languageServer);
     registerRazorEndpoints(context, languageServer, razorLogger, platformInfo);
 
     registerUnitTestingCommands(context, languageServer);
@@ -98,6 +97,7 @@ export async function activateRoslynLanguageServer(
     registerRestoreCommands(context, languageServer, _channel);
 
     registerSourceGeneratedFilesContentProvider(context, languageServer);
+    registerSourceGeneratorRefresh(context, languageServer, _channel);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 
@@ -166,11 +166,6 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
     let extension = '';
     if (platformInfo.isWindows()) {
         extension = '.exe';
-    } else if (platformInfo.isMacOS()) {
-        // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
-        // and therefore dotnet publish does not automatically sign them.
-        // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
-        extension = '.dll';
     }
 
     let pathWithExtension = `${serverFilePath}${extension}`;
@@ -180,4 +175,15 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
     }
 
     return pathWithExtension;
+}
+
+/**
+ * Creates an activity log capture that collects logs from the C#, LSP trace, and Razor channels.
+ * Sets log levels to Trace for capture. Call dispose() to stop capturing and restore log levels.
+ */
+export async function createCaptureActivityLogs(
+    languageServer: RoslynLanguageServer,
+    razorLogger: RazorLogger
+): Promise<ActivityLogCapture> {
+    return createActivityLogCapture(languageServer, _channel, _traceChannel, razorLogger);
 }

@@ -40,6 +40,8 @@ pr:
     # Changes to documentation are not functional changes.
     - '**.md'
     - CODEOWNERS
+    # Changes to init.ps1 is not exercised in CI
+    - 'init.ps1'
     # Changes to the vesion is not a functional change. The extension version is updated by the branch-snap GH action.
     - 'version.json'
     # Changes to text files (e.g. third party notices) are not functional changes.
@@ -55,11 +57,10 @@ schedules:
         - main
 
 variables:
-- template: /azure-pipelines/dotnet-variables.yml@self
 - name: testVSCodeVersion
-  ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}: 
+  ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}:
     value: insiders
-  ${{ else }}: 
+  ${{ else }}:
     value: stable
 
 stages:
@@ -67,52 +68,71 @@ stages:
   parameters:
     isOfficial: false
     signType: test
-    dotnetVersion: $(defaultDotnetVersion)
 
 - template: azure-pipelines/validate-build.yml
-  parameters:
-    dotnetVersion: $(defaultDotnetVersion)
 
 - stage:
   displayName: Test Linux (.NET 8)
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       os: linux
       # Prefer the dotnet from the container.
-      dotnetVersion: ''
+      installDotNet: false
       testVSCodeVersion: $(testVSCodeVersion)
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        demands: ImageOverride -equals 1es-ubuntu-2004-open
-      containerName: mcr.microsoft.com/dotnet/sdk:8.0
+        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+      containerName: mcr.microsoft.com/dotnet/sdk:8.0-noble
 
 - stage:
   displayName: Test Linux (.NET 9)
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       os: linux
       # Prefer the dotnet from the container.
-      dotnetVersion: ''
+      installDotNet: false
       testVSCodeVersion: $(testVSCodeVersion)
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        demands: ImageOverride -equals 1es-ubuntu-2004-open
-      containerName: mcr.microsoft.com/dotnet/sdk:9.0
+        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+      containerName: mcr.microsoft.com/dotnet/sdk:9.0-noble
 
-- stage: Test_Windows_Stage
-  displayName: Test Windows
+- stage:
+  displayName: Test Linux (.NET 10)
   dependsOn: []
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: linux
+      # Prefer the dotnet from the container.
+      installDotNet: false
+      testVSCodeVersion: $(testVSCodeVersion)
+      installAdditionalLinuxDependencies: true
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+      containerName: mcr.microsoft.com/dotnet/sdk:10.0-noble
+
+- stage: Test_Windows_Stage
+  displayName: Test Windows
+  dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
+  jobs:
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
       os: windows
-      dotnetVersion: $(defaultDotnetVersion)
+      installDotNet: true
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: NetCore-Public
@@ -121,15 +141,17 @@ stages:
 - stage: Test_MacOS_Stage
   displayName: Test MacOS
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       os: macos
-      dotnetVersion: $(defaultDotnetVersion)
+      installDotNet: true
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: Azure Pipelines
-        vmImage: macOS-13
+        vmImage: macOS-15
 
 - stage: Test_OmniSharp
   displayName: Test OmniSharp
@@ -139,7 +161,7 @@ stages:
     strategy:
       matrix:
         linux:
-          demandsName: 1es-ubuntu-2004-open
+          demandsName: build.ubuntu.2204.amd64.open
         windows:
           demandsName: 1es-windows-2022-open
     pool:
@@ -148,5 +170,5 @@ stages:
     steps:
     - template: azure-pipelines/test-omnisharp.yml
       parameters:
-        dotnetVersion: $(defaultDotnetVersion)
+        installDotNet: true
         testVSCodeVersion: $(testVSCodeVersion)

@@ -46,7 +46,7 @@ You can test for this condition by adding the following code to the start of you
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
             {
                 nativeLibraryPrefix = "lib";
-                nativeLibraryExtension = ".so";
+                nativeLibraryExtension = ".dylib";
             }
             else
             {

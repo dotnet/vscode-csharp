@@ -16,6 +16,11 @@ injections:
       - include: '#explicit-razor-expression'
       - include: '#implicit-expression'
 
+  # Inject inline templates into C# scope to handle @<tag> inside C# expressions
+  source.cs:
+    patterns:
+      - include: '#inline-template'
+
 patterns:
   - include: '#razor-control-structures'
   - include: 'text.html.basic'
@@ -71,6 +76,7 @@ repository:
   razor-codeblock-body:
     patterns:
       - include: '#text-tag'
+      - include: '#inline-template'
       - include: '#wellformed-html'
       - include: '#razor-single-line-markup'
       - include: '#optionally-transitioned-razor-control-structures'
@@ -95,6 +101,50 @@ repository:
     end: '(</text>)'
     endCaptures:
       1: { name: 'keyword.control.cshtml.transition.textTag.close' }
+
+  # Inline template @<tag>...</tag> inside C# contexts
+  inline-template:
+    patterns:
+      - include: '#inline-template-void-tag'
+      - include: '#inline-template-non-void-tag'
+
+  inline-template-void-tag:
+    name: 'meta.tag.structure.$4.void.html'
+    begin: '(?i)(@)(<)(!)?(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)(?=\s|/?>)'
+    beginCaptures:
+      1: { patterns: [ include: '#transition' ] }
+      2: { name: 'punctuation.definition.tag.begin.html'}
+      3: { name: 'constant.character.escape.razor.tagHelperOptOut' }
+      4: { name: 'entity.name.tag.html' }
+    patterns:
+      - include: '#razor-control-structures'
+      - include: 'text.html.basic#attribute'
+    end: '/?>'
+    endCaptures:
+      0: { name: 'punctuation.definition.tag.end.html' }
+
+  inline-template-non-void-tag:
+    begin: '(@)(<)(!)?([^/\s>]+)(?=\s|/?>)'
+    beginCaptures:
+      1: { patterns: [ include: '#transition' ] }
+      2: { name: 'punctuation.definition.tag.begin.html' }
+      3: { name: 'constant.character.escape.razor.tagHelperOptOut' }
+      4: { name: 'entity.name.tag.html' }
+    end: '(</)(\4)\s*(>)|(/>)'
+    endCaptures:
+      1: { name: 'punctuation.definition.tag.begin.html' }
+      2: { name: 'entity.name.tag.html' }
+      3: { name: 'punctuation.definition.tag.end.html' }
+      4: { name: 'punctuation.definition.tag.end.html' }
+    patterns:
+      - begin: '(?<=>)(?!$)'
+        end: '(?=</)'
+        patterns:
+          - include: '#inline-template'
+          - include: '#wellformed-html'
+          - include: '#razor-control-structures'
+      - include: '#razor-control-structures'
+      - include: 'text.html.basic#attribute'
 
 # --------- Razor Comment -----------
 
@@ -578,7 +628,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   using-statement-with-optional-transition:
     name: 'meta.statement.using.razor'
@@ -590,7 +640,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @if (...) { ... } <<<<<
 
@@ -604,7 +654,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   if-statement-with-optional-transition:
     name: 'meta.statement.if.razor'
@@ -616,7 +666,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> else [if (...)] { ... } <<<<<
 
@@ -630,7 +680,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @for (...) { ... } <<<<<
 
@@ -644,7 +694,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   for-statement-with-optional-transition:
     name: 'meta.statement.for.razor'
@@ -656,7 +706,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @foreach (...) { ... } <<<<<
 
@@ -671,7 +721,7 @@ repository:
       - include: '#foreach-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   foreach-statement-with-optional-transition:
     name: 'meta.statement.foreach.razor'
@@ -684,7 +734,7 @@ repository:
       - include: '#foreach-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   # This condition is pulled directly from the C# grammar for foreach statements
   foreach-condition:
@@ -753,7 +803,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   do-statement-with-optional-transition:
     name: 'meta.statement.do.razor'
@@ -765,7 +815,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @while (...) { ... } <<<<<
 
@@ -795,7 +845,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#switch-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   switch-statement-with-optional-transition:
     name: 'meta.statement.switch.razor'
@@ -807,7 +857,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#switch-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   switch-code-block:
     name: 'meta.structure.razor.csharp.codeblock.switch'
@@ -834,7 +884,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   lock-statement-with-optional-transition:
     name: 'meta.statement.lock.razor'
@@ -846,7 +896,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @try { ... } [catch|finally] (...) { ... } <<<<<
 
@@ -872,7 +922,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   try-block-with-optional-transition:
     name: 'meta.statement.try.razor'
@@ -884,7 +934,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   catch-clause:
     name: 'meta.statement.catch.razor'
@@ -896,7 +946,7 @@ repository:
       - include: 'source.cs#when-clause'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   # This condition is pulled directly from the C# grammar for catch clauses
   catch-condition:
@@ -943,7 +993,7 @@ repository:
     patterns:
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   # ----------  Misc C# ------------
 

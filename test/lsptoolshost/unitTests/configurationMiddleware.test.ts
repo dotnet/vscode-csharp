@@ -278,7 +278,7 @@ const testData = [
 describe('Server option name to vscode configuration name test', () => {
     const packageJson = JSON.parse(readFileSync('package.json').toString());
     const configurations = <any[]>packageJson['contributes']['configuration'];
-    const numConfigurations = 5;
+    const numConfigurations = 6;
     test('Max server sections are expected', () => {
         expect(configurations.length).toBe(numConfigurations);
     });

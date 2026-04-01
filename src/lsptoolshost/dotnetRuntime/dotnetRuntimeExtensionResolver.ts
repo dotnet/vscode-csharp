@@ -21,9 +21,9 @@ import {
 import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
-const DotNetMajorVersion = '9';
+const DotNetMajorVersion = '10';
 const DotNetMinorVersion = '0';
-const DotNetPatchVersion = '1';
+const DotNetPatchVersion = '5';
 export const DotNetRuntimeVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}.${DotNetPatchVersion}`;
 
 /**
@@ -50,9 +50,9 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         const usingDevkit = getCSharpDevKit() !== undefined;
         // If we're using devkit, acquire aspnetcore as well - this avoids two separate acquisitions (devkit requires aspnetcore).
         const runtimeMode: DotnetInstallMode = usingDevkit ? 'aspnetcore' : 'runtime';
+        const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
 
         this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
-        const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
         const findPathRequest: IDotnetFindPathContext = {
             acquireContext: {
                 version: DotNetRuntimeVersion,
@@ -64,6 +64,15 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             // Reject previews because we are not setting `DOTNET_ROLL_FORWARD_TO_PRERELEASE` when starting the server.
             rejectPreviews: true,
         };
+
+        if (usingDevkit) {
+            const toolingRuntimeHostInfo = await this.tryGetToolingRuntimeHostInfo();
+            if (toolingRuntimeHostInfo) {
+                this.hostInfo = toolingRuntimeHostInfo;
+                return toolingRuntimeHostInfo;
+            }
+        }
+
         let acquireResult = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
             'dotnet.findPath',
             findPathRequest
@@ -84,6 +93,33 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         };
         this.hostInfo = hostInfo;
         return hostInfo;
+    }
+
+    private async tryGetToolingRuntimeHostInfo(): Promise<HostExecutableInformation | undefined> {
+        // get vscode setting value for dotnet.toolingRuntimePath
+        const toolingRuntimePath = languageServerOptions.toolingRuntimePath;
+        if (toolingRuntimePath.length === 0) {
+            return undefined;
+        }
+
+        this.channel.appendLine(
+            `Validating runtime override dotnet.toolingRuntimePath which is set to "${toolingRuntimePath}".`
+        );
+
+        if (!path.isAbsolute(toolingRuntimePath) || !existsSync(toolingRuntimePath)) {
+            this.channel.appendLine(
+                "The path specified in dotnet.toolingRuntimePath is not absolute or doesn't exist. Falling back to normal runtime acquisition."
+            );
+            return undefined;
+        }
+
+        this.channel.appendLine('Using runtime override specified in dotnet.toolingRuntimePath.');
+
+        return {
+            version: '' /* We don't need to know the version - we've already downloaded the correct one */,
+            path: toolingRuntimePath,
+            env: this.getEnvironmentVariables(toolingRuntimePath),
+        };
     }
 
     private getEnvironmentVariables(dotnetExecutablePath: string): NodeJS.ProcessEnv {

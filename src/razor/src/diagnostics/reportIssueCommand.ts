@@ -5,7 +5,6 @@
 
 import { HtmlDocumentManager } from '../../../lsptoolshost/razor/htmlDocumentManager';
 import { RoslynLanguageServer } from '../../../lsptoolshost/server/roslynLanguageServer';
-import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLogger } from '../razorLogger';
 import { api } from '../vscodeAdapter';
 import * as vscode from '../vscodeAdapter';
@@ -20,18 +19,12 @@ export class ReportIssueCommand {
 
     constructor(
         private readonly vscodeApi: api,
-        documentManager: RazorDocumentManager | undefined,
-        cohostingDocumentManager: HtmlDocumentManager | undefined,
-        roslynLanguageServer: RoslynLanguageServer | undefined,
+        cohostingDocumentManager: HtmlDocumentManager,
+        roslynLanguageServer: RoslynLanguageServer,
         logger: RazorLogger
     ) {
         this.dataCollectorFactory = new ReportIssueDataCollectorFactory(logger);
-        this.issueCreator = new ReportIssueCreator(
-            this.vscodeApi,
-            documentManager,
-            cohostingDocumentManager,
-            roslynLanguageServer
-        );
+        this.issueCreator = new ReportIssueCreator(this.vscodeApi, cohostingDocumentManager, roslynLanguageServer);
         this.issuePanel = new ReportIssuePanel(this.dataCollectorFactory, this.issueCreator, logger);
     }
 

@@ -154,7 +154,8 @@ export async function activateOmniSharpLanguageServer(
             eventStream,
             context.extension.packageJSON,
             platformInfo,
-            context.extension.extensionPath
+            context.extension.extensionPath,
+            reporter
         );
 
         await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
@@ -178,7 +179,8 @@ export async function activateOmniSharpLanguageServer(
         networkSettingsProvider,
         eventStream,
         context.extension.extensionPath,
-        omnisharpChannel
+        omnisharpChannel,
+        reporter
     );
 }
 
@@ -189,7 +191,8 @@ async function activate(
     provider: NetworkSettingsProvider,
     eventStream: EventStream,
     extensionPath: string,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.OutputChannel,
+    reporter: ITelemetryReporter
 ) {
     const disposables = new CompositeDisposable();
 
@@ -211,7 +214,8 @@ async function activate(
         omnisharpDotnetResolver,
         context,
         outputChannel,
-        languageMiddlewareFeature
+        languageMiddlewareFeature,
+        reporter
     );
     const advisor = new Advisor(server); // create before server is started
     const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);

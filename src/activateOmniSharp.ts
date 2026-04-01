@@ -12,8 +12,7 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { activateOmniSharpLanguageServer } from './omnisharp/omnisharpLanguageServer';
 import { EventStream } from './eventStream';
 import { razorOptions } from './shared/options';
-import { activateRazorExtension } from './razor/razor';
-import { RazorLogger } from './razor/src/razorLogger';
+import { activateRazorOmniSharpExtension } from './razor/razorOmnisharp';
 
 export function activateOmniSharp(
     context: vscode.ExtensionContext,
@@ -40,19 +39,9 @@ export function activateOmniSharp(
         reporter
     );
 
-    const razorLogger = new RazorLogger();
     let omnisharpRazorPromise: Promise<void> | undefined = undefined;
     if (!razorOptions.razorDevMode) {
-        omnisharpRazorPromise = activateRazorExtension(
-            context,
-            context.extension.extensionPath,
-            eventStream,
-            reporter,
-            undefined,
-            platformInfo,
-            /* useOmnisharpServer */ true,
-            razorLogger
-        );
+        omnisharpRazorPromise = activateRazorOmniSharpExtension(context, context.extension.extensionPath, eventStream);
     }
 
     const coreClrDebugPromise = getCoreClrDebugPromise(omnisharpLangServicePromise);

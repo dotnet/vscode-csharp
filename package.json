@@ -40,11 +40,11 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.3.0-1.25513.2",
+    "roslyn": "5.6.0-2.26173.1",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25512.6",
+    "razor": "10.0.0-preview.26179.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "18.0.11023.10"
+    "xamlTools": "18.6.11622.36"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -63,30 +63,47 @@
     }
   ],
   "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "tsc -p ./ && npx eslint ./ && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
-    "compileDev": "tsc -p ./ && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
-    "package": "npm run compile && node esbuild.js --production && gulp signJs",
-    "packageDev": "npm run compileDev && node esbuild.js",
-    "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
+    "compile": "tsc -p tsconfig.json && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
+    "compileDev": "tsc -p tsconfig.json && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
-    "test:unit": "npm run compileDev && gulp test:unit",
-    "test:integration:csharp": "npm run packageDev && gulp test:integration:csharp",
-    "test:integration:razor": "npm run packageDev && gulp test:integration:razor",
-    "test:integration:razor:cohost": "npm run packageDev && gulp test:integration:razor:cohost",
-    "test:integration:devkit": "npm run packageDev && gulp test:integration:devkit",
-    "test:integration:untrusted": "npm run packageDev && gulp test:integration:untrusted",
-    "profiling": "npm run package && gulp profiling",
-    "test:artifacts": "npm run compileDev && gulp test:artifacts",
-    "omnisharptest": "npm run packageDev && gulp omnisharptest",
-    "omnisharptest:unit": "npm run compileDev && gulp omnisharptest:unit",
-    "omnisharptest:integration": "npm run packageDev && gulp omnisharptest:integration",
-    "omnisharptest:integration:singleCsproj": "npm run packageDev && gulp omnisharptest:integration:singleCsproj",
-    "omnisharptest:integration:slnWithCsproj": "npm run packageDev && gulp omnisharptest:integration:slnWithCsproj",
-    "omnisharptest:integration:slnFilterWithCsproj": "npm run packageDev && gulp omnisharptest:integration:slnFilterWithCsproj",
-    "updatePackageDependencies": "gulp updatePackageDependencies",
+    "createTags": "npx ts-node tasks/tags/createTags.ts",
+    "fixLocUrls": "npx ts-node tasks/debugger/fixLocUrls.ts",
+    "generateOptionsSchema": "npx ts-node tasks/debugger/generateOptionsSchema.ts",
+    "incrementVersion": "npx ts-node tasks/snap/incrementVersion.ts",
+    "installDependencies": "npx ts-node tasks/packaging/installDependencies.ts",
+    "installDependenciesClean": "npx ts-node tasks/packaging/installDependenciesClean.ts",
+    "installSignPlugin": "npx ts-node tasks/signing/installSignPlugin.ts",
+    "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
-    "l10nDevImportXlf": "npx @vscode/l10n-dev import-xlf ./loc/vscode-csharp.*.xlf --outDir ./l10n && move l10n\\package.nls.*.json ."
+    "l10nDevImportXlf": "npx @vscode/l10n-dev import-xlf ./loc/vscode-csharp.*.xlf --outDir ./l10n && move l10n\\package.nls.*.json .",
+    "lint": "npx eslint ./",
+    "omnisharptest": "npm run packageDev && npx ts-node tasks/tests/omnisharptest.ts",
+    "omnisharptest:integration": "npm run packageDev && npx ts-node tasks/tests/omnisharptestIntegration.ts",
+    "omnisharptest:unit": "npm run compileDev && npx ts-node tasks/tests/omnisharptestUnit.ts",
+    "package": "npm run compile && npm run signJs && node esbuild.js --production",
+    "packageDev": "npm run compileDev && node esbuild.js",
+    "prepare": "npm run installDependencies",
+    "profiling": "npm run package && npx ts-node tasks/profiling/profiling.ts",
+    "publishLocalizationContent": "npx ts-node tasks/localization/publishLocalizationContent.ts",
+    "publishRoslynCopilot": "npx ts-node tasks/components/publishRoslynCopilot.ts",
+    "signJs": "npx ts-node tasks/signing/signJs.ts",
+    "signVsix": "npx ts-node tasks/signing/signVsix.ts",
+    "test": "npm run test:unit && npm run test:artifacts",
+    "test:artifacts": "npm run compileDev && npx ts-node tasks/tests/testArtifacts.ts",
+    "test:integration": "npm run test:integration:csharp && npm run test:integration:devkit && npm run test:integration:razor:cohost && npm run test:integration:untrusted",
+    "test:integration:csharp": "npm run packageDev && npx ts-node tasks/tests/testIntegrationCsharp.ts",
+    "test:integration:devkit": "npm run packageDev && npx ts-node tasks/tests/testIntegrationDevkit.ts",
+    "test:integration:razor:cohost": "npm run packageDev && npx ts-node tasks/tests/testIntegrationRazorCohost.ts",
+    "test:integration:untrusted": "npm run packageDev && npx ts-node tasks/tests/testIntegrationUntrusted.ts",
+    "test:unit": "npm run compileDev && npx ts-node tasks/tests/testUnit.ts",
+    "updateChangelog": "npx ts-node tasks/snap/updateChangelog.ts",
+    "updatePackageDependencies": "npx ts-node tasks/debugger/updatePackageDependencies.ts",
+    "updateRazorVersion": "npx ts-node tasks/packaging/updateRazorVersion.ts",
+    "updateRoslynVersion": "npx ts-node tasks/packaging/updateRoslynVersion.ts",
+    "updateVersionForStableRelease": "npx ts-node tasks/snap/updateVersionForStableRelease.ts",
+    "verifyVsix": "npx ts-node tasks/signing/verifyVsix.ts",
+    "vscode:prepublish": "npm run package",
+    "vsix:release:package": "npx ts-node tasks/packaging/vsixReleasePackage.ts"
   },
   "extensionDependencies": [
     "ms-dotnettools.vscode-dotnet-runtime"
@@ -94,37 +111,34 @@
   "dependencies": {
     "@github/copilot-language-server": "1.290.0",
     "@microsoft/servicehub-framework": "4.2.99-beta",
-    "@octokit/rest": "^20.0.1",
-    "@vscode/debugprotocol": "1.56.0",
     "@vscode/extension-telemetry": "^0.9.0",
     "@vscode/js-debug-browsers": "^1.1.0",
+    "archiver": "5.3.0",
     "execa": "4.0.0",
     "fs-extra": "11.3.0",
     "http-proxy-agent": "7.0.0",
     "https-proxy-agent": "7.0.2",
     "jsonc-parser": "3.0.0",
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/0af42abab690d5de903a4a814d6aedc1/microsoft.aspnetcore.razor.vscode-7.0.0-preview.23363.1.tgz",
-    "nerdbank-gitversioning": "^3.6.79-alpha",
     "node-machine-id": "1.1.12",
     "ps-list": "7.2.0",
     "rxjs": "6.6.7",
     "semver": "7.5.4",
     "vscode-html-languageservice": "^5.3.1",
-    "vscode-jsonrpc": "9.0.0-next.8",
-    "vscode-languageclient": "10.0.0-next.15",
-    "vscode-languageserver-protocol": "3.17.6-next.13",
+    "vscode-jsonrpc": "9.0.0-next.10",
+    "vscode-languageclient": "10.0.0-next.18",
+    "vscode-languageserver-protocol": "3.17.6-next.15",
     "vscode-languageserver-textdocument": "1.0.12",
     "vscode-languageserver-types": "3.17.6-next.6",
-    "vscode-nls": "5.0.1",
-    "yauzl": "2.10.0"
+    "yauzl": "3.2.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.6.2",
+    "@octokit/rest": "^20.0.1",
     "@types/archiver": "5.1.0",
     "@types/fs-extra": "11.0.4",
-    "@types/gulp": "4.0.5",
     "@types/minimist": "1.2.1",
-    "@types/node": "20.14.8",
+    "@types/node": "24.10.8",
     "@types/semver": "7.3.13",
     "@types/tmp": "0.0.33",
     "@types/uuid": "^9.0.1",
@@ -133,9 +147,8 @@
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
     "@vscode/l10n-dev": "^0.0.35",
-    "@vscode/test-electron": "2.3.8",
-    "@vscode/vsce": "3.0.0",
-    "archiver": "5.3.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "3.7.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
@@ -146,11 +159,10 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-unicorn": "^47.0.0",
     "get-port": "5.1.1",
-    "gulp": "5.0.0",
     "jest": "^29.6.2",
     "jest-junit": "^16.0.0",
     "mock-http-server": "1.4.2",
-    "octokit": "^3.1.0",
+    "nerdbank-gitversioning": "^3.6.79-alpha",
     "prettier": "2.8.8",
     "tmp": "0.2.4",
     "ts-jest": "^29.1.1",
@@ -405,7 +417,7 @@
     {
       "id": "RoslynCopilot",
       "description": "Language server for Roslyn Copilot integration",
-      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.898-alpha.zip",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.3.72-alpha.zip",
       "installPath": ".roslynCopilot",
       "platforms": [
         "neutral"
@@ -414,12 +426,12 @@
         "neutral"
       ],
       "installTestPath": "./.roslynCopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
-      "integrity": "44FC523F2B3FA451327147C53E2FA0D7BA2C438B1A901EAEC32E004FBFA731B4"
+      "integrity": "8F2F8B686D7E2FFD8E7C9AD980C5DE8FD1F0A6CFB5B6B1E13024EF6501E63D8E"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -429,12 +441,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "C25E19B3DBAE55DBBBD7384561E34064CDB92633A816FFB862E68635221A63EC"
+      "integrity": "61F2DFAD969C0D4AEC0A9D7216CBDACDDE3A191FF98394AA0FD12554A3C91700"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -443,12 +455,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "F8F9DE062D0678CFF808B8BC9AADC59C7C39253B1249DE2F9CF3037163D8049F"
+      "integrity": "98C98517794C0EF31EEF7EB75F6756E6FF7BC9D0D646775A23A940BD48F23962"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -462,12 +474,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "D1817389B6A1254BDDD8798AD866D6E1AC47740D05E138C060C387C0A53A7925"
+      "integrity": "0AC449332375CD7E0963ACEF0D9DC13106B8AE519CD2099812A010C6A28DC697"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -480,12 +492,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "089C742676FD1627ECCF3AAF1643ECCFC654FCED9C0D1E803780CB9C2E1FE355"
+      "integrity": "0160FCB0F64532B5DF22C0812617F42AD98B16FB98CB8D8A6AD22783FB9786CF"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -498,12 +510,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "64DF1D83556A3E33664122B10D94787AF10E54129362D6E8A63F8AA3B47035D3"
+      "integrity": "C73C09964386A7036076C3CF1442E497DE95470BF442534598E6BB9457AF9278"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -516,12 +528,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "578A61AE844470B7D1814AA8A0A49E21069F68CA16F661648AF85F68DC08BC9D"
+      "integrity": "5FEA2A074890FE01ED664D41B9952FF9C092F2B8F4E543A54550829B6033BE34"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -534,12 +546,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "5636C90B08D2849C13E198036B467F73080694CC9D5BF7422B04EA25B27633F9"
+      "integrity": "9E03969EE4FF40BA5A678772CE28BD095EBA8CC0462F807AAD724D54279CEF15"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -552,12 +564,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "BF668378285B814949F39718D559D976C7ED0C1575A248370F282210AF513B2E"
+      "integrity": "F3984D09C7A866C6A29B1021277EE4CDF5DCD78543F9E88964E8D3AB393F4ED2"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-131-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -570,7 +582,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "085CDC403578B24F8335BAFA1B7D62E48FFFEE80419DFA41C6D48D8DBADF95D7"
+      "integrity": "7851CBACD7FA6FF8A7DC5A617F4C7D8C5D91711BBBED65002452092C364A24FF"
     },
     {
       "id": "RazorOmnisharp",
@@ -705,7 +717,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.98.0"
+    "vscode": "^1.106.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -736,6 +748,7 @@
     "configuration": [
       {
         "title": "Project",
+        "id": "ms-dotnettools.csharp.project",
         "order": 0,
         "properties": {
           "dotnet.defaultSolution": {
@@ -747,6 +760,7 @@
       },
       {
         "title": "Text Editor",
+        "id": "ms-dotnettools.csharp.textEditor",
         "order": 1,
         "properties": {
           "dotnet.autoInsert.enableAutoInsert": {
@@ -971,6 +985,7 @@
       },
       {
         "title": "Debugger",
+        "id": "ms-dotnettools.csharp.debugger",
         "order": 8,
         "properties": {
           "csharp.debug.stopAtEntry": {
@@ -1434,6 +1449,7 @@
       },
       {
         "title": "LSP Server",
+        "id": "ms-dotnettools.csharp.lspServer",
         "order": 9,
         "properties": {
           "dotnet.preferCSharpExtension": {
@@ -1465,10 +1481,6 @@
               },
               "razorExtension": {
                 "description": "%configuration.dotnet.server.componentPaths.razorExtension%",
-                "type": "string"
-              },
-              "razorDevKit": {
-                "description": "%configuration.dotnet.server.componentPaths.razorDevKit%",
                 "type": "string"
               }
             },
@@ -1519,6 +1531,27 @@
             "default": true,
             "description": "%configuration.dotnet.server.useServerGC%"
           },
+          "dotnet.server.environmentVariables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "description": "%configuration.dotnet.server.environmentVariables%"
+          },
+          "dotnet.server.sourceGeneratorExecution": {
+            "type": "string",
+            "enum": [
+              "Balanced",
+              "Automatic"
+            ],
+            "default": "Balanced",
+            "markdownEnumDescriptions": [
+              "%configuration.dotnet.server.sourceGeneratorExecution.balanced%",
+              "%configuration.dotnet.server.sourceGeneratorExecution.automatic%"
+            ],
+            "markdownDescription": "%configuration.dotnet.server.sourceGeneratorExecution%"
+          },
           "dotnet.enableXamlTools": {
             "scope": "machine-overridable",
             "type": "boolean",
@@ -1544,37 +1577,49 @@
               "preview"
             ]
           },
-          "razor.languageServer.directory": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.razor.languageServer.directory%",
-            "order": 90
-          },
-          "razor.languageServer.debug": {
-            "type": "boolean",
-            "scope": "machine-overridable",
-            "default": false,
-            "description": "%configuration.razor.languageServer.debug%",
-            "order": 90
-          },
-          "razor.languageServer.suppressLspErrorToasts": {
+          "dotnet.projects.enableFileBasedProgramsWhenAmbiguous": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
-          },
-          "razor.languageServer.cohostingEnabled": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.razor.languageServer.cohostingEnabled%",
+            "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
             "tags": [
-              "experimental"
+              "preview"
             ]
           }
         }
       },
       {
-        "title": "OmniSharp",
+        "title": "Razor",
+        "id": "ms-dotnettools.csharp.razor",
         "order": 10,
+        "properties": {
+          "razor.format.codeBlockBraceOnNextLine": {
+            "type": "boolean",
+            "scope": "window",
+            "default": false,
+            "description": "%configuration.razor.razor.format.codeBlockBraceOnNextLine%"
+          },
+          "razor.format.attributeIndentStyle": {
+            "type": "string",
+            "default": "alignWithFirst",
+            "enum": [
+              "alignWithFirst",
+              "indentByOne",
+              "indentByTwo"
+            ],
+            "description": "%configuration.razor.razor.format.attributeIndentStyle%"
+          },
+          "razor.completion.commitElementsWithSpace": {
+            "type": "boolean",
+            "scope": "window",
+            "default": false,
+            "description": "%configuration.razor.razor.completion.commitElementsWithSpace%"
+          }
+        }
+      },
+      {
+        "title": "OmniSharp",
+        "id": "ms-dotnettools.csharp.omniSharp",
+        "order": 11,
         "properties": {
           "dotnet.server.useOmnisharp": {
             "type": "boolean",
@@ -1777,18 +1822,6 @@
             "scope": "window",
             "default": true,
             "description": "%configuration.omnisharp.razor.format.enable%"
-          },
-          "razor.format.codeBlockBraceOnNextLine": {
-            "type": "boolean",
-            "scope": "window",
-            "default": false,
-            "description": "%configuration.omnisharp.razor.format.codeBlockBraceOnNextLine%"
-          },
-          "razor.completion.commitElementsWithSpace": {
-            "type": "boolean",
-            "scope": "window",
-            "default": false,
-            "description": "%configuration.omnisharp.razor.completion.commitElementsWithSpace%"
           }
         }
       }
@@ -1882,6 +1915,32 @@
         "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
       },
       {
+        "command": "csharp.changeProjectContext",
+        "title": "%command.csharp.changeProjectContext%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+      },
+      {
+        "command": "csharp.changeProjectContextEditor",
+        "title": "%command.csharp.changeProjectContextEditor%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
+      },
+      {
+        "command": "csharp.changeProjectContextFileExplorer",
+        "title": "%command.csharp.changeProjectContextFileExplorer%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
+      },
+      {
+        "command": "csharp.rerunSourceGenerators",
+        "title": "%command.csharp.rerunSourceGenerators%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+      },
+      {
         "command": "csharp.listProcess",
         "title": "%command.csharp.listProcess%",
         "category": "CSharp",
@@ -1918,10 +1977,10 @@
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
-        "command": "csharp.recordLanguageServerTrace",
-        "title": "%command.csharp.recordLanguageServerTrace%",
+        "command": "csharp.collectLogs",
+        "title": "%command.csharp.collectLogs%",
         "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "extension.showRazorCSharpWindow",
@@ -5631,14 +5690,26 @@
       ],
       "editor/context": [
         {
+          "command": "csharp.changeProjectContextEditor",
+          "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@1"
+        },
+        {
           "command": "dotnet.test.runTestsInContext",
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
-          "group": "2_dotnet@1"
+          "group": "3_dotnet@1"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
-          "group": "2_dotnet@2"
+          "group": "3_dotnet@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "csharp.changeProjectContextFileExplorer",
+          "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@1"
         }
       ],
       "issue/reporter": [
@@ -5657,9 +5728,6 @@
     "configurationDefaults": {
       "[xaml]": {
         "editor.wordBasedSuggestions": "off"
-      },
-      "[csharp]": {
-        "editor.formatOnType": true
       },
       "explorer.fileNesting.patterns": {
         "*.cs": "${capture}.designer.cs,${capture}.g.cs,${capture}.generated.cs,${capture}.run.json,${capture}.settings.json,${capture}.settings.*.json",
