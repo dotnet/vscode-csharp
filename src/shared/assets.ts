@@ -361,7 +361,7 @@ export class AssetGenerator {
     public isDotNet9OrNewer(): boolean {
         let ret = false;
         for (let i = 0; i < this.executableProjects.length; i++) {
-            const project = this.executableProjects.at(i);
+            const project = this.executableProjects[i];
             if (project?.isWebAssemblyProject) {
                 let projectFileText = fs.readFileSync(project.projectPath, 'utf8');
                 projectFileText = projectFileText.toLowerCase();
