@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.133.x
+
 # 2.132.x
 * Update Razor to 10.0.0-preview.26179.2 (PR: [#9115](https://github.com/dotnet/vscode-csharp/pull/9115))
   * Handle when there is non-whitespace content after the end of a Razor comment (PR: [#12961](https://github.com/dotnet/razor/pull/12961))
