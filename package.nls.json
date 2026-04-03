@@ -49,7 +49,6 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "Enables the \"file-based programs\" (dotnet run app.cs) experience.",
   "configuration.dotnet.projects.enableFileBasedPrograms.deprecationMessage": "The setting 'dotnet.projects.enableFileBasedPrograms' has been deprecated in favor of 'dotnet.fileBasedApps.enable'.",
-  "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "Enables the \"file-based programs\" (dotnet run app.cs) experience in files where the editor is unable to determine with certainty whether the file is a file-based program. Only respected when `dotnet.fileBasedApps.enable` is `true`.",
   "configuration.dotnet.fileBasedApps.enable": "Enables the \"file-based apps\" (dotnet run app.cs) experience.",
   "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.projects.binaryLogPath": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors.",
