@@ -104,6 +104,10 @@ export const migrateOptions = [
         oldName: 'omnisharp.organizeImportsOnFormat',
         newName: 'dotnet.formatting.organizeImportsOnFormat',
     },
+    {
+        oldName: 'dotnet.projects.enableFileBasedPrograms',
+        newName: 'dotnet.fileBasedApps.enable',
+    },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {

@@ -1548,6 +1548,7 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.projects.enableFileBasedPrograms%",
+            "deprecationMessage": "%configuration.dotnet.projects.enableFileBasedPrograms.deprecationMessage%",
             "tags": [
               "preview"
             ]
@@ -1556,6 +1557,14 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
+            "tags": [
+              "preview"
+            ]
+          },
+          "dotnet.fileBasedApps.enable": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.fileBasedApps.enable%",
             "tags": [
               "preview"
             ]
