@@ -1550,14 +1550,20 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.projects.enableFileBasedPrograms%",
+            "deprecationMessage": "%configuration.dotnet.projects.enableFileBasedPrograms.deprecationMessage%",
             "tags": [
               "preview"
             ]
           },
-          "dotnet.projects.enableFileBasedProgramsWhenAmbiguous": {
+          "dotnet.fileBasedApps.enable": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
+            "description": "%configuration.dotnet.fileBasedApps.enable%"
+          },
+          "dotnet.fileBasedApps.enableAutomaticDiscovery": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.fileBasedApps.enableAutomaticDiscovery%",
             "tags": [
               "preview"
             ]
