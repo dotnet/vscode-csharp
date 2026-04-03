@@ -48,7 +48,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Abilita il supporto per mostrare i tipi non importati e i metodi di estensione non importati negli elenchi di completamento. Quando viene eseguito il commit, la direttiva using appropriata verrà aggiunta all'inizio del file corrente.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Consente di eseguire il completamento automatico del nome dell'oggetto per i membri selezionati di recente.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Mostra automaticamente l'elenco di completamento negli elenchi di argomenti",
-  "configuration.dotnet.defaultSolution.description": "Percorso della soluzione predefinita da aprire nell'area di lavoro o impostare su 'disabilita' per ignorarla.",
+  "configuration.dotnet.defaultSolution.description": "Percorso della soluzione predefinita da aprire nell'area di lavoro quando sono disponibili più soluzioni.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Abilitare questa impostazione per ridurre le distrazioni visive nell'Editor. I problemi informativi verranno segnalati come suggerimenti e saranno visibili solo quando la finestra popup delle azioni codice è aperta. (Richiede il riavvio dell'estensione)",
   "configuration.dotnet.enableXamlTools": "Abilita gli strumenti XAML quando si usa il kit di sviluppo C#. (Richiede il riavvio dell'estensione)",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Specifica se le direttive \"using\" devono essere raggruppate e ordinate durante la formattazione del documento.",
