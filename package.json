@@ -1563,7 +1563,7 @@
           "dotnet.fileBasedApps.enableAutomaticDiscovery": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.fileBasedApps.AutomaticDiscovery%",
+            "description": "%configuration.dotnet.fileBasedApps.enableAutomaticDiscovery%",
             "tags": [
               "preview"
             ]
