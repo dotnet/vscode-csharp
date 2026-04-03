@@ -1556,10 +1556,7 @@
           "dotnet.fileBasedApps.enable": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.fileBasedApps.enable%",
-            "tags": [
-              "preview"
-            ]
+            "description": "%configuration.dotnet.fileBasedApps.enable%"
           },
           "dotnet.fileBasedApps.enableAutomaticDiscovery": {
             "type": "boolean",
