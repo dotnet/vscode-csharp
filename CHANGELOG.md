@@ -4,6 +4,29 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.134.x
+* Update Roslyn to 5.7.0-1.26203.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * File-based apps automatic discovery (PR: [#82863](https://github.com/dotnet/roslyn/pull/82863))
+  * Fix evaluations inside ref-returning methods (PR: [#83037](https://github.com/dotnet/roslyn/pull/83037))
+  * Fix with-element indentation in collection expressions on multiple lines (PR: [#83030](https://github.com/dotnet/roslyn/pull/83030))
+  * Do not crash if URI not parseable and no default handler exists (PR: [#83024](https://github.com/dotnet/roslyn/pull/83024))
+  * Allow generate method to run on Razor documents (PR: [#83028](https://github.com/dotnet/roslyn/pull/83028))
+  * Preserve #: file-based app directives during formatting (PR: [#82996](https://github.com/dotnet/roslyn/pull/82996))
+  * Move inheritance margin logic to a features service (PR: [#83001](https://github.com/dotnet/roslyn/pull/83001))
+  * Don't format plain blocks as member declaration blocks in top level code (PR: [#82976](https://github.com/dotnet/roslyn/pull/82976))
+  * Add LSP CallHierarchy support (PR: [#82865](https://github.com/dotnet/roslyn/pull/82865))
+  * Move CallHierarchy logic to the Features layer (PR: [#82864](https://github.com/dotnet/roslyn/pull/82864))
+  * Handle misc project having an AdditionalDocument and not a Document (PR: [#82956](https://github.com/dotnet/roslyn/pull/82956))
+  * Fix structure guideline anchor for initializer expressions with multi-line argument lists (PR: [#82946](https://github.com/dotnet/roslyn/pull/82946))
+  * Navigate to position instead of span for Go to Implementation (PR: [#82906](https://github.com/dotnet/roslyn/pull/82906))
+  * Only cache diagnostics for legacy projects (PR: [#82643](https://github.com/dotnet/roslyn/pull/82643))
+  * Improve classification of file-based app directives (PR: [#82627](https://github.com/dotnet/roslyn/pull/82627))
+  * Add support for skipping analyzing banned API analysis in generated files (PR: [#82713](https://github.com/dotnet/roslyn/pull/82713))
+  * Add regex search support to NavigateTo (PR: [#82706](https://github.com/dotnet/roslyn/pull/82706))
+  * Add completion provider for `#:include` directives (PR: [#82625](https://github.com/dotnet/roslyn/pull/82625))
+  * Modify SyntaxNode trivia search/walk methods to utilize green node checks (PR: [#82893](https://github.com/dotnet/roslyn/pull/82893))
+  * Fix handling of added import trivia (PR: [#82788](https://github.com/dotnet/roslyn/pull/82788))
+  * DeterministicKeyBuilder: deduplicate ParseOptions across SyntaxTrees (PR: [#82895](https://github.com/dotnet/roslyn/pull/82895))
+  * Fix InvalidCastException in split-if refactoring for top-level statements (PR: [#82807](https://github.com/dotnet/roslyn/pull/82807))
 
 # 2.133.x
 
