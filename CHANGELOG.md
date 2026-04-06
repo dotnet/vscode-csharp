@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.134.x
-* Update Roslyn to 5.7.0-1.26203.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Add setting `dotnet.fileBasedApps.enableAutomaticDiscovery` (PR: [#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
+* Update Roslyn to 5.7.0-1.26203.6 (PR: [#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
   * File-based apps automatic discovery (PR: [#82863](https://github.com/dotnet/roslyn/pull/82863))
   * Fix evaluations inside ref-returning methods (PR: [#83037](https://github.com/dotnet/roslyn/pull/83037))
   * Fix with-element indentation in collection expressions on multiple lines (PR: [#83030](https://github.com/dotnet/roslyn/pull/83030))
