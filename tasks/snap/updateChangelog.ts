@@ -13,6 +13,7 @@ import { findTagsByVersion } from '../gitTasks';
 import { runTask } from '../runTask';
 
 const execAsync = promisify(exec);
+const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/;
 
 runTask(updateChangelog);
 
@@ -79,8 +80,6 @@ async function updateChangelog(): Promise<void> {
     changelogLines.splice(currentHeaderLine + 1, 0, ...newPrs);
     fs.writeFileSync(changelogPath, changelogLines.join(os.EOL));
 }
-
-const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/;
 
 function findNextVersionHeaderLine(changelogLines: string[], startLine: number = 0): [number, string] {
     const headerRegex = /^#\s(\d+\.\d+)\.(x|\d+)$/;

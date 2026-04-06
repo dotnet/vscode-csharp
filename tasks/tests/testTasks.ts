@@ -18,7 +18,7 @@ export async function testArtifacts(): Promise<void> {
 
 export async function testIntegrationCSharp(): Promise<void> {
     for (const projectName of integrationTestProjects) {
-        await runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `[C#][${projectName}]`);
+        await runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `CSharp-${projectName}`);
     }
 }
 
@@ -27,18 +27,14 @@ export async function testIntegrationDevkit(): Promise<void> {
         await runDevKitIntegrationTests(
             projectName,
             path.join('lsptoolshost', 'integrationTests'),
-            `[DevKit][${projectName}]`
+            `DevKit-${projectName}`
         );
     }
 }
 
 export async function testIntegrationRazorCohost(): Promise<void> {
     for (const projectName of razorIntegrationTestProjects) {
-        await runIntegrationTest(
-            projectName,
-            path.join('razor', 'razorIntegrationTests'),
-            `Razor Test Integration ${projectName}`
-        );
+        await runIntegrationTest(projectName, path.join('razor', 'razorIntegrationTests'), `Razor-${projectName}`);
     }
 }
 
