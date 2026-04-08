@@ -51,6 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "複数のソリューションが使用可能な場合にワークスペースで開く既定のソリューションのパス。",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "この設定を有効にすると、エディター内の視覚的な注意がそがれるものを減らすことができます。情報の問題はヒントとして報告され、コード アクション ポップアップが開いているときにのみ表示されます。(拡張機能の再起動が必要)",
   "configuration.dotnet.enableXamlTools": "C# 開発キットを使用するときに XAML ツールを有効にします。(拡張機能の再起動が必要)",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "ドキュメントの書式設定中に 'using' ディレクティブをグループ化して並べ替えるかどうかを指定します。",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "カーソルの下にある関連する JSON コンポーネントをハイライトします。",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "カーソルの下にある関連する正規表現コンポーネントをハイライトします。",

@@ -51,6 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Cesta k výchozímu řešení, které se má otevřít v pracovním prostoru, pokud je k dispozici více řešení",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Povolením tohoto nastavení snížíte množství vizuálních rušivých prvků v editoru. Informační problémy budou hlášeny jako nápovědy a budou viditelné pouze tehdy, když je otevřeno místní okno akcí kódu. (Vyžaduje restartování rozšíření)",
   "configuration.dotnet.enableXamlTools": "Povolí nástroje XAML při použití sady C# Dev Kit. (Vyžaduje restartování rozšíření)",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Určuje, zda mají být během formátování dokumentu seskupeny a seřazeny direktivy using.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zvýrazněte související komponenty JSON pod kurzorem.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Zvýraznit související komponenty regulárního výrazu pod kurzorem.",

@@ -51,6 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Birden çok çözüm olduğunda çalışma alanında açılacak varsayılan çözümün yolu.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Düzenleyicinizdeki görsel dikkat dağıtıcı öğeleri azaltmak için bu ayarı etkinleştirin. Bilgi sorunları ipucu olarak bildirilecek ve yalnızca kod eylemleri açılır penceresi açıkken görülebilecektir. (Uzantının yeniden başlatılması gerekir)",
   "configuration.dotnet.enableXamlTools": "C# Geliştirme Setini kullanırken XAML araçlarını etkinleştirir. (Uzantının yeniden başlatılması gerekir)",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "'using' yönergelerinin belge biçimlendirmesi sırasında gruplandırılarak sıralandırılıp sıralandırılmayacağını belirtir.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "İmlecin altındaki ilgili JSON bileşenlerini vurgula.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "İmleç altındaki ilgili normal ifade bileşenlerini vurgula.",

@@ -51,6 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Ścieżka domyślnego rozwiązania, które zostanie otwarte w obszarze roboczym, gdy dostępnych jest kilka rozwiązań.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Włącz to ustawienie, aby ograniczyć wizualne elementy rozpraszające uwagę w edytorze. Problemy z informacjami będą zgłaszane jako wskazówki i będą widoczne tylko wtedy, gdy jest otwarte wyskakujące okno akcji dotyczących kodu. (Wymaga ponownego uruchomienia rozszerzenia)",
   "configuration.dotnet.enableXamlTools": "Włącza narzędzia XAML podczas korzystania z zestawu deweloperskiego języka C#. (Wymaga ponownego uruchomienia rozszerzenia)",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Określa, czy dyrektywy „using” mają być grupowane i sortowane podczas formatowania dokumentu.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Wyróżnij powiązane składniki JSON pod kursorem.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Wyróżnij powiązane składniki wyrażenia regularnego pod kursorem.",

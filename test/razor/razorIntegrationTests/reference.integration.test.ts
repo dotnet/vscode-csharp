@@ -121,7 +121,7 @@ describe(`Razor References ${testAssetWorkspace.description}`, function () {
                 expect(definitionLocation.range.start.line).toBe(23);
                 expect(definitionLocation.range.start.character).toBe(10);
                 expect(definitionLocation.range.end.line).toBe(23);
-                expect(definitionLocation.range.end.character).toBe(19);
+                expect(definitionLocation.range.end.character).toBe(10);
             }
         );
     });

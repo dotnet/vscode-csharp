@@ -51,6 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "当有多个解决方案可用时，在工作区中打开的默认解决方案的路径。",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "启用此设置可减少编辑器中的视觉干扰。信息问题将报告为提示，并且仅在代码操作弹出窗口打开时可见。(需要重启扩展)",
   "configuration.dotnet.enableXamlTools": "使用 C# 开发工具包时启用 XAML 工具。(需要重启扩展)",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "指定在文档格式化期间是否应对“使用”指令进行分组和排序。",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "突出显示光标下的相关 JSON 组件。",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "突出显示光标下的相关正则表达式组件。",

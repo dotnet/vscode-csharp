@@ -51,6 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Der Pfad der Standardlösung, die im Arbeitsbereich geöffnet werden soll, wenn mehrere Lösungen verfügbar sind.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Aktivieren Sie diese Einstellung, um visuelle Ablenkungen in Ihrem Editor zu reduzieren. Informationsprobleme werden als Hinweise gemeldet und sind nur sichtbar, wenn das Popupfenster für Codeaktionen geöffnet ist. (Erfordert Neustart der Erweiterung)",
   "configuration.dotnet.enableXamlTools": "Aktiviert XAML-Tools bei Verwendung des C# Dev Kits. (Erfordert Neustart der Erweiterung)",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Gibt an, ob „using“-Anweisungen während der Dokumentformatierung gruppiert und sortiert werden sollen.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zugehörige JSON-Komponenten unter dem Cursor markieren.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Zugehörige Komponenten regulärer Ausdrücke unter dem Cursor markieren.",
