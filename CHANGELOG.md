@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.135.x
-* Update Roslyn to 5.7.0-1.26210.4 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.7.0-1.26210.4 (PR: [#9187](https://github.com/dotnet/vscode-csharp/pull/9187))
   * Add LSP TypeHierarchy Support (PR: [#83011](https://github.com/dotnet/roslyn/pull/83011))
   * Add option for import completion commit behavior (PR: [#82916](https://github.com/dotnet/roslyn/pull/82916))
   * Skip unmappable source-generated document edits in rename (PR: [#83080](https://github.com/dotnet/roslyn/pull/83080))
