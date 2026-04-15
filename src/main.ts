@@ -23,6 +23,7 @@ import { isValidDownload } from './packageManager/isValidDownload';
 import { MigrateOptions } from './shared/migrateOptions';
 import { CSharpExtensionExports, LimitedExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { getCSharpDevKit } from './utils/getCSharpDevKit';
+import { isCopilotExtensionInstalled } from './utils/getCopilotExtension';
 import { commonOptions, omnisharpOptions } from './shared/options';
 import { TelemetryEventNames } from './shared/telemetryEventNames';
 import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion';
@@ -79,7 +80,7 @@ export async function activate(
         requiredPackageIds.push('OmniSharp');
     }
     requiredPackageIds.push('VSWebAssemblyBridge');
-    if (csharpDevkitExtension) {
+    if (csharpDevkitExtension && isCopilotExtensionInstalled()) {
         requiredPackageIds.push('RoslynCopilot');
     }
 

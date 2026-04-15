@@ -29,6 +29,7 @@ import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { isCopilotExtensionInstalled } from '../../utils/getCopilotExtension';
 import { randomUUID } from 'crypto';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
@@ -56,6 +57,10 @@ import { ProjectContextFeature } from '../projectContext/projectContextFeature';
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
 let _wasActivatedWithCSharpDevkit: boolean | undefined;
+
+// Flag indicating if a Copilot extension was installed the last time we activated.
+// Used to determine if we need to prompt for reload when Copilot is installed later.
+let _wasActivatedWithCopilot: boolean | undefined;
 
 export class RoslynLanguageServer {
     /**
@@ -687,6 +692,7 @@ export class RoslynLanguageServer {
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         if (csharpDevKitExtensionExports) {
             _wasActivatedWithCSharpDevkit = true;
+            _wasActivatedWithCopilot = isCopilotExtensionInstalled();
 
             channel.info('Activating C# + C# Dev Kit...');
 
@@ -696,12 +702,9 @@ export class RoslynLanguageServer {
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths, channel);
             args = args.concat(csharpDevKitArgs);
 
-            await this.setupDevKitEnvironment(
-                dotnetInfo.env,
-                csharpDevKitExtensionExports,
-                additionalExtensionPaths,
-                channel
-            );
+            await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevKitExtensionExports);
+
+            this.setupCopilotEnvironment(_wasActivatedWithCopilot, additionalExtensionPaths, channel);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             channel.info('Activating C# standalone...');
@@ -709,6 +712,7 @@ export class RoslynLanguageServer {
             // Set command enablement to use roslyn standalone commands.
             await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
+            _wasActivatedWithCopilot = false;
 
             // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
             // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
@@ -865,7 +869,7 @@ export class RoslynLanguageServer {
     }
 
     private registerExtensionsChanged() {
-        // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
+        // subscribe to extension change events so that we can get notified if C# Dev Kit or Copilot is added/removed later.
         this._languageClient.addDisposable(
             vscode.extensions.onDidChange(async () => {
                 const csharpDevkitExtension = getCSharpDevKit();
@@ -875,7 +879,7 @@ export class RoslynLanguageServer {
                     return;
                 }
 
-                const title: CommandOption = {
+                const reloadAction: CommandOption = {
                     title: vscode.l10n.t('Reload C# Extension'),
                     command: 'workbench.action.restartExtensionHost',
                 };
@@ -884,7 +888,19 @@ export class RoslynLanguageServer {
                     // Offer a prompt to restart extensions in order to use C# Dev Kit.
                     this._channel.info(`Detected new installation of ${csharpDevkitExtensionId}`);
                     const message = `Detected installation of C# Dev Kit. Please reload the C# extension to continue.`;
-                    showInformationMessage(vscode, message, title);
+                    showInformationMessage(vscode, message, reloadAction);
+                } else if (
+                    _wasActivatedWithCSharpDevkit &&
+                    !_wasActivatedWithCopilot &&
+                    isCopilotExtensionInstalled()
+                ) {
+                    // Dev Kit is active but Copilot was not present at activation and is now installed.
+                    // Prompt for reload to enable Copilot integration.
+                    this._channel.info('Detected new installation of GitHub Copilot extension.');
+                    const message = vscode.l10n.t(
+                        'Detected installation of GitHub Copilot. Please reload the C# extension to enable Copilot integration.'
+                    );
+                    showInformationMessage(vscode, message, reloadAction);
                 } else {
                     // Any other change to extensions is irrelevant - an uninstall requires the extension host to restart
                     // which will automatically restart this extension too.
@@ -936,14 +952,23 @@ export class RoslynLanguageServer {
 
     private static async setupDevKitEnvironment(
         env: NodeJS.ProcessEnv,
-        csharpDevkitExtensionExports: CSharpDevKitExports,
-        additionalExtensionPaths: string[],
-        channel: vscode.LogOutputChannel
+        csharpDevkitExtensionExports: CSharpDevKitExports
     ): Promise<void> {
         // setupTelemetryEnvironmentAsync was a later addition to devkit (not in preview 1)
         // so it may not exist in whatever version of devkit the user has installed
         if (csharpDevkitExtensionExports.setupTelemetryEnvironmentAsync) {
             await csharpDevkitExtensionExports.setupTelemetryEnvironmentAsync(env);
+        }
+    }
+
+    private static setupCopilotEnvironment(
+        copilotInstalled: boolean,
+        additionalExtensionPaths: string[],
+        channel: vscode.LogOutputChannel
+    ): void {
+        if (!copilotInstalled) {
+            channel.debug('GitHub Copilot extension not detected. Skipping Roslyn Copilot component.');
+            return;
         }
 
         getComponentPaths('roslynCopilot', languageServerOptions, channel).forEach((extPath) => {
