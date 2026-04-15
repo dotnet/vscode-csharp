@@ -51,7 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Путь к решению по умолчанию, которое будет открыто в рабочей области при наличии нескольких решений.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Включите этот параметр, чтобы уменьшить количество визуальных отвлекающих факторов в редакторе. Информационные проблемы будут отображаться в виде подсказок и видны только при открытии всплывающего окна действий кода. (Требуется перезапуск расширения)",
   "configuration.dotnet.enableXamlTools": "Включает инструменты XAML при использовании C# Dev Kit. (Требуется перезапуск расширения)",
-  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Включает автоматическое обнаружение приложений на основе файлов C# в рабочей области.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Указывает, следует ли группировать и сортировать директивы \"using\" во время форматирования документов.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Выделить связанные компоненты JSON под курсором.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Выделение связанных компонентов регулярных выражений под курсором.",
@@ -265,5 +265,6 @@
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[Поддерживается только в локальной отладке macOS]\r\n\r\nАрхитектура отлаживаемого объекта. Будет определяться автоматически, если этот параметр не задан. Допустимые значения: \"x86_64\" или \"arm64\".",
   "generateOptionsSchema.targetOutputLogPath.description": "Если этот параметр настроен, текст, который целевое приложение записывает в stdout и stderr (например, Console.WriteLine), будет сохранен в указанном файле. Этот параметр игнорируется, если для консоли настроено значение, отличное от internalConsole. Например, \"${workspaceFolder}/out.txt\"",
   "generateOptionsSchema.type.markdownDescription": "Введите тип кода для отладки. Может быть либо \"coreclr\" для отладки .NET Core, либо \"clr\" для классической .NET Framework. \"clr\" работает только в Windows, так как классическая платформа предназначена только для Windows.",
+  "generateOptionsSchema.useVSDbg.description": "Включить новый отладчик Wasm для .NET 9+ (предварительная версия)",
   "viewsWelcome.debug.contents": "[Создание ресурсов C# для сборки и отладки](command:dotnet.generateAssets)\r\n\r\nДополнительные сведения о launch.json см. в разделе [Настройка launch.json для отладки C#](https://aka.ms/VSCode-CS-LaunchJson)."
 }

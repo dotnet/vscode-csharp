@@ -51,7 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Cesta k výchozímu řešení, které se má otevřít v pracovním prostoru, pokud je k dispozici více řešení",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Povolením tohoto nastavení snížíte množství vizuálních rušivých prvků v editoru. Informační problémy budou hlášeny jako nápovědy a budou viditelné pouze tehdy, když je otevřeno místní okno akcí kódu. (Vyžaduje restartování rozšíření)",
   "configuration.dotnet.enableXamlTools": "Povolí nástroje XAML při použití sady C# Dev Kit. (Vyžaduje restartování rozšíření)",
-  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Umožňuje automaticky zjišťovat aplikace založené na souborech C# v pracovním prostoru.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Určuje, zda mají být během formátování dokumentu seskupeny a seřazeny direktivy using.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zvýrazněte související komponenty JSON pod kurzorem.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Zvýraznit související komponenty regulárního výrazu pod kurzorem.",
@@ -265,5 +265,6 @@
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[Podporováno pouze v místním ladění macOS]\r\n\r\nArchitektura laděného procesu. Tato chyba se automaticky zjistí, pokud není tento parametr nastavený. Povolené hodnoty jsou x86_64 nebo arm64.",
   "generateOptionsSchema.targetOutputLogPath.description": "Při nastavení této možnosti se text, který cílová aplikace zapisuje do stdout a stderr (např. Console.WriteLine), uloží do zadaného souboru. Tato možnost se bude ignorovat, pokud je konzola nastavená na jinou hodnotu než internalConsole. Příklad: ${workspaceFolder}/out.txt",
   "generateOptionsSchema.type.markdownDescription": "Typ kódu, který se má ladit. Může to být buď coreclr pro ladění .NET Core, nebo cclr pro Desktop .NET Framework. clr funguje pouze v systému Windows, protože Desktop Framework je určen pouze pro Windows.",
+  "generateOptionsSchema.useVSDbg.description": "Povolit nový ladicí program Wasm pro .NET 9+ (Preview)",
   "viewsWelcome.debug.contents": "[Generování prostředků jazyka C# pro sestavení a ladění](command:dotnet.generateAssets)\r\n\r\nDalší informace o souboru launch.json najdete v tématu [Konfigurace souboru launch.json pro ladění v jazyce C#](https://aka.ms/VSCode-CS-LaunchJson)."
 }

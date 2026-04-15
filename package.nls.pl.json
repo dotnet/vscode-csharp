@@ -51,7 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Ścieżka domyślnego rozwiązania, które zostanie otwarte w obszarze roboczym, gdy dostępnych jest kilka rozwiązań.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Włącz to ustawienie, aby ograniczyć wizualne elementy rozpraszające uwagę w edytorze. Problemy z informacjami będą zgłaszane jako wskazówki i będą widoczne tylko wtedy, gdy jest otwarte wyskakujące okno akcji dotyczących kodu. (Wymaga ponownego uruchomienia rozszerzenia)",
   "configuration.dotnet.enableXamlTools": "Włącza narzędzia XAML podczas korzystania z zestawu deweloperskiego języka C#. (Wymaga ponownego uruchomienia rozszerzenia)",
-  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Umożliwia automatyczne odnajdowanie aplikacji opartych na plikach w języku C# w obszarze roboczym.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Określa, czy dyrektywy „using” mają być grupowane i sortowane podczas formatowania dokumentu.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Wyróżnij powiązane składniki JSON pod kursorem.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Wyróżnij powiązane składniki wyrażenia regularnego pod kursorem.",
@@ -265,5 +265,6 @@
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[Obsługiwane tylko w przypadku debugowania lokalnego systemu macOS]\r\n\r\nArchitektura obiektu debugowanego. Zostanie automatycznie wykryta, chyba że ten parametr jest ustawiony. Dozwolone wartości to „x86_64” lub „arm_64”.",
   "generateOptionsSchema.targetOutputLogPath.description": "Po ustawieniu tekst, który aplikacja docelowa zapisuje w stdout i stderr (np. Console.WriteLine), zostanie zapisany w określonym pliku. Ta opcja jest ignorowana, jeśli konsola jest ustawiona na wartość inną niż internalConsole, np. \"${workspaceFolder}/out.txt\"",
   "generateOptionsSchema.type.markdownDescription": "Wpisz typ kodu do debugowania. Może to być „coreclr” na potrzeby debugowania platformy .NET Core lub „clr” dla platformy klasycznej .NET Framework. Element „clr” działa tylko w systemie Windows, ponieważ platforma klasyczna działa tylko w systemie Windows.",
+  "generateOptionsSchema.useVSDbg.description": "Włącz nowy debuger wasm platformy .NET 9+ (wersja zapoznawcza)",
   "viewsWelcome.debug.contents": "[Generuj zasoby języka C# na potrzeby kompilacji i debugowania](polecenie:dotnet.generateAssets)\r\n\r\nAby dowiedzieć się więcej o uruchamianiu pliku launch.json, zobacz [Konfigurowanie pliku launch.json na potrzeby debugowania w języku C#](https://aka.ms/VSCode-CS-LaunchJson)."
 }

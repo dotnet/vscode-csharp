@@ -51,7 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "Chemin d’accès de la solution par défaut à ouvrir dans l’espace de travail lorsque plusieurs solutions sont disponibles.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Activez ce paramètre pour réduire les distractions visuelles dans votre éditeur. Les problèmes d’information seront signalés sous forme de suggestions et seront visibles uniquement lorsque la fenêtre contextuelle des actions de code est ouverte. (Nécessite le redémarrage de l’extension)",
   "configuration.dotnet.enableXamlTools": "Active les outils XAML lors de l’utilisation du Kit de développement C#. (Nécessite le redémarrage de l’extension)",
-  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Active la découverte automatique des applications basées sur des fichiers C# dans l’espace de travail.",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Spécifie si les directives « using » doivent être regroupées et triées lors du formatage du document.",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Mettez en surbrillance les composants JSON associés sous le curseur.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Mettre en surbrillance les composants d’expression régulière associés sous le curseur.",
@@ -265,5 +265,6 @@
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[Uniquement pris en charge dans le débogage macOS local]\r\n\r\nArchitecture du débogué. Ce paramètre est automatiquement détecté, sauf si ce paramètre est défini. Les valeurs autorisées sont « x86_64 » ou « arm64 ».",
   "generateOptionsSchema.targetOutputLogPath.description": "Lorsqu’il est défini, le texte écrit par l’application cible dans stdout et stderr (par exemple, Console.WriteLine) est enregistré dans le fichier spécifié. Cette option est ignorée si la console a une valeur autre que internalConsole. Exemple : « ${workspaceFolder}/out.txt »",
   "generateOptionsSchema.type.markdownDescription": "Type de code à déboguer. Peut être soit « coreclr » pour le débogage .NET Core, soit « clr » pour Desktop .NET Framework. `clr` ne fonctionne que sous Windows car le framework Desktop est uniquement Windows.",
+  "generateOptionsSchema.useVSDbg.description": "Activer le nouveau débogueur Wasm pour .NET 9 et versions ultérieures (version préliminaire)",
   "viewsWelcome.debug.contents": "[Générer des ressources C# pour la génération et le débogage](command:dotnet.generateAssets)\r\n\r\nPour en savoir plus sur launch.json, consultez [Configuration de launch.json pour le débogage C#](https://aka.ms/VSCode-CS-LaunchJson)."
 }

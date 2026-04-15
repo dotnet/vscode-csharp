@@ -51,7 +51,7 @@
   "configuration.dotnet.defaultSolution.description": "當工作區中有多個解決方案可用時，預設要開啟的解決方案路徑。",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "啟用此設定以減少您編輯器中的視覺干擾。資訊問題將以提示的形式回報，並且僅在程式碼動作快顯視窗開啟時顯示。(需要重新啟動延伸模組)",
   "configuration.dotnet.enableXamlTools": "使用 C# 開發人員套件時啟用 XAML 工具。(需要重新啟動延伸模組)",
-  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "啟用在工作區中自動偵測基於 C# 檔案的應用程式。",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "指定在文件格式化期間，是否應該將 'using' 指示詞分組和排序。",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "反白資料指標下的相關 JSON 元件。",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "反白資料指標下的相關規則運算式元件。",
@@ -265,5 +265,6 @@
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[僅支援在局部 macOS 偵錯]\r\n\r\n偵錯程式的架構。除非設定此參數，否則會自動偵測到此情況。允許的值為 'x86_64' 或 'arm64'。",
   "generateOptionsSchema.targetOutputLogPath.description": "設定時，目標應用程式寫入 stdout 和 stderr 的文字 (例如: Console.WriteLine) 將會儲存到指定的檔案。如果主控台設定為 internalConsole 以外的項目，則會略過此選項。例如 '${workspaceFolder}/out.txt'",
   "generateOptionsSchema.type.markdownDescription": "輸入要進行偵錯的程式碼類型。可以是 `coreclr` 表示 .NET Core 偵錯，或 `clr` 表示桌面 .NET Framework。`clr` 僅在 Windows 上運作，因為桌面 Framework 僅限 Windows。",
+  "generateOptionsSchema.useVSDbg.description": "啟用新的 .NET 9+ Wasm 偵錯工具 (預覽)",
   "viewsWelcome.debug.contents": "[為組建和偵錯產生 C# 資產](command:dotnet.generateAssets)\r\n\r\n若要深入了解 launch.json，請參閱[為 C# 偵錯設定 launch.json](https://aka.ms/VSCode-CS-LaunchJson)(英文)。"
 }
