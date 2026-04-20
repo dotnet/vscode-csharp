@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { DotNetChannelObserver } from '../../../../src/omnisharp/observers/dotnetChannelObserver';
 import { getNullChannel } from '../../../fakes';
 import { CommandDotNetRestoreStart } from '../../../../src/omnisharp/omnisharpLoggingEvents';

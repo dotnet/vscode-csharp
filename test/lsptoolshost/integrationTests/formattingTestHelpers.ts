@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { expect } from '@jest/globals';
+import { expect } from 'vitest';
 
 export async function formatDocumentAsync(): Promise<void> {
     const edits = await vscode.commands.executeCommand<vscode.TextEdit[]>(

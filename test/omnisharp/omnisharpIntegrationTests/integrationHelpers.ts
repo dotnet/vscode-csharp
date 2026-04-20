@@ -9,7 +9,7 @@ import { Advisor } from '../../../src/omnisharp/features/diagnosticsProvider';
 import { EventStream } from '../../../src/eventStream';
 import { EventType } from '../../../src/shared/eventType';
 import { OmnisharpExtensionExports } from '../../../src/csharpExtensionExports';
-import { describe } from '@jest/globals';
+import { describe } from 'vitest';
 
 export interface ActivationResult {
     readonly advisor: Advisor;

@@ -5,7 +5,7 @@
 
 import { readFileSync } from 'fs';
 import { convertServerOptionNameToClientConfigurationName } from '../../../src/lsptoolshost/options/optionNameConverter';
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect } from 'vitest';
 
 const editorBehaviorSection = 1;
 const testData = [

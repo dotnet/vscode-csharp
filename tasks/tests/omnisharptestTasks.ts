@@ -5,27 +5,27 @@
 
 import path from 'path';
 import { codeExtensionPath, rootPath } from '../projectPaths';
-import { runJestIntegrationTest, runJestTest } from './testHelpers';
-import { jestOmniSharpUnitTestProjectName } from '../../test/omnisharp/omnisharpUnitTests/jest.config';
+import { runVitestIntegrationTest, runVitestTest } from './testHelpers';
+import { omnisharpUnitTestProjectName } from '../../test/omnisharp/omnisharpUnitTests/jest.config';
 
 const omnisharpIntegrationTestProjects = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'BasicRazorApp2_1'];
 
 export async function omnisharpTestUnit(): Promise<void> {
-    await runJestTest(jestOmniSharpUnitTestProjectName);
+    await runVitestTest(omnisharpUnitTestProjectName);
 }
 
 export async function omnisharpTestIntegration(skipLsp: boolean = false): Promise<void> {
     for (const projectName of omnisharpIntegrationTestProjects) {
-        await runOmnisharpJestIntegrationTest(projectName, 'stdio', `[O#][${projectName}][STDIO]`);
+        await runOmnisharpVitestIntegrationTest(projectName, 'stdio', `[O#][${projectName}][STDIO]`);
         if (skipLsp) {
             continue;
         }
 
-        await runOmnisharpJestIntegrationTest(projectName, 'lsp', `[O#][${projectName}][LSP]`);
+        await runOmnisharpVitestIntegrationTest(projectName, 'lsp', `[O#][${projectName}][LSP]`);
     }
 }
 
-async function runOmnisharpJestIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp', suiteName: string) {
+async function runOmnisharpVitestIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp', suiteName: string) {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
     const testFolder = path.join('test', 'omnisharp', 'omnisharpIntegrationTests');
 
@@ -38,5 +38,5 @@ async function runOmnisharpJestIntegrationTest(testAssetName: string, engine: 's
         CODE_DISABLE_EXTENSIONS: 'true',
     };
 
-    await runJestIntegrationTest(testAssetName, testFolder, workspaceFile, suiteName, env);
+    await runVitestIntegrationTest(testAssetName, testFolder, workspaceFile, suiteName, env);
 }

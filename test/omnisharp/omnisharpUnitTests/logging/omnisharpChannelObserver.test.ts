@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { jest, describe, test, expect, beforeEach } from '@jest/globals';
+import { vi as jest, describe, test, expect, beforeEach } from 'vitest';
 import { getNullChannel, getWorkspaceConfiguration } from '../../../fakes';
 import { OmnisharpChannelObserver } from '../../../../src/omnisharp/observers/omnisharpChannelObserver';
 import { BaseEvent } from '../../../../src/shared/loggingEvents';

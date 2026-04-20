@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getNextReleaseVersion } from '../../tasks/snap/snapTasks';
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect } from 'vitest';
 
 describe('getNextReleaseVersion', () => {
     test('rounds up to next tens from single digit minor version', () => {

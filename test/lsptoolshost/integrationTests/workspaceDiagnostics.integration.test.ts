@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, test, expect, beforeAll, afterAll } from 'vitest';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting } from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService';
 import { getCode, setDiagnosticSettings, waitForExpectedDiagnostics } from './diagnosticsHelpers';

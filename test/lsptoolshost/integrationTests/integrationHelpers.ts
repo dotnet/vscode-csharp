@@ -11,7 +11,7 @@ import { existsSync } from 'fs';
 import { ServerState } from '../../../src/lsptoolshost/server/languageServerEvents';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL, platform } from 'os';
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from 'vitest';
 import { WaitForAsyncOperationsRequest } from './testHooks';
 
 export async function activateCSharpExtension(): Promise<CSharpExtensionExports> {

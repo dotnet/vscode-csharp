@@ -16,7 +16,7 @@ import {
     waitForExpectedResult,
     describeIfFileBasedPrograms,
 } from './integrationHelpers';
-import { beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { beforeAll, beforeEach, afterAll, test, expect, afterEach } from 'vitest';
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
 describeIfFileBasedPrograms(`File-based Programs Tests`, () => {

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { MessageItem, vscode } from '../../../../src/vscodeAdapter';
 import { ErrorMessageObserver } from '../../../../src/omnisharp/observers/errorMessageObserver';
 import { ZipError, EventWithMessage, IntegrityCheckFailure } from '../../../../src/shared/loggingEvents';

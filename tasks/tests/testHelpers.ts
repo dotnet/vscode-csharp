@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import execa from 'execa';
 import fs from 'fs';
 import * as path from 'path';
-import * as jest from 'jest';
-import { Config } from '@jest/types';
 import { rootPath, outPath } from '../projectPaths';
 import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher';
 
@@ -68,11 +67,11 @@ export async function runIntegrationTest(
     env: NodeJS.ProcessEnv = {}
 ): Promise<number> {
     const testFolder = path.join('test', testFolderName);
-    return await runJestIntegrationTest(testAssetName, testFolder, vscodeWorkspaceFileName, suiteName, env, testFile);
+    return await runVitestIntegrationTest(testAssetName, testFolder, vscodeWorkspaceFileName, suiteName, env, testFile);
 }
 
 /**
- * Runs jest based integration tests.
+ * Runs Vitest-based integration tests.
  * @param testAssetName the name of the test asset
  * @param testFolderName the relative path (from workspace root)
  * @param workspaceFileName the name of the vscode workspace file to use.
@@ -80,7 +79,7 @@ export async function runIntegrationTest(
  * @param env any environment variables needed.
  * @param testFile the full path to a specific test file to run.
  */
-export async function runJestIntegrationTest(
+export async function runVitestIntegrationTest(
     testAssetName: string,
     testFolderName: string,
     workspaceFileName: string,
@@ -110,8 +109,8 @@ export async function runJestIntegrationTest(
     }
 
     // Configure the file and suite name in CI to avoid having multiple test runs stomp on each other.
-    env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(logName);
-    env.JEST_SUITE_NAME = suiteName;
+    env.VITEST_JUNIT_OUTPUT_NAME = getJUnitFileName(logName);
+    env.TEST_SUITE_NAME = suiteName;
 
     if (testFile) {
         console.log(`Setting test file filter to: ${testFile}`);
@@ -121,7 +120,7 @@ export async function runJestIntegrationTest(
     try {
         const result = await prepareVSCodeAndExecuteTests(rootPath, vscodeRunnerPath, workspacePath, userDataDir, env);
         if (result > 0) {
-            // The VSCode API will generally throw if jest fails the test, but we can get errors before the test runs (e.g. launching VSCode).
+            // The VSCode API will generally throw if Vitest fails the test, but we can get errors before the test runs (e.g. launching VSCode).
             // So here we make sure to error if we don't get a clean exit code.
             throw new Error(`Exit code: ${result}`);
         }
@@ -140,21 +139,30 @@ export function getJUnitFileName(logName: string) {
     return `${logName.replaceAll(' ', '_')}_junit.xml`;
 }
 
-export async function runJestTest(project: string) {
-    process.env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(project);
-    process.env.JEST_SUITE_NAME = project;
-    const configPath = path.join(rootPath, 'jest.config.ts');
+const unitProjectConfigs: Record<string, string> = {
+    'Artifact Tests': path.join(rootPath, 'test', 'lsptoolshost', 'artifactTests', 'jest.config.ts'),
+    'Unit Tests': path.join(rootPath, 'test', 'lsptoolshost', 'unitTests', 'jest.config.ts'),
+    'Razor Unit Tests': path.join(rootPath, 'test', 'razor', 'razorTests', 'jest.config.ts'),
+    'Tasks Unit Tests': path.join(rootPath, 'test', 'tasks', 'jest.config.ts'),
+    'OmniSharp Unit Tests': path.join(rootPath, 'test', 'omnisharp', 'omnisharpUnitTests', 'jest.config.ts'),
+};
 
-    const { results } = await jest.runCLI(
-        {
-            config: configPath,
-            selectProjects: [project],
-            verbose: true,
-        } as Config.Argv,
-        [project]
-    );
+export async function runVitestTest(project: string) {
+    process.env.VITEST_JUNIT_OUTPUT_NAME = getJUnitFileName(project);
+    process.env.TEST_SUITE_NAME = project;
 
-    if (!results.success) {
+    const configPath = unitProjectConfigs[project];
+    if (!configPath) {
+        throw new Error(`No Vitest config registered for project '${project}'.`);
+    }
+
+    try {
+        await execa('npx', ['vitest', 'run', '--config', configPath], {
+            cwd: rootPath,
+            stdio: 'inherit',
+            env: process.env,
+        });
+    } catch {
         throw new Error('Tests failed.');
     }
 }

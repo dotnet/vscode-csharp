@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
+import { describe, expect, test, beforeAll, afterAll } from 'vitest';
 import * as fs from 'fs-extra';
 import * as vscode from 'vscode';
 import { activateCSharpExtension } from './integrationHelpers';

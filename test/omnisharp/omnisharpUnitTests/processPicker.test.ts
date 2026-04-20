@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect } from 'vitest';
 import { RemoteAttachPicker, Process, CimProcessParser } from '../../../src/shared/processPicker';
 
 describe('Remote Process Picker: Validate quoting arguments.', () => {

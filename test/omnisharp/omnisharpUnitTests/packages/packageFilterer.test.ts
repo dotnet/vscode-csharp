@@ -2,17 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { describe, test, expect, beforeEach, vi as jest } from 'vitest';
 import { PlatformInformation } from '../../../../src/shared/platform';
 import { getNotInstalledPackagesForPlatform } from '../../../../src/packageManager/packageFilterer';
 import { Package } from '../../../../src/packageManager/package';
 import { AbsolutePathPackage } from '../../../../src/packageManager/absolutePathPackage';
-import { MockedFunction } from 'jest-mock';
+import type { MockedFunction } from 'vitest';
 import * as fs from 'fs';
 import { join } from 'path';
 
 // Necessary when spying on module members.
-jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
+jest.mock('fs', async () => ({ __esModule: true, ...(<any>await jest.importActual('fs')) }));
 
 describe(`${getNotInstalledPackagesForPlatform.name}`, () => {
     let absolutePathPackages: AbsolutePathPackage[];

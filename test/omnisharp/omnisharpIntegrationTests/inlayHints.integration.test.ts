@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, test, beforeAll, afterAll } from '@jest/globals';
+import { expect, test, beforeAll, afterAll } from 'vitest';
 import * as vscode from 'vscode';
 import { activateCSharpExtension, describeIfNotRazorOrGenerator, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe } from '@jest/globals';
+import { describe } from 'vitest';
 import { RunAddTagHelperDirectiveSuite } from './addTagHelperDirective';
 import { RunAttributeDirectiveSuite } from './attributeDirective';
 import { RunCodeBlockSuite } from './codeBlock';

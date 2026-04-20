@@ -13,7 +13,7 @@ import {
     revertActiveFile,
     waitForExpectedResult,
 } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from 'vitest';
 import { EOL } from 'os';
 
 describe(`OnAutoInsert Tests`, () => {

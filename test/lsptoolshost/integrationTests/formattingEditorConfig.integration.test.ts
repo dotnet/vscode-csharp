@@ -12,7 +12,7 @@ import {
     expectText,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, afterEach } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, afterEach } from 'vitest';
 import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
 
 describe(`Formatting With EditorConfig Tests`, () => {

@@ -3,9 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as jest from 'jest';
-import { Config } from '@jest/types';
+import execa from 'execa';
 import * as path from 'path';
+
+const integrationProjectConfigs: Record<string, string> = {
+    'Integration Tests': path.join('test', 'lsptoolshost', 'integrationTests', 'jest.config.ts'),
+    'OmniSharp Integration Tests': path.join('test', 'omnisharp', 'omnisharpIntegrationTests', 'jest.config.ts'),
+    'Razor Integration Tests': path.join('test', 'razor', 'razorIntegrationTests', 'jest.config.ts'),
+    'Untrusted Integration Tests': path.join('test', 'untrustedWorkspace', 'integrationTests', 'jest.config.ts'),
+};
 
 export async function runIntegrationTests(projectName: string) {
     const repoRoot = process.env.CODE_EXTENSIONS_PATH;
@@ -13,29 +19,33 @@ export async function runIntegrationTests(projectName: string) {
         throw new Error('CODE_EXTENSIONS_PATH not set.');
     }
 
-    const jestConfigPath = path.join(repoRoot, 'jest.config.ts');
-    const jestConfig = {
-        config: jestConfigPath,
-        selectProjects: [projectName],
-        // Since we're running tests in the actual vscode process we have to run them serially.
-        runInBand: true,
-        // Timeout cannot be overriden in the jest config file, so override here.
-        testTimeout: 120000,
-        verbose: true,
-    } as Config.Argv;
+    const configRelativePath = integrationProjectConfigs[projectName];
+    if (!configRelativePath) {
+        throw new Error(`No Vitest config registered for project '${projectName}'.`);
+    }
 
+    // Integration tests run inside the real VS Code process, so make the live API available to the
+    // shared vscode mock before Vitest loads any test modules.
+    (globalThis as any).vscode = require('vscode');
+
+    const args = ['vitest', 'run', '--config', path.join(repoRoot, configRelativePath)];
     if (process.env.TEST_FILE_FILTER) {
-        // If we have just a file, run that with an explicit match.
-        jestConfig.testMatch = [process.env.TEST_FILE_FILTER];
+        args.push(process.env.TEST_FILE_FILTER);
     }
 
-    const { results } = await jest.runCLI(jestConfig, [projectName]);
+    try {
+        await execa('npx', args, {
+            cwd: repoRoot,
+            stdio: 'inherit',
+            env: process.env,
+        });
 
-    if (!results.success) {
-        console.log('Tests failed.');
+        process.exit(0);
+    } catch (error: any) {
+        if (typeof error?.exitCode === 'number') {
+            process.exit(error.exitCode);
+        }
+
+        throw error;
     }
-
-    // Explicitly exit the process - VSCode likes to write a bunch of cancellation errors to the console after this
-    // which make it look like the tests always fail.  We're done with the tests at this point, so just exit.
-    process.exit(results.success ? 0 : 1);
 }

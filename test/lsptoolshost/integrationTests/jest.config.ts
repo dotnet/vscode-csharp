@@ -2,20 +2,22 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { Config } from 'jest';
+import { defineConfig, mergeConfig } from 'vitest/config';
 import { baseProjectConfig } from '../../../baseJestConfig';
 
-export const jestIntegrationTestProjectName = 'Integration Tests';
+export const integrationTestProjectName = 'Integration Tests';
 
 /**
- * Defines a project configuration for jest integration tests.
+ * Defines a project configuration for Vitest integration tests.
  */
-const integrationTestConfig: Config = {
-    ...baseProjectConfig,
-    displayName: jestIntegrationTestProjectName,
-    roots: ['<rootDir>'],
-    testEnvironment: '<rootDir>/../../vsCodeEnvironment.ts',
-    setupFilesAfterEnv: ['<rootDir>/../../vsCodeFramework.ts'],
-};
-
-export default integrationTestConfig;
+export default mergeConfig(
+    baseProjectConfig,
+    defineConfig({
+        test: {
+            name: integrationTestProjectName,
+            dir: __dirname,
+            include: ['**/*.test.ts'],
+            testTimeout: 120000,
+        },
+    })
+);

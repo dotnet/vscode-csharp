@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { beforeEach, test, describe, expect } from '@jest/globals';
+import { beforeEach, test, describe, expect } from 'vitest';
 import { TelemetryObserver } from '../../../../src/omnisharp/observers/telemetryObserver';
 import { PlatformInformation } from '../../../../src/shared/platform';
 import { PackageInstallation, InstallationFailure, InstallationSuccess } from '../../../../src/shared/loggingEvents';

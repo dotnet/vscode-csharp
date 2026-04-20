@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
-import { expect } from '@jest/globals';
+import { expect } from 'vitest';
 import { restartLanguageServer, waitForExpectedResult } from './integrationHelpers';
 
 function sortDiagnostics(diagnostics: vscode.Diagnostic[]): vscode.Diagnostic[] {

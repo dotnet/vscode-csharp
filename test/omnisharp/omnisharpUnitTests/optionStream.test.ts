@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { jest, describe, test, expect, beforeEach } from '@jest/globals';
+import { vi as jest, describe, test, expect, beforeEach } from 'vitest';
 import { Observable } from 'rxjs';
 import createOptionStream from '../../../src/shared/observables/createOptionStream';
 import Disposable from '../../../src/disposable';

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, expect, jest, test } from '@jest/globals';
+import { describe, expect, vi as jest, test } from 'vitest';
 import * as vscode from 'vscode';
 import { CSharpExtensionExports, LimitedExtensionExports } from '../../../src/csharpExtensionExports';
 

@@ -8,7 +8,7 @@ import reportIssue from '../../../../src/shared/reportIssue';
 import { FakeMonoResolver, fakeMonoInfo } from '../fakes/fakeMonoResolver';
 import { FakeDotnetResolver } from '../fakes/fakeDotnetResolver';
 import { DotnetInfo } from '../../../../src/shared/utils/dotnetInfo';
-import { jest, describe, test, expect, beforeEach } from '@jest/globals';
+import { vi as jest, describe, test, expect, beforeEach } from 'vitest';
 
 describe(`${reportIssue.name}`, () => {
     const vscodeVersion = 'myVersion';

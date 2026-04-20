@@ -12,7 +12,7 @@ import {
     openFileInWorkspaceAsync,
     sortLocations,
 } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from 'vitest';
 
 describe(`Go To Implementation Tests`, () => {
     beforeAll(async () => {

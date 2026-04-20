@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { AbsolutePath } from '../../../src/packageManager/absolutePath';
 import { TmpAsset, CreateTmpFile } from '../../createTmpAsset';
 import { join } from 'path';

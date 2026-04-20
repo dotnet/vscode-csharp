@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { OmnisharpDownloader } from '../../../src/omnisharp/omnisharpDownloader';
 import NetworkSettings from '../../../src/networkSettings';
 import { EventStream } from '../../../src/eventStream';

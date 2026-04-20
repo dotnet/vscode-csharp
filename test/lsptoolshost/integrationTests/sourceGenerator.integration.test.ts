@@ -14,7 +14,7 @@ import {
     sleep,
     sortLocations,
 } from './integrationHelpers';
-import { beforeAll, beforeEach, afterAll, test, expect, afterEach, describe } from '@jest/globals';
+import { beforeAll, beforeEach, afterAll, test, expect, afterEach, describe } from 'vitest';
 
 describe(`Source Generator Tests`, () => {
     beforeAll(async () => {

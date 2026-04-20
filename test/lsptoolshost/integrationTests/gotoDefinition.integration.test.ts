@@ -15,7 +15,7 @@ import {
     testIfCSharp,
     testIfDevKit,
 } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from 'vitest';
 
 /**
  * For built-in library references, we can get different metadata results depending on the test project TFM and installed SDKs.

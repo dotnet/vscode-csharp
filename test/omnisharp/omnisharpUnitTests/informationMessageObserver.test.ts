@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+import { vi as jest, describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { InformationMessageObserver } from '../../../src/omnisharp/observers/informationMessageObserver';
 import { getUnresolvedDependenices, getWorkspaceConfiguration } from '../../fakes';
 import { Subject, from as observableFrom } from 'rxjs';

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, test, beforeAll, afterAll, describe } from '@jest/globals';
+import { expect, test, beforeAll, afterAll, describe } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';

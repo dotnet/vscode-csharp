@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { describe, beforeAll, afterAll, test, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect, beforeEach, afterEach } from 'vitest';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from './integrationHelpers';
 import { InlayHint, InlayHintKind, Position } from 'vscode-languageclient';

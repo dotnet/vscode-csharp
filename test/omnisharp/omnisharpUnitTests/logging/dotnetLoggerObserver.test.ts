@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect } from 'vitest';
 import { getNullChannel } from '../../../fakes';
 import { DotnetLoggerObserver } from '../../../../src/omnisharp/observers/dotnetLoggerObserver';
 import { EventWithMessage } from '../../../../src/shared/loggingEvents';

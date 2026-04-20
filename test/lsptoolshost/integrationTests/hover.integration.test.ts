@@ -8,7 +8,7 @@ import * as path from 'path';
 import { EOL } from 'os';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from 'vitest';
 
 describe(`Hover Tests`, () => {
     beforeAll(async () => {

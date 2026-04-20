@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { jest, describe, test, expect, beforeEach } from '@jest/globals';
+import { vi as jest, describe, test, expect, beforeEach } from 'vitest';
 import * as path from 'path';
 import { commonOptions, omnisharpOptions } from '../../../src/shared/options';
 import { getWorkspaceConfiguration } from '../../fakes';

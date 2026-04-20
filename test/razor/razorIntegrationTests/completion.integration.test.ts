@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { beforeAll, afterAll, test, expect, beforeEach, describe } from '@jest/globals';
+import { beforeAll, afterAll, test, expect, beforeEach, describe } from 'vitest';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 

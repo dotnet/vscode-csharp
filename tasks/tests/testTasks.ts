@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers';
-import { jestArtifactTestsProjectName } from '../../test/lsptoolshost/artifactTests/jest.config';
-import { jestUnitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config';
+import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runVitestTest } from './testHelpers';
+import { artifactTestsProjectName } from '../../test/lsptoolshost/artifactTests/jest.config';
+import { unitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config';
 import { razorTestProjectName } from '../../test/razor/razorTests/jest.config';
-import { jestTasksTestProjectName } from '../../test/tasks/jest.config';
+import { tasksTestProjectName } from '../../test/tasks/jest.config';
 
 const razorIntegrationTestProjects = ['RazorApp'];
 
 export async function testArtifacts(): Promise<void> {
-    await runJestTest(jestArtifactTestsProjectName);
+    await runVitestTest(artifactTestsProjectName);
 }
 
 export async function testIntegrationCSharp(): Promise<void> {
@@ -43,7 +43,7 @@ export async function testIntegrationUntrusted(): Promise<void> {
 }
 
 export async function testUnit(): Promise<void> {
-    await runJestTest(jestUnitTestProjectName);
-    await runJestTest(razorTestProjectName);
-    await runJestTest(jestTasksTestProjectName);
+    await runVitestTest(unitTestProjectName);
+    await runVitestTest(razorTestProjectName);
+    await runVitestTest(tasksTestProjectName);
 }

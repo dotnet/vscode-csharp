@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { jest } from '@jest/globals';
+import { getFakeVsCode } from './fakes';
 
-// Defines a virtual mock for the vscode library since it doesn't exist until it gets loaded in by the vscode extension process.
-jest.mock('vscode', () => (global as any).vscode, { virtual: true });
+// Ensure tests always have a vscode object available. Integration tests replace this with the
+// real VS Code API before Vitest starts, while unit tests fall back to a lightweight fake.
+(globalThis as any).vscode ??= getFakeVsCode();

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect } from '@jest/globals';
+import { expect } from 'vitest';
 import { createSnapshot } from './snapshotFactory';
 import { tokenize } from './tokenizedContentProvider';
 

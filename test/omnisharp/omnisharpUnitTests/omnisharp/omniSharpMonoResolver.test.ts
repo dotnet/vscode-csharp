@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { describe, test, expect, beforeEach, vi as jest } from 'vitest';
 import { OmniSharpMonoResolver } from '../../../../src/omnisharp/omniSharpMonoResolver';
 
 import { join } from 'path';

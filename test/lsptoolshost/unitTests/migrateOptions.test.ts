@@ -13,13 +13,13 @@ import {
     MigrateOptions,
     migrateOptions,
 } from '../../../src/shared/migrateOptions';
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { describe, test, expect, beforeEach, vi as jest } from 'vitest';
 import { getVSCodeWithConfig } from '../../fakes';
 import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId';
 import { ConfigurationTarget } from '../../../src/vscodeAdapter';
 
 // Necessary when spying on module members.
-jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
+jest.mock('fs', async () => ({ __esModule: true, ...(<any>await jest.importActual('fs')) }));
 
 describe('Migrate configurations', () => {
     const packageJson = JSON.parse(fs.readFileSync('package.json').toString());

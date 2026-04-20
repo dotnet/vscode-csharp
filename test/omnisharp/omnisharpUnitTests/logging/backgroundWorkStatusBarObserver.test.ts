@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { StatusBarItem } from '../../../../src/vscodeAdapter';
 import { OmnisharpBackgroundDiagnosticStatus } from '../../../../src/omnisharp/omnisharpLoggingEvents';
 import { BackgroundWorkStatusBarObserver } from '../../../../src/omnisharp/observers/backgroundWorkStatusBarObserver';
