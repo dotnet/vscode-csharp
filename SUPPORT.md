@@ -110,6 +110,32 @@ Missing language features are often caused by a failure to load the project(s) o
 3. **Verify the Solution Explorer (C# Dev Kit)**:
    - If you are using C# Dev Kit, check the Solution Explorer to ensure the project is displayed with the expected references.
    - If the references or structure are not as expected, include the contents of the `Projects` output window in your issue report.
+  
+#### Collecting design-time build binary logs
+
+When troubleshooting project load problems, collecting MSBuild binary logs from design-time builds can provide additional diagnostic detail.
+
+1. **Configure the binary log path**:
+   - Open VS Code settings.
+   - Set `dotnet.projects.binaryLogPath` to a writable folder where logs should be saved.
+   - You can set this in your `settings.json`, for example:
+
+   ```json
+   {
+     "dotnet.projects.binaryLogPath": "C:\\temp\\csharp-binlogs"
+   }
+   ```
+
+2. **Reload and reproduce**:
+   - Reload VS Code (or reopen the workspace) after changing the setting.
+   - Reproduce the project load issue so the extension performs design-time builds.
+
+3. **Collect the generated `.binlog` files**:
+   - After reproducing the issue, check the configured folder for new `.binlog` files.
+   - Attach relevant binary logs to the GitHub issue, or share them privately (see [Sharing information privately](#sharing-information-privately)).
+
+> [!WARNING]
+> Binary logs can contain machine-specific and workspace-specific information (for example file paths and project details). Review logs before sharing publicly.
 
 ### Colorization problems
 If you encounter issues with document classification (e.g., incorrect syntax highlighting or colorization), please provide the following information to help us diagnose the problem:

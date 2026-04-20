@@ -22,7 +22,50 @@ This skill describes how to update the Roslyn language server version in the vsc
 
 ## Input Required
 
-- **New Roslyn Version**: The new version to update to (e.g., `5.5.0-2.26080.10`)
+- **New Roslyn Version** (optional): The new version to update to (e.g., `5.5.0-2.26080.10`). If not provided, the version will be auto-discovered from the latest passing `dotnet-roslyn-official` pipeline build on main. See [Version Auto-Discovery](#version-auto-discovery) below.
+
+## Version Auto-Discovery
+
+If the user does not provide a specific Roslyn version, follow these steps to discover the latest version from the official Roslyn build pipeline.
+
+### Prerequisites
+
+1. The Azure Developer CLI (`azd`) must be installed. See https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd for platform-specific instructions.
+2. You must be authenticated:
+   ```shell
+   azd auth login
+   ```
+
+### Discovery Steps
+
+1. **Get an Azure DevOps bearer token:**
+   ```shell
+   TOKEN=$(azd auth token --scope "499b84ac-1321-427f-aa17-267ca6975798/.default" --output json | jq -r '.token')
+   ```
+
+2. **Find the latest passing main build** (pipeline definition ID `327` = `dotnet-roslyn-official`):
+   ```shell
+   BUILD_ID=$(curl -s -H "Authorization: Bearer $TOKEN" \
+     "https://dnceng.visualstudio.com/internal/_apis/build/builds?definitions=327&branchName=refs/heads/main&statusFilter=completed&resultFilter=succeeded&\$top=1&api-version=7.0" \
+     | jq '.value[0].id')
+   ```
+
+3. **Find the "Publish Assets" task log URL from the build timeline:**
+   ```shell
+   LOG_URL=$(curl -s -H "Authorization: Bearer $TOKEN" \
+     "https://dnceng.visualstudio.com/internal/_apis/build/builds/$BUILD_ID/timeline?api-version=7.0" \
+     | jq -r '.records[] | select(.name == "Publish Assets" and .type == "Task") | .log.url')
+   ```
+
+4. **Fetch the log and extract the NuGet package version:**
+   ```shell
+   VERSION=$(curl -s -H "Authorization: Bearer $TOKEN" "$LOG_URL" \
+     | grep -oP 'Microsoft\.CodeAnalysis\.\K\d+\.\d+\.\d+-[\w.]+(?=\.nupkg)' \
+     | head -1)
+   echo "Discovered version: $VERSION"
+   ```
+
+The extracted version (e.g., `5.6.0-2.26173.1`) is the value to use as the new Roslyn version for the rest of the process.
 
 ## Process
 

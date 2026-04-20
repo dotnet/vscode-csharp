@@ -23,7 +23,6 @@ describeIfFileBasedPrograms(`File-based Programs Tests`, () => {
     let exports: CSharpExtensionExports;
 
     beforeAll(async () => {
-        process.env.RoslynWaiterEnabled = 'true';
         exports = await activateCSharpExtension();
     });
 
@@ -45,6 +44,11 @@ describeIfFileBasedPrograms(`File-based Programs Tests`, () => {
             editBuilder.insert(new vscode.Position(0, 0), '#:package Newtonsoft.Json@13.0.3');
             editBuilder.insert(new vscode.Position(1, 0), 'using Newton');
         });
+
+        // Note: FBP project system doesn't register file watchers until first design-time build completes.
+        await waitForAllAsyncOperationsAsync(exports);
+
+        // Save the document, triggering a new design-time build, then wait for it.
         await vscode.window.activeTextEditor!.document.save();
         await waitForAllAsyncOperationsAsync(exports);
 
