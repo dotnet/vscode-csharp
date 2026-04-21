@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.136.x
+* Update Roslyn to 5.7.0-1.26220.12 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * File-based apps: Adjust heuristics to properly handle transitive directives (PR: [#83185](https://github.com/dotnet/roslyn/pull/83185))
+  * Ensure we don't touch the remote host during new document formatting (PR: [#83212](https://github.com/dotnet/roslyn/pull/83212))
+  * Allow creation of DocumentUri for uris System.Uri cannot parse (PR: [#83210](https://github.com/dotnet/roslyn/pull/83210))
+  * Fix property pattern completion filtering out member being edited (PR: [#83230](https://github.com/dotnet/roslyn/pull/83230))
+  * Support MatchPriority comparison in LSP completion (PR: [#83164](https://github.com/dotnet/roslyn/pull/83164))
+  * Have CompleteStatement handle EOF statements (PR: [#83205](https://github.com/dotnet/roslyn/pull/83205))
 * Update Razor to 10.0.0-preview.26217.1 (PR: [#9206](https://github.com/dotnet/vscode-csharp/pull/9206))
   * Fix Watson crash in ToRazorTextDocumentIdentifier when DocumentUri is unparseable (PR: [#13043](https://github.com/dotnet/razor/pull/13043))
   * Fix NRE in CohostDocumentPullDiagnosticsEndpointBase.GetDiagnosticsAsync (PR: [#13044](https://github.com/dotnet/razor/pull/13044))
