@@ -1432,12 +1432,12 @@
                   "coreclr",
                   "clr"
                 ],
-                "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+                "markdownDescription": "%generateOptionsSchema.type.markdownDescription%",
                 "default": "coreclr"
               },
               "debugServer": {
                 "type": "number",
-                "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+                "description": "%generateOptionsSchema.debugServer.description%",
                 "default": 4711
               }
             }
