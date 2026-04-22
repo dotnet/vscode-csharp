@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.136.x
+* Update Roslyn to 5.7.0-1.26220.12 (PR: [#9217](https://github.com/dotnet/vscode-csharp/pull/9217))
+* Bump brace-expansion (PR: [#9119](https://github.com/dotnet/vscode-csharp/pull/9119))
+* Bump dotnet-sdk from 10.0.201 to 10.0.202 in /msbuild (PR: [#9192](https://github.com/dotnet/vscode-csharp/pull/9192))
 * Update Roslyn to 5.7.0-1.26220.12 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
   * File-based apps: Adjust heuristics to properly handle transitive directives (PR: [#83185](https://github.com/dotnet/roslyn/pull/83185))
   * Ensure we don't touch the remote host during new document formatting (PR: [#83212](https://github.com/dotnet/roslyn/pull/83212))
