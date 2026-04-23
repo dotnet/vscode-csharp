@@ -264,6 +264,7 @@
   "generateOptionsSchema.symbolOptions.searchPaths.description": "符號陣列伺服器 URL (example: http​://MyExampleSymbolServer) 或目錄 (範例: /build/symbols) 搜尋 .pdb 檔案。除了預設位置 (位於模組旁和 pdb 原先放置的路徑)，也會搜尋這些目錄。",
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[僅支援在局部 macOS 偵錯]\r\n\r\n偵錯程式的架構。除非設定此參數，否則會自動偵測到此情況。允許的值為 'x86_64' 或 'arm64'。",
   "generateOptionsSchema.targetOutputLogPath.description": "設定時，目標應用程式寫入 stdout 和 stderr 的文字 (例如: Console.WriteLine) 將會儲存到指定的檔案。如果主控台設定為 internalConsole 以外的項目，則會略過此選項。例如 '${workspaceFolder}/out.txt'",
+  "generateOptionsSchema.terminateChildProcesses.description": "When the debug session ends, if this is set to `true`, the debugger will terminate the debuggee and all child processes it spawned. If set to `false`, only the debuggee itself is terminated and child processes are left running. This option defaults to `false`.\r\n\r\nOn Windows, child processes are tracked using a Job Object. Processes that need to outlive the debug session can opt out by passing the `CREATE_BREAKAWAY_FROM_JOB` flag when calling `CreateProcess`.",
   "generateOptionsSchema.type.markdownDescription": "輸入要進行偵錯的程式碼類型。可以是 `coreclr` 表示 .NET Core 偵錯，或 `clr` 表示桌面 .NET Framework。`clr` 僅在 Windows 上運作，因為桌面 Framework 僅限 Windows。",
   "generateOptionsSchema.useVSDbg.description": "啟用新的 .NET 9+ Wasm 偵錯工具 (預覽)",
   "viewsWelcome.debug.contents": "[為組建和偵錯產生 C# 資產](command:dotnet.generateAssets)\r\n\r\n若要深入了解 launch.json，請參閱[為 C# 偵錯設定 launch.json](https://aka.ms/VSCode-CS-LaunchJson)(英文)。"

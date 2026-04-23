@@ -6,7 +6,7 @@
 import { OmniSharpServer } from './server';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
-import { CancellationToken } from 'vscode-languageserver-protocol';
+import { CancellationToken } from 'vscode-languageclient';
 import {
     isWebProject,
     isBlazorWebAssemblyProject,

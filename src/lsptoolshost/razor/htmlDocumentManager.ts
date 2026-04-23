@@ -10,7 +10,7 @@ import { getUriPath } from '../../razor/src/uriPaths';
 import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider';
 import { HtmlDocument } from './htmlDocument';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
+import { RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
 import { UriConverter } from '../utils/uriConverter';
 
 const virtualHtmlSuffix = '__virtual.html';

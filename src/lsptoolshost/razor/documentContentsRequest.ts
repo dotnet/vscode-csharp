@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { TextDocumentIdentifier } from 'vscode-languageserver-types';
+import { TextDocumentIdentifier } from 'vscode-languageclient';
 import { GeneratedDocumentKind } from './generatedDocumentKind';
 
 export class DocumentContentsRequest {

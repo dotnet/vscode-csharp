@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { describe, beforeAll, afterAll, test, expect, beforeEach, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from './integrationHelpers';
-import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
+import { InlayHint, InlayHintKind, Position } from 'vscode-languageclient';
 
 describe(`Inlay Hints Tests`, () => {
     beforeAll(async () => {

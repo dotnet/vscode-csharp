@@ -8,8 +8,8 @@ import { Advisor } from './omnisharp/features/diagnosticsProvider';
 import { EventStream } from './eventStream';
 import TestManager from './omnisharp/features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
-import { PartialResultParams, ProtocolRequestType, RequestType } from 'vscode-languageclient/node';
 import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents';
+import { PartialResultParams, ProtocolRequestType, RequestParam, RequestType } from 'vscode-languageclient';
 
 export interface LimitedExtensionExports {
     isLimitedActivation: true;
@@ -50,7 +50,7 @@ export interface CSharpExtensionExports {
 export interface CSharpExtensionExperimentalExports {
     sendServerRequest: <Params, Response, Error>(
         type: RequestType<Params, Response, Error>,
-        params: Params,
+        params: RequestParam<Params>,
         token: vscode.CancellationToken
     ) => Promise<Response>;
     sendServerRequestWithProgress<
@@ -61,7 +61,7 @@ export interface CSharpExtensionExperimentalExports {
         RegistrationOptions
     >(
         type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
-        params: Params,
+        params: RequestParam<Params>,
         onProgress: (p: PartialResult) => Promise<any>,
         token?: vscode.CancellationToken
     ): Promise<Response>;

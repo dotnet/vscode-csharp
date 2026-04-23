@@ -8,7 +8,7 @@ import { RazorLanguage } from '../../razor/src/razorLanguage';
 import { getUriPath } from '../../razor/src/uriPaths';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { DocumentContentsRequest } from './documentContentsRequest';
-import { CancellationToken, RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
+import { CancellationToken, RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
 import { UriConverter } from '../utils/uriConverter';
 import { GeneratedDocumentKind } from './generatedDocumentKind';
 

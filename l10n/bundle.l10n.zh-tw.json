@@ -84,7 +84,6 @@
   "For more information about the 'console' field, see {0}": "如需 [主控台] 欄位的詳細資訊，請參閱 {0}",
   "GC Dump": "GC 傾印",
   "Garbage collector heap dump using dotnet-gcdump": "使用 dotnet-gcdump 的記憶體回收行程堆積傾印",
-  "Generated document not found": "找不到產生的文件",
   "Get the SDK": "取得 SDK",
   "Go to GitHub": "移至 GitHub",
   "Go to output": "前往輸出",

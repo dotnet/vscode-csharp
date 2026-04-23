@@ -9,7 +9,7 @@ import {
     type ContextProvider,
 } from '@github/copilot-language-server';
 import * as vscode from 'vscode';
-import * as lsp from 'vscode-languageserver-protocol';
+import * as lsp from 'vscode-languageclient';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { CSharpExtensionId } from '../../constants/csharpExtensionId';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';

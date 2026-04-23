@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as RoslynProtocol from '../server/roslynProtocol';
-import { LSPAny } from 'vscode-languageserver-protocol';
+import { LSPAny } from 'vscode-languageclient';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { URIConverter, createConverter } from 'vscode-languageclient/protocolConverter';
 import { UriConverter } from '../utils/uriConverter';

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { DocumentSelector } from 'vscode-languageserver-protocol';
+import { DocumentSelector } from 'vscode-languageclient';
 import * as path from 'path';
 
 export interface CommonOptions {

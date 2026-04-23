@@ -4,14 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import {
-    FormattingOptions,
-    InsertTextFormat,
-    LanguageClient,
-    TextDocumentIdentifier,
-} from 'vscode-languageclient/node';
 import * as RoslynProtocol from '../server/roslynProtocol';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { FormattingOptions, InsertTextFormat, Range, TextDocumentIdentifier } from 'vscode-languageclient';
+import { LanguageClient } from 'vscode-languageclient/node';
 
 export function registerOnAutoInsert(languageServer: RoslynLanguageServer, languageClient: LanguageClient) {
     let source = new vscode.CancellationTokenSource();
@@ -33,7 +29,7 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer, langu
         }
 
         // Convert to a VSCode range for ease of handling.
-        const vscodeRange = languageClient.protocol2CodeConverter.asRange(change.range);
+        const vscodeRange = languageClient.protocol2CodeConverter.asRange(change.range as Range);
 
         // Empty or multiline changes are not supported for onautoinsert.
         if (!vscodeRange.isEmpty || !vscodeRange.isSingleLine) {

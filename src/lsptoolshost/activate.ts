@@ -20,7 +20,6 @@ import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
 import { registerRestoreCommands } from './projectRestore/restore';
-import { registerSourceGeneratedFilesContentProvider } from './generators/sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
@@ -96,7 +95,6 @@ export async function activateRoslynLanguageServer(
 
     registerRestoreCommands(context, languageServer, _channel);
 
-    registerSourceGeneratedFilesContentProvider(context, languageServer);
     registerSourceGeneratorRefresh(context, languageServer, _channel);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));

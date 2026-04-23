@@ -9,7 +9,10 @@ This skill describes how to update the Roslyn language server version in the vsc
 
 ## Prerequisites
 
-1. You must have a local clone of the `dotnet/roslyn` repository (commonly at `C:\Users\<username>\source\repos\roslyn`)
+1. You must have a local clone of the `dotnet/roslyn` repository. Common locations for this include:
+  - `C:\Users\<username>\source\repos\roslyn`
+  - Next to the current repo directory, e.g. `<current-repo-root>/../roslyn`
+  - If unable to find local roslyn repo, ask the user for its location.
 2. The `roslyn-tools` CLI tool must be installed as a global .NET tool:
    ```powershell
    dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
@@ -31,6 +34,7 @@ If the user does not provide a specific Roslyn version, follow these steps to di
 ### Prerequisites
 
 1. The Azure Developer CLI (`azd`) must be installed. See https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd for platform-specific instructions.
+    - If `azd` is missing, don't look for an alternative. Instead, stop and assist the user with installing it.
 2. You must be authenticated:
    ```shell
    azd auth login

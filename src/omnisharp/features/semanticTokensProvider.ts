@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { SemanticTokenTypes } from 'vscode-languageserver-protocol';
+import { SemanticTokenTypes } from 'vscode-languageclient';
 import * as protocol from '../protocol';
 import * as serverUtils from '../utils';
 import { createRequest, toRange2 } from '../typeConversion';

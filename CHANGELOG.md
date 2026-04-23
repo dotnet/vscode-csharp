@@ -3,6 +3,31 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.136.x
+* Update Roslyn to 5.7.0-1.26220.12 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * File-based apps: Adjust heuristics to properly handle transitive directives (PR: [#83185](https://github.com/dotnet/roslyn/pull/83185))
+  * Ensure we don't touch the remote host during new document formatting (PR: [#83212](https://github.com/dotnet/roslyn/pull/83212))
+  * Allow creation of DocumentUri for uris System.Uri cannot parse (PR: [#83210](https://github.com/dotnet/roslyn/pull/83210))
+  * Fix property pattern completion filtering out member being edited (PR: [#83230](https://github.com/dotnet/roslyn/pull/83230))
+  * Support MatchPriority comparison in LSP completion (PR: [#83164](https://github.com/dotnet/roslyn/pull/83164))
+  * Have CompleteStatement handle EOF statements (PR: [#83205](https://github.com/dotnet/roslyn/pull/83205))
+* Update Razor to 10.0.0-preview.26217.1 (PR: [#9206](https://github.com/dotnet/vscode-csharp/pull/9206))
+  * Fix Watson crash in ToRazorTextDocumentIdentifier when DocumentUri is unparseable (PR: [#13043](https://github.com/dotnet/razor/pull/13043))
+  * Fix NRE in CohostDocumentPullDiagnosticsEndpointBase.GetDiagnosticsAsync (PR: [#13044](https://github.com/dotnet/razor/pull/13044))
+* Update Roslyn to 5.7.0-1.26217.5 (PR: [#9155](https://github.com/dotnet/vscode-csharp/pull/9155))
+  * Allow cohost rename in Razor source-generated docs (PR: [#83217](https://github.com/dotnet/roslyn/pull/83217))
+  * Allow manual creation of hot reload brokered services in VSCode (PR: [#83082](https://github.com/dotnet/roslyn/pull/83082))
+  * Use standard LSP for source generator contents (PR: [#83119](https://github.com/dotnet/roslyn/pull/83119))
+  * Fix restore of misc project for virtual files and older SDKs (PR: [#83172](https://github.com/dotnet/roslyn/pull/83172))
+  * Improve TextLine and line table performance by packing existing data into unused bits (PR: [#83000](https://github.com/dotnet/roslyn/pull/83000))
+  * Restore removed brokered service descriptors for hot reload (PR: [#83184](https://github.com/dotnet/roslyn/pull/83184))
+* Update xamlTools to 18.7.11721.33 (PR: [#9225](https://github.com/dotnet/vscode-csharp/pull/9225))
+  * Fix msvsmon crash during debug session shutdown with XAML Hot Reload enabled (PR: AzDO#728217)
+  * Fix SslStream disposal crash (Issues: [9146](https://github.com/dotnet/vscode-csharp/issues/9146), [9183](https://github.com/dotnet/vscode-csharp/issues/9183), [9175](https://github.com/dotnet/vscode-csharp/issues/9175), PR: AzDO#728722)
+  * Fix XAML Hot Reload error reporting when exceptions originate from indirectly-loaded views (PR: AzDO#729745)
+  * XAML C# Expressions (XEXPR) limited support (PR: AzDO#721767)
+ 
+
 # 2.135.x
 * Bump lodash from 4.17.23 to 4.18.1 (PR: [#9152](https://github.com/dotnet/vscode-csharp/pull/9152))
 * Adding changes to support use monovsdbg to debug wasm apps. (PR: [#7220](https://github.com/dotnet/vscode-csharp/pull/7220))

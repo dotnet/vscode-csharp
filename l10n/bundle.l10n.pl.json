@@ -84,7 +84,6 @@
   "For more information about the 'console' field, see {0}": "Aby uzyskać więcej informacji o polu „console”, zobacz {0}",
   "GC Dump": "Zrzut sterty GC",
   "Garbage collector heap dump using dotnet-gcdump": "Zrzut sterty modułu odzyskiwania pamięci przy użyciu dotnet-gcdump",
-  "Generated document not found": "Nie znaleziono wygenerowanego dokumentu",
   "Get the SDK": "Pobierz zestaw SDK",
   "Go to GitHub": "Przejdź do serwisu GitHub",
   "Go to output": "Przejdź do danych wyjściowych",

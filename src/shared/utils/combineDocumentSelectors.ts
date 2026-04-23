@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { DocumentSelector } from 'vscode-languageserver-protocol/lib/common/protocol';
+import { DocumentSelector } from 'vscode-languageclient';
 
 export function combineDocumentSelectors(
     ...selectors: (DocumentSelector | vscode.DocumentSelector)[]
