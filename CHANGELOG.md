@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
+* Update Razor to 10.0.0-preview.26226.17 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Parallelize HTML and OOP completion requests in Razor cohost endpoint (PR: [#13092](https://github.com/dotnet/razor/pull/13092))
+  * Fix formatting for self-closing multiline templates (PR: [#13069](https://github.com/dotnet/razor/pull/13069))
+  * Return empty incomplete list when HTML completion fails in Razor (PR: [#13090](https://github.com/dotnet/razor/pull/13090))
+  * Perf: Skip GetAttributes() for non-viable component properties (PR: [#13091](https://github.com/dotnet/razor/pull/13091))
+  * Fix #13056 - Debugger and stack exception pointed to incorrect line/code as source of issue (PR: [#13057](https://github.com/dotnet/razor/pull/13057))
 
 # 2.136.x
 * Update Roslyn to 5.7.0-1.26220.12 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
