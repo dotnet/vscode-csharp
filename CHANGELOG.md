@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
-* Update Razor to 10.0.0-preview.26226.17 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 10.0.0-preview.26226.17 (PR: [#9240](https://github.com/dotnet/vscode-csharp/pull/9240))
   * Parallelize HTML and OOP completion requests in Razor cohost endpoint (PR: [#13092](https://github.com/dotnet/razor/pull/13092))
   * Fix formatting for self-closing multiline templates (PR: [#13069](https://github.com/dotnet/razor/pull/13069))
   * Return empty incomplete list when HTML completion fails in Razor (PR: [#13090](https://github.com/dotnet/razor/pull/13090))
