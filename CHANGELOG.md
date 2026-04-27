@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
-* Update Roslyn to 5.7.0-1.26226.5 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.7.0-1.26226.5 (PR: [#9247](https://github.com/dotnet/vscode-csharp/pull/9247))
   * Fix false positive "infinite chain of calls" error in collection expressions when parameterless constructor exists alongside params constructor (PR: [#82591](https://github.com/dotnet/roslyn/pull/82591))
   * Fix regression in CreateFallbackEncoding (PR: [#83320](https://github.com/dotnet/roslyn/pull/83320))
   * Avoid decoding all SuppressMessageAttributes up front (PR: [#83087](https://github.com/dotnet/roslyn/pull/83087))
