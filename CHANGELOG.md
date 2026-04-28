@@ -22,13 +22,13 @@ Two powerful navigation features are now available for C# in VS Code:
 
 ### File-based apps: automatic discovery and improved editing
 
-File-based C# apps (standalone `.cs` files that run without a project file) now have a significantly improved experience. A new `dotnet.fileBasedApps.enableAutomaticDiscovery` setting enables the language server to automatically detect standalone C# files and provide full language support — completions, diagnostics, and navigation — without requiring a `.csproj`.
+File-based C# apps (standalone `.cs` files that run without a project file) can now be [automatically discovered](https://github.com/dotnet/roslyn/blob/main/docs/features/file-based-programs-vscode.md#automatic-discovery) in the opened workspace folders. Set `dotnet.fileBasedApps.enableAutomaticDiscovery` to `true` to use it. This is particularly recommended when using the new `#:include` directive for multi-file-based apps.
 
 Beyond discovery, the editing experience for file-based apps has been refined:
 
 - **Transitive `#:` directives** are now handled correctly, so transitive dependencies resolve properly.
 - **`#:` directives are preserved during formatting**, preventing the formatter from mangling file-based app metadata.
-- **Completions for `#:include` directives** help you discover available directives as you type.
+- **Completions for `#:include` directives** help you discover available files as you type.
 - **Improved colorization** of file-based app directives makes them visually distinct from regular C# code.
 
 ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
