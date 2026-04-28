@@ -9,12 +9,16 @@ This update brings new language features like Type Hierarchy and Call Hierarchy,
 
 ## C# Language Support
 
+### Selection Range
+
+The LSP now supports **Selection Range** (`Expand Selection` / `Shrink Selection`), enabling smart expanding and shrinking of text selections based on the syntactic structure of your C# code. For example, you can progressively select from a variable name → the containing statement → the containing block → the method → the class, all with keyboard shortcuts. ([roslyn#82809](https://github.com/dotnet/roslyn/pull/82809))
+
 ### Type Hierarchy and Call Hierarchy
 
 Two powerful navigation features are now available for C# in VS Code:
 
-- **Type Hierarchy** lets you explore the full inheritance chain of any class, interface, or struct — navigate through base types and derived types without leaving the editor. ([vscode-csharp#9188](https://github.com/dotnet/vscode-csharp/pull/9188))
-- **Call Hierarchy** lets you trace incoming and outgoing calls for any method, making it easy to understand how your code connects. Interface implementation categories for overrides are correctly shown, so you get an accurate picture of the full call chain. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096), [vscode-csharp#9188](https://github.com/dotnet/vscode-csharp/pull/9188))
+- **Type Hierarchy** lets you explore the full inheritance chain of any class, interface, or struct — navigate through base types and derived types without leaving the editor. ([roslyn#83011](https://github.com/dotnet/roslyn/pull/83011))
+- **Call Hierarchy** lets you trace incoming and outgoing calls for any method, making it easy to understand how your code connects. Interface implementation categories for overrides are correctly shown, so you get an accurate picture of the full call chain. ([roslyn#82865](https://github.com/dotnet/roslyn/pull/82865))
 
 ### File-based apps: automatic discovery and improved editing
 
@@ -29,43 +33,22 @@ Beyond discovery, the editing experience for file-based apps has been refined:
 
 ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
 
-### Import completion commit behavior
-
-A new option controls the commit behavior when accepting import completions. This gives you more flexibility over how auto-imports are inserted — for example, whether accepting a completion should also add the import or just insert the symbol name. ([vscode-csharp#9188](https://github.com/dotnet/vscode-csharp/pull/9188))
-
-### Bug fixes
-
-- **Property pattern completion** no longer filters out the member you are currently editing. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
-- **`#!` shebang directives** now correctly report an error when they appear anywhere other than the very start of a file, instead of showing a misleading message. ([vscode-csharp#9188](https://github.com/dotnet/vscode-csharp/pull/9188))
-- **Rename in source-generated documents** no longer fails when some edits can't be mapped back to the original source. ([vscode-csharp#9188](https://github.com/dotnet/vscode-csharp/pull/9188))
-- **IDE0059** ("unnecessary assignment") no longer incorrectly flags writes to by-ref parameters or ref locals as redundant. ([vscode-csharp#9068](https://github.com/dotnet/vscode-csharp/pull/9068))
-- **Signature help** no longer crashes when invoked through an extension property. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
-- **Split-if refactoring** no longer throws an exception for top-level statements. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
-- **Non-standard URIs** no longer crash the language server — the server now gracefully handles URIs that `System.Uri` cannot parse. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096), [vscode-csharp#9155](https://github.com/dotnet/vscode-csharp/pull/9155))
-- **Collection expression formatting** now correctly indents `with`-elements that span multiple lines. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
-- **Top-level code formatting** no longer incorrectly treats plain blocks as member declaration blocks. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
-
 ## Performance
 
 ### Faster solution loading with parallel analyzer initialization
 
-Solution-level analyzers now load in parallel during project initialization. In solutions with many analyzers (which is common when using .NET Analyzers, StyleCop, or other code analysis packages), this can meaningfully reduce the time between opening a solution and seeing your first diagnostics. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+Solution-level analyzers now load in parallel during project initialization. In solutions with many analyzers (which is common when using .NET Analyzers, StyleCop, or other code analysis packages), this can meaningfully reduce the time between opening a solution and seeing your first diagnostics. ([roslyn#82447](https://github.com/dotnet/roslyn/pull/82447))
 
 ### Reduced memory allocations across the language server
 
 A broad sweep of allocation reductions has been made across many hot paths in the language server:
 
-- **Syntax trivia handling** — modified search and walk methods now check green nodes first, avoiding unnecessary allocations. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
-- **Text diffing and source text operations** — internal text line data structures now pack data more efficiently, reducing per-line overhead. ([vscode-csharp#9155](https://github.com/dotnet/vscode-csharp/pull/9155), [vscode-csharp#9057](https://github.com/dotnet/vscode-csharp/pull/9057))
-- **Navigate To indexing** — elfie search index operations and metadata name escaping now allocate less. ([vscode-csharp#9068](https://github.com/dotnet/vscode-csharp/pull/9068))
-- **Completion** — repeated `int.ToString` calls during completion item generation are now avoided. ([vscode-csharp#9093](https://github.com/dotnet/vscode-csharp/pull/9093))
-- **Document analysis and code fix service** — result creation and predicate evaluation now reuse objects instead of allocating. ([vscode-csharp#9068](https://github.com/dotnet/vscode-csharp/pull/9068), [vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
+- **Syntax trivia handling** — modified search and walk methods now check green nodes first, avoiding unnecessary allocations.
+- **Text diffing and source text operations** — internal text line data structures now pack data more efficiently, reducing per-line overhead.
+- **Completion** — repeated `int.ToString` calls during completion item generation are now avoided.
+- **Document analysis and code fix service** — result creation and predicate evaluation now reuse objects instead of allocating.
 
 These improvements contribute to lower GC pressure and smoother editing, especially in large codebases.
-
-### Smarter Navigate To filtering
-
-Navigate To now avoids scanning documents unnecessarily, making workspace-wide symbol search faster. This is especially noticeable in large solutions where many projects can be skipped entirely. ([vscode-csharp#9034](https://github.com/dotnet/vscode-csharp/pull/9034))
 
 ## Razor
 
@@ -92,15 +75,15 @@ Rename operations now work correctly in Razor source-generated documents, enabli
 
 A large number of Razor formatting issues have been resolved in this release:
 
-- **Multiline `@if` statements** are now formatted correctly. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
-- **Ternary expressions** inside Razor blocks no longer break formatting. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
-- **Wrapped CSS** in Razor files is now indented properly. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
-- **`<pre>` tags** are now treated like `<textarea>` tags, so their content is preserved as-is. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
-- **Void tag helpers** no longer break HTML formatting. ([vscode-csharp#9025](https://github.com/dotnet/vscode-csharp/pull/9025))
-- **Script tags** that are or contain tag helpers are now formatted correctly. ([vscode-csharp#9115](https://github.com/dotnet/vscode-csharp/pull/9115))
-- **Short HTML tag attributes** are now formatted correctly. ([vscode-csharp#9115](https://github.com/dotnet/vscode-csharp/pull/9115))
-- **Block-bodied lambda attributes** no longer break formatting. ([vscode-csharp#9090](https://github.com/dotnet/vscode-csharp/pull/9090))
-- **Trailing content after Razor comments** no longer causes formatting errors. ([vscode-csharp#9115](https://github.com/dotnet/vscode-csharp/pull/9115))
+- **Multiline `@if` statements** are now formatted correctly.
+- **Ternary expressions** inside Razor blocks no longer break formatting.
+- **Wrapped CSS** in Razor files is now indented properly.
+- **`<pre>` tags** are now treated like `<textarea>` tags, so their content is preserved as-is.
+- **Void tag helpers** no longer break HTML formatting.
+- **Script tags** that are or contain tag helpers are now formatted correctly.
+- **Short HTML tag attributes** are now formatted correctly.
+- **Block-bodied lambda attributes** no longer break formatting.
+- **Trailing content after Razor comments** no longer causes formatting errors.
 
 ### Bug fixes
 
@@ -141,19 +124,6 @@ Implicit XML namespaces for MAUI are now supported, reducing the need for explic
 - **Null reference exception** — an unhandled null reference exception in the XAML Language Service has been fixed. ([vscode-csharp#9091](https://github.com/dotnet/vscode-csharp/pull/9091))
 - **Legacy Hot Reload conflict** — legacy XAML Hot Reload is now automatically disabled when Source Generators are active, preventing conflicts. ([vscode-csharp#9091](https://github.com/dotnet/vscode-csharp/pull/9091))
 
-## Editor Experience
-
-### Selection Range
-
-The editor now supports **Selection Range** (`Expand Selection` / `Shrink Selection`), enabling smart expanding and shrinking of text selections based on the syntactic structure of your C# code. For example, you can progressively select from a variable name → the containing statement → the containing block → the method → the class, all with keyboard shortcuts. ([vscode-csharp#9093](https://github.com/dotnet/vscode-csharp/pull/9093))
-
-### Regex search in Navigate To
-
-Navigate To (<kbd>Ctrl+T</kbd> / <kbd>Cmd+T</kbd>) now supports **regex patterns**, allowing more flexible symbol searching across your workspace. Surround your search with `/slashes/` to use regex matching. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
-
-### Improved Go to Implementation
-
-Go to Implementation now navigates to the **precise position** of a symbol definition rather than selecting a range, making navigation more accurate and consistent with other navigation features. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
 
 # 2.130.x
 
