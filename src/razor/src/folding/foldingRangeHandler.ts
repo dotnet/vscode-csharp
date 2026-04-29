@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { FoldingRange, FoldingRangeKind } from 'vscode-languageserver-protocol';
+import { FoldingRange, FoldingRangeKind } from 'vscode-languageclient';
 import { RazorLogger } from '../razorLogger';
 
 export class FoldingRangeHandler {

@@ -9,7 +9,16 @@ jest.mock('vscode-languageclient/node', () => ({
     LanguageClient: class {},
     State: { Running: 2 },
 }));
-jest.mock('vscode-languageclient', () => ({}));
+jest.mock('vscode-languageclient', () => ({
+    MessageDirection: {
+        clientToServer: 1,
+        serverToClient: 2,
+    },
+    NotificationType: class {},
+    ProtocolRequestType: class {},
+    RequestType: class {},
+    RequestType0: class {},
+}));
 
 import { RoslynLanguageClient } from '../../../src/lsptoolshost/server/roslynLanguageClient';
 import { TelemetryEventNames } from '../../../src/shared/telemetryEventNames';

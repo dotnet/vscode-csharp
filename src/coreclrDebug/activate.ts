@@ -20,9 +20,8 @@ import { RemoteAttachPicker } from '../shared/processPicker';
 import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
 import { omnisharpOptions } from '../shared/options';
-import { ActionOption, showErrorMessage } from '../shared/observers/utils/showMessage';
+import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
-import { Command } from 'vscode-languageserver-types';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -109,21 +108,10 @@ export async function activate(
             new BaseVsDbgConfigurationProvider(platformInformation, csharpOutputChannel)
         )
     );
-    context.subscriptions.push(
-        vscode.debug.registerDebugConfigurationProvider(
-            'monovsdbg',
-            new BaseVsDbgConfigurationProvider(platformInformation, csharpOutputChannel)
-        )
-    );
-    context.subscriptions.push(
-        vscode.debug.registerDebugConfigurationProvider(
-            'coreclr_mobile',
-            new BaseVsDbgConfigurationProvider(platformInformation, csharpOutputChannel)
-        )
-    );
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('monovsdbg', factory));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('monovsdbg_wasm', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr_mobile', factory));
 
     context.subscriptions.push(disposables);
@@ -231,7 +219,7 @@ function showInstallErrorMessage(eventStream: EventStream) {
 function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
-        const getDotNetMessage: ActionOption | Command =
+        const getDotNetMessage: ActionOption | CommandOption =
             getCSharpDevKit() !== undefined
                 ? {
                       title: vscode.l10n.t('Get the SDK'),

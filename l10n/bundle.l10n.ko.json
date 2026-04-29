@@ -84,7 +84,6 @@
   "For more information about the 'console' field, see {0}": "'콘솔' 필드에 대한 자세한 내용은 {0}을(를) 참조하세요.",
   "GC Dump": "GC 덤프",
   "Garbage collector heap dump using dotnet-gcdump": "dotnet-gcdump를 사용하여 가비지 수집기 힙 덤프",
-  "Generated document not found": "생성된 문서를 찾을 수 없음",
   "Get the SDK": "SDK 받기",
   "Go to GitHub": "GitHub로 이동",
   "Go to output": "출력으로 이동",

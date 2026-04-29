@@ -14,7 +14,7 @@ import {
     Position,
     Range,
     TextEdit,
-} from 'vscode-languageserver-protocol';
+} from 'vscode-languageclient';
 
 export class CompletionHandler {
     constructor() {}

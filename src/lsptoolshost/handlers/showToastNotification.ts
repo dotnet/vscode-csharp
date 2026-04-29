@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageClient } from '../server/roslynLanguageClient';
-import { MessageType } from 'vscode-languageserver-protocol';
+import { MessageType } from 'vscode-languageclient';
 import { ShowToastNotification } from '../server/roslynProtocol';
 import { showErrorMessage, showInformationMessage, showWarningMessage } from '../../shared/observers/utils/showMessage';
 

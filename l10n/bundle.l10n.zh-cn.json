@@ -84,7 +84,6 @@
   "For more information about the 'console' field, see {0}": "有关“控制台”字段的详细信息，请参阅 {0}",
   "GC Dump": "GC 转储",
   "Garbage collector heap dump using dotnet-gcdump": "使用 dotnet-gcdump 进行垃圾回收器堆转储",
-  "Generated document not found": "找不到生成的文档",
   "Get the SDK": "获取 SDK",
   "Go to GitHub": "转到 GitHub",
   "Go to output": "转到输出",

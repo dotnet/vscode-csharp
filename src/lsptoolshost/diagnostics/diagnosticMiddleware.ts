@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { ProvideDiagnosticSignature, ProvideWorkspaceDiagnosticSignature, vsdiag } from 'vscode-languageclient/node';
+import { ProvideDiagnosticSignature, ProvideWorkspaceDiagnosticSignature, vsdiag } from 'vscode-languageclient';
 import { languageServerOptions } from '../../shared/options';
 
 export async function provideDiagnostics(

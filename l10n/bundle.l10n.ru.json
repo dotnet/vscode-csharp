@@ -84,7 +84,6 @@
   "For more information about the 'console' field, see {0}": "Дополнительные сведения о поле \"console\" см. в {0}",
   "GC Dump": "Дамп сборки мусора",
   "Garbage collector heap dump using dotnet-gcdump": "Дамп кучи сборщика мусора с использованием dotnet-gcdump",
-  "Generated document not found": "Созданный документ не найден",
   "Get the SDK": "Получение пакета SDK",
   "Go to GitHub": "Перейти в GitHub",
   "Go to output": "Перейти к выходным данным",

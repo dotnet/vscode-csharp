@@ -34,6 +34,7 @@
 ## Project Conventions & Patterns
 - **TypeScript**: Follows strict linting (`.eslintrc.js`), including header/license blocks and camelCase filenames (except for interfaces and special files).
 - **Code Formatting**: After making code edits, always run `npx eslint <file-path> --fix` to auto-fix formatting issues (prettier) and lint errors. This ensures code passes CI checks.
+- **Language Client Imports**: Import shared protocol and middleware types from `vscode-languageclient`, but import the concrete `LanguageClient`, process-launch `ServerOptions`, and transport types from `vscode-languageclient/node`. Do not add new direct imports or type references from `vscode-jsonrpc` or `vscode-languageserver-protocol` in code that flows through the language client; prefer the `vscode-languageclient` re-exports instead. Avoid defining request and notification types from bare `vscode-jsonrpc`, since mixed package instances can cause parameter-structure type and runtime mismatches.
 - **Component Downloads**: Language servers and debuggers are downloaded at runtime; see `package.json` for URLs and install logic.
 - **Copilot Providers**: Use `registerCopilotContextProviders` and `registerCopilotRelatedFilesProvider` to extend Copilot context for C#.
 - **Testing**: Prefer integration tests over unit tests for features. Structure follows:

@@ -4,9 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CancellationToken, MessageSignature } from 'vscode-jsonrpc';
-import { LanguageClient, ServerOptions, State } from 'vscode-languageclient/node';
-import { ErrorHandler, LanguageClientOptions } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { CancellationToken, ErrorHandler, LanguageClientOptions, MessageSignature, State } from 'vscode-languageclient';
 import CompositeDisposable from '../../compositeDisposable';
 import { IDisposable } from '../../disposable';
 import { languageServerOptions } from '../../shared/options';

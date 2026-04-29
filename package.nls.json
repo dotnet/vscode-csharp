@@ -49,6 +49,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "Enables the \"file-based programs\" (dotnet run app.cs) experience.",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "Enables the \"file-based programs\" (dotnet run app.cs) experience in files where the editor is unable to determine with certainty whether the file is a file-based program. Only respected when `dotnet.projects.enableFileBasedPrograms` is `true`.",
+  "configuration.dotnet.fileBasedApps.enableAutomaticDiscovery": "Enables automatic discovery of C# file-based apps in the workspace.",
   "configuration.dotnet.projects.binaryLogPath": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors.",
   "configuration.dotnet.server.sourceGeneratorExecution": "Controls when source generators are executed. (Requires extension restart)",
   "configuration.dotnet.server.sourceGeneratorExecution.balanced": "Source generators are executed after an explicit user action, including save, build, or the [Rerun source generators](command:csharp.rerunSourceGenerators) command.",
@@ -487,6 +488,12 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
+  "generateOptionsSchema.terminateChildProcesses.description": {
+    "message": "When the debug session ends, if this is set to `true`, the debugger will terminate the debuggee and all child processes it spawned. If set to `false`, only the debuggee itself is terminated and child processes are left running. This option defaults to `false`.\n\nOn Windows, child processes are tracked using a Job Object. Processes that need to outlive the debug session can opt out by passing the `CREATE_BREAKAWAY_FROM_JOB` flag when calling `CreateProcess`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
   "generateOptionsSchema.processName.markdownDescription": {
     "message": "The process name to attach to. If this is used, `processId` should not be used.",
     "comment": [
@@ -504,5 +511,6 @@
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
-  }
+  },
+  "generateOptionsSchema.useVSDbg.description": "Enable new .NET 9+ Wasm Debugger (preview)"
 }

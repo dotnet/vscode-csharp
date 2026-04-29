@@ -11,7 +11,7 @@ import {
     VSProjectContext,
     VSProjectContextList,
 } from '../server/roslynProtocol';
-import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
+import { TextDocumentIdentifier } from 'vscode-languageclient';
 import { UriConverter } from '../utils/uriConverter';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
 import { RoslynLanguageClient } from '../server/roslynLanguageClient';

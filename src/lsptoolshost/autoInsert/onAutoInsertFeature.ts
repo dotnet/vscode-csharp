@@ -10,7 +10,7 @@ import {
     TextDocument,
 } from 'vscode';
 
-import { DynamicFeature, FeatureState, LanguageClient, RegistrationData, ensure } from 'vscode-languageclient/node';
+import { DynamicFeature, FeatureState, RegistrationData, ensure } from 'vscode-languageclient';
 
 import {
     ClientCapabilities,
@@ -19,10 +19,11 @@ import {
     ProtocolRequestType,
     RegistrationType,
     ServerCapabilities,
-} from 'vscode-languageserver-protocol';
+} from 'vscode-languageclient';
 
 import * as RoslynProtocol from '../server/roslynProtocol';
 import { randomUUID } from 'crypto';
+import { LanguageClient } from 'vscode-languageclient/node';
 
 export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAutoInsertRegistrationOptions> {
     private readonly _client: LanguageClient;
