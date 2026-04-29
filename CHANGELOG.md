@@ -8,6 +8,9 @@
   * Parallelize HTML and Razor completion requests (PR: [#13092](https://github.com/dotnet/razor/pull/13092))
   * Fix formatting for self-closing multiline templates (PR: [#13069](https://github.com/dotnet/razor/pull/13069))
   * Return empty incomplete list when HTML completion fails in Razor (PR: [#13090](https://github.com/dotnet/razor/pull/13090))
+* Update xamlTools to 18.7.11727.258 (PR: [#9261](https://github.com/dotnet/vscode-csharp/pull/9261))
+  * XAML C# Expressions (XEXPR) full support (PR: AzDO#728266, AzDO#730837)
+
 
 # 2.136.x
 * Update Roslyn to 5.7.0-1.26220.12 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
