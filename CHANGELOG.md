@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
+* Remove update Razor skill, and have Roslyn do both packages (PR: [#9241](https://github.com/dotnet/vscode-csharp/pull/9241))
 * Update Razor to 10.0.0-preview.26226.17 (PR: [#9240](https://github.com/dotnet/vscode-csharp/pull/9240))
   * Parallelize HTML and Razor completion requests (PR: [#13092](https://github.com/dotnet/razor/pull/13092))
   * Fix formatting for self-closing multiline templates (PR: [#13069](https://github.com/dotnet/razor/pull/13069))
