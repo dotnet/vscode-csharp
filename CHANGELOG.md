@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
+* Update Roslyn to 5.7.0-1.26226.5 (PR: [#9247](https://github.com/dotnet/vscode-csharp/pull/9247))
+  * Fix false positive "infinite chain of calls" error in collection expressions when parameterless constructor exists alongside params constructor (PR: [#82591](https://github.com/dotnet/roslyn/pull/82591))
+  * Fix regression in CreateFallbackEncoding (PR: [#83320](https://github.com/dotnet/roslyn/pull/83320))
+  * Avoid decoding all SuppressMessageAttributes up front (PR: [#83087](https://github.com/dotnet/roslyn/pull/83087))
+  * Add interceptor method info to Quick Info tooltip (PR: [#83254](https://github.com/dotnet/roslyn/pull/83254))
+  * FAWMN add support for [method: MyGenerator] to target primary constructors (PR: [#79609](https://github.com/dotnet/roslyn/pull/79609))
+  * Add local function support for top-level statements (PR: [#83279](https://github.com/dotnet/roslyn/pull/83279))
+  * Fix InvalidCastException in document highlights for constructor references (PR: [#83246](https://github.com/dotnet/roslyn/pull/83246))
+  * Pre-load lazily-loaded assemblies before assembly snapshots (PR: [#83247](https://github.com/dotnet/roslyn/pull/83247))
 * Update Razor to 10.0.0-preview.26226.17 (PR: [#9240](https://github.com/dotnet/vscode-csharp/pull/9240))
   * Parallelize HTML and Razor completion requests (PR: [#13092](https://github.com/dotnet/razor/pull/13092))
   * Fix formatting for self-closing multiline templates (PR: [#13069](https://github.com/dotnet/razor/pull/13069))
