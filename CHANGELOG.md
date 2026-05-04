@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
+* Update Roslyn to 5.8.0-1.26252.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Fix IDE0004 false positive for nullable generic type argument casts (PR: [#83326](https://github.com/dotnet/roslyn/pull/83326))
+* Update Razor to 10.4.0-preview.26252.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Fix add using code action when there are other directives present (PR: [#83448](https://github.com/dotnet/roslyn/pull/83448))
+  * Implement `textDocument/selectionRange` for Razor (PR: [#83514](https://github.com/dotnet/roslyn/pull/83514))
+  * Razor support for Generate Type (PR: [#83491](https://github.com/dotnet/roslyn/pull/83491))
+  * Razor support for Generate Constructor (and other methods) (PR: [#83478](https://github.com/dotnet/roslyn/pull/83478))
+  * Razor support for Generate Property and Generate Field code actions (PR: [#83450](https://github.com/dotnet/roslyn/pull/83450))
+  * Clear false-positive SuggestionMode in Razor implicit expression completions (PR: [#83463](https://github.com/dotnet/roslyn/pull/83463))
+  * Fix tag helper attribute completion with ParentTag constraint (PR: [#83455](https://github.com/dotnet/roslyn/pull/83455))
 * Remove update Razor skill, and have Roslyn do both packages (PR: [#9241](https://github.com/dotnet/vscode-csharp/pull/9241))
 * Update Roslyn to 5.7.0-1.26226.5 (PR: [#9247](https://github.com/dotnet/vscode-csharp/pull/9247))
   * Fix false positive "infinite chain of calls" error in collection expressions when parameterless constructor exists alongside params constructor (PR: [#82591](https://github.com/dotnet/roslyn/pull/82591))
