@@ -672,11 +672,7 @@ export class RoslynLanguageServer {
             args.push('--sourceGeneratorExecutionPreference', sourceGeneratorExecution);
         }
 
-        let razorComponentPath = '';
-        getComponentPaths('razorExtension', languageServerOptions, channel).forEach((extPath) => {
-            additionalExtensionPaths.push(extPath);
-            razorComponentPath = path.dirname(extPath);
-        });
+        const razorComponentPath = path.dirname(serverPath);
 
         args.push('--razorSourceGenerator', path.join(razorComponentPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
 
