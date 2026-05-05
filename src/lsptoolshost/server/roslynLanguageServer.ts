@@ -29,6 +29,7 @@ import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit';
+
 import { randomUUID } from 'crypto';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
@@ -696,12 +697,9 @@ export class RoslynLanguageServer {
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths, channel);
             args = args.concat(csharpDevKitArgs);
 
-            await this.setupDevKitEnvironment(
-                dotnetInfo.env,
-                csharpDevKitExtensionExports,
-                additionalExtensionPaths,
-                channel
-            );
+            await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevKitExtensionExports);
+
+            this.setupCopilotEnvironment(additionalExtensionPaths, channel);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             channel.info('Activating C# standalone...');
@@ -875,16 +873,16 @@ export class RoslynLanguageServer {
                     return;
                 }
 
-                const title: CommandOption = {
-                    title: vscode.l10n.t('Reload C# Extension'),
-                    command: 'workbench.action.restartExtensionHost',
-                };
                 if (csharpDevkitExtension && !_wasActivatedWithCSharpDevkit) {
                     // We previously started without C# Dev Kit and it's now installed.
                     // Offer a prompt to restart extensions in order to use C# Dev Kit.
                     this._channel.info(`Detected new installation of ${csharpDevkitExtensionId}`);
                     const message = `Detected installation of C# Dev Kit. Please reload the C# extension to continue.`;
-                    showInformationMessage(vscode, message, title);
+                    const reloadAction: CommandOption = {
+                        title: vscode.l10n.t('Reload C# Extension'),
+                        command: 'workbench.action.restartExtensionHost',
+                    };
+                    showInformationMessage(vscode, message, reloadAction);
                 } else {
                     // Any other change to extensions is irrelevant - an uninstall requires the extension host to restart
                     // which will automatically restart this extension too.
@@ -907,6 +905,17 @@ export class RoslynLanguageServer {
                 showInformationMessage(vscode, message, restart);
             })
         );
+    }
+
+    private static setupCopilotEnvironment(additionalExtensionPaths: string[], channel: vscode.LogOutputChannel): void {
+        if (commonOptions.disableAIFeatures) {
+            channel.info('AI features are disabled (chat.disableAIFeatures). Skipping Roslyn Copilot component.');
+            return;
+        }
+
+        getComponentPaths('roslynCopilot', languageServerOptions, channel).forEach((extPath) => {
+            additionalExtensionPaths.push(extPath);
+        });
     }
 
     private static getCSharpDevKitExportArgs(
@@ -936,19 +945,13 @@ export class RoslynLanguageServer {
 
     private static async setupDevKitEnvironment(
         env: NodeJS.ProcessEnv,
-        csharpDevkitExtensionExports: CSharpDevKitExports,
-        additionalExtensionPaths: string[],
-        channel: vscode.LogOutputChannel
+        csharpDevkitExtensionExports: CSharpDevKitExports
     ): Promise<void> {
         // setupTelemetryEnvironmentAsync was a later addition to devkit (not in preview 1)
         // so it may not exist in whatever version of devkit the user has installed
         if (csharpDevkitExtensionExports.setupTelemetryEnvironmentAsync) {
             await csharpDevkitExtensionExports.setupTelemetryEnvironmentAsync(env);
         }
-
-        getComponentPaths('roslynCopilot', languageServerOptions, channel).forEach((extPath) => {
-            additionalExtensionPaths.push(extPath);
-        });
     }
 
     /**
