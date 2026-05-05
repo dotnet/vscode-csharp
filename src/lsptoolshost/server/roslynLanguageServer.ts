@@ -672,13 +672,6 @@ export class RoslynLanguageServer {
             args.push('--sourceGeneratorExecutionPreference', sourceGeneratorExecution);
         }
 
-        const razorComponentPath = path.dirname(serverPath);
-
-        args.push(
-            '--razorDesignTimePath',
-            path.join(razorComponentPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
-        );
-
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         if (csharpDevKitExtensionExports) {
             _wasActivatedWithCSharpDevkit = true;
@@ -704,6 +697,7 @@ export class RoslynLanguageServer {
 
             // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
             // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
+            const razorComponentPath = path.dirname(serverPath);
             args.push(
                 '--csharpDesignTimePath',
                 path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
