@@ -674,8 +674,6 @@ export class RoslynLanguageServer {
 
         const razorComponentPath = path.dirname(serverPath);
 
-        args.push('--razorSourceGenerator', path.join(razorComponentPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
-
         args.push(
             '--razorDesignTimePath',
             path.join(razorComponentPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
