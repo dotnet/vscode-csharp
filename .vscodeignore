@@ -50,6 +50,7 @@ tsconfig.json
 version.json
 wallaby.js
 esbuild.js
+!src/lsptoolshost/copilot/skills/**
 !src/razor/language-configuration.json
 !src/razor/syntaxes/*
 

@@ -1,0 +1,27 @@
+{
+  "upstreamRepo": "dotnet/skills",
+  "upstreamRef": "main",
+  "syncedAt": "2026-05-05T21:20:29.989Z",
+  "skills": {
+    "csharp-scripts": {
+      "sourcePath": "plugins/dotnet/skills/csharp-scripts",
+      "commitSha": "05aeb657e67426e62603002f1d9e9675a59e471b"
+    },
+    "analyzing-dotnet-performance": {
+      "sourcePath": "plugins/dotnet-diag/skills/analyzing-dotnet-performance",
+      "commitSha": "05aeb657e67426e62603002f1d9e9675a59e471b"
+    },
+    "dotnet-trace-collect": {
+      "sourcePath": "plugins/dotnet-diag/skills/dotnet-trace-collect",
+      "commitSha": "05aeb657e67426e62603002f1d9e9675a59e471b"
+    },
+    "dump-collect": {
+      "sourcePath": "plugins/dotnet-diag/skills/dump-collect",
+      "commitSha": "05aeb657e67426e62603002f1d9e9675a59e471b"
+    },
+    "microbenchmarking": {
+      "sourcePath": "plugins/dotnet-diag/skills/microbenchmarking",
+      "commitSha": "05aeb657e67426e62603002f1d9e9675a59e471b"
+    }
+  }
+}

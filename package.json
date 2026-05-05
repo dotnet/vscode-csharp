@@ -730,6 +730,23 @@
     "workspaceContains:**/*.{csproj,csx,cake}"
   ],
   "contributes": {
+    "chatSkills": [
+      {
+        "path": "./src/lsptoolshost/copilot/skills/csharp-scripts/SKILL.md"
+      },
+      {
+        "path": "./src/lsptoolshost/copilot/skills/analyzing-dotnet-performance/SKILL.md"
+      },
+      {
+        "path": "./src/lsptoolshost/copilot/skills/dotnet-trace-collect/SKILL.md"
+      },
+      {
+        "path": "./src/lsptoolshost/copilot/skills/dump-collect/SKILL.md"
+      },
+      {
+        "path": "./src/lsptoolshost/copilot/skills/microbenchmarking/SKILL.md"
+      }
+    ],
     "themes": [
       {
         "label": "Visual Studio 2019 Dark",
