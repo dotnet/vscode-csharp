@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
-* Skip RoslynCopilot install when Copilot extension is not present (PR: [#9196](https://github.com/dotnet/vscode-csharp/pull/9196))
+* Skip RoslynCopilot install when AI features are disabeld (PR: [#9196](https://github.com/dotnet/vscode-csharp/pull/9196))
 * Support remote coreclr debugger (PR: [#8667](https://github.com/dotnet/vscode-csharp/pull/8667))
 * Update Roslyn and Razor (PR: [#9271](https://github.com/dotnet/vscode-csharp/pull/9271))
 * Update .NET version references in CONTRIBUTING.md (PR: [#9259](https://github.com/dotnet/vscode-csharp/pull/9259))
