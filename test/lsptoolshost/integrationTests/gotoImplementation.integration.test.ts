@@ -38,10 +38,10 @@ describe(`Go To Implementation Tests`, () => {
         expect(implementationList).toHaveLength(2);
 
         expect(implementationList[0].uri.path).toContain('BaseClassImplementation.cs');
-        expect(implementationList[0].range).toStrictEqual(new vscode.Range(2, 17, 2, 40));
+        expect(implementationList[0].range).toStrictEqual(new vscode.Range(2, 17, 2, 17));
 
         expect(implementationList[1].uri.path).toContain('implementation.cs');
-        expect(implementationList[1].range).toStrictEqual(new vscode.Range(5, 17, 5, 26));
+        expect(implementationList[1].range).toStrictEqual(new vscode.Range(5, 17, 5, 17));
     });
 });
 

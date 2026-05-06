@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { UriConverter } from '../utils/uriConverter';
-import * as languageClient from 'vscode-languageclient/node';
+import * as languageClient from 'vscode-languageclient';
 
 /**
  * Register server -> client commands as well as commands that drive the Roslyn Language Server.

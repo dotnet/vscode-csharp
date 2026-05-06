@@ -276,6 +276,9 @@ function getLowercaseFileNameFromUrl(url: string): string {
         const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
         fileName = fileName.substr(0, secondToLastDash);
         return fileName;
+    } else if (fileName.startsWith('vswebassemblybridge')) {
+        // VSWebAssemblyBridge versions are in the URL path, not the file name.
+        return fileName;
     } else {
         throw new Error(`Unexpected dependency file name '${fileName}'`);
     }

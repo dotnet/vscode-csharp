@@ -8,8 +8,8 @@ import { Advisor } from './omnisharp/features/diagnosticsProvider';
 import { EventStream } from './eventStream';
 import TestManager from './omnisharp/features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
-import { PartialResultParams, ProtocolRequestType, RequestType } from 'vscode-languageclient/node';
 import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents';
+import { PartialResultParams, ProtocolRequestType, RequestParam, RequestType } from 'vscode-languageclient';
 
 export interface LimitedExtensionExports {
     isLimitedActivation: true;
@@ -24,6 +24,16 @@ export interface OmnisharpExtensionExports {
     logDirectory: string;
 }
 
+export interface ActivityLogCapture extends vscode.Disposable {
+    getActivityLogs(): ActivityLogResult;
+}
+
+export interface ActivityLogResult {
+    csharpLog: string;
+    lspTraceLog: string;
+    razorLog: string;
+}
+
 export interface CSharpExtensionExports {
     isLimitedActivation: false;
     initializationFinished: () => Promise<void>;
@@ -32,12 +42,15 @@ export interface CSharpExtensionExports {
     determineBrowserType: () => Promise<string | undefined>;
     experimental: CSharpExtensionExperimentalExports;
     getComponentFolder: (componentName: string) => string;
+    tryToUseVSDbgForMono: (urlStr: string, projectPath: string) => Promise<[string, number, number]>;
+    languageServerProcessId: () => number | undefined;
+    captureActivityLogs: () => Promise<ActivityLogCapture>;
 }
 
 export interface CSharpExtensionExperimentalExports {
     sendServerRequest: <Params, Response, Error>(
         type: RequestType<Params, Response, Error>,
-        params: Params,
+        params: RequestParam<Params>,
         token: vscode.CancellationToken
     ) => Promise<Response>;
     sendServerRequestWithProgress<
@@ -48,7 +61,7 @@ export interface CSharpExtensionExperimentalExports {
         RegistrationOptions
     >(
         type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
-        params: Params,
+        params: RequestParam<Params>,
         onProgress: (p: PartialResult) => Promise<any>,
         token?: vscode.CancellationToken
     ): Promise<Response>;

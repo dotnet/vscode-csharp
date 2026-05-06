@@ -12,17 +12,19 @@ import {
     integer,
     MessageDirection,
     MessageType,
+    NotificationType,
     PartialResultParams,
     Position,
     ProtocolRequestType,
     Range,
+    RequestType,
+    RequestType0,
     TextDocumentIdentifier,
     TextDocumentRegistrationOptions,
     TextEdit,
     URI,
     WorkDoneProgressParams,
-} from 'vscode-languageserver-protocol';
-import { NotificationType, RequestType, RequestType0 } from 'vscode-jsonrpc';
+} from 'vscode-languageclient';
 import { ProjectConfigurationMessage } from '../../shared/projectConfiguration';
 
 export interface VSProjectContextList {
@@ -241,16 +243,6 @@ export interface ProjectNeedsRestoreName {
     projectFilePaths: string[];
 }
 
-export interface SourceGeneratorGetRequestParams {
-    textDocument: TextDocumentIdentifier;
-    resultId?: string;
-}
-
-export interface SourceGeneratedDocumentText {
-    text?: string;
-    resultId?: string;
-}
-
 export interface RefreshSourceGeneratorsParams {
     forceRegeneration: boolean;
 }
@@ -361,18 +353,6 @@ export namespace RestorableProjects {
     export const method = 'workspace/_roslyn_restorableProjects';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType0<string[], void>(method);
-}
-
-export namespace SourceGeneratorGetTextRequest {
-    export const method = 'sourceGeneratedDocument/_roslyn_getText';
-    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new RequestType<SourceGeneratorGetRequestParams, SourceGeneratedDocumentText, void>(method);
-}
-
-export namespace RefreshSourceGeneratedDocumentNotification {
-    export const method = 'workspace/refreshSourceGeneratedDocument';
-    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
-    export const type = new NotificationType(method);
 }
 
 export namespace RefreshSourceGeneratorsNotification {

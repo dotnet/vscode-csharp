@@ -62,13 +62,32 @@ This returns the NuGet package version (e.g., `10.0.0-preview.26114.1`).
 
 **Note**: If authentication fails, run `az login` first and ensure you have access to the `dnceng/internal` project.
 
-### Step 2: Create a New Branch
+### Step 2: Sync to the Canonical Base Branch
 
-Create a new git branch for the update:
+Always anchor the update branch to the latest `main` from whichever remote points at `github.com/dotnet/vscode-csharp` before making any changes. Do **not** create the update branch from the current checkout, since the current branch may already be stale or may contain a previous failed attempt at the same update.
+
 ```powershell
-git checkout -B update/razor-<version>
+# Find the canonical vscode-csharp remote (for example, origin or upstream)
+$canonicalRemote = git remote -v |
+    Select-String 'github\.com[:/]dotnet/vscode-csharp(\.git)?\s+\(fetch\)$' |
+    ForEach-Object { ($_ -split '\s+')[0] } |
+    Select-Object -First 1
+
+if (-not $canonicalRemote) {
+    git remote add upstream https://github.com/dotnet/vscode-csharp.git
+    $canonicalRemote = 'upstream'
+}
+
+git fetch $canonicalRemote
+git checkout -B update/razor-<version> "$canonicalRemote/main"
 ```
+
 Replace `<version>` with the new Razor version, using dashes instead of dots for the branch name.
+
+**Important**:
+- Capture the old Razor version from the canonical remote's `main` `package.json` before editing `package.json`
+- Update the changelog section that exists on the latest canonical remote `main`, not one from an older local branch
+- If a remote branch with the same name already exists from a previous attempt, inspect it before force-pushing. Do not blindly overwrite unexpected remote commits
 
 ### Step 3: Update package.json
 
@@ -81,12 +100,12 @@ Update the `defaults.razor` field in `package.json`:
 }
 ```
 
-### Step 4: Run gulp updateRazorVersion
+### Step 4: Run updateRazorVersion
 
 This step acquires the new Razor extension package and ensures it is in the proper feeds:
 
 ```powershell
-gulp updateRazorVersion
+npm run updateRazorVersion
 ```
 
 This task:
@@ -97,11 +116,11 @@ This task:
 
 ### Step 5: Get the Previous Razor Commit SHA
 
-The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `gulp updateRazorVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
+The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `npm run updateRazorVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
 
 **To get the old version's commit SHA:**
 
-1. First, find the old version number from the current `package.json` (before your edit) - look at the `defaults.razor` value
+1. First, find the old version number from the canonical remote's `main` `package.json` (before your edit) - look at the `defaults.razor` value
 2. Download the old version's package to the local cache:
    ```powershell
    dotnet restore "C:\Users\<username>\source\repos\vscode-csharp\msbuild\server" /p:PackageName=Microsoft.VisualStudioCode.RazorExtension /p:PackageVersion=<old-version> --interactive
@@ -119,7 +138,7 @@ The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet pa
 
 ### Step 6: Get the New Razor Commit SHA
 
-After running `gulp updateRazorVersion`, the new version's package is already cached. Extract the commit SHA:
+After running `npm run updateRazorVersion`, the new version's package is already cached. Extract the commit SHA:
 
 ```powershell
 Get-Content "C:\Users\<username>\source\repos\vscode-csharp\out\.nuget\microsoft.visualstudiocode.razorextension\<new-version>\microsoft.visualstudiocode.razorextension.nuspec" | Select-String -Pattern "commit"
@@ -150,7 +169,7 @@ This will output a list of PRs in the format needed for the changelog:
 
 ### Step 8: Update CHANGELOG.md
 
-Add an entry to `CHANGELOG.md` under the current version section (e.g., `# 2.121.x`):
+Add an entry to `CHANGELOG.md` under the current version section from the latest canonical remote `main` (for example, `# 2.132.x`):
 Copy the results from the previous step (should already be formatted correctly).
 
 ```markdown
@@ -188,6 +207,8 @@ git add package.json CHANGELOG.md
 git commit -m "Bump Razor to <new-version>"
 git push -u origin update/razor-<version>
 ```
+
+If you are retrying an existing PR branch, prefer `git push --force-with-lease` after you have inspected the remote branch and confirmed it is safe to replace.
 
 ### Step 11: Create Pull Request
 
@@ -228,7 +249,7 @@ For updating from `10.0.0-preview.26075.11` to `10.0.0-preview.26081.1`:
 1. Discover latest version via `az pipelines build list` (or use a provided version)
 2. Branch: `update/razor-10-0-0-preview-26081-1`
 3. package.json change: `"razor": "10.0.0-preview.26081.1"`
-4. Run `gulp updateRazorVersion`
+4. Run `npm run updateRazorVersion`
 5. Find old commit from nuspec for version `10.0.0-preview.26075.11`
 6. Find new commit from nuspec for version `10.0.0-preview.26081.1`
 7. Run pr-finder in razor repo
@@ -249,11 +270,20 @@ See [PR #8914](https://github.com/dotnet/vscode-csharp/pull/8914) as an example 
 
 ## Troubleshooting
 
-### Authentication Issues with gulp updateRazorVersion
+### Authentication Issues with updateRazorVersion
 
 If you encounter authentication errors:
 1. Install Azure Artifacts Credential Provider
 2. Run the command again - it should prompt for interactive authentication
+
+### Started from a Stale Local Branch
+
+If the update was created from an outdated local checkout:
+1. Fetch the canonical remote that points at `github.com/dotnet/vscode-csharp`
+2. Recreate the update branch from that remote's `main`
+3. Re-read the old version from that remote's `main:package.json`
+4. Recompute the changelog range using the old commit SHA from the version currently shipped on that remote's `main`
+5. Rebuild the PR branch rather than layering a new bump on top of the stale attempt
 
 ### pr-finder Returns Empty Results
 
@@ -267,7 +297,7 @@ Ensure:
 
 The commit SHAs are embedded in the nuspec files inside the downloaded NuGet packages:
 
-1. After running `gulp updateRazorVersion`, packages are cached in `out/.nuget/`
+1. After running `npm run updateRazorVersion`, packages are cached in `out/.nuget/`
 2. To get the old version's commit, you may need to explicitly download it first:
    ```powershell
    dotnet restore "msbuild\server" /p:PackageName=Microsoft.VisualStudioCode.RazorExtension /p:PackageVersion=<old-version> --interactive

@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
-import { MessageType } from 'vscode-languageserver-protocol';
+import { MessageType } from 'vscode-languageclient';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';

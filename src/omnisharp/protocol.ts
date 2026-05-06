@@ -4,12 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import {
-    CompletionTriggerKind,
-    CompletionItemKind,
-    CompletionItemTag,
-    InsertTextFormat,
-} from 'vscode-languageserver-protocol';
+import { CompletionTriggerKind, CompletionItemKind, CompletionItemTag, InsertTextFormat } from 'vscode-languageclient';
 import {
     findNetCoreTargetFramework,
     findNetFrameworkTargetFramework,
@@ -343,6 +338,7 @@ export interface MSBuildProject {
     IsWebProject: boolean;
     IsBlazorWebAssemblyStandalone: boolean;
     IsBlazorWebAssemblyHosted: boolean;
+    IsWebAssemblyProject: boolean;
 }
 
 export interface TargetFramework {

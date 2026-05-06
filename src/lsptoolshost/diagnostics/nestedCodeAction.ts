@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CodeAction, CodeActionResolveRequest, LSPAny } from 'vscode-languageserver-protocol';
+import { CodeAction, CodeActionResolveRequest, LSPAny } from 'vscode-languageclient';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { URIConverter, createConverter } from 'vscode-languageclient/protocolConverter';
 import { UriConverter } from '../utils/uriConverter';

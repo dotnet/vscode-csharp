@@ -345,6 +345,65 @@ export class AssetGenerator {
 
         return result;
     }
+
+    public getAssetsPathAndProgram(): [string, string] {
+        if (this.executableProjects.length === 0) {
+            return ['', ''];
+        }
+        let assetsPath = ``;
+        this.executableProjects.forEach((project) => {
+            if (project.isWebAssemblyProject) {
+                assetsPath += path.join(path.dirname(project.outputPath), path.sep);
+                assetsPath += ';';
+            }
+        });
+        assetsPath = assetsPath.slice(0, -1);
+        return [assetsPath, this.executableProjects[0].outputPath];
+    }
+
+    /**
+     * Returns [assetsPath, program] for wasm projects that target .NET 9 or newer,
+     * or undefined if no such project exists.
+     */
+    public getNet9WasmAssetsPathAndProgram(): [string, string] | undefined {
+        if (!this.isDotNet9OrNewer()) {
+            return undefined;
+        }
+        return this.getAssetsPathAndProgram();
+    }
+
+    public isDotNet9OrNewer(): boolean {
+        for (let i = 0; i < this.executableProjects.length; i++) {
+            const project = this.executableProjects[i];
+            if (project?.isWebAssemblyProject) {
+                let projectFileText = fs.readFileSync(project.projectPath, 'utf8');
+                projectFileText = projectFileText.toLowerCase();
+                const pattern =
+                    /.*<targetframework>.*<\/targetframework>.*|.*<targetframeworks>.*<\/targetframeworks>.*/;
+                const tfmPattern = /net(\d+\.\d+)/g;
+                const match = projectFileText.match(pattern);
+                if (match) {
+                    const tfmContent = match[0]
+                        .replace('<targetframework>', '')
+                        .replace('</targetframework>', '')
+                        .replace('<targetframeworks>', '')
+                        .replace('</targetframeworks>', '')
+                        .trim();
+                    const matches = [...tfmContent.matchAll(tfmPattern)];
+                    if (matches.length === 0) {
+                        continue;
+                    }
+                    for (const m of matches) {
+                        if (+m[1] < 9) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 
 export enum ProgramLaunchType {

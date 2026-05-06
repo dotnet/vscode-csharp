@@ -9,7 +9,10 @@ This skill describes how to update the Roslyn language server version in the vsc
 
 ## Prerequisites
 
-1. You must have a local clone of the `dotnet/roslyn` repository (commonly at `C:\Users\<username>\source\repos\roslyn`)
+1. You must have a local clone of the `dotnet/roslyn` repository. Common locations for this include:
+  - `C:\Users\<username>\source\repos\roslyn`
+  - Next to the current repo directory, e.g. `<current-repo-root>/../roslyn`
+  - If unable to find local roslyn repo, ask the user for its location.
 2. The `roslyn-tools` CLI tool must be installed as a global .NET tool:
    ```powershell
    dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
@@ -22,7 +25,51 @@ This skill describes how to update the Roslyn language server version in the vsc
 
 ## Input Required
 
-- **New Roslyn Version**: The new version to update to (e.g., `5.5.0-2.26080.10`)
+- **New Roslyn Version** (optional): The new version to update to (e.g., `5.5.0-2.26080.10`). If not provided, the version will be auto-discovered from the latest passing `dotnet-roslyn-official` pipeline build on main. See [Version Auto-Discovery](#version-auto-discovery) below.
+
+## Version Auto-Discovery
+
+If the user does not provide a specific Roslyn version, follow these steps to discover the latest version from the official Roslyn build pipeline.
+
+### Prerequisites
+
+1. The Azure Developer CLI (`azd`) must be installed. See https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd for platform-specific instructions.
+    - If `azd` is missing, don't look for an alternative. Instead, stop and assist the user with installing it.
+2. You must be authenticated:
+   ```shell
+   azd auth login
+   ```
+
+### Discovery Steps
+
+1. **Get an Azure DevOps bearer token:**
+   ```shell
+   TOKEN=$(azd auth token --scope "499b84ac-1321-427f-aa17-267ca6975798/.default" --output json | jq -r '.token')
+   ```
+
+2. **Find the latest passing main build** (pipeline definition ID `327` = `dotnet-roslyn-official`):
+   ```shell
+   BUILD_ID=$(curl -s -H "Authorization: Bearer $TOKEN" \
+     "https://dnceng.visualstudio.com/internal/_apis/build/builds?definitions=327&branchName=refs/heads/main&statusFilter=completed&resultFilter=succeeded&\$top=1&api-version=7.0" \
+     | jq '.value[0].id')
+   ```
+
+3. **Find the "Publish Assets" task log URL from the build timeline:**
+   ```shell
+   LOG_URL=$(curl -s -H "Authorization: Bearer $TOKEN" \
+     "https://dnceng.visualstudio.com/internal/_apis/build/builds/$BUILD_ID/timeline?api-version=7.0" \
+     | jq -r '.records[] | select(.name == "Publish Assets" and .type == "Task") | .log.url')
+   ```
+
+4. **Fetch the log and extract the NuGet package version:**
+   ```shell
+   VERSION=$(curl -s -H "Authorization: Bearer $TOKEN" "$LOG_URL" \
+     | grep -oP 'Microsoft\.CodeAnalysis\.\K\d+\.\d+\.\d+-[\w.]+(?=\.nupkg)' \
+     | head -1)
+   echo "Discovered version: $VERSION"
+   ```
+
+The extracted version (e.g., `5.6.0-2.26173.1`) is the value to use as the new Roslyn version for the rest of the process.
 
 ## Process
 
@@ -45,12 +92,12 @@ Update the `defaults.roslyn` field in `package.json`:
 }
 ```
 
-### Step 3: Run gulp updateRoslynVersion
+### Step 3: Run updateRoslynVersion
 
 This step acquires the new Roslyn packages and ensures they are in the proper feeds:
 
 ```powershell
-gulp updateRoslynVersion
+npm run updateRoslynVersion
 ```
 
 This task:
@@ -62,7 +109,7 @@ This task:
 
 ### Step 4: Get the Previous Roslyn Commit SHA
 
-The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `gulp updateRoslynVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
+The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet packages. After running `npm run updateRoslynVersion`, the new version's package will be cached locally, but you need to explicitly download the old version to get its commit SHA.
 
 **To get the old version's commit SHA:**
 
@@ -82,7 +129,7 @@ The commit SHAs are stored in the `.nuspec` files inside the downloaded NuGet pa
 
 ### Step 5: Get the New Roslyn Commit SHA
 
-After running `gulp updateRoslynVersion`, the new version's package is already cached. Extract the commit SHA:
+After running `npm run updateRoslynVersion`, the new version's package is already cached. Extract the commit SHA:
 
 ```powershell
 Get-Content "C:\Users\<username>\source\repos\vscode-csharp\out\.nuget\roslyn-language-server.osx-arm64\<new-version>\roslyn-language-server.osx-arm64.nuspec" | Select-String -Pattern "commit"
@@ -183,7 +230,7 @@ For updating from `5.4.0-2.26077.7` to `5.5.0-2.26080.10`:
 4. Find new commit from package metadata for version `5.5.0-2.26080.10`
 5. Run pr-finder in roslyn repo
 6. Update CHANGELOG.md with the output
-7. Run `gulp updateRoslynVersion`
+7. Run `npm run updateRoslynVersion`
 8. Create PR titled "Update roslyn to 5.5.0-2.26080.10"
 9. Update changelog with PR number
 
@@ -198,7 +245,7 @@ See [PR #8941](https://github.com/dotnet/vscode-csharp/pull/8941) as an example 
 
 ## Troubleshooting
 
-### Authentication Issues with gulp updateRoslynVersion
+### Authentication Issues with updateRoslynVersion
 
 If you encounter authentication errors:
 1. Install Azure Artifacts Credential Provider
@@ -216,7 +263,7 @@ Ensure:
 
 The commit SHAs are embedded in the nuspec files inside the downloaded NuGet packages:
 
-1. After running `gulp updateRoslynVersion`, packages are cached in `out/.nuget/`
+1. After running `npm run updateRoslynVersion`, packages are cached in `out/.nuget/`
 2. To get the old version's commit, you may need to explicitly download it first:
    ```powershell
    dotnet restore "msbuild\server" /p:PackageName=roslyn-language-server.osx-arm64 /p:PackageVersion=<old-version> --interactive

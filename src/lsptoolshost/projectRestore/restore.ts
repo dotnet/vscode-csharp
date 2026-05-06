@@ -9,7 +9,7 @@ import { RestorableProjects, RestoreParams, RestoreRequest } from '../server/ros
 import path from 'path';
 import { showErrorMessage } from '../../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
-import { CancellationToken } from 'vscode-jsonrpc';
+import { CancellationToken } from 'vscode-languageclient';
 
 let _restoreInProgress = false;
 

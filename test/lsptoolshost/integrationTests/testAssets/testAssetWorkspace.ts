@@ -22,7 +22,7 @@ const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     slnWithGenerator,
 };
 
-const workspaceName = vscode.workspace.workspaceFolders![0].uri.fsPath.split(path.sep).pop();
+const workspaceName = path.basename(vscode.workspace.workspaceFolders![0].uri.fsPath);
 
 const activeTestAssetWorkspace = new TestAssetWorkspace(testAssetWorkspaces[workspaceName!]);
 
