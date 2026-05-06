@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.142.x
+
 # 2.141.x
 * Skip RoslynCopilot install when AI features are disabeld (PR: [#9196](https://github.com/dotnet/vscode-csharp/pull/9196))
 * Support remote coreclr debugger (PR: [#8667](https://github.com/dotnet/vscode-csharp/pull/8667))
