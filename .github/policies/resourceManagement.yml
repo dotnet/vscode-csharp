@@ -76,6 +76,19 @@ configuration:
       - addLabel:
           label: OmniSharp
 
+    - description: Add "C#DK" label to issues filed with C# DevKit installed
+      triggerOnOwnActions: false
+      if:
+      - payloadType: Issues
+      - isAction:
+          action: Opened
+      - bodyContains:
+          pattern: "|csdevkit|ms-dotnettools|"
+          isRegex: False
+      then:
+      - addLabel:
+          label: C#DK
+
     - description: Close issues opened with incomplete bug template information
       triggerOnOwnActions: false
       if:
