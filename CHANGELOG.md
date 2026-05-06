@@ -29,7 +29,6 @@
   * Fix SslStream disposal crash (Issues: [9146](https://github.com/dotnet/vscode-csharp/issues/9146), [9183](https://github.com/dotnet/vscode-csharp/issues/9183), [9175](https://github.com/dotnet/vscode-csharp/issues/9175), PR: AzDO#728722)
   * Fix XAML Hot Reload error reporting when exceptions originate from indirectly-loaded views (PR: AzDO#729745)
   * XAML C# Expressions (XEXPR) limited support (PR: AzDO#721767)
- 
 
 # 2.135.x
 * Bump lodash from 4.17.23 to 4.18.1 (PR: [#9152](https://github.com/dotnet/vscode-csharp/pull/9152))
@@ -157,6 +156,135 @@
   * Fix formatting incorrect for void tag helpers (PR: [#12802](https://github.com/dotnet/razor/pull/12802))
   * Add theme info for leading whitespace to a comment (PR: [#12791](https://github.com/dotnet/razor/pull/12791))
 
+# 2.130.x
+
+This update brings significant improvements to reliability, diagnostics tooling, language server performance, and Razor editing.
+
+## Reliability
+
+### Improved error reporting when the language server encounters an error
+
+The experience when the language server crashes has been significantly improved. Previously, crashes could go unnoticed (only visible in logs) or spam users with multiple meaningless notifications that had no actionable items.
+
+Now, when the language server encounters an unrecoverable error:
+
+- A **single, consolidated notification** is shown instead of 3+ duplicate error toasts.
+- Error notifications include a **"Report Issue"** button that opens the issue reporter with logs pre-filled.
+- Server crashes can trigger a **restart of the extension**, so you can get back to work quickly.
+
+Under the hood, the extension now uses the built-in VS Code LSP client support for named pipe connections, delegating process lifecycle management to VS Code itself. This means better handling of process crashes, cleaner shutdown behavior, and fewer lingering processes. ([vscode-csharp#8982](https://github.com/dotnet/vscode-csharp/pull/8982), [roslyn#82376](https://github.com/dotnet/roslyn/pull/82376))
+
+### Language server now shuts down when VS Code exits
+
+The language server now accepts the extension host process ID on startup. If the parent VS Code process terminates unexpectedly, the language server will automatically shut itself down, preventing orphaned server processes from lingering in the background. ([vscode-csharp#8976](https://github.com/dotnet/vscode-csharp/pull/8976), [roslyn#82346](https://github.com/dotnet/roslyn/pull/82346))
+
+## Performance
+
+### Balanced source generator execution (default)
+
+Source generator execution now defaults to **Balanced** mode. In this mode, source generators only run on explicit actions like file save, build task execution, or the `C#: Rerun Source Generators` command. This is a significant change from the previous default (`Automatic`), which ran source generators on every keystroke.
+
+Benchmarks show measurable improvements in both CPU and memory usage:
+
+| Typing Iterations | Mode      | Mean Time   | Allocated Memory |
+|-------------------|-----------|-------------|------------------|
+| 1000              | Automatic | 4,345 ms    | 216 MB           |
+| 1000              | Balanced  | 3,897 ms    | 186 MB           |
+
+If you need real-time source generator updates while typing, you can switch back via the `dotnet.server.sourceGeneratorExecution` setting (requires restart). ([vscode-csharp#8970](https://github.com/dotnet/vscode-csharp/pull/8970), [roslyn#82330](https://github.com/dotnet/roslyn/pull/82330))
+
+### Reduced memory and CPU usage in the language server
+
+Several internal optimizations reduce allocations during analysis result creation, pattern matching operations, and file system watching:
+
+- **Improved pattern matching elimination** — redundant evaluations during pattern matching are now eliminated more aggressively. ([roslyn#82142](https://github.com/dotnet/roslyn/pull/82142))
+- **Reduced file system watchers** — `FileSystemWatcher` instances are now limited to one per drive root, reducing overhead on large solutions. ([roslyn#82211](https://github.com/dotnet/roslyn/pull/82211))
+- **Lower allocations during analysis** — analysis result creation now allocates less memory. ([roslyn#82139](https://github.com/dotnet/roslyn/pull/82139))
+
+## Diagnostics Tooling
+
+### New "Capture Logs" command
+
+A new `C#: Capture Logs` command lets you quickly record C# and C# LSP log activity for troubleshooting. When you run the command, it:
+
+1. Sets the log level to Trace
+2. Captures all log output until you cancel
+3. Packages the logs (including your current C# settings) into a downloadable `.zip` file
+
+This makes it much easier to provide detailed diagnostic information when reporting issues. ([vscode-csharp#8942](https://github.com/dotnet/vscode-csharp/pull/8942))
+
+### Logs included when recording a server trace
+
+The existing `C#: Record Language Server Trace` command now also captures log output alongside the trace data, and optionally lets you collect memory or GC dumps before and after the trace. All data is bundled into a single archive for easy sharing. ([vscode-csharp#8951](https://github.com/dotnet/vscode-csharp/pull/8951))
+
+### New "Collect Dump" command
+
+A new `C#: Collect Dump` command allows you to collect either a **Memory dump** or a **GC dump** of the language server process on demand. The generated archive additionally includes logs and settings, making it invaluable for diagnosing performance or memory issues. ([vscode-csharp#8966](https://github.com/dotnet/vscode-csharp/pull/8966))
+
+### Razor logs now included in diagnostics
+
+The `Capture Logs`, `Collect Dump`, and `Record Trace` commands now also collect Razor language server logs, so you get a complete picture of all language services activity in a single archive. ([vscode-csharp#8988](https://github.com/dotnet/vscode-csharp/pull/8988))
+
+### All settings now captured when collecting logs
+
+Log captures now include the complete set of C# extension settings (including server-only settings defined in `package.json`), not just the subset used by the extension code. This ensures that when you share a diagnostics archive, the full configuration context is available. ([vscode-csharp#8954](https://github.com/dotnet/vscode-csharp/pull/8954))
+
+## Settings
+
+### New `dotnet.server.environmentVariables` setting
+
+You can now pass custom environment variables to the language server process via the `dotnet.server.environmentVariables` setting. This is useful for advanced scenarios like overriding the .NET garbage collector:
+
+```json
+{
+    "dotnet.server.environmentVariables": {
+        "DOTNET_GCName": "libclrgc.dylib",
+        "DOTNET_gcServer": "0"
+    }
+}
+```
+
+Changes to this setting prompt a window reload. ([vscode-csharp#8967](https://github.com/dotnet/vscode-csharp/pull/8967))
+
+### `dotnet.server.crashDumpPath` now triggers a restart prompt
+
+Changing the `dotnet.server.crashDumpPath` setting now properly prompts you to restart the extension for the change to take effect. Previously, the setting would silently have no effect until a manual restart.
+
+Additionally, all settings that require an extension restart now use a consistent `(Requires extension restart)` label in their descriptions. ([vscode-csharp#8973](https://github.com/dotnet/vscode-csharp/pull/8973))
+
+## C# Language Service
+
+### IntelliSense and completions
+
+- **Property and extension method items with the same name** are now both shown in the completion list, instead of one hiding the other. ([roslyn#82315](https://github.com/dotnet/roslyn/pull/82315))
+- **`this` is no longer recommended inside `nameof` in an attribute**, reducing noise in completion suggestions. ([roslyn#82299](https://github.com/dotnet/roslyn/pull/82299))
+- The **`enableFileBasedPrograms` setting change** is now properly handled in the editor without requiring a restart. ([roslyn#82214](https://github.com/dotnet/roslyn/pull/82214))
+
+### Bug fixes
+
+- Fixed **workspace search always returning no results** for the first query after opening a solution. ([roslyn#82276](https://github.com/dotnet/roslyn/pull/82276))
+- Fixed `GetDeconstructionInfo` returning incorrect results on converted deconstruction assignments. ([roslyn#82324](https://github.com/dotnet/roslyn/pull/82324))
+- Fixed a **crash in the "Simplify LINQ expression"** code fix. ([roslyn#82392](https://github.com/dotnet/roslyn/pull/82392))
+- The **"Use with-element" suggestion** is no longer offered in projects targeting C# versions prior to 15. ([roslyn#82389](https://github.com/dotnet/roslyn/pull/82389))
+- Fixed an issue where `isReferenceAssembly` was incorrectly set to `true` even when the implementation assembly was found. ([roslyn#82242](https://github.com/dotnet/roslyn/pull/82242))
+
+## Razor
+
+### Formatting fixes
+
+- Fixed formatting when there are **two markup elements on the same line inside a C# block**, and prevented a crash caused by block-bodied lambdas in attributes. ([razor#12786](https://github.com/dotnet/razor/pull/12786))
+- Fixed **indentation after complete tags** that regressed due to an incorrect regex group. ([razor#12784](https://github.com/dotnet/razor/pull/12784))
+- Improved handling of **VS Code newline behavior** — the formatter now correctly handles blank line insertion between elements and newline rearrangement in long HTML tags. ([razor#12773](https://github.com/dotnet/razor/pull/12773))
+- Fixed **indentation following a self-closing tag with a lambda attribute**. ([razor#12727](https://github.com/dotnet/razor/pull/12727))
+
+### Debugging
+
+- Fixed **breakpoint placement for `@code` blocks in the middle of Razor documents**. Previously, breakpoints could be placed on incorrect lines when code blocks appeared after markup content. ([razor#12741](https://github.com/dotnet/razor/pull/12741))
+
+### Other improvements
+
+- The `html.autoClosingTags` setting is now properly honored in VS Code. ([razor#12735](https://github.com/dotnet/razor/pull/12735))
+
 # 2.123.x
 * Improve error reporting UX when server encounters an error (PR: [#8982](https://github.com/dotnet/vscode-csharp/pull/8982))
 * Update Roslyn to 5.5.0-2.26117.2 (PR: [#8982](https://github.com/dotnet/vscode-csharp/pull/8982))
@@ -203,6 +331,9 @@
 * Log settings when capturing logs (PR: [#8948](https://github.com/dotnet/vscode-csharp/pull/8948))
 * Add captureLogs command which will record C# and C# LSP log activity (PR: [#8942](https://github.com/dotnet/vscode-csharp/pull/8942))
 * Bump Razor to 10.0.0-preview.26081.1 (PR: [#8940](https://github.com/dotnet/vscode-csharp/pull/8940))
+
+# 2.120.x
+* See 2.115.x for full list of changes.
 
 # 2.115.x
 * Update Roslyn to 5.5.0-2.26080.10 (PR: [#8941](https://github.com/dotnet/vscode-csharp/pull/8941))
@@ -293,6 +424,9 @@
   * Update C# code when Razor components are renamed (PR: [#12534](https://github.com/dotnet/razor/pull/12534))
   * Ensure formatting can't change string literal contents (PR: [#12556](https://github.com/dotnet/razor/pull/12556))
 
+# 2.110.x
+* See 2.103.x for full list of changes.
+
 # 2.103.x
 * include roslyn event source configs in profiling command (PR: [#8808](https://github.com/dotnet/vscode-csharp/pull/8808))
 * Revise SUPPORT.md for clarity on sharing information (PR: [#8807](https://github.com/dotnet/vscode-csharp/pull/8807))
@@ -363,6 +497,10 @@
   * Default the cohosting option in the generator to on. (PR: [#12446](https://github.com/dotnet/razor/pull/12446))
   * Add UnboundDirectiveAttributeAddUsingCodeActionProvider for directive attributes (PR: [#12404](https://github.com/dotnet/razor/pull/12404))
   * Fix edit in one project not being reflected in consuming project (PR: [#12439](https://github.com/dotnet/razor/pull/12439))
+
+# 2.100.x
+* Fix issue refreshing colorization after project loads (PR: [#8787](https://github.com/dotnet/vscode-csharp/pull/8787))
+* See 2.97.x for full list of changes.
 
 # 2.97.x
 * Add integration test for restore of file-based programs (PR: [#8470](https://github.com/dotnet/vscode-csharp/pull/8470))
@@ -613,6 +751,7 @@
   * Ensure unique file paths for non-file Uris (PR: [#12037](https://github.com/dotnet/razor/pull/12037))
   * Fix completion of hyphenated items (PR: [#12035](https://github.com/dotnet/razor/pull/12035))
   * Allow completion items to add using directives (PR: [#12034](https://github.com/dotnet/razor/pull/12034))
+* Default `dotnet.projects.enableFileBasedPrograms` to `true` (PR: [#8587](https://github.com/dotnet/vscode-csharp/pull/8587)
 
 # 2.86.x
 * Bump Roslyn to 5.0.0-1.25361.2 (PR: [#8416](https://github.com/dotnet/vscode-csharp/pull/8416))
@@ -764,6 +903,9 @@
   * Add new shared SelectXXXAsArray helpers (#11796) (PR: [#11796](https://github.com/dotnet/razor/pull/11796))
 
 # 2.76.x
+* Bump Roslyn to 5.0.0-1.25263.2 (PR: [#8286](https://github.com/dotnet/vscode-csharp/pull/8286))
+  * [release/vscode] Gracefully handle span mapping failing(PR: [#78562](https://github.com/dotnet/roslyn/pull/78562))
+  * Fix razor redirect(PR: [#78448](https://github.com/dotnet/roslyn/pull/78448))
 * Bump Roslyn to 5.0.0-1.25257.6 (PR: [#8264](https://github.com/dotnet/vscode-csharp/pull/8264))
   * Do not parse URIs during LSP serialization/deserialization (PR: [#76691](https://github.com/dotnet/roslyn/pull/76691))
   * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation (PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
@@ -840,6 +982,8 @@
 * Acquire aspnetcore runtime when using Dev Kit to avoid double acquisition (PR: [#8132](https://github.com/dotnet/vscode-csharp/pull/8132))
 
 # 2.72.x
+* Bump Razor to 9.0.0-preview.25211.4 (PR: [#8181](https://github.com/dotnet/vscode-csharp/pull/8181))
+  * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
 * Revert xamlTools to 17.14.35913.250 (PR: [#8121](https://github.com/dotnet/vscode-csharp/pull/8121))
 * Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
   * Merge `null conditional assignment` to main (PR: [#77867](https://github.com/dotnet/roslyn/pull/77867))
