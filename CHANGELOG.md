@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.141.x
+* Skip RoslynCopilot install when Copilot extension is not present (PR: [#9196](https://github.com/dotnet/vscode-csharp/pull/9196))
+* Support remote coreclr debugger (PR: [#8667](https://github.com/dotnet/vscode-csharp/pull/8667))
+* Update Roslyn and Razor (PR: [#9271](https://github.com/dotnet/vscode-csharp/pull/9271))
+* Update .NET version references in CONTRIBUTING.md (PR: [#9259](https://github.com/dotnet/vscode-csharp/pull/9259))
+* Update .NET Core Debugger URLs and integrity hashes to version 2.141.0 (PR: [#9251](https://github.com/dotnet/vscode-csharp/pull/9251))
 * Update Roslyn to 5.8.0-1.26252.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
   * Fix IDE0004 false positive for nullable generic type argument casts (PR: [#83326](https://github.com/dotnet/roslyn/pull/83326))
 * Update Razor to 10.4.0-preview.26252.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
