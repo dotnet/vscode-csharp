@@ -79,7 +79,7 @@ export async function activate(
         requiredPackageIds.push('OmniSharp');
     }
     requiredPackageIds.push('VSWebAssemblyBridge');
-    if (csharpDevkitExtension) {
+    if (csharpDevkitExtension && !commonOptions.disableAIFeatures) {
         requiredPackageIds.push('RoslynCopilot');
     }
 
