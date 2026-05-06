@@ -6,7 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as languageClient from 'vscode-languageclient/node';
+import * as languageClient from 'vscode-languageclient';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from '../server/roslynProtocol';
 import { commonOptions } from '../../shared/options';

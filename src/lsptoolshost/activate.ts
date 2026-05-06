@@ -20,7 +20,6 @@ import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
 import { registerRestoreCommands } from './projectRestore/restore';
-import { registerSourceGeneratedFilesContentProvider } from './generators/sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
@@ -31,6 +30,8 @@ import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
+import { ActivityLogCapture } from '../csharpExtensionExports';
+import { createActivityLogCapture } from './logging/loggingUtils';
 
 let _channel: ObservableLogOutputChannel;
 let _traceChannel: ObservableLogOutputChannel;
@@ -94,7 +95,6 @@ export async function activateRoslynLanguageServer(
 
     registerRestoreCommands(context, languageServer, _channel);
 
-    registerSourceGeneratedFilesContentProvider(context, languageServer);
     registerSourceGeneratorRefresh(context, languageServer, _channel);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
@@ -173,4 +173,15 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
     }
 
     return pathWithExtension;
+}
+
+/**
+ * Creates an activity log capture that collects logs from the C#, LSP trace, and Razor channels.
+ * Sets log levels to Trace for capture. Call dispose() to stop capturing and restore log levels.
+ */
+export async function createCaptureActivityLogs(
+    languageServer: RoslynLanguageServer,
+    razorLogger: RazorLogger
+): Promise<ActivityLogCapture> {
+    return createActivityLogCapture(languageServer, _channel, _traceChannel, razorLogger);
 }

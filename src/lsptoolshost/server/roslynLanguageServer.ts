@@ -6,24 +6,22 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import {
+    CancellationToken,
     LanguageClientOptions,
     NotificationHandler,
+    NotificationHandler0,
     NotificationType,
+    PartialResultParams,
     ProtocolRequestType,
-} from 'vscode-languageclient';
-import {
-    Trace,
+    RequestHandler,
+    RequestParam,
     RequestType,
     RequestType0,
-    CancellationToken,
-    RequestHandler,
     ResponseError,
-    NotificationHandler0,
-    PartialResultParams,
     State,
-    Executable,
-    TransportKind,
-} from 'vscode-languageclient/node';
+    Trace,
+} from 'vscode-languageclient';
+import { Executable, TransportKind } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../../shared/platform';
 import { readConfigurations } from '../options/configurationMiddleware';
 import * as RoslynProtocol from './roslynProtocol';
@@ -126,7 +124,7 @@ export class RoslynLanguageServer {
         return this._state;
     }
 
-    public get processId(): number | undefined {
+    public static get processId(): number | undefined {
         return RoslynLanguageServer._processId;
     }
 
@@ -330,6 +328,7 @@ export class RoslynLanguageServer {
             'Microsoft.CodeAnalysis.LanguageServer',
             serverOptions,
             clientOptions,
+            telemetryReporter,
             channel
         );
 
@@ -397,7 +396,7 @@ export class RoslynLanguageServer {
      */
     public async sendRequest<Params, Response, Error>(
         type: RequestType<Params, Response, Error>,
-        params: Params,
+        params: RequestParam<Params>,
         token: vscode.CancellationToken
     ): Promise<Response> {
         if (!this.isRunning()) {
@@ -433,7 +432,7 @@ export class RoslynLanguageServer {
 
     public async sendRequestWithProgress<P extends PartialResultParams, R, PR, E, RO>(
         type: ProtocolRequestType<P, R, PR, E, RO>,
-        params: P,
+        params: RequestParam<P>,
         onProgress: (p: PR) => Promise<any>,
         cancellationToken?: vscode.CancellationToken
     ): Promise<R> {

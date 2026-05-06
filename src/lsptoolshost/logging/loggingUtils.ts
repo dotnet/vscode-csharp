@@ -10,6 +10,8 @@ import archiver from 'archiver';
 import { execChildProcess } from '../../common';
 import { Message, ObservableLogOutputChannel } from './observableLogOutputChannel';
 import { RazorLogger } from '../../razor/src/razorLogger';
+import { ActivityLogCapture, ActivityLogResult } from '../../csharpExtensionExports';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 
 /**
  * Configuration for a dump tool.
@@ -169,32 +171,6 @@ export async function selectDumpsWithArguments(options: SelectDumpsOptions): Pro
 }
 
 /**
- * Verifies that all dump tools are installed for the given requests.
- * @param dumpRequests The dump requests to verify tools for
- * @param folder The folder to run tool verification in
- * @param progress Progress reporter
- * @param outputChannel Output channel for logging
- * @returns True if all tools are installed, false if cancelled or failed
- */
-export async function verifyDumpTools(
-    dumpRequests: DumpRequest[],
-    folder: string,
-    progress: vscode.Progress<{ message?: string; increment?: number }>,
-    outputChannel: ObservableLogOutputChannel
-): Promise<boolean> {
-    // Get unique tool names to avoid verifying the same tool twice
-    const toolNames = new Set(dumpRequests.map((r) => getDumpConfig(r.type).toolName));
-
-    for (const toolName of toolNames) {
-        const toolInstalled = await verifyOrAcquireDotnetTool(toolName, folder, progress, outputChannel);
-        if (!toolInstalled) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
  * Prompts the user for tool arguments with customizable defaults.
  * @param toolName The name of the tool (displayed in the input box title)
  * @param defaultArgs The default arguments to pre-populate
@@ -334,9 +310,7 @@ export async function createZipWithLogs(
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
     razorLogger: RazorLogger,
-    csharpActivityLogContent: string,
-    traceActivityLogContent: string,
-    razorActivityLogContent: string,
+    activityLogs: ActivityLogResult | undefined,
     outputPath: string,
     traceFilePath?: string,
     additionalFiles?: string[]
@@ -412,14 +386,10 @@ export async function createZipWithLogs(
         }
 
         // Add captured activity logs to the archive
-        if (csharpActivityLogContent !== '') {
-            archive.append(csharpActivityLogContent, { name: 'csharp.activity.log' });
-        }
-        if (traceActivityLogContent !== '') {
-            archive.append(traceActivityLogContent, { name: 'csharp-lsp-trace.activity.log' });
-        }
-        if (razorActivityLogContent !== '') {
-            archive.append(razorActivityLogContent, { name: 'razor.activity.log' });
+        if (activityLogs) {
+            archive.append(activityLogs.csharpLog, { name: 'csharp.activity.log' });
+            archive.append(activityLogs.lspTraceLog, { name: 'csharp-lsp-trace.activity.log' });
+            archive.append(activityLogs.razorLog, { name: 'razor.activity.log' });
         }
 
         // Add current settings to the archive
@@ -569,4 +539,149 @@ export class RazorLogObserver {
             })
             .join('\n');
     }
+}
+
+/**
+ * Creates an activity log capture that collects logs from the C#, LSP trace, and Razor channels.
+ * Sets log levels to Trace for capture. Call dispose() to stop capturing and restore log levels.
+ */
+export async function createActivityLogCapture(
+    languageServer: RoslynLanguageServer,
+    outputChannel: ObservableLogOutputChannel,
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
+): Promise<ActivityLogCapture> {
+    const csharpLogObserver = outputChannel.observe();
+    const traceLogObserver = traceChannel.observe();
+    const razorLogObserver = new RazorLogObserver(razorLogger);
+
+    const restoreLogLevels = await languageServer.setLogLevelsForCapture();
+    razorLogger.traceEnabled = true;
+    razorLogger.debugEnabled = true;
+    razorLogger.infoEnabled = true;
+
+    return {
+        getActivityLogs: () => ({
+            csharpLog: csharpLogObserver.getLog(),
+            lspTraceLog: traceLogObserver.getLog(),
+            razorLog: razorLogObserver.getLog(),
+        }),
+        dispose: async () => {
+            csharpLogObserver.dispose();
+            traceLogObserver.dispose();
+            razorLogObserver.dispose();
+            await restoreLogLevels();
+            await razorLogger.updateLogLevelAsync();
+        },
+    };
+}
+
+/** Describes which additional logs were selected for collection. */
+export interface LogsToCollect {
+    activityLogs: boolean;
+    performanceTrace: boolean;
+    memoryDump: boolean;
+    gcDump: boolean;
+}
+
+/**
+ * Generate a readme.md file which describes the contents of the log archive,
+ * warns the user about potentially sensitive information in the logs, and
+ * provides instructions on how to share the logs with Microsoft for troubleshooting.
+ * @param options Which additional logs were selected for collection
+ * @param archivePath The absolute path where the archive was saved on disk
+ */
+export function generateReadmeContent(options: LogsToCollect, archivePath: string): string {
+    const lines: string[] = [];
+
+    lines.push('# C# Extension Log Archive');
+    lines.push('');
+    lines.push(
+        'An archive was generated by the **C# extension for Visual Studio Code** (`CSharp: Collect C# Logs` command).'
+    );
+    lines.push('');
+    lines.push(`**Archive location**: [${archivePath}](${archivePath})`);
+    lines.push('');
+
+    lines.push('## Contents');
+    lines.push('');
+
+    lines.push('### Current Logs and Settings');
+    lines.push('');
+    lines.push('| File | Description |');
+    lines.push('| --- | --- |');
+    lines.push('| `csharp.log` | C# extension output log |');
+    lines.push('| `csharp-lsp-trace.log` | LSP trace log between VS Code and the Roslyn language server |');
+    lines.push('| `razor.log` | Razor language support log |');
+    lines.push('| `csharp-settings.json` | Current C# extension settings at time of capture |');
+    lines.push('');
+
+    if (options.activityLogs) {
+        lines.push('### Record Activity');
+        lines.push('');
+        lines.push(
+            'Activity logs capture live output recorded during the diagnostic session with the log level set to Trace.'
+        );
+        lines.push('');
+        lines.push('| File | Description |');
+        lines.push('| --- | --- |');
+        lines.push('| `csharp.activity.log` | C# output captured during the recording session |');
+        lines.push('| `csharp-lsp-trace.activity.log` | LSP trace captured during the recording session |');
+        lines.push('| `razor.activity.log` | Razor output captured during the recording session |');
+        lines.push('');
+    }
+
+    if (options.performanceTrace) {
+        lines.push('### Performance Trace');
+        lines.push('');
+        lines.push(
+            'A `.nettrace` file captured using `dotnet-trace`. This file contains runtime events from the language server process.'
+        );
+        lines.push('');
+        lines.push(
+            'You can view this file using [PerfView](https://github.com/microsoft/perfview), [dotnet-trace convert](https://learn.microsoft.com/dotnet/core/diagnostics/dotnet-trace#dotnet-trace-convert), or Visual Studio.'
+        );
+        lines.push('');
+    }
+
+    if (options.memoryDump) {
+        lines.push('### Memory Dump');
+        lines.push('');
+        lines.push(
+            'One or more `.dmp` files captured using `dotnet-dump`. These contain a process memory dump of the language server.'
+        );
+        lines.push('');
+        lines.push(
+            '> **WARNING**: Memory dumps contain the full process memory and may include sensitive data such as source code, file contents, and credentials loaded in memory.'
+        );
+        lines.push('');
+    }
+
+    if (options.gcDump) {
+        lines.push('### GC Dump');
+        lines.push('');
+        lines.push(
+            'One or more `.gcdump` files captured using `dotnet-gcdump`. These contain managed heap information from the language server.'
+        );
+        lines.push('');
+    }
+
+    lines.push('## Sharing');
+    lines.push('');
+
+    lines.push('> **WARNING**: This archive may contain sensitive information such as file paths, project names,');
+    lines.push('> source code fragments, and other workspace-specific details. Please review the contents before');
+    lines.push('> sharing publicly.');
+    lines.push('');
+
+    lines.push(
+        '**Publicly**: Attach this archive to your [GitHub issue](https://github.com/dotnet/vscode-csharp/issues).'
+    );
+    lines.push('');
+    lines.push(
+        '**Privately**: If the archive contains sensitive information, upload it via the [Developer Community](https://developercommunity.visualstudio.com/dotnet/report) page and reference your GitHub issue in the description.'
+    );
+    lines.push('');
+
+    return lines.join('\n');
 }

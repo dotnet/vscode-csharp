@@ -12,8 +12,8 @@ import CompositeDisposable from '../../compositeDisposable';
 import AbstractProvider from './abstractProvider';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
 import { buildEditForResponse } from '../fileOperationsResponseEditBuilder';
-import { CancellationToken } from 'vscode-jsonrpc';
 import { showWarningMessage } from '../../shared/observers/utils/showMessage';
+import { CancellationToken } from 'vscode-languageclient';
 
 export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
     public static fixAllCodeActionKind = vscode.CodeActionKind.SourceFixAll.append('csharp');

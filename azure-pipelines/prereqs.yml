@@ -20,7 +20,7 @@ steps:
     inputs:
       useGlobalJson: true
       workingDirectory: $(Build.SourcesDirectory)/msbuild
-      
+
 
 - script: dotnet --info
   displayName: Display dotnet info
@@ -40,5 +40,4 @@ steps:
 
 - script: |
     npm ci
-    npm i -g gulp
   displayName: 'Install dependencies'

@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { isRelevantDocument } from './projectContextService';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { VSProjectContext } from '../server/roslynProtocol';
-import { CancellationToken } from 'vscode-languageclient/node';
+import { CancellationToken } from 'vscode-languageclient';
 
 export const changeProjectContextCommandName = 'csharp.changeProjectContext';
 export const changeProjectContextFileExplorer = 'csharp.changeProjectContextFileExplorer';

@@ -25,6 +25,7 @@ import {
     MarkupContent,
     NotificationType,
     ReferencesRequest,
+    RequestHandler,
     RequestType,
     SignatureHelp,
     SignatureHelpRequest,
@@ -74,23 +75,24 @@ export function registerRazorEndpoints(
     function registerCohostingEndpoints() {
         const documentManager = new HtmlDocumentManager(platformInfo, roslynLanguageServer, razorLogger);
         const reportIssueCommand = new ReportIssueCommand(vscode, documentManager, roslynLanguageServer, razorLogger);
+        const updateHtmlRequestType = new RequestType<HtmlUpdateParameters, void, void>('razor/updateHtml');
         context.subscriptions.push(documentManager.register());
         context.subscriptions.push(reportIssueCommand.register());
 
-        registerMethodHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
+        registerMethodHandler(updateHtmlRequestType, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             await documentManager.updateDocumentText(uri, params.checksum, params.text);
         });
 
-        registerCohostHandler(DocumentColorRequest.type, documentManager, async (document) => {
+        registerCohostHandler(DocumentColorRequest.type, documentManager, [], async (document) => {
             return await DocumentColorHandler.doDocumentColorRequest(document.uri);
         });
 
-        registerCohostHandler(ColorPresentationRequest.type, documentManager, async (document, params) => {
+        registerCohostHandler(ColorPresentationRequest.type, documentManager, [], async (document, params) => {
             return await ColorPresentationHandler.doColorPresentationRequest(document.uri, params);
         });
 
-        registerCohostHandler(FoldingRangeRequest.type, documentManager, async (document) => {
+        registerNullableCohostHandler(FoldingRangeRequest.type, documentManager, async (document) => {
             const results = await vscode.commands.executeCommand<vscode.FoldingRange[]>(
                 'vscode.executeFoldingRangeProvider',
                 document.uri
@@ -99,7 +101,7 @@ export function registerRazorEndpoints(
             return FoldingRangeHandler.convertFoldingRanges(results, razorLogger);
         });
 
-        registerCohostHandler(HoverRequest.type, documentManager, async (document, params) => {
+        registerNullableCohostHandler(HoverRequest.type, documentManager, async (document, params) => {
             const results = await vscode.commands.executeCommand<vscode.Hover[]>(
                 'vscode.executeHoverProvider',
                 document.uri,
@@ -110,7 +112,7 @@ export function registerRazorEndpoints(
             return rewriteHover(applicableHover);
         });
 
-        registerCohostHandler(DocumentHighlightRequest.type, documentManager, async (document, params) => {
+        registerNullableCohostHandler(DocumentHighlightRequest.type, documentManager, async (document, params) => {
             const results = await vscode.commands.executeCommand<vscode.DocumentHighlight[]>(
                 'vscode.executeDocumentHighlights',
                 document.uri,
@@ -120,45 +122,45 @@ export function registerRazorEndpoints(
             return rewriteHighlight(results);
         });
 
-        registerCohostHandler(CompletionRequest.type, documentManager, async (document, params) => {
-            return CompletionHandler.provideVscodeCompletions(
+        registerNullableCohostHandler(CompletionRequest.type, documentManager, async (document, params) => {
+            return await CompletionHandler.provideVscodeCompletions(
                 document.uri,
                 params.position,
                 params.context?.triggerCharacter
             );
         });
 
-        registerCohostHandler(ReferencesRequest.type, documentManager, async (document, params) => {
+        registerNullableCohostHandler(ReferencesRequest.type, documentManager, async (document, params) => {
             const results = await vscode.commands.executeCommand<vscode.Location[]>(
                 'vscode.executeReferenceProvider',
                 document.uri,
                 params.position
             );
 
-            return rewriteLocations(results);
+            return rewriteLocations(results ?? []);
         });
 
-        registerCohostHandler(ImplementationRequest.type, documentManager, async (document, params) => {
+        registerNullableCohostHandler(ImplementationRequest.type, documentManager, async (document, params) => {
             const results = await vscode.commands.executeCommand<vscode.Location[]>(
                 'vscode.executeImplementationProvider',
                 document.uri,
                 params.position
             );
 
-            return rewriteLocations(results);
+            return rewriteLocations(results ?? []);
         });
 
-        registerCohostHandler(DefinitionRequest.type, documentManager, async (document, params) => {
+        registerNullableCohostHandler(DefinitionRequest.type, documentManager, async (document, params) => {
             const results = await vscode.commands.executeCommand<vscode.Location[]>(
                 'vscode.executeDefinitionProvider',
                 document.uri,
                 params.position
             );
 
-            return rewriteLocations(results);
+            return rewriteLocations(results ?? []);
         });
 
-        registerCohostHandler(SignatureHelpRequest.type, documentManager, async (document, params) => {
+        registerNullableCohostHandler(SignatureHelpRequest.type, documentManager, async (document, params) => {
             const results = await vscode.commands.executeCommand<vscode.SignatureHelp>(
                 'vscode.executeSignatureHelpProvider',
                 document.uri,
@@ -166,13 +168,13 @@ export function registerRazorEndpoints(
             );
 
             if (!results) {
-                return undefined;
+                return null;
             }
 
             return rewriteSignatureHelp(results);
         });
 
-        registerCohostHandler(DocumentFormattingRequest.type, documentManager, async (document, params) => {
+        registerNullableCohostHandler(DocumentFormattingRequest.type, documentManager, async (document, params) => {
             const content = document.getContent();
             const options = <vscode.FormattingOptions>params.options;
 
@@ -180,49 +182,85 @@ export function registerRazorEndpoints(
             return response?.edits;
         });
 
-        registerCohostHandler(DocumentOnTypeFormattingRequest.type, documentManager, async (document, params) => {
-            const content = document.getContent();
-            const options = <vscode.FormattingOptions>params.options;
+        registerNullableCohostHandler(
+            DocumentOnTypeFormattingRequest.type,
+            documentManager,
+            async (document, params) => {
+                const content = document.getContent();
+                const options = <vscode.FormattingOptions>params.options;
 
-            const response = await FormattingHandler.getHtmlOnTypeFormattingResult(
-                document.uri,
-                content,
-                params.position,
-                params.ch,
-                options
-            );
-            return response?.edits;
-        });
+                const response = await FormattingHandler.getHtmlOnTypeFormattingResult(
+                    document.uri,
+                    content,
+                    params.position,
+                    params.ch,
+                    options
+                );
+                return response?.edits;
+            }
+        );
     }
 
     // Helper method that registers a request handler, and logs errors to the Razor logger.
     function registerCohostHandler<Params, Result, Error>(
         type: RequestType<Params, Result, Error>,
         documentManager: HtmlDocumentManager,
+        missingDocumentResult: Result,
         invocation: (document: HtmlDocument, request: Params) => Promise<Result>
     ) {
-        return registerMethodHandler<HtmlForwardedRequest<Params>, Result | undefined>(type.method, async (params) => {
+        const forwardedType = new RequestType<HtmlForwardedRequest<Params>, Result, Error>(
+            type.method,
+            type.parameterStructures
+        );
+
+        return registerMethodHandler(forwardedType, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri, params.checksum);
 
             if (!document) {
-                return undefined;
+                return missingDocumentResult;
             }
 
             return invocation(document, params.request);
         });
     }
 
-    function registerMethodHandler<Params, Result>(method: string, invocation: (params: Params) => Promise<Result>) {
-        const requestType = new RequestType<Params, Result, Error>(method);
-        roslynLanguageServer.registerOnRequest(requestType, async (params) => {
+    function registerNullableCohostHandler<Params, Result, Error>(
+        type: RequestType<Params, Result | null, Error>,
+        documentManager: HtmlDocumentManager,
+        invocation: (document: HtmlDocument, request: Params) => Promise<Result | null>
+    ) {
+        const forwardedType = new RequestType<HtmlForwardedRequest<Params>, Result | null, Error>(
+            type.method,
+            type.parameterStructures
+        );
+
+        return registerMethodHandler(forwardedType, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri, params.checksum);
+
+            if (!document) {
+                return null;
+            }
+
+            return invocation(document, params.request);
+        });
+    }
+
+    function registerMethodHandler<Params, Result, Error>(
+        type: RequestType<Params, Result, Error>,
+        invocation: (params: Params, token: vscode.CancellationToken) => Promise<Result>
+    ) {
+        const handler = (async (params: Params, token: vscode.CancellationToken) => {
             try {
-                return await invocation(params);
+                return await invocation(params, token);
             } catch (error) {
                 razorLogger.logError(`Error: ${error}`, error);
-                return undefined;
+                throw error;
             }
-        });
+        }) as RequestHandler<Params, Result, Error>;
+
+        roslynLanguageServer.registerOnRequest(type, handler);
     }
 }
 

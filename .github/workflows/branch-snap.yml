@@ -34,9 +34,9 @@ jobs:
       - name: Update version.json
         run: |
           if [ "${{ github.event.inputs.releaseCandidate }}" = "true" ]; then
-            npx gulp incrementVersion --releaseCandidate=true
+            npm run incrementVersion -- --releaseCandidate=true
           else
-            npx gulp incrementVersion
+            npm run incrementVersion
           fi
       - name: Create version update PR
         uses: peter-evans/create-pull-request@v4
@@ -63,7 +63,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Update version.json for release
-        run: npx gulp updateVersionForStableRelease
+        run: npm run updateVersionForStableRelease
       - name: Commit and push version update
         run: |
           git config user.name "github-actions[bot]"

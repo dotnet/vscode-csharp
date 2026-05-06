@@ -6,7 +6,7 @@
 import { OmniSharpServer } from './server';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
-import { CancellationToken } from 'vscode-languageserver-protocol';
+import { CancellationToken } from 'vscode-languageclient';
 import {
     isWebProject,
     isBlazorWebAssemblyProject,
@@ -170,8 +170,7 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
     const response = await server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
     if (response.MsBuild && response.MsBuild.Projects) {
         for (const project of response.MsBuild.Projects) {
-            project.IsWebProject = isWebProject(project.Path);
-
+            [project.IsWebProject, project.IsWebAssemblyProject] = isWebProject(project.Path);
             const isProjectBlazorWebAssemblyProject = await isBlazorWebAssemblyProject(project.Path);
 
             const targetsDotnetCore =

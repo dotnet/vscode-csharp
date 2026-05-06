@@ -64,12 +64,11 @@ extends:
             storage: "$(AzStorage)"
             ContainerName: "$(AzContainerName)"
 
-        - pwsh: | 
+        - pwsh: |
             npm install
-            npm install -g gulp
           displayName: 'Install tools'
 
-        - pwsh: gulp 'publish roslyn copilot' --userName dotnet-maestro-bot --email dotnet-maestro-bot@microsoft.com --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
+        - pwsh: npm run publishRoslynCopilot -- --userName dotnet-maestro-bot --email dotnet-maestro-bot@microsoft.com --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
           displayName: 'Create component update PR'
           env:
             GitHubPAT: $(BotAccount-dotnet-maestro-bot-PAT)

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { integer } from 'vscode-languageserver-protocol';
+import { integer } from 'vscode-languageclient';
 
 export interface ISolutionSnapshotProvider {
     /**

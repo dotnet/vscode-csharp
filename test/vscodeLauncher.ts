@@ -40,6 +40,7 @@ export async function prepareVSCodeAndExecuteTests(
     // The folder containing the Extension Manifest package.json
     // Passed to `--extensionDevelopmentPath`
     env.CODE_EXTENSIONS_PATH = extensionDevelopmentPath;
+    env.RoslynWaiterEnabled = 'true';
 
     console.log(`workspace path = '${workspacePath}'`);
 
