@@ -4,7 +4,125 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.140.x
-* See 2.136.x for full list of changes.
+
+This update brings new language features like Type Hierarchy and Call Hierarchy, major file-based apps improvements, significant performance gains, extensive Razor formatting and editing enhancements, Blazor WebAssembly debugging, and MAUI tooling improvements.
+
+## C# Language Support
+
+### Selection Range
+
+The LSP now supports **Selection Range** (`Expand Selection` / `Shrink Selection`), enabling smart expanding and shrinking of text selections based on the syntactic structure of your C# code. For example, you can progressively select from a variable name → the containing statement → the containing block → the method → the class, all with keyboard shortcuts. ([roslyn#82809](https://github.com/dotnet/roslyn/pull/82809))
+
+### Type Hierarchy and Call Hierarchy
+
+Two powerful navigation features are now available for C# in VS Code:
+
+- **Type Hierarchy** lets you explore the full inheritance chain of any class, interface, or struct — navigate through base types and derived types without leaving the editor. ([roslyn#83011](https://github.com/dotnet/roslyn/pull/83011))
+- **Call Hierarchy** lets you trace incoming and outgoing calls for any method, making it easy to understand how your code connects. Interface implementation categories for overrides are correctly shown, so you get an accurate picture of the full call chain. ([roslyn#82865](https://github.com/dotnet/roslyn/pull/82865))
+
+### File-based apps: automatic discovery and improved editing
+
+C# file-based apps (standalone `.cs` files that run without a project file) can now be [automatically discovered](https://github.com/dotnet/roslyn/blob/main/docs/features/file-based-programs-vscode.md#automatic-discovery) in the opened workspace folders. Set `dotnet.fileBasedApps.enableAutomaticDiscovery` to `true` to use it. This is particularly recommended when using the new `#:include` directive to enable file-based apps made up of multiple `.cs` files.
+
+Beyond discovery, the editing experience for file-based apps has been refined:
+
+- **Transitive `#:` directives** are now handled correctly, so transitive dependencies resolve properly.
+- **`#:` directives are preserved during formatting**, preventing the formatter from mangling file-based app metadata.
+- **Completions for `#:include` directives** help you discover available files as you type.
+- **Improved colorization** of file-based app directives makes them visually distinct from regular C# code.
+
+([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
+
+## Performance
+
+### Faster solution loading with parallel analyzer initialization
+
+Solution-level analyzers now load in parallel during project initialization. In solutions with many analyzers (which is common when using .NET Analyzers, StyleCop, or other code analysis packages), this can meaningfully reduce the time between opening a solution and seeing your first diagnostics. ([roslyn#82447](https://github.com/dotnet/roslyn/pull/82447))
+
+### Reduced memory allocations across the language server
+
+A broad sweep of allocation reductions has been made across many hot paths in the language server:
+
+- **Syntax trivia handling** — modified search and walk methods now check green nodes first, avoiding unnecessary allocations.
+- **Text diffing and source text operations** — internal text line data structures now pack data more efficiently, reducing per-line overhead.
+- **Completion** — repeated `int.ToString` calls during completion item generation are now avoided.
+- **Document analysis and code fix service** — result creation and predicate evaluation now reuse objects instead of allocating.
+
+These improvements contribute to lower GC pressure and smoother editing, especially in large codebases.
+
+## Razor
+
+### Unused directives: fade, remove, and sort
+
+Unused `@using` directives in Razor files now appear **faded**, just like unused `using` statements in C# files. A new **"Remove unnecessary usings"** code action lets you clean them up in one click.
+
+Additionally, two new commands are available for Razor files:
+
+- **Remove and Sort Usings** — removes unused directives and sorts the remainder.
+- **Sort and Consolidate Usings** — sorts and consolidates `@using` directives without removing any.
+
+These features bring Razor's `@using` management in line with the C# editing experience. ([vscode-csharp#9040](https://github.com/dotnet/vscode-csharp/pull/9040))
+
+### Generate Method code action
+
+The **Generate Method** code action now works in Razor files. When you call a method that doesn't exist yet, you can generate a stub directly from the Razor editor — no need to switch to a `.cs` file first. This also works from the C# editor for methods referenced in Razor documents. ([vscode-csharp#9162](https://github.com/dotnet/vscode-csharp/pull/9162))
+
+### Rename in Razor source-generated documents
+
+Rename operations now work correctly in Razor source-generated documents, enabling more seamless refactoring across Razor and C# boundaries. Previously, renames could fail when the source-generated document couldn't be mapped back. ([vscode-csharp#9155](https://github.com/dotnet/vscode-csharp/pull/9155))
+
+### Formatting fixes
+
+A large number of Razor formatting issues have been resolved in this release:
+
+- **Multiline `@if` statements** are now formatted correctly.
+- **Ternary expressions** inside Razor blocks no longer break formatting.
+- **Wrapped CSS** in Razor files is now indented properly.
+- **`<pre>` tags** are now treated like `<textarea>` tags, so their content is preserved as-is.
+- **Void tag helpers** no longer break HTML formatting.
+- **Script tags** that are or contain tag helpers are now formatted correctly.
+- **Short HTML tag attributes** are now formatted correctly.
+- **Block-bodied lambda attributes** no longer break formatting.
+- **Trailing content after Razor comments** no longer causes formatting errors.
+
+### Bug fixes
+
+- **Diagnostics** no longer crash with a null reference exception when pulling diagnostics for certain document configurations. ([vscode-csharp#9206](https://github.com/dotnet/vscode-csharp/pull/9206))
+- **Unparseable document URIs** no longer crash the Razor language server. ([vscode-csharp#9206](https://github.com/dotnet/vscode-csharp/pull/9206))
+- **Code actions** for unmapped directive spans now correctly apply as Razor content. ([vscode-csharp#9067](https://github.com/dotnet/vscode-csharp/pull/9067))
+- **"Remove directive"** code action is no longer incorrectly offered for multi-line directives. ([vscode-csharp#9056](https://github.com/dotnet/vscode-csharp/pull/9056))
+
+## Debugging
+
+### Blazor WebAssembly debugging
+
+The extension now supports debugging **Blazor WebAssembly** applications targeting .NET 9 and later. You can set breakpoints, step through code, and inspect variables in your Blazor WASM projects directly from VS Code, using the `monovsdbg` debugger. This brings the Blazor WASM debugging experience closer to the server-side experience you're already familiar with. ([vscode-csharp#7220](https://github.com/dotnet/vscode-csharp/pull/7220))
+
+### Hot Reload improvements
+
+Several Hot Reload issues have been resolved. The DevKit Hot Reload flow now works correctly, and exception details are included in internal error messages to make troubleshooting easier. ([vscode-csharp#9155](https://github.com/dotnet/vscode-csharp/pull/9155), [vscode-csharp#9188](https://github.com/dotnet/vscode-csharp/pull/9188))
+
+### Debugger expression evaluation
+
+Evaluations inside **ref-returning methods** now work correctly during debugging. Previously, attempting to evaluate an expression in a method that returns by ref could produce incorrect results. ([vscode-csharp#9096](https://github.com/dotnet/vscode-csharp/pull/9096))
+
+## MAUI
+
+### XAML C# Expressions (XEXPR)
+
+The XAML tooling now has limited support for **C# expressions in XAML** (XEXPR), a new feature that allows you to write C# expressions directly in XAML markup. ([vscode-csharp#9225](https://github.com/dotnet/vscode-csharp/pull/9225))
+
+### Implicit XML namespace support
+
+Implicit XML namespaces for MAUI are now supported, reducing the need for explicit `xmlns` declarations in your XAML files. This simplifies MAUI XAML authoring by letting you reference common types without namespace prefixes. ([vscode-csharp#9091](https://github.com/dotnet/vscode-csharp/pull/9091))
+
+### Bug fixes
+
+- **SslStream disposal crash** — an intermittent crash caused by a disposed `SslStream` in the XAML tooling has been fixed. This was reported by multiple users as the C# language server crashing several times a day. ([vscode-csharp#9225](https://github.com/dotnet/vscode-csharp/pull/9225))
+- **Debug session shutdown crash** — the `msvsmon` process no longer crashes during debug session shutdown when XAML Hot Reload is enabled. ([vscode-csharp#9225](https://github.com/dotnet/vscode-csharp/pull/9225))
+- **Hot Reload error reporting** — XAML Hot Reload errors now display correctly when exceptions originate from indirectly-loaded views. ([vscode-csharp#9225](https://github.com/dotnet/vscode-csharp/pull/9225))
+- **Null reference exception** — an unhandled null reference exception in the XAML Language Service has been fixed. ([vscode-csharp#9091](https://github.com/dotnet/vscode-csharp/pull/9091))
+- **Legacy Hot Reload conflict** — legacy XAML Hot Reload is now automatically disabled when Source Generators are active, preventing conflicts. ([vscode-csharp#9091](https://github.com/dotnet/vscode-csharp/pull/9091))
 
 # 2.136.x
 * Update Roslyn to 5.7.0-1.26220.12 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
