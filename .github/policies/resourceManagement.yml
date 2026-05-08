@@ -83,7 +83,7 @@ configuration:
       - isAction:
           action: Opened
       - bodyContains:
-          pattern: "|csdevkit|ms-dotnettools|"
+          pattern: "Activating C# + C# Dev Kit..."
           isRegex: False
       then:
       - addLabel:
