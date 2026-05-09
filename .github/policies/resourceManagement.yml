@@ -82,9 +82,13 @@ configuration:
       - payloadType: Issues
       - isAction:
           action: Opened
-      - bodyContains:
-          pattern: "|csdevkit|ms-dotnettools|"
-          isRegex: False
+      - or:
+        - bodyContains:
+            pattern: "|csdevkit|ms-dotnettools|"
+            isRegex: False
+        - bodyContains:
+            pattern: "Activating C# + C# Dev Kit..."
+            isRegex: False
       then:
       - addLabel:
           label: C#DK
