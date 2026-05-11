@@ -4,11 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.142.x
-* Update Roslyn to 5.8.0-1.26256.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.8.0-1.26256.6 (PR: [#9291](https://github.com/dotnet/vscode-csharp/pull/9291))
   * Allow LSP character position to go beyond line length (PR: [#83595](https://github.com/dotnet/roslyn/pull/83595))
   * Fix leaked event handlers in AbstractRefreshQueue and ProjectSystemProject (PR: [#83561](https://github.com/dotnet/roslyn/pull/83561))
   * Skip dot-prefixed directories in file-based app discovery (PR: [#83547](https://github.com/dotnet/roslyn/pull/83547))
-* Update Razor to 10.4.0-preview.26256.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 10.4.0-preview.26256.6 (PR: [#9291](https://github.com/dotnet/vscode-csharp/pull/9291))
   * Suppress snippets and tag helper completions in end-tag contexts (PR: [#83573](https://github.com/dotnet/roslyn/pull/83573))
   * Fix Razor directive attribute completion issues (PR: [#83559](https://github.com/dotnet/roslyn/pull/83559))
 
