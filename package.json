@@ -40,9 +40,8 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.8.0-1.26262.9",
+    "roslyn": "5.8.0-1.26262.10",
     "omniSharp": "1.39.14",
-    "razor": "10.4.0-preview.26262.9",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.7.11727.258"
   },
@@ -98,7 +97,6 @@
     "test:unit": "npm run compileDev && npx ts-node tasks/tests/testUnit.ts",
     "updateChangelog": "npx ts-node tasks/snap/updateChangelog.ts",
     "updatePackageDependencies": "npx ts-node tasks/debugger/updatePackageDependencies.ts",
-    "updateRazorVersion": "npx ts-node tasks/packaging/updateRazorVersion.ts",
     "updateRoslynVersion": "npx ts-node tasks/packaging/updateRoslynVersion.ts",
     "updateVersionForStableRelease": "npx ts-node tasks/snap/updateVersionForStableRelease.ts",
     "verifyVsix": "npx ts-node tasks/signing/verifyVsix.ts",
@@ -1479,10 +1477,6 @@
               },
               "roslynCopilot": {
                 "description": "%configuration.dotnet.server.componentPaths.roslynCopilot%",
-                "type": "string"
-              },
-              "razorExtension": {
-                "description": "%configuration.dotnet.server.componentPaths.razorExtension%",
                 "type": "string"
               }
             },

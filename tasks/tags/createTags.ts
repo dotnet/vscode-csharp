@@ -24,7 +24,6 @@ interface CreateTagsOptions {
 
 async function createTags(): Promise<void> {
     await createTagsRoslyn();
-    await createTagsRazor();
     await createTagsVSCodeCSharp();
 }
 
@@ -37,25 +36,6 @@ async function createTagsRoslyn(): Promise<void> {
         'roslyn',
         async (releaseCommit: string, githubPAT: string) =>
             getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit, githubPAT),
-        (releaseVersion: string, isPrerelease: boolean): [string, string] => {
-            const prereleaseText = isPrerelease ? '-prerelease' : '';
-            return [
-                `VSCode-CSharp-${releaseVersion}${prereleaseText}`,
-                `${releaseVersion} VSCode C# extension ${prereleaseText}`,
-            ];
-        }
-    );
-}
-
-async function createTagsRazor(): Promise<void> {
-    const options = minimist<CreateTagsOptions>(process.argv.slice(2));
-
-    return createTagsAsync(
-        options,
-        'dotnet',
-        'razor',
-        async (releaseCommit: string, githubPAT: string) =>
-            getCommitFromNugetAsync(allNugetPackages.razorExtension, releaseCommit, githubPAT),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
