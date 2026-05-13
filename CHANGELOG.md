@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.143.x
+
 # 2.142.x
 * Update Roslyn to 5.8.0-1.26262.9 (PR: [#9293](https://github.com/dotnet/vscode-csharp/pull/9293))
   * Fix doc comment autocomplete corrupting declarations with existing /// (PR: [#83648](https://github.com/dotnet/roslyn/pull/83648))
