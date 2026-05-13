@@ -3,6 +3,25 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.142.x
+* Update Roslyn to 5.8.0-1.26262.9 (PR: [#9293](https://github.com/dotnet/vscode-csharp/pull/9293))
+  * Fix doc comment autocomplete corrupting declarations with existing /// (PR: [#83648](https://github.com/dotnet/roslyn/pull/83648))
+  * Throw content modified for stale code action resolve request (PR: [#83612](https://github.com/dotnet/roslyn/pull/83612))
+* Update Razor to 10.4.0-preview.26262.9 (PR: [#9293](https://github.com/dotnet/vscode-csharp/pull/9293))
+  * Don't crash lowering a generic component type argument with mixed literal/expression content (PR: [#83645](https://github.com/dotnet/roslyn/pull/83645))
+  * Avoid _ collision in bind-*:after property accessor (PR: [#83572](https://github.com/dotnet/roslyn/pull/83572))
+  * Fix ArgumentOutOfRangeException when orphan end tag follows HTML text (PR: [#83574](https://github.com/dotnet/roslyn/pull/83574))
+  * Fix formatting of multiline expressions in attributes (PR: [#83566](https://github.com/dotnet/roslyn/pull/83566))
+  * Implement call hierarchy LSP methods in Razor (PR: [#83548](https://github.com/dotnet/roslyn/pull/83548))
+  * Add prepareRename support to Razor (PR: [#83599](https://github.com/dotnet/roslyn/pull/83599))
+* Update Roslyn to 5.8.0-1.26256.6 (PR: [#9291](https://github.com/dotnet/vscode-csharp/pull/9291))
+  * Allow LSP character position to go beyond line length (PR: [#83595](https://github.com/dotnet/roslyn/pull/83595))
+  * Fix leaked event handlers in AbstractRefreshQueue and ProjectSystemProject (PR: [#83561](https://github.com/dotnet/roslyn/pull/83561))
+  * Skip dot-prefixed directories in file-based app discovery (PR: [#83547](https://github.com/dotnet/roslyn/pull/83547))
+* Update Razor to 10.4.0-preview.26256.6 (PR: [#9291](https://github.com/dotnet/vscode-csharp/pull/9291))
+  * Suppress snippets and tag helper completions in end-tag contexts (PR: [#83573](https://github.com/dotnet/roslyn/pull/83573))
+  * Fix Razor directive attribute completion issues (PR: [#83559](https://github.com/dotnet/roslyn/pull/83559))
+
 # 2.141.x
 * Skip RoslynCopilot install when AI features are disabeld (PR: [#9196](https://github.com/dotnet/vscode-csharp/pull/9196))
 * Support remote coreclr debugger (PR: [#8667](https://github.com/dotnet/vscode-csharp/pull/8667))
