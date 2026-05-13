@@ -4,13 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.142.x
-* Update Roslyn to 5.8.0-1.26262.9 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.8.0-1.26262.9 (PR: [#9293](https://github.com/dotnet/vscode-csharp/pull/9293))
   * Fix doc comment autocomplete corrupting declarations with existing /// (PR: [#83648](https://github.com/dotnet/roslyn/pull/83648))
   * Include generated documents and generator diagnostics in the workspace log (PR: [#83647](https://github.com/dotnet/roslyn/pull/83647))
   * Strongly type DocumentResolveData (PR: [#83624](https://github.com/dotnet/roslyn/pull/83624))
   * Throw content modified for stale code action resolve request (PR: [#83612](https://github.com/dotnet/roslyn/pull/83612))
   * Unsafe evolution: avoid interior effect of `unsafe` modifier on members (PR: [#83452](https://github.com/dotnet/roslyn/pull/83452))
-* Update Razor to 10.4.0-preview.26262.9 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 10.4.0-preview.26262.9 (PR: [#9293](https://github.com/dotnet/vscode-csharp/pull/9293))
   * Don't crash lowering a generic component type argument with mixed literal/expression content (PR: [#83645](https://github.com/dotnet/roslyn/pull/83645))
   * Update metadata of the Razor tree (PR: [#83629](https://github.com/dotnet/roslyn/pull/83629))
   * Move razor anaylzers (PR: [#83616](https://github.com/dotnet/roslyn/pull/83616))
