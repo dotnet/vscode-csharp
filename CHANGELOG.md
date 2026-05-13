@@ -91,7 +91,8 @@ A large number of Razor formatting issues have been resolved in this release:
 - **Unparseable document URIs** no longer crash the Razor language server. ([vscode-csharp#9206](https://github.com/dotnet/vscode-csharp/pull/9206))
 - **Code actions** for unmapped directive spans now correctly apply as Razor content. ([vscode-csharp#9067](https://github.com/dotnet/vscode-csharp/pull/9067))
 - **"Remove directive"** code action is no longer incorrectly offered for multi-line directives. ([vscode-csharp#9056](https://github.com/dotnet/vscode-csharp/pull/9056))
-
+- **Fix ArgumentOutOfRangeException** when orphan end tag follows HTML text (PR: [razor#13129](https://github.com/dotnet/razor/pull/13129))
+- **Fix compiler crash** for malformed attributes (PR: [razor#13120](https://github.com/dotnet/razor/pull/13120))
 ## Debugging
 
 ### Blazor WebAssembly debugging
