@@ -158,6 +158,8 @@ This will output a list of PRs in the format needed for the changelog:
   * <PR title> (PR: [#<number>](https://github.com/dotnet/roslyn/pull/<number>))
 ```
 
+Keep the raw output from `roslyn-tools pr-finder`; you'll use it unchanged in the pull request description in Step 10.
+
 ### Step 7: Update CHANGELOG.md
 
 Add an entry to `CHANGELOG.md` under the current version section (e.g., `# 2.121.x`):
@@ -174,7 +176,7 @@ Note: Leave the PR number blank initially (just `[#]`) - it will be updated afte
 
 ### Step 8: Filter Changelog Entries
 
-Review the changelog entries and remove any PRs that obviously don't affect VS Code. Remove entries that are:
+Review the changelog entries in `CHANGELOG.md` and remove any PRs that obviously don't affect VS Code. Remove entries that are:
 
 - **Infrastructure/Build changes**: CI/CD pipelines, build scripts, Azure DevOps configurations
 - **Visual Studio-only changes**: Features or fixes specific to Visual Studio IDE (not VS Code)
@@ -203,6 +205,7 @@ git push -u origin update/roslyn-<version>
 Create a pull request on GitHub:
 - Title: `Update roslyn to <new-version>`
 - Base: `main`
+- Description/body: the raw, unfiltered output from `roslyn-tools pr-finder` in Step 6, including the compare link and full PR list exactly as produced by the tool. Do not apply the Step 8 changelog filtering to the PR description.
 
 ### Step 11: Update Changelog with PR Number
 
