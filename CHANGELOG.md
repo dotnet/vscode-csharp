@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
-* Update Roslyn to 5.8.0-1.26267.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.8.0-1.26267.2 (PR: [#9321](https://github.com/dotnet/vscode-csharp/pull/9321))
   * Centralize commit character definitions and fix cross-deserialization equality (PR: [#83732](https://github.com/dotnet/roslyn/pull/83732))
   * Fix racecondition on UnsuedDirectiveCache.Set (PR: [#83693](https://github.com/dotnet/roslyn/pull/83693))
   * Fix progress reporting to report done on dispose (PR: [#83686](https://github.com/dotnet/roslyn/pull/83686))
