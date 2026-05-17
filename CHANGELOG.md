@@ -5,9 +5,7 @@
 
 # 2.143.x
 * Update Roslyn to 5.8.0-1.26267.2 (PR: [#9321](https://github.com/dotnet/vscode-csharp/pull/9321))
-  * Centralize commit character definitions and fix cross-deserialization equality (PR: [#83732](https://github.com/dotnet/roslyn/pull/83732))
   * Fix racecondition on UnsuedDirectiveCache.Set (PR: [#83693](https://github.com/dotnet/roslyn/pull/83693))
-  * Fix progress reporting to report done on dispose (PR: [#83686](https://github.com/dotnet/roslyn/pull/83686))
   * Fix single line script tag formatting (PR: [#83721](https://github.com/dotnet/roslyn/pull/83721))
   * Implement type hierarchy LSP methods in Razor (PR: [#83637](https://github.com/dotnet/roslyn/pull/83637))
   * Razor support for Implement Interface (PR: [#83636](https://github.com/dotnet/roslyn/pull/83636))
