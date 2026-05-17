@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
+* Update Roslyn to 5.8.0-1.26267.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Centralize commit character definitions and fix cross-deserialization equality (PR: [#83732](https://github.com/dotnet/roslyn/pull/83732))
+  * Fix racecondition on UnsuedDirectiveCache.Set (PR: [#83693](https://github.com/dotnet/roslyn/pull/83693))
+  * Fix progress reporting to report done on dispose (PR: [#83686](https://github.com/dotnet/roslyn/pull/83686))
+  * Fix single line script tag formatting (PR: [#83721](https://github.com/dotnet/roslyn/pull/83721))
+  * Implement type hierarchy LSP methods in Razor (PR: [#83637](https://github.com/dotnet/roslyn/pull/83637))
+  * Razor support for Implement Interface (PR: [#83636](https://github.com/dotnet/roslyn/pull/83636))
+  * Razor support for Implement Abstract Class (PR: [#83638](https://github.com/dotnet/roslyn/pull/83638))
+  * feat(LSP): add IsOptionServiceAvailable opt-in for CodeActionWithOptions filtering (PR: [#83650](https://github.com/dotnet/roslyn/pull/83650))
 
 # 2.142.x
 * Update Roslyn to 5.8.0-1.26262.9 (PR: [#9293](https://github.com/dotnet/vscode-csharp/pull/9293))
