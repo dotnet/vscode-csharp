@@ -39,7 +39,7 @@ So for a release at version `2.130`, the prerelease entries are `2.121.x` throug
 2. Calculate the **previous release version** by subtracting 10 from the target minor (e.g., target `2.140` → previous `2.130`).
 3. The prerelease sections to gather are all minor versions **after** the previous release and **before** the target release. For example, for target `2.140`: sections `2.131.x`, `2.132.x`, ..., `2.139.x`.
 
-### Step 2: Fetch the CHANGELOG from prerelease the branch
+### Step 2: Fetch the CHANGELOG from the prerelease branch
 
 The prerelease entries are in the `prerelease` branch. The `prerelease` branch is the canonical source.
 
