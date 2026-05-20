@@ -48,6 +48,7 @@ export interface CSharpExtensionExports {
 }
 
 export interface CSharpExtensionExperimentalExports {
+    getTreatmentVariable: <T extends boolean | number | string>(name: string, configId?: string) => T | undefined;
     sendServerRequest: <Params, Response, Error>(
         type: RequestType<Params, Response, Error>,
         params: RequestParam<Params>,

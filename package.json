@@ -124,6 +124,7 @@
     "semver": "7.5.4",
     "vscode-html-languageservice": "^5.3.1",
     "vscode-languageclient": "10.0.0-next.20",
+    "vscode-tas-client": "^0.2.1",
     "yauzl": "3.2.1"
   },
   "devDependencies": {
@@ -750,6 +751,26 @@
             "type": "string",
             "description": "%configuration.dotnet.defaultSolution.description%",
             "order": 0
+          },
+          "dotnet.experiments.targetPopulation": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "team",
+              "internal",
+              "insiders",
+              "public"
+            ],
+            "default": "auto",
+            "enumDescriptions": [
+              "%configuration.dotnet.experiments.targetPopulation.auto%",
+              "%configuration.dotnet.experiments.targetPopulation.team%",
+              "%configuration.dotnet.experiments.targetPopulation.internal%",
+              "%configuration.dotnet.experiments.targetPopulation.insiders%",
+              "%configuration.dotnet.experiments.targetPopulation.public%"
+            ],
+            "description": "%configuration.dotnet.experiments.targetPopulation%",
+            "order": 1
           }
         }
       },

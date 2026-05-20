@@ -25,6 +25,7 @@ import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/soluti
 import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService';
 import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
 import { RazorLogger } from './razor/src/razorLogger';
+import { IExperimentationService } from 'vscode-tas-client';
 
 export function activateRoslyn(
     context: vscode.ExtensionContext,
@@ -33,6 +34,7 @@ export function activateRoslyn(
     eventStream: EventStream,
     csharpChannel: vscode.LogOutputChannel,
     reporter: TelemetryReporter,
+    experimentationService: IExperimentationService | undefined,
     csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
     getCoreClrDebugPromise: (languageServerStarted: Promise<any>) => Promise<void>
 ): CSharpExtensionExports {
@@ -78,6 +80,8 @@ export function activateRoslyn(
         logDirectory: context.logUri.fsPath,
         determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
         experimental: {
+            getTreatmentVariable: <T extends boolean | number | string>(name: string, configId = 'vscode') =>
+                experimentationService?.getTreatmentVariable<T>(configId, name),
             sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
             sendServerRequestWithProgress: async (t, p, pr, ct) =>
                 await languageServerExport.sendRequestWithProgress(t, p, pr, ct),

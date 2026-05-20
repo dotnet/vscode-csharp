@@ -12,7 +12,6 @@ import { CsharpChannelObserver } from './shared/observers/csharpChannelObserver'
 import { CsharpLoggerObserver } from './shared/observers/csharpLoggerObserver';
 import { EventStream } from './eventStream';
 import { PlatformInformation } from './shared/platform';
-import TelemetryReporter from '@vscode/extension-telemetry';
 import { vscodeNetworkSettingsProvider } from './networkSettings';
 import createOptionStream from './shared/observables/createOptionStream';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
@@ -30,6 +29,8 @@ import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateOmniSharp } from './activateOmniSharp';
 import { activateRoslyn } from './activateRoslyn';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
+import { initializeTasExperimentationService, TasTelemetryReporter } from './shared/tasExperimentationService';
+import { IExperimentationService } from 'vscode-tas-client';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -43,9 +44,18 @@ export async function activate(
     util.setExtensionPath(context.extension.extensionPath);
 
     const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
-    const reporter = new TelemetryReporter(aiKey);
+    const reporter = new TasTelemetryReporter(aiKey);
     // ensure it gets properly disposed. Upon disposal the events will be flushed.
     context.subscriptions.push(reporter);
+
+    let experimentationService: IExperimentationService | undefined;
+    try {
+        experimentationService = await initializeTasExperimentationService(context, reporter);
+        const tasService = experimentationService;
+        context.subscriptions.push({ dispose: () => tasService.dispose() });
+    } catch (error) {
+        csharpChannel.warn(`Unable to initialize TAS experimentation service: ${error}`);
+    }
 
     const eventStream = new EventStream();
     const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
@@ -138,6 +148,7 @@ export async function activate(
                 eventStream,
                 csharpChannel,
                 reporter,
+                experimentationService,
                 csharpDevkitExtension,
                 getCoreClrDebugPromise
             );
