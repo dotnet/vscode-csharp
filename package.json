@@ -1892,6 +1892,12 @@
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
+        "command": "dotnet.configureCopilotLsp",
+        "title": "%command.dotnet.configureCopilotLsp%",
+        "category": ".NET",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
         "command": "o.fixAll.solution",
         "title": "%command.o.fixAll.solution%",
         "category": "OmniSharp",

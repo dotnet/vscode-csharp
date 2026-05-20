@@ -4,6 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as fs from 'fs/promises';
+import * as os from 'os';
+import * as path from 'path';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
 import reportIssue from '../shared/reportIssue';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
@@ -22,6 +25,8 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { registerCollectLogsCommand } from './logging/collectLogs';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { RazorLogger } from '../razor/src/razorLogger';
+
+const configureCopilotLspCommand = 'dotnet.configureCopilotLsp';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -91,6 +96,54 @@ function registerExtensionCommands(
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(configureCopilotLspCommand, async () => {
+            const lspConfigPath = path.join(os.homedir(), '.copilot', 'lsp-config.json');
+            const csharpLspServerConfig = {
+                command: 'dotnet',
+                args: ['dnx', 'roslyn-language-server', '--yes', '--prerelease', '--', '--stdio', '--autoLoadProjects'],
+                fileExtensions: {
+                    '.cs': 'csharp',
+                    '.razor': 'aspnetcorerazor',
+                    '.cshtml': 'aspnetcorerazor',
+                },
+                warmupTimeoutMs: 120000,
+            };
+
+            let lspConfig: { lspServers?: { [key: string]: unknown } } = {};
+
+            try {
+                const currentContent = await fs.readFile(lspConfigPath, 'utf8');
+                lspConfig = JSON.parse(currentContent);
+            } catch (error) {
+                const nodeError = error as NodeJS.ErrnoException;
+                if (nodeError.code !== 'ENOENT') {
+                    void vscode.window.showErrorMessage(
+                        vscode.l10n.t('Failed to read Copilot LSP config: {0}', nodeError.message)
+                    );
+                    return;
+                }
+            }
+
+            if (!lspConfig.lspServers || typeof lspConfig.lspServers !== 'object') {
+                lspConfig.lspServers = {};
+            }
+
+            lspConfig.lspServers.csharp = csharpLspServerConfig;
+
+            try {
+                await fs.writeFile(lspConfigPath, `${JSON.stringify(lspConfig, null, 2)}\n`, 'utf8');
+                void vscode.window.showInformationMessage(
+                    vscode.l10n.t('Updated Copilot LSP config at {0}.', lspConfigPath)
+                );
+            } catch (error) {
+                const nodeError = error as NodeJS.ErrnoException;
+                void vscode.window.showErrorMessage(
+                    vscode.l10n.t('Failed to write Copilot LSP config: {0}', nodeError.message)
+                );
+            }
+        })
     );
     registerCollectLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
 }
