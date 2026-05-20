@@ -29,6 +29,10 @@ import { RazorLogger } from '../razor/src/razorLogger';
 const configureCopilotLspCommand = 'dotnet.configureCopilotLsp';
 const packagedCopilotLspConfigPath = path.join('copilot', 'lsp-config.json');
 
+interface CopilotLspConfig {
+    lspServers?: { [key: string]: unknown };
+}
+
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
@@ -102,21 +106,9 @@ function registerExtensionCommands(
         vscode.commands.registerCommand(configureCopilotLspCommand, async () => {
             const lspConfigPath = path.join(os.homedir(), '.copilot', 'lsp-config.json');
             const extensionLspConfigPath = path.join(context.extension.extensionPath, packagedCopilotLspConfigPath);
-
-            let csharpLspServerConfig: unknown;
+            let packagedContent: string;
             try {
-                const extensionLspConfigContent = await fs.readFile(extensionLspConfigPath, 'utf8');
-                const extensionLspConfig = JSON.parse(extensionLspConfigContent) as {
-                    lspServers?: { [key: string]: unknown };
-                };
-                csharpLspServerConfig = extensionLspConfig.lspServers?.csharp;
-
-                if (!csharpLspServerConfig || typeof csharpLspServerConfig !== 'object') {
-                    void vscode.window.showErrorMessage(
-                        vscode.l10n.t('Packaged Copilot LSP config is missing lspServers.csharp.')
-                    );
-                    return;
-                }
+                packagedContent = await fs.readFile(extensionLspConfigPath, 'utf8');
             } catch (error) {
                 const nodeError = error as NodeJS.ErrnoException;
                 void vscode.window.showErrorMessage(
@@ -124,12 +116,10 @@ function registerExtensionCommands(
                 );
                 return;
             }
-
-            let lspConfig: { lspServers?: { [key: string]: unknown } } = {};
+            let currentContent: string | undefined;
 
             try {
-                const currentContent = await fs.readFile(lspConfigPath, 'utf8');
-                lspConfig = JSON.parse(currentContent);
+                currentContent = await fs.readFile(lspConfigPath, 'utf8');
             } catch (error) {
                 const nodeError = error as NodeJS.ErrnoException;
                 if (nodeError.code !== 'ENOENT') {
@@ -140,21 +130,24 @@ function registerExtensionCommands(
                 }
             }
 
-            if (copilotConfigContainsRoslynLanguageServer(lspConfig)) {
+            let updateResult: { shouldWrite: boolean; updatedContent?: string };
+            try {
+                updateResult = getUpdatedCopilotLspConfigContent(currentContent, packagedContent);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : String(error);
+                void vscode.window.showErrorMessage(vscode.l10n.t('Failed to update Copilot LSP config: {0}', message));
+                return;
+            }
+
+            if (!updateResult.shouldWrite || !updateResult.updatedContent) {
                 void vscode.window.showInformationMessage(
                     vscode.l10n.t('Copilot LSP config already contains roslyn-language-server. No changes were made.')
                 );
                 return;
             }
 
-            if (!lspConfig.lspServers || typeof lspConfig.lspServers !== 'object') {
-                lspConfig.lspServers = {};
-            }
-
-            lspConfig.lspServers.csharp = csharpLspServerConfig;
-
             try {
-                await fs.writeFile(lspConfigPath, `${JSON.stringify(lspConfig, null, 2)}\n`, 'utf8');
+                await fs.writeFile(lspConfigPath, updateResult.updatedContent, 'utf8');
                 void vscode.window.showInformationMessage(
                     vscode.l10n.t('Updated Copilot LSP config at {0}.', lspConfigPath)
                 );
@@ -169,7 +162,38 @@ function registerExtensionCommands(
     registerCollectLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
 }
 
-function copilotConfigContainsRoslynLanguageServer(lspConfig: { lspServers?: { [key: string]: unknown } }): boolean {
+export function getUpdatedCopilotLspConfigContent(
+    currentContent: string | undefined,
+    packagedContent: string
+): { shouldWrite: boolean; updatedContent?: string } {
+    const packagedConfig = JSON.parse(packagedContent) as CopilotLspConfig;
+    const packagedCsharpConfig = packagedConfig.lspServers?.csharp;
+    if (!packagedCsharpConfig || typeof packagedCsharpConfig !== 'object') {
+        throw new Error('Packaged Copilot LSP config is missing lspServers.csharp.');
+    }
+
+    if (currentContent === undefined) {
+        return { shouldWrite: true, updatedContent: packagedContent };
+    }
+
+    const currentConfig = JSON.parse(currentContent) as CopilotLspConfig;
+    if (copilotConfigContainsRoslynLanguageServer(currentConfig)) {
+        return { shouldWrite: false };
+    }
+
+    const updatedConfig: CopilotLspConfig = {
+        ...currentConfig,
+        lspServers:
+            currentConfig.lspServers && typeof currentConfig.lspServers === 'object'
+                ? { ...currentConfig.lspServers }
+                : {},
+    };
+
+    updatedConfig.lspServers!.csharp = packagedCsharpConfig;
+    return { shouldWrite: true, updatedContent: `${JSON.stringify(updatedConfig, null, 2)}\n` };
+}
+
+function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig): boolean {
     const lspServers = lspConfig.lspServers;
     if (!lspServers || typeof lspServers !== 'object') {
         return false;
