@@ -140,6 +140,13 @@ function registerExtensionCommands(
                 }
             }
 
+            if (copilotConfigContainsRoslynLanguageServer(lspConfig)) {
+                void vscode.window.showInformationMessage(
+                    vscode.l10n.t('Copilot LSP config already contains roslyn-language-server. No changes were made.')
+                );
+                return;
+            }
+
             if (!lspConfig.lspServers || typeof lspConfig.lspServers !== 'object') {
                 lspConfig.lspServers = {};
             }
@@ -160,4 +167,20 @@ function registerExtensionCommands(
         })
     );
     registerCollectLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
+}
+
+function copilotConfigContainsRoslynLanguageServer(lspConfig: { lspServers?: { [key: string]: unknown } }): boolean {
+    const lspServers = lspConfig.lspServers;
+    if (!lspServers || typeof lspServers !== 'object') {
+        return false;
+    }
+
+    return Object.values(lspServers).some((serverConfig) => {
+        if (!serverConfig || typeof serverConfig !== 'object') {
+            return false;
+        }
+
+        const args = (serverConfig as { args?: unknown }).args;
+        return Array.isArray(args) && args.some((arg) => arg === 'roslyn-language-server');
+    });
 }
