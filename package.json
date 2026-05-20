@@ -68,6 +68,7 @@
     "createTags": "npx ts-node tasks/tags/createTags.ts",
     "fixLocUrls": "npx ts-node tasks/debugger/fixLocUrls.ts",
     "generateOptionsSchema": "npx ts-node tasks/debugger/generateOptionsSchema.ts",
+    "ingest": "npx ts-node tasks/components/ingestCopilotLspConfig.ts",
     "incrementVersion": "npx ts-node tasks/snap/incrementVersion.ts",
     "installDependencies": "npx ts-node tasks/packaging/installDependencies.ts",
     "installDependenciesClean": "npx ts-node tasks/packaging/installDependenciesClean.ts",
