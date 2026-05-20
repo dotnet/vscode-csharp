@@ -27,6 +27,7 @@ import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel
 import { RazorLogger } from '../razor/src/razorLogger';
 
 const configureCopilotLspCommand = 'dotnet.configureCopilotLsp';
+const packagedCopilotLspConfigPath = path.join('copilot', 'lsp-config.json');
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -100,16 +101,29 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand(configureCopilotLspCommand, async () => {
             const lspConfigPath = path.join(os.homedir(), '.copilot', 'lsp-config.json');
-            const csharpLspServerConfig = {
-                command: 'dotnet',
-                args: ['dnx', 'roslyn-language-server', '--yes', '--prerelease', '--', '--stdio', '--autoLoadProjects'],
-                fileExtensions: {
-                    '.cs': 'csharp',
-                    '.razor': 'aspnetcorerazor',
-                    '.cshtml': 'aspnetcorerazor',
-                },
-                warmupTimeoutMs: 120000,
-            };
+            const extensionLspConfigPath = path.join(context.extension.extensionPath, packagedCopilotLspConfigPath);
+
+            let csharpLspServerConfig: unknown;
+            try {
+                const extensionLspConfigContent = await fs.readFile(extensionLspConfigPath, 'utf8');
+                const extensionLspConfig = JSON.parse(extensionLspConfigContent) as {
+                    lspServers?: { [key: string]: unknown };
+                };
+                csharpLspServerConfig = extensionLspConfig.lspServers?.csharp;
+
+                if (!csharpLspServerConfig || typeof csharpLspServerConfig !== 'object') {
+                    void vscode.window.showErrorMessage(
+                        vscode.l10n.t('Packaged Copilot LSP config is missing lspServers.csharp.')
+                    );
+                    return;
+                }
+            } catch (error) {
+                const nodeError = error as NodeJS.ErrnoException;
+                void vscode.window.showErrorMessage(
+                    vscode.l10n.t('Failed to read packaged Copilot LSP config: {0}', nodeError.message)
+                );
+                return;
+            }
 
             let lspConfig: { lspServers?: { [key: string]: unknown } } = {};
 

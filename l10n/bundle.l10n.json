@@ -141,6 +141,8 @@
   "Text editor must be focused to fix all issues": "Text editor must be focused to fix all issues",
   "Fix all issues": "Fix all issues",
   "Select fix all action": "Select fix all action",
+  "Packaged Copilot LSP config is missing lspServers.csharp.": "Packaged Copilot LSP config is missing lspServers.csharp.",
+  "Failed to read packaged Copilot LSP config: {0}": "Failed to read packaged Copilot LSP config: {0}",
   "Failed to read Copilot LSP config: {0}": "Failed to read Copilot LSP config: {0}",
   "Updated Copilot LSP config at {0}.": "Updated Copilot LSP config at {0}.",
   "Failed to write Copilot LSP config: {0}": "Failed to write Copilot LSP config: {0}",
