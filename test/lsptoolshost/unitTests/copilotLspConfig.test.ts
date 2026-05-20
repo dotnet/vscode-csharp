@@ -5,7 +5,10 @@
 
 import { describe, expect, test } from '@jest/globals';
 import { readFileSync } from 'fs';
-import { getUpdatedCopilotLspConfigContent } from '../../../src/lsptoolshost/copilotLspConfig';
+import {
+    getUninstalledCopilotLspConfigContent,
+    getUpdatedCopilotLspConfigContent,
+} from '../../../src/lsptoolshost/copilotLspConfig';
 
 describe('Copilot LSP config installation', () => {
     test('is idempotent and preserves shipped config content across multiple runs', () => {
@@ -37,6 +40,47 @@ describe('Copilot LSP config installation', () => {
         );
 
         const result = getUpdatedCopilotLspConfigContent(existingConfig, packagedContent);
+        expect(result.shouldWrite).toBe(false);
+    });
+
+    test('uninstall removes lspServers.csharp and preserves other servers', () => {
+        const existingConfig = JSON.stringify(
+            {
+                lspServers: {
+                    csharp: {
+                        command: 'dotnet',
+                    },
+                    typescript: {
+                        command: 'typescript-language-server',
+                        args: ['--stdio'],
+                    },
+                },
+            },
+            null,
+            2
+        );
+
+        const result = getUninstalledCopilotLspConfigContent(existingConfig);
+        expect(result.shouldWrite).toBe(true);
+        const parsed = JSON.parse(result.updatedContent!);
+        expect(parsed.lspServers.csharp).toBeUndefined();
+        expect(parsed.lspServers.typescript).toBeDefined();
+    });
+
+    test('uninstall is a no-op when lspServers.csharp is absent', () => {
+        const existingConfig = JSON.stringify(
+            {
+                lspServers: {
+                    typescript: {
+                        command: 'typescript-language-server',
+                    },
+                },
+            },
+            null,
+            2
+        );
+
+        const result = getUninstalledCopilotLspConfigContent(existingConfig);
         expect(result.shouldWrite).toBe(false);
     });
 });

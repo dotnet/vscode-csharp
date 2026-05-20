@@ -38,6 +38,34 @@ export function getUpdatedCopilotLspConfigContent(
     return { shouldWrite: true, updatedContent: `${JSON.stringify(updatedConfig, null, 2)}\n` };
 }
 
+export function getUninstalledCopilotLspConfigContent(currentContent: string | undefined): {
+    shouldWrite: boolean;
+    updatedContent?: string;
+} {
+    if (currentContent === undefined) {
+        return { shouldWrite: false };
+    }
+
+    const currentConfig = JSON.parse(currentContent) as CopilotLspConfig;
+    const lspServers = currentConfig.lspServers;
+    if (!lspServers || typeof lspServers !== 'object') {
+        return { shouldWrite: false };
+    }
+
+    const csharpServer = lspServers.csharp;
+    if (!csharpServer || typeof csharpServer !== 'object') {
+        return { shouldWrite: false };
+    }
+
+    const updatedConfig: CopilotLspConfig = {
+        ...currentConfig,
+        lspServers: { ...lspServers },
+    };
+    delete updatedConfig.lspServers!.csharp;
+
+    return { shouldWrite: true, updatedContent: `${JSON.stringify(updatedConfig, null, 2)}\n` };
+}
+
 function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig): boolean {
     const lspServers = lspConfig.lspServers;
     if (!lspServers || typeof lspServers !== 'object') {

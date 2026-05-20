@@ -25,9 +25,10 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { registerCollectLogsCommand } from './logging/collectLogs';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { RazorLogger } from '../razor/src/razorLogger';
-import { getUpdatedCopilotLspConfigContent } from './copilotLspConfig';
+import { getUninstalledCopilotLspConfigContent, getUpdatedCopilotLspConfigContent } from './copilotLspConfig';
 
 const configureCopilotLspCommand = 'dotnet.configureCopilotLsp';
+const uninstallCopilotLspCommand = 'dotnet.uninstallCopilotLsp';
 const packagedCopilotLspConfigPath = path.join('redist', 'lsp-config.json');
 
 export function registerCommands(
@@ -147,6 +148,54 @@ function registerExtensionCommands(
                 await fs.writeFile(lspConfigPath, updateResult.updatedContent, 'utf8');
                 void vscode.window.showInformationMessage(
                     vscode.l10n.t('Updated Copilot LSP config at {0}.', lspConfigPath)
+                );
+            } catch (error) {
+                const nodeError = error as NodeJS.ErrnoException;
+                void vscode.window.showErrorMessage(
+                    vscode.l10n.t('Failed to write Copilot LSP config: {0}', nodeError.message)
+                );
+            }
+        })
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(uninstallCopilotLspCommand, async () => {
+            const lspConfigPath = path.join(os.homedir(), '.copilot', 'lsp-config.json');
+
+            let currentContent: string | undefined;
+            try {
+                currentContent = await fs.readFile(lspConfigPath, 'utf8');
+            } catch (error) {
+                const nodeError = error as NodeJS.ErrnoException;
+                if (nodeError.code !== 'ENOENT') {
+                    void vscode.window.showErrorMessage(
+                        vscode.l10n.t('Failed to read Copilot LSP config: {0}', nodeError.message)
+                    );
+                    return;
+                }
+            }
+
+            let uninstallResult: { shouldWrite: boolean; updatedContent?: string };
+            try {
+                uninstallResult = getUninstalledCopilotLspConfigContent(currentContent);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : String(error);
+                void vscode.window.showErrorMessage(
+                    vscode.l10n.t('Failed to uninstall Copilot LSP config: {0}', message)
+                );
+                return;
+            }
+
+            if (!uninstallResult.shouldWrite || !uninstallResult.updatedContent) {
+                void vscode.window.showInformationMessage(
+                    vscode.l10n.t('Copilot LSP config does not contain lspServers.csharp. No changes were made.')
+                );
+                return;
+            }
+
+            try {
+                await fs.writeFile(lspConfigPath, uninstallResult.updatedContent, 'utf8');
+                void vscode.window.showInformationMessage(
+                    vscode.l10n.t('Removed lspServers.csharp from Copilot LSP config at {0}.', lspConfigPath)
                 );
             } catch (error) {
                 const nodeError = error as NodeJS.ErrnoException;

@@ -3,6 +3,7 @@
   "command.o.pickProjectAndStart": "Select Project",
   "command.dotnet.openSolution": "Open Solution",
   "command.dotnet.configureCopilotLsp": "Configure Copilot CLI C# LSP",
+  "command.dotnet.uninstallCopilotLsp": "Uninstall Copilot CLI C# LSP",
   "command.o.fixAll.solution": "Fix all occurrences of a code issue within solution",
   "command.o.fixAll.project": "Fix all occurrences of a code issue within project",
   "command.o.fixAll.document": "Fix all occurrences of a code issue within document",

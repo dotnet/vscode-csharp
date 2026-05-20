@@ -1899,6 +1899,12 @@
         "enablement": "isWorkspaceTrusted"
       },
       {
+        "command": "dotnet.uninstallCopilotLsp",
+        "title": "%command.dotnet.uninstallCopilotLsp%",
+        "category": ".NET",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
         "command": "o.fixAll.solution",
         "title": "%command.o.fixAll.solution%",
         "category": "OmniSharp",
