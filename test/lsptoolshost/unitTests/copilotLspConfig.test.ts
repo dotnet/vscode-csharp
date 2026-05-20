@@ -5,7 +5,7 @@
 
 import { describe, expect, test } from '@jest/globals';
 import { readFileSync } from 'fs';
-import { getUpdatedCopilotLspConfigContent } from '../../../src/lsptoolshost/commands';
+import { getUpdatedCopilotLspConfigContent } from '../../../src/lsptoolshost/copilotLspConfig';
 
 describe('Copilot LSP config installation', () => {
     test('is idempotent and preserves shipped config content across multiple runs', () => {

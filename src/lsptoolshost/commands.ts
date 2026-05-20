@@ -25,13 +25,10 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { registerCollectLogsCommand } from './logging/collectLogs';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { RazorLogger } from '../razor/src/razorLogger';
+import { getUpdatedCopilotLspConfigContent } from './copilotLspConfig';
 
 const configureCopilotLspCommand = 'dotnet.configureCopilotLsp';
 const packagedCopilotLspConfigPath = path.join('copilot', 'lsp-config.json');
-
-interface CopilotLspConfig {
-    lspServers?: { [key: string]: unknown };
-}
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -160,51 +157,4 @@ function registerExtensionCommands(
         })
     );
     registerCollectLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
-}
-
-export function getUpdatedCopilotLspConfigContent(
-    currentContent: string | undefined,
-    packagedContent: string
-): { shouldWrite: boolean; updatedContent?: string } {
-    const packagedConfig = JSON.parse(packagedContent) as CopilotLspConfig;
-    const packagedCsharpConfig = packagedConfig.lspServers?.csharp;
-    if (!packagedCsharpConfig || typeof packagedCsharpConfig !== 'object') {
-        throw new Error('Packaged Copilot LSP config is missing lspServers.csharp.');
-    }
-
-    if (currentContent === undefined) {
-        return { shouldWrite: true, updatedContent: packagedContent };
-    }
-
-    const currentConfig = JSON.parse(currentContent) as CopilotLspConfig;
-    if (copilotConfigContainsRoslynLanguageServer(currentConfig)) {
-        return { shouldWrite: false };
-    }
-
-    const updatedConfig: CopilotLspConfig = {
-        ...currentConfig,
-        lspServers:
-            currentConfig.lspServers && typeof currentConfig.lspServers === 'object'
-                ? { ...currentConfig.lspServers }
-                : {},
-    };
-
-    updatedConfig.lspServers!.csharp = packagedCsharpConfig;
-    return { shouldWrite: true, updatedContent: `${JSON.stringify(updatedConfig, null, 2)}\n` };
-}
-
-function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig): boolean {
-    const lspServers = lspConfig.lspServers;
-    if (!lspServers || typeof lspServers !== 'object') {
-        return false;
-    }
-
-    return Object.values(lspServers).some((serverConfig) => {
-        if (!serverConfig || typeof serverConfig !== 'object') {
-            return false;
-        }
-
-        const args = (serverConfig as { args?: unknown }).args;
-        return Array.isArray(args) && args.some((arg) => arg === 'roslyn-language-server');
-    });
 }
