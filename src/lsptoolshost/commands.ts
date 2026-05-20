@@ -27,7 +27,7 @@ import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel
 import { RazorLogger } from '../razor/src/razorLogger';
 import { getUninstalledCopilotLspConfigContent, getUpdatedCopilotLspConfigContent } from './copilotLspConfig';
 
-const configureCopilotLspCommand = 'dotnet.configureCopilotLsp';
+const installCopilotLspCommand = 'dotnet.installCopilotLsp';
 const uninstallCopilotLspCommand = 'dotnet.uninstallCopilotLsp';
 const packagedCopilotLspConfigPath = path.join('redist', 'lsp-config.json');
 
@@ -101,7 +101,7 @@ function registerExtensionCommands(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand(configureCopilotLspCommand, async () => {
+        vscode.commands.registerCommand(installCopilotLspCommand, async () => {
             const lspConfigPath = path.join(os.homedir(), '.copilot', 'lsp-config.json');
             const extensionLspConfigPath = path.join(context.extension.extensionPath, packagedCopilotLspConfigPath);
             let packagedContent: string;

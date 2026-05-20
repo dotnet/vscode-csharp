@@ -1893,8 +1893,8 @@
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
-        "command": "dotnet.configureCopilotLsp",
-        "title": "%command.dotnet.configureCopilotLsp%",
+        "command": "dotnet.installCopilotLsp",
+        "title": "%command.dotnet.installCopilotLsp%",
         "category": ".NET",
         "enablement": "isWorkspaceTrusted"
       },
