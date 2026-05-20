@@ -9,7 +9,7 @@ import { getUpdatedCopilotLspConfigContent } from '../../../src/lsptoolshost/cop
 
 describe('Copilot LSP config installation', () => {
     test('is idempotent and preserves shipped config content across multiple runs', () => {
-        const packagedContent = readFileSync('copilot/lsp-config.json', 'utf8');
+        const packagedContent = readFileSync('redist/lsp-config.json', 'utf8');
 
         const firstRun = getUpdatedCopilotLspConfigContent(undefined, packagedContent);
         expect(firstRun.shouldWrite).toBe(true);
@@ -23,7 +23,7 @@ describe('Copilot LSP config installation', () => {
     });
 
     test('does not modify config when lspServers.csharp object already exists', () => {
-        const packagedContent = readFileSync('copilot/lsp-config.json', 'utf8');
+        const packagedContent = readFileSync('redist/lsp-config.json', 'utf8');
         const existingConfig = JSON.stringify(
             {
                 lspServers: {

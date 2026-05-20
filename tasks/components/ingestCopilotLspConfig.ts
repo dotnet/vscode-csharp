@@ -10,7 +10,7 @@ import { runTask } from '../runTask';
 import { rootPath } from '../projectPaths';
 
 const sourceUrl = 'https://raw.githubusercontent.com/dotnet/skills/main/plugins/dotnet/lsp.json';
-const outputPath = path.join(rootPath, 'copilot', 'lsp-config.json');
+const outputPath = path.join(rootPath, 'redist', 'lsp-config.json');
 
 runTask(ingestCopilotLspConfig);
 

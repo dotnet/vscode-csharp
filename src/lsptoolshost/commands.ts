@@ -28,7 +28,7 @@ import { RazorLogger } from '../razor/src/razorLogger';
 import { getUpdatedCopilotLspConfigContent } from './copilotLspConfig';
 
 const configureCopilotLspCommand = 'dotnet.configureCopilotLsp';
-const packagedCopilotLspConfigPath = path.join('copilot', 'lsp-config.json');
+const packagedCopilotLspConfigPath = path.join('redist', 'lsp-config.json');
 
 export function registerCommands(
     context: vscode.ExtensionContext,
