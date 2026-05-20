@@ -44,12 +44,10 @@ function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig):
         return false;
     }
 
-    return Object.values(lspServers).some((serverConfig) => {
-        if (!serverConfig || typeof serverConfig !== 'object') {
-            return false;
-        }
+    const csharpServer = lspServers.csharp;
+    if (csharpServer && typeof csharpServer === 'object') {
+        return true;
+    }
 
-        const args = (serverConfig as { args?: unknown }).args;
-        return Array.isArray(args) && args.some((arg) => arg === 'roslyn-language-server');
-    });
+    return false;
 }

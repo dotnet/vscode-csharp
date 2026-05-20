@@ -21,4 +21,22 @@ describe('Copilot LSP config installation', () => {
         const finalContent = secondRun.updatedContent ?? firstRun.updatedContent;
         expect(finalContent).toBe(packagedContent);
     });
+
+    test('does not modify config when lspServers.csharp object already exists', () => {
+        const packagedContent = readFileSync('copilot/lsp-config.json', 'utf8');
+        const existingConfig = JSON.stringify(
+            {
+                lspServers: {
+                    csharp: {
+                        command: 'some-other-command',
+                    },
+                },
+            },
+            null,
+            2
+        );
+
+        const result = getUpdatedCopilotLspConfigContent(existingConfig, packagedContent);
+        expect(result.shouldWrite).toBe(false);
+    });
 });
