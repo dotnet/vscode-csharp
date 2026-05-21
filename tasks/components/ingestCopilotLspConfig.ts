@@ -16,9 +16,33 @@ runTask(ingestCopilotLspConfig);
 
 async function ingestCopilotLspConfig() {
     const content = await downloadText(sourceUrl);
+    validateLspConfig(content, sourceUrl);
     await fs.mkdir(path.dirname(outputPath), { recursive: true });
     await fs.writeFile(outputPath, content, 'utf8');
     console.log(`Updated ${outputPath} from ${sourceUrl}`);
+}
+
+function validateLspConfig(content: string, source: string): void {
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(content) as unknown;
+    } catch {
+        throw new Error(`Failed to parse JSON from ${source}.`);
+    }
+
+    if (!parsed || typeof parsed !== 'object') {
+        throw new Error(`Downloaded config from ${source} is not a JSON object.`);
+    }
+
+    const lspServers = (parsed as { lspServers?: unknown }).lspServers;
+    if (!lspServers || typeof lspServers !== 'object') {
+        throw new Error(`Downloaded config from ${source} is missing lspServers.`);
+    }
+
+    const csharp = (lspServers as { csharp?: unknown }).csharp;
+    if (!csharp || typeof csharp !== 'object') {
+        throw new Error(`Downloaded config from ${source} is missing lspServers.csharp.`);
+    }
 }
 
 async function downloadText(url: string): Promise<string> {
