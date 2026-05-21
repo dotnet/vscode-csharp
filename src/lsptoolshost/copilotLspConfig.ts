@@ -52,16 +52,26 @@ export function getUninstalledCopilotLspConfigContent(currentContent: string | u
         return { shouldWrite: false };
     }
 
-    const csharpServer = lspServers.csharp;
-    if (!csharpServer || typeof csharpServer !== 'object') {
-        return { shouldWrite: false };
-    }
-
     const updatedConfig: CopilotLspConfig = {
         ...currentConfig,
         lspServers: { ...lspServers },
     };
-    delete updatedConfig.lspServers!.csharp;
+
+    let removedServer = false;
+    for (const [serverName, server] of Object.entries(lspServers)) {
+        if (!server || typeof server !== 'object') {
+            continue;
+        }
+
+        if (serverName === 'csharp' || serverContainsCSharpFileExtension(server)) {
+            delete updatedConfig.lspServers![serverName];
+            removedServer = true;
+        }
+    }
+
+    if (!removedServer) {
+        return { shouldWrite: false };
+    }
 
     return { shouldWrite: true, updatedContent: `${JSON.stringify(updatedConfig, null, 2)}\n` };
 }
@@ -88,4 +98,17 @@ function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig):
     }
 
     return false;
+}
+
+function serverContainsCSharpFileExtension(server: object): boolean {
+    const fileExtensions = (server as { fileExtensions?: unknown }).fileExtensions;
+    if (!fileExtensions) {
+        return false;
+    }
+
+    if (Array.isArray(fileExtensions)) {
+        return fileExtensions.includes('.cs');
+    }
+
+    return typeof fileExtensions === 'object' && '.cs' in fileExtensions;
 }

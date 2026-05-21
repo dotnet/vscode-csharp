@@ -93,6 +93,35 @@ describe('Copilot LSP config installation', () => {
         expect(parsed.lspServers.typescript).toBeDefined();
     });
 
+    test('uninstall removes custom server when it maps .cs in fileExtensions', () => {
+        const existingConfig = JSON.stringify(
+            {
+                lspServers: {
+                    customCsharpServer: {
+                        command: 'dotnet',
+                        fileExtensions: {
+                            '.cs': 'csharp',
+                        },
+                    },
+                    typescript: {
+                        command: 'typescript-language-server',
+                        fileExtensions: {
+                            '.ts': 'typescript',
+                        },
+                    },
+                },
+            },
+            null,
+            2
+        );
+
+        const result = getUninstalledCopilotLspConfigContent(existingConfig);
+        expect(result.shouldWrite).toBe(true);
+        const parsed = JSON.parse(result.updatedContent!);
+        expect(parsed.lspServers.customCsharpServer).toBeUndefined();
+        expect(parsed.lspServers.typescript).toBeDefined();
+    });
+
     test('uninstall is a no-op when lspServers.csharp is absent', () => {
         const existingConfig = JSON.stringify(
             {
