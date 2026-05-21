@@ -22,7 +22,7 @@ export function getUpdatedCopilotLspConfigContent(
     }
 
     const currentConfig = JSON.parse(currentContent) as CopilotLspConfig;
-    if (copilotConfigContainsRoslynLanguageServer(currentConfig)) {
+    if (copilotConfigContainsCSharpLsp(currentConfig)) {
         return { shouldWrite: false };
     }
 
@@ -69,7 +69,7 @@ export function getUninstalledCopilotLspConfigContent(currentContent: string | u
     return { shouldWrite: true, updatedContent: `${JSON.stringify(updatedConfig, null, 2)}\n` };
 }
 
-function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig): boolean {
+function copilotConfigContainsCSharpLsp(lspConfig: CopilotLspConfig): boolean {
     const lspServers = lspConfig.lspServers;
     if (!lspServers || typeof lspServers !== 'object') {
         return false;
