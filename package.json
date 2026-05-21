@@ -752,26 +752,6 @@
             "type": "string",
             "description": "%configuration.dotnet.defaultSolution.description%",
             "order": 0
-          },
-          "dotnet.experiments.targetPopulation": {
-            "type": "string",
-            "enum": [
-              "auto",
-              "team",
-              "internal",
-              "insiders",
-              "public"
-            ],
-            "default": "auto",
-            "enumDescriptions": [
-              "%configuration.dotnet.experiments.targetPopulation.auto%",
-              "%configuration.dotnet.experiments.targetPopulation.team%",
-              "%configuration.dotnet.experiments.targetPopulation.internal%",
-              "%configuration.dotnet.experiments.targetPopulation.insiders%",
-              "%configuration.dotnet.experiments.targetPopulation.public%"
-            ],
-            "description": "%configuration.dotnet.experiments.targetPopulation%",
-            "order": 1
           }
         }
       },
