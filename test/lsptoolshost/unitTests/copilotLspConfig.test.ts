@@ -25,13 +25,16 @@ describe('Copilot LSP config installation', () => {
         expect(finalContent).toBe(packagedContent);
     });
 
-    test('does not modify config when lspServers.csharp object already exists', () => {
+    test('does not modify config when any server maps .cs in fileExtensions', () => {
         const packagedContent = readFileSync('redist/lsp-config.json', 'utf8');
         const existingConfig = JSON.stringify(
             {
                 lspServers: {
-                    csharp: {
+                    customServerName: {
                         command: 'some-other-command',
+                        fileExtensions: {
+                            '.cs': 'csharp',
+                        },
                     },
                 },
             },
@@ -41,6 +44,29 @@ describe('Copilot LSP config installation', () => {
 
         const result = getUpdatedCopilotLspConfigContent(existingConfig, packagedContent);
         expect(result.shouldWrite).toBe(false);
+    });
+
+    test('adds csharp server when .cs is not present in fileExtensions', () => {
+        const packagedContent = readFileSync('redist/lsp-config.json', 'utf8');
+        const existingConfig = JSON.stringify(
+            {
+                lspServers: {
+                    typescript: {
+                        command: 'typescript-language-server',
+                        fileExtensions: {
+                            '.ts': 'typescript',
+                        },
+                    },
+                },
+            },
+            null,
+            2
+        );
+
+        const result = getUpdatedCopilotLspConfigContent(existingConfig, packagedContent);
+        expect(result.shouldWrite).toBe(true);
+        const parsed = JSON.parse(result.updatedContent!);
+        expect(parsed.lspServers.csharp).toBeDefined();
     });
 
     test('uninstall removes lspServers.csharp and preserves other servers', () => {
