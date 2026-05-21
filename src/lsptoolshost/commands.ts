@@ -139,7 +139,9 @@ function registerExtensionCommands(
 
             if (!updateResult.shouldWrite || !updateResult.updatedContent) {
                 void vscode.window.showInformationMessage(
-                    vscode.l10n.t('Copilot LSP config already contains roslyn-language-server. No changes were made.')
+                    vscode.l10n.t(
+                        'Copilot LSP config already contains a C# LSP mapping for .cs files. No changes were made.'
+                    )
                 );
                 return;
             }
@@ -188,7 +190,9 @@ function registerExtensionCommands(
 
             if (!uninstallResult.shouldWrite || !uninstallResult.updatedContent) {
                 void vscode.window.showInformationMessage(
-                    vscode.l10n.t('Copilot LSP config does not contain lspServers.csharp. No changes were made.')
+                    vscode.l10n.t(
+                        'Copilot LSP config does not contain a C# LSP mapping for .cs files. No changes were made.'
+                    )
                 );
                 return;
             }
@@ -196,7 +200,10 @@ function registerExtensionCommands(
             try {
                 await fs.writeFile(lspConfigPath, uninstallResult.updatedContent, 'utf8');
                 void vscode.window.showInformationMessage(
-                    vscode.l10n.t('Removed lspServers.csharp from Copilot LSP config at {0}.', lspConfigPath)
+                    vscode.l10n.t(
+                        'Removed C# LSP mapping(s) for .cs files from Copilot LSP config at {0}.',
+                        lspConfigPath
+                    )
                 );
             } catch (error) {
                 const nodeError = error as NodeJS.ErrnoException;
