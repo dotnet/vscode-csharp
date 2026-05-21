@@ -145,6 +145,7 @@ function registerExtensionCommands(
             }
 
             try {
+                await fs.mkdir(path.dirname(lspConfigPath), { recursive: true });
                 await fs.writeFile(lspConfigPath, updateResult.updatedContent, 'utf8');
                 void vscode.window.showInformationMessage(
                     vscode.l10n.t('Updated Copilot LSP config at {0}.', lspConfigPath)
