@@ -57,19 +57,12 @@ export function getUninstalledCopilotLspConfigContent(currentContent: string | u
         lspServers: { ...lspServers },
     };
 
-    let removedServer = false;
-    for (const [serverName, server] of Object.entries(lspServers)) {
-        if (!server || typeof server !== 'object') {
-            continue;
-        }
-
-        if (serverName === 'csharp' || serverContainsCSharpFileExtension(server)) {
-            delete updatedConfig.lspServers![serverName];
-            removedServer = true;
-        }
+    const matchingServerNames = getCSharpServerNames(lspServers);
+    for (const serverName of matchingServerNames) {
+        delete updatedConfig.lspServers![serverName];
     }
 
-    if (!removedServer) {
+    if (matchingServerNames.length === 0) {
         return { shouldWrite: false };
     }
 
@@ -82,17 +75,24 @@ function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig):
         return false;
     }
 
-    for (const server of Object.values(lspServers)) {
-        if (!server || typeof server !== 'object') {
-            continue;
-        }
+    return containsCSharpServer(lspServers);
+}
 
-        const fileExtensions = (server as { fileExtensions?: unknown }).fileExtensions;
-        if (!fileExtensions) {
-            continue;
-        }
+function getCSharpServerNames(lspServers: { [key: string]: unknown }): string[] {
+    const csharpServerNames: string[] = [];
 
-        if (typeof fileExtensions === 'object' && '.cs' in fileExtensions) {
+    for (const [serverName, server] of Object.entries(lspServers)) {
+        if (serverName === 'csharp' || serverContainsCSharpFileExtension(server)) {
+            csharpServerNames.push(serverName);
+        }
+    }
+
+    return csharpServerNames;
+}
+
+function containsCSharpServer(lspServers: { [key: string]: unknown }): boolean {
+    for (const [serverName, server] of Object.entries(lspServers)) {
+        if (serverName === 'csharp' || serverContainsCSharpFileExtension(server)) {
             return true;
         }
     }
@@ -100,7 +100,11 @@ function copilotConfigContainsRoslynLanguageServer(lspConfig: CopilotLspConfig):
     return false;
 }
 
-function serverContainsCSharpFileExtension(server: object): boolean {
+function serverContainsCSharpFileExtension(server: unknown): boolean {
+    if (!server || typeof server !== 'object') {
+        return false;
+    }
+
     const fileExtensions = (server as { fileExtensions?: unknown }).fileExtensions;
     if (!fileExtensions) {
         return false;
