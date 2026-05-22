@@ -82,7 +82,7 @@ function getCSharpServerNames(lspServers: { [key: string]: unknown }): string[] 
     const csharpServerNames: string[] = [];
 
     for (const [serverName, server] of Object.entries(lspServers)) {
-        if (serverName === 'csharp' || serverContainsCSharpFileExtension(server)) {
+        if (serverContainsCSharpFileExtension(server)) {
             csharpServerNames.push(serverName);
         }
     }

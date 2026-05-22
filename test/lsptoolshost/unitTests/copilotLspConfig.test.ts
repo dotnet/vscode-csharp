@@ -69,12 +69,15 @@ describe('Copilot LSP config installation', () => {
         expect(parsed.lspServers.csharp).toBeDefined();
     });
 
-    test('uninstall removes lspServers.csharp and preserves other servers', () => {
+    test('uninstall removes lspServers.csharp when it maps .cs and preserves other servers', () => {
         const existingConfig = JSON.stringify(
             {
                 lspServers: {
                     csharp: {
                         command: 'dotnet',
+                        fileExtensions: {
+                            '.cs': 'csharp',
+                        },
                     },
                     typescript: {
                         command: 'typescript-language-server',
