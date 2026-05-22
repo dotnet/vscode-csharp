@@ -562,7 +562,7 @@ export class RoslynLanguageServer {
                 await this.openSolution(vscode.Uri.file(defaultSolution));
             } else {
                 // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
-                const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
+                const solutionUris = await vscode.workspace.findFiles('**/*.slnx?', '**/node_modules/**', 2);
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
                         await this.openSolution(solutionUris[0]);
