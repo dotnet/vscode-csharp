@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
-* Update Roslyn to 5.8.0-1.26273.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.8.0-1.26273.3 (PR: [#9348](https://github.com/dotnet/vscode-csharp/pull/9348))
   * Suppress Razor completion when @ is typed in Emmet numbering context (PR: [#83837](https://github.com/dotnet/roslyn/pull/83837))
   * Convert to local function: ensure unique names for multiple discard parameters (PR: [#83644](https://github.com/dotnet/roslyn/pull/83644))
   * remove duplicate lsp registration breaking cca (PR: [#83830](https://github.com/dotnet/roslyn/pull/83830))
