@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
+* Update Roslyn to 5.8.0-1.26273.3 (PR: [#9348](https://github.com/dotnet/vscode-csharp/pull/9348))
+  * Suppress Razor completion when @ is typed in Emmet numbering context (PR: [#83837](https://github.com/dotnet/roslyn/pull/83837))
+  * Convert to local function: ensure unique names for multiple discard parameters (PR: [#83644](https://github.com/dotnet/roslyn/pull/83644))
+
 * Update Roslyn to 5.8.0-1.26267.2 (PR: [#9321](https://github.com/dotnet/vscode-csharp/pull/9321))
   * Fix racecondition on UnsuedDirectiveCache.Set (PR: [#83693](https://github.com/dotnet/roslyn/pull/83693))
   * Fix single line script tag formatting (PR: [#83721](https://github.com/dotnet/roslyn/pull/83721))
