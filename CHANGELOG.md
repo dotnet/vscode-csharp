@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
-* Update Roslyn to 5.8.0-1.26276.4 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.8.0-1.26276.4 (PR: [#9352](https://github.com/dotnet/vscode-csharp/pull/9352))
   * Fix service broker initializers to consistently be LSP services (PR: [#83890](https://github.com/dotnet/roslyn/pull/83890))
   * Shut down the BuildHost before we start the restore (PR: [#83860](https://github.com/dotnet/roslyn/pull/83860))
   * Use dedicated type for union syntax. (PR: [#83808](https://github.com/dotnet/roslyn/pull/83808))
