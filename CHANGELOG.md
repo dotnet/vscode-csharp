@@ -4,7 +4,6 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
-* Update roslyn to 5.8.0-1.26273.3 (PR: [#9348](https://github.com/dotnet/vscode-csharp/pull/9348))
 * .slnx support (PR: [#9286](https://github.com/dotnet/vscode-csharp/pull/9286))
 * Fix debugger crash with in-memory symbols (PR: [#9335](https://github.com/dotnet/vscode-csharp/pull/9335))
 * Bump dotnet-sdk from 10.0.202 to 10.0.300 in /msbuild (PR: [#9294](https://github.com/dotnet/vscode-csharp/pull/9294))
