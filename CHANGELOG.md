@@ -5,15 +5,8 @@
 
 # 2.143.x
 * Update Roslyn to 5.8.0-1.26276.4 (PR: [#9352](https://github.com/dotnet/vscode-csharp/pull/9352))
-  * Fix service broker initializers to consistently be LSP services (PR: [#83890](https://github.com/dotnet/roslyn/pull/83890))
+  * Fix XAML hot reload (PR: [#83890](https://github.com/dotnet/roslyn/pull/83890))
   * Shut down the BuildHost before we start the restore (PR: [#83860](https://github.com/dotnet/roslyn/pull/83860))
-  * Use dedicated type for union syntax. (PR: [#83808](https://github.com/dotnet/roslyn/pull/83808))
-  * Suppress IDE0019 when local is later passed to out/ref of nullable parameter (PR: [#83883](https://github.com/dotnet/roslyn/pull/83883))
-  * Don't offer IDE0058 for Null-conditional assignment (PR: [#83817](https://github.com/dotnet/roslyn/pull/83817))
-  * Add full semantic tokens support to Razor (PR: [#83800](https://github.com/dotnet/roslyn/pull/83800))
-  * Don't pass client capabilities via a string (PR: [#83871](https://github.com/dotnet/roslyn/pull/83871))
-
-* Update Roslyn to 5.8.0-1.26273.3 (PR: [#9348](https://github.com/dotnet/vscode-csharp/pull/9348))
   * Suppress Razor completion when @ is typed in Emmet numbering context (PR: [#83837](https://github.com/dotnet/roslyn/pull/83837))
   * Convert to local function: ensure unique names for multiple discard parameters (PR: [#83644](https://github.com/dotnet/roslyn/pull/83644))
 
