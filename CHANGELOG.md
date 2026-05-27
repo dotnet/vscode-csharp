@@ -4,7 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
-* Update Roslyn to 5.8.0-1.26273.3 (PR: [#9348](https://github.com/dotnet/vscode-csharp/pull/9348))
+* Update Roslyn to 5.8.0-1.26276.4 (PR: [#9352](https://github.com/dotnet/vscode-csharp/pull/9352))
+  * Fix XAML hot reload (PR: [#83890](https://github.com/dotnet/roslyn/pull/83890))
+  * Shut down the BuildHost before we start the restore (PR: [#83860](https://github.com/dotnet/roslyn/pull/83860))
   * Suppress Razor completion when @ is typed in Emmet numbering context (PR: [#83837](https://github.com/dotnet/roslyn/pull/83837))
   * Convert to local function: ensure unique names for multiple discard parameters (PR: [#83644](https://github.com/dotnet/roslyn/pull/83644))
 
