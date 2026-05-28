@@ -68,6 +68,7 @@
     "createTags": "npx ts-node tasks/tags/createTags.ts",
     "fixLocUrls": "npx ts-node tasks/debugger/fixLocUrls.ts",
     "generateOptionsSchema": "npx ts-node tasks/debugger/generateOptionsSchema.ts",
+    "ingest": "npx ts-node tasks/components/ingestCopilotLspConfig.ts",
     "incrementVersion": "npx ts-node tasks/snap/incrementVersion.ts",
     "installDependencies": "npx ts-node tasks/packaging/installDependencies.ts",
     "installDependenciesClean": "npx ts-node tasks/packaging/installDependenciesClean.ts",
@@ -124,6 +125,7 @@
     "semver": "7.5.4",
     "vscode-html-languageservice": "^5.3.1",
     "vscode-languageclient": "10.0.0-next.20",
+    "vscode-tas-client": "^0.2.1",
     "yauzl": "3.2.1"
   },
   "devDependencies": {
@@ -1869,6 +1871,18 @@
         "title": "%command.dotnet.openSolution%",
         "category": ".NET",
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
+      },
+      {
+        "command": "dotnet.installCopilotLsp",
+        "title": "%command.dotnet.installCopilotLsp%",
+        "category": ".NET",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "dotnet.uninstallCopilotLsp",
+        "title": "%command.dotnet.uninstallCopilotLsp%",
+        "category": ".NET",
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "o.fixAll.solution",
