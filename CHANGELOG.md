@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
+* Update Roslyn to 5.9.0-1.26279.7 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Log Razor messages to normal LSP log endpoint (PR: [#83935](https://github.com/dotnet/roslyn/pull/83935))
+  * Don't gate LSP server shutdown on JSON-RPC stream completion (PR: [#83930](https://github.com/dotnet/roslyn/pull/83930))
+  * Speculative fix for exception formatting collection expression (PR: [#83933](https://github.com/dotnet/roslyn/pull/83933))
+  * feat: enable move static members up in headless env (PR: [#83696](https://github.com/dotnet/roslyn/pull/83696))
+  * Fix Razor @{ completion regression in VS Code CSHTML files (PR: [#83919](https://github.com/dotnet/roslyn/pull/83919))
+  * Handle inaccessible-directory I/O during LSP auto-discovery to prevent server termination (PR: [#83841](https://github.com/dotnet/roslyn/pull/83841))
+  * Report percentage progress during LSP project loading (PR: [#83785](https://github.com/dotnet/roslyn/pull/83785))
+  * Fix toggling of automatic rename suggestions (PR: [#83889](https://github.com/dotnet/roslyn/pull/83889))
+  * Migrate more Razor code to DocumentUri and System.Uri helpers (PR: [#83810](https://github.com/dotnet/roslyn/pull/83810))
 * .slnx support (PR: [#9286](https://github.com/dotnet/vscode-csharp/pull/9286))
 * Fix debugger crash with in-memory symbols (PR: [#9335](https://github.com/dotnet/vscode-csharp/pull/9335))
 * Bump dotnet-sdk from 10.0.202 to 10.0.300 in /msbuild (PR: [#9294](https://github.com/dotnet/vscode-csharp/pull/9294))
