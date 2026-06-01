@@ -27,7 +27,6 @@
   "command.o.reanalyze.allProjects": "Analyser tous les projets",
   "command.o.reanalyze.currentProject": "Analyser le projet en cours",
   "command.o.restart": "Redémarrez OmniSharp",
-  "command.razor.reportIssue": "Signaler un problème avec le rasoir",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": "Afficher les indicateurs pour la création d'objet implicite",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": "Afficher les indicateurs pour les variables ayant des types déduits",
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Afficher les indicateurs pour les indexeurs",

@@ -27,7 +27,6 @@
   "command.o.reanalyze.allProjects": "分析所有專案",
   "command.o.reanalyze.currentProject": "分析目前專案",
   "command.o.restart": "重新啟動 OmniSharp",
-  "command.razor.reportIssue": "報告 Razor 問題",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": "顯示隱含物件建立的提示",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": "顯示有推斷類型之變數的提示",
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "顯示索引子的提示",

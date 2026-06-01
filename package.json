@@ -1999,12 +1999,6 @@
         "enablement": "isWorkspaceTrusted"
       },
       {
-        "command": "razor.reportIssue",
-        "title": "%command.razor.reportIssue%",
-        "category": "Razor",
-        "enablement": "isWorkspaceTrusted"
-      },
-      {
         "command": "dotnet.test.runTestsInContext",
         "title": "%command.dotnet.test.runTestsInContext%",
         "category": ".NET",
@@ -5704,10 +5698,6 @@
         },
         {
           "command": "extension.showRazorHtmlWindow",
-          "when": "resourceLangId == aspnetcorerazor"
-        },
-        {
-          "command": "razor.reportIssue",
           "when": "resourceLangId == aspnetcorerazor"
         }
       ],
