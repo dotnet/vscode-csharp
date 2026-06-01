@@ -11,6 +11,7 @@
   * feat: enable move static members up in headless env (PR: [#83696](https://github.com/dotnet/roslyn/pull/83696))
   * Fix Razor @{ completion regression in VS Code CSHTML files (PR: [#83919](https://github.com/dotnet/roslyn/pull/83919))
   * Report percentage progress during LSP project loading (PR: [#83785](https://github.com/dotnet/roslyn/pull/83785))
+  * Fix for "hintName must be unique" in some Razor projects (PR: [#83878](https://github.com/dotnet/roslyn/pull/83878))
 * .slnx support (PR: [#9286](https://github.com/dotnet/vscode-csharp/pull/9286))
 * Fix debugger crash with in-memory symbols (PR: [#9335](https://github.com/dotnet/vscode-csharp/pull/9335))
 * Bump dotnet-sdk from 10.0.202 to 10.0.300 in /msbuild (PR: [#9294](https://github.com/dotnet/vscode-csharp/pull/9294))
