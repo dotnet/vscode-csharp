@@ -27,7 +27,6 @@
   "command.o.reanalyze.allProjects": "すべてのプロジェクトを分析する",
   "command.o.reanalyze.currentProject": "現在のプロジェクトを分析する",
   "command.o.restart": "OmniSharp を再起動する",
-  "command.razor.reportIssue": "Razor の問題を報告する",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": "暗黙的なオブジェクト作成のヒントを表示します",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": "推論された型の変数のヒントを表示する",
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "インデクサーのヒントを表示する",

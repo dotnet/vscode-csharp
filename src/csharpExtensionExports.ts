@@ -31,7 +31,6 @@ export interface ActivityLogCapture extends vscode.Disposable {
 export interface ActivityLogResult {
     csharpLog: string;
     lspTraceLog: string;
-    razorLog: string;
 }
 
 export interface CSharpExtensionExports {

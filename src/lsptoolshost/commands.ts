@@ -21,7 +21,6 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { registerCollectLogsCommand } from './logging/collectLogs';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
-import { RazorLogger } from '../razor/src/razorLogger';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -29,8 +28,7 @@ export function registerCommands(
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     csharpTraceChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter,
-    razorLogger: RazorLogger
+    reporter: TelemetryReporter
 ) {
     registerExtensionCommands(
         context,
@@ -38,8 +36,7 @@ export function registerCommands(
         hostExecutableResolver,
         outputChannel,
         csharpTraceChannel,
-        reporter,
-        razorLogger
+        reporter
     );
     registerWorkspaceCommands(context, languageServer);
     registerServerCommands(context, languageServer, outputChannel);
@@ -54,8 +51,7 @@ function registerExtensionCommands(
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     csharpTraceChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter,
-    razorLogger: RazorLogger
+    reporter: TelemetryReporter
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -92,5 +88,5 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
-    registerCollectLogsCommand(context, languageServer, outputChannel, csharpTraceChannel, razorLogger);
+    registerCollectLogsCommand(context, languageServer, outputChannel, csharpTraceChannel);
 }

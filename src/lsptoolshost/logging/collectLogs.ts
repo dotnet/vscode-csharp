@@ -23,7 +23,6 @@ import {
     LogsToCollect,
 } from './loggingUtils';
 import { runDotnetTraceInTerminal } from './profiling';
-import { RazorLogger } from '../../razor/src/razorLogger';
 
 /** Represents the types of data the user can choose to collect */
 type CollectOption = 'activityLogs' | 'performanceTrace' | 'memoryDump' | 'gcDump';
@@ -39,12 +38,11 @@ export function registerCollectLogsCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel,
-    razorLogger: RazorLogger
+    traceChannel: ObservableLogOutputChannel
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.collectLogs', async () => {
-            await collectLogs(context, languageServer, outputChannel, traceChannel, razorLogger);
+            await collectLogs(context, languageServer, outputChannel, traceChannel);
         })
     );
 }
@@ -53,8 +51,7 @@ async function collectLogs(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel,
-    razorLogger: RazorLogger
+    traceChannel: ObservableLogOutputChannel
 ): Promise<void> {
     // Step 1: Let the user select which additional logs or dumps to collect.
     const selectedLogs = await selectAdditionalLogs();
@@ -108,7 +105,6 @@ async function collectLogs(
                   languageServer,
                   outputChannel,
                   traceChannel,
-                  razorLogger,
                   selectedLogs,
                   dumpSelected,
                   toolConfigs.dumpConfigs,
@@ -120,7 +116,6 @@ async function collectLogs(
                   context,
                   outputChannel,
                   traceChannel,
-                  razorLogger,
                   toolConfigs.dumpConfigs,
                   zipFile.parentFolder,
                   zipFile.uri
@@ -167,7 +162,7 @@ async function selectAdditionalLogs(): Promise<LogsToCollect | undefined> {
     const items: CollectOptionQuickPickItem[] = [
         {
             label: vscode.l10n.t('Record Activity'),
-            description: vscode.l10n.t('Capture live C#, LSP trace, and Razor log output'),
+            description: vscode.l10n.t('Capture live C# output (including Razor) and LSP trace logs'),
             detail: vscode.l10n.t('Records verbose extension logging and stops when canceled.'),
             option: 'activityLogs',
         },
@@ -348,7 +343,6 @@ async function archiveDumps(
     context: vscode.ExtensionContext,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
-    razorLogger: RazorLogger,
     dumpConfigs: DumpRequest[],
     outputFolder: string,
     saveUri: vscode.Uri
@@ -365,7 +359,6 @@ async function archiveDumps(
                 context,
                 outputChannel,
                 traceChannel,
-                razorLogger,
                 /* activityLogs */ undefined,
                 saveUri.fsPath,
                 undefined,
@@ -389,7 +382,6 @@ async function archiveActivity(
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
-    razorLogger: RazorLogger,
     selectedLogs: LogsToCollect,
     dumpSelected: boolean,
     dumpConfigs: DumpRequest[],
@@ -400,7 +392,7 @@ async function archiveActivity(
     let errorMessage: string | undefined;
     let uri: vscode.Uri | undefined;
 
-    const capture = await createActivityLogCapture(languageServer, outputChannel, traceChannel, razorLogger);
+    const capture = await createActivityLogCapture(languageServer, outputChannel, traceChannel);
 
     try {
         let traceFilePath: string | undefined;
@@ -454,7 +446,6 @@ async function archiveActivity(
                     context,
                     outputChannel,
                     traceChannel,
-                    razorLogger,
                     activityLogs,
                     saveUri.fsPath,
                     traceFilePath,

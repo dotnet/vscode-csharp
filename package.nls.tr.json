@@ -27,7 +27,6 @@
   "command.o.reanalyze.allProjects": "Tüm projeleri çözümleyin",
   "command.o.reanalyze.currentProject": "Geçerli projeyi çözümle",
   "command.o.restart": "OmniSharp'ı yeniden başlatın",
-  "command.razor.reportIssue": "Razor sorunu bildirin",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": "Örtük nesne oluşturma ipuçlarını göster",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": "Çıkarsanan türlere sahip değişkenler için ipuçlarını göster",
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Dizin oluşturucular için ipuçlarını göster",

@@ -461,28 +461,15 @@ Verify each of the test projects above's `project.razor.json` file (ASP.NET Core
 }
 ```
 
-#### Report a Razor issue
-Perform the following in any of the above Razor projects.
-
-- Run the `Report a Razor issue` command while `razor.server.trace` is set to `None`. Ensure that you get a dialog stating that `razor.server.trace` must be set to `Debug`.
-
-- Run the `Report a Razor issue` command while `razor.server.trace` is set to `Debug`. Follow the instructions, type a little bit in a .cshtml file when it's recording. Once you stop the recording ensure that the content copied to your clipboard has the following information:
-  - Razor log output under the **Logs** section
-  - The Razor document content under the **Workspace information** section
-  - Projected CSharp document under the **Workspace information** section
-  - Projected Html document under the **Workspace information** section
-  - `dotnet --info` output under **Machine information** section
-  - The table of extensions under the **Machine information** section
-
 #### Razor Options
 
-##### razor.server.trace
-This option should always be displayed in the View --> Output --> Razor Log window
-This option can be set to any of the following values:
-  * "None" - Will launch Razor Language server with its log output set to 'Off'. The header in the Razor Log output window will be shown but no other content will be shown.
-  - "Information" - Will launch Razor Language server with its log output set to 'Information'. Limited messages will be shown such as "Opening document xyz in project abc".
-  - "Debug" - Will launch Razor Language server with its log output set to 'Debug'. All logging messages will be shown such as "123 - Synchronizing documentxyz currently ...."
-Changing this option should result in a notification message at the bottom right of the window, prompting for a restart of the Razor Language Server.
+##### Razor logging in the C# output window
+Razor log output should be visible in the View --> Output --> C# window.
+The output window log level can be set to any of the following values:
+  * "Off" - No Razor log output will be shown.
+  - "Info" - Limited messages will be shown, such as document lifecycle events.
+  - "Debug" - Additional Razor debugging information will be shown.
+  - "Trace" - The most verbose Razor logging will be shown.
 
 #### OmniSharp Options
 
