@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
 import { HtmlDocumentManager } from './htmlDocumentManager';
-import { RazorLogger } from '../../razor/src/razorLogger';
 import { getUriPath } from '../../razor/src/uriPaths';
 
 export class HtmlDocumentContentProvider implements vscode.TextDocumentContentProvider {
@@ -13,7 +13,10 @@ export class HtmlDocumentContentProvider implements vscode.TextDocumentContentPr
 
     private readonly onDidChangeEmitter: vscode.EventEmitter<vscode.Uri> = new vscode.EventEmitter<vscode.Uri>();
 
-    constructor(private readonly documentManager: HtmlDocumentManager, private readonly logger: RazorLogger) {}
+    constructor(
+        private readonly documentManager: HtmlDocumentManager,
+        private readonly logger: ObservableLogOutputChannel
+    ) {}
 
     public get onDidChange() {
         return this.onDidChangeEmitter.event;
@@ -28,7 +31,7 @@ export class HtmlDocumentContentProvider implements vscode.TextDocumentContentPr
         if (!document) {
             // Document was removed from the document manager, meaning there's no more content for this
             // file. Report an empty document.
-            this.logger.logTrace(
+            this.logger.trace(
                 `Could not find document '${getUriPath(
                     uri
                 )}' when updating the HTML buffer. This typically happens when a document is removed.`

@@ -5,7 +5,6 @@
 
 import { describe, test, expect } from '@jest/globals';
 import { LogObserver } from '../../../src/lsptoolshost/logging/observableLogOutputChannel';
-import { RazorLogObserver } from '../../../src/lsptoolshost/logging/loggingUtils';
 
 describe('captureActivityLogs', () => {
     describe('LogObserver', () => {
@@ -36,34 +35,6 @@ describe('captureActivityLogs', () => {
             expect(lines[0]).toContain('first');
             expect(lines[1]).toContain('ERROR');
             expect(lines[1]).toContain('second');
-        });
-    });
-
-    describe('RazorLogObserver', () => {
-        test('formatLogMessages returns empty string for empty array', () => {
-            const result = RazorLogObserver.formatLogMessages([]);
-            expect(result).toBe('');
-        });
-
-        test('formatLogMessages includes timestamp and message', () => {
-            const timestamp = new Date('2024-01-01T12:00:00.000Z');
-            const messages = [{ message: 'razor log entry', timestamp }];
-            const result = RazorLogObserver.formatLogMessages(messages);
-            expect(result).toContain('2024-01-01T12:00:00.000Z');
-            expect(result).toContain('razor log entry');
-        });
-
-        test('formatLogMessages formats multiple messages with newlines', () => {
-            const timestamp = new Date('2024-01-01T12:00:00.000Z');
-            const messages = [
-                { message: 'first razor', timestamp },
-                { message: 'second razor', timestamp },
-            ];
-            const result = RazorLogObserver.formatLogMessages(messages);
-            const lines = result.split('\n');
-            expect(lines).toHaveLength(2);
-            expect(lines[0]).toContain('first razor');
-            expect(lines[1]).toContain('second razor');
         });
     });
 });
