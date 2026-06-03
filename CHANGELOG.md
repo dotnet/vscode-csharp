@@ -22,6 +22,9 @@
   * Shut down the BuildHost before we start the restore (PR: [#83860](https://github.com/dotnet/roslyn/pull/83860))
   * Suppress Razor completion when @ is typed in Emmet numbering context (PR: [#83837](https://github.com/dotnet/roslyn/pull/83837))
   * Convert to local function: ensure unique names for multiple discard parameters (PR: [#83644](https://github.com/dotnet/roslyn/pull/83644))
+* Update xamlTools to 18.9.11902.238 (PR: [#9382](https://github.com/dotnet/vscode-csharp/pull/9382))
+  * Hot Reload E2E diagnostics fundamentals (PR: AzDO#731599)
+  * Fix MetadataUpdateHandlers were not called in some cases in MAUI apps (PR: AzDO#731599)
 
 * Update Roslyn to 5.8.0-1.26267.2 (PR: [#9321](https://github.com/dotnet/vscode-csharp/pull/9321))
   * Fix racecondition on UnsuedDirectiveCache.Set (PR: [#83693](https://github.com/dotnet/roslyn/pull/83693))
