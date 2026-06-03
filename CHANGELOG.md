@@ -4,14 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
-* Add compiler side fix to the changelog (PR: [#9374](https://github.com/dotnet/vscode-csharp/pull/9374))
-* Remove razor logger (PR: [#9368](https://github.com/dotnet/vscode-csharp/pull/9368))
-* Bump multiparty from 4.2.1 to 4.3.0 (PR: [#9323](https://github.com/dotnet/vscode-csharp/pull/9323))
-* Update release notes skill (PR: [#9324](https://github.com/dotnet/vscode-csharp/pull/9324))
-* Bump qs and body-parser (PR: [#9345](https://github.com/dotnet/vscode-csharp/pull/9345))
-* Bump @nevware21/ts-utils from 0.10.1 to 0.14.0 (PR: [#9340](https://github.com/dotnet/vscode-csharp/pull/9340))
-* Bump tmp from 0.2.4 to 0.2.6 (PR: [#9356](https://github.com/dotnet/vscode-csharp/pull/9356))
-* Update roslyn to 5.8.0-1.26273.3 (PR: [#9348](https://github.com/dotnet/vscode-csharp/pull/9348))
+* Remove Razor logger (PR: [#9368](https://github.com/dotnet/vscode-csharp/pull/9368))
 * Update Roslyn to 5.9.0-1.26279.7 (PR: [#9367](https://github.com/dotnet/vscode-csharp/pull/9367))
   * Log Razor messages to normal LSP log endpoint (PR: [#83935](https://github.com/dotnet/roslyn/pull/83935))
   * Don't gate LSP server shutdown on JSON-RPC stream completion (PR: [#83930](https://github.com/dotnet/roslyn/pull/83930))
