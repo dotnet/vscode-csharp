@@ -23,7 +23,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "無法建立 .NET 偵錯設定。伺服器仍在初始化或已意外結束。",
   "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "無法載入 Razor OmniSharp 語言伺服器，因為找不到目錄: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "無法解析 .NET 偵錯設定。伺服器仍在初始化或已意外結束。",
-  "Capture live C# output (including Razor) and LSP trace logs": "Capture live C# output (including Razor) and LSP trace logs",
+  "Capture live C# output (including Razor) and LSP trace logs": "擷取即時 C# 輸出 (包括 Razor) 和 LSP 追蹤記錄",
   "Captures managed heap information for investigating memory issues.": "擷取受控堆積資訊以調查記憶體問題。",
   "Captures runtime events from the language server process until canceled.": "擷取來自語言伺服器流程的執行階段事件，直到取消為止。",
   "Choose": "選擇",
