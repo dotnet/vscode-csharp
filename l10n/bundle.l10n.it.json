@@ -23,7 +23,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Impossibile creare configurazioni di debug .NET. Inizializzazione del server ancora in corso o chiusura imprevista.",
   "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Non è possibile caricare il server di linguaggio Razor OmniSharp perché la directory non è stata trovata: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Impossibile risolvere le configurazioni di debug .NET. Inizializzazione del server ancora in corso o chiusura imprevista.",
-  "Capture live C# output (including Razor) and LSP trace logs": "Capture live C# output (including Razor) and LSP trace logs",
+  "Capture live C# output (including Razor) and LSP trace logs": "Trascrivere l'output C# in tempo reale (incluso Razor) e i log di traccia LSP",
   "Captures managed heap information for investigating memory issues.": "Acquisisce le informazioni sull'heap gestito per analizzare i problemi di memoria.",
   "Captures runtime events from the language server process until canceled.": "Acquisisce gli eventi di runtime dal processo del server del linguaggio fino all'annullamento.",
   "Choose": "Scegli",

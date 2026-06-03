@@ -23,7 +23,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Nelze vytvořit konfigurace ladění .NET. Server se stále inicializuje nebo se neočekávaně ukončil.",
   "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Nepovedlo se načíst jazykový server Razor OmniSharp, protože se nenašel adresář: {0}",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Nelze přeložit konfigurace ladění .NET. Server se stále inicializuje nebo se neočekávaně ukončil.",
-  "Capture live C# output (including Razor) and LSP trace logs": "Capture live C# output (including Razor) and LSP trace logs",
+  "Capture live C# output (including Razor) and LSP trace logs": "Zachytit živý výstup C# (včetně Razor) a protokoly trasování LSP",
   "Captures managed heap information for investigating memory issues.": "Zachytává informace o spravované haldě pro prošetřování problémů s pamětí.",
   "Captures runtime events from the language server process until canceled.": "Zachytává běhové události z procesu jazykového serveru, dokud se nezruší.",
   "Choose": "Zvolit",

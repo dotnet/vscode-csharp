@@ -23,7 +23,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET デバッグ構成を作成できません。サーバーはまだ初期化中か、予期せず終了しました。",
   "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "ディレクトリが見つからなかったため、Razor OmniSharp 言語サーバーを読み込めません: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET デバッグ構成を解決できません。サーバーはまだ初期化中か、予期せず終了しました。",
-  "Capture live C# output (including Razor) and LSP trace logs": "Capture live C# output (including Razor) and LSP trace logs",
+  "Capture live C# output (including Razor) and LSP trace logs": "ライブ C# 出力 (Razor を含む) と LSP トレース ログのキャプチャ",
   "Captures managed heap information for investigating memory issues.": "メモリ問題の調査のために、マネージド ヒープ情報をキャプチャします。",
   "Captures runtime events from the language server process until canceled.": "キャンセルされるまで、言語サーバー プロセスのランタイム イベントをキャプチャします。",
   "Choose": "選択",

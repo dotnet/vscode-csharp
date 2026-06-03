@@ -23,7 +23,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET hata ayıklama yapılandırmaları oluşturulamıyor. Sunucu hala başlatılıyor veya beklenmedik şekilde çıkıldı.",
   "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Dizin bulunamadığı için Razor OmniSharp dil sunucusu yüklenemiyor: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET hata ayıklama yapılandırmaları çözümlenemiyor. Sunucu hala başlatılıyor veya beklenmedik şekilde çıkıldı.",
-  "Capture live C# output (including Razor) and LSP trace logs": "Capture live C# output (including Razor) and LSP trace logs",
+  "Capture live C# output (including Razor) and LSP trace logs": "Canlı C# çıkışını (Razor dahil) ve LSP izleme günlüklerini yakalayın",
   "Captures managed heap information for investigating memory issues.": "Bellek sorunlarını araştırmak için yönetilen yığın bilgilerini yakalar.",
   "Captures runtime events from the language server process until canceled.": "Dil sunucusu işlemi iptal edilene kadar çalışma zamanı olaylarını yakalar.",
   "Choose": "Seç",

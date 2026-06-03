@@ -23,7 +23,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET 디버그 구성을 생성할 수 없습니다. 서버가 아직 초기화 중이거나 예기치 않게 종료되었습니다.",
   "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "디렉터리를 찾을 수 없으므로 Razor OmniSharp 언어 서버를 로드할 수 없습니다. '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET 디버그 구성을 확인할 수 없습니다. 서버가 아직 초기화 중이거나 예기치 않게 종료되었습니다.",
-  "Capture live C# output (including Razor) and LSP trace logs": "Capture live C# output (including Razor) and LSP trace logs",
+  "Capture live C# output (including Razor) and LSP trace logs": "라이브 C# 출력(Razor 포함) 및 LSP 추적 로그 캡처",
   "Captures managed heap information for investigating memory issues.": "메모리 문제를 조사하기 위해 관리되는 힙 정보를 캡처합니다.",
   "Captures runtime events from the language server process until canceled.": "언어 서버 프로세스에서 실행 중인 이벤트를 취소할 때까지 캡처합니다.",
   "Choose": "선택",
