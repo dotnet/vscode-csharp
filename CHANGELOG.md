@@ -5,12 +5,9 @@
 
 # 2.143.x
 * Update Roslyn to 5.9.0-1.26308.3 (PR: [#9403](https://github.com/dotnet/vscode-csharp/pull/9403))
-  * Add baseline availability status to HTML completion tooltips (PR: [#84054](https://github.com/dotnet/roslyn/pull/84054))
-  * Fix Razor breakpoint placement (PR: [#84029](https://github.com/dotnet/roslyn/pull/84029))
   * Enable parallel builds in the LSP when loading projects (PR: [#83982](https://github.com/dotnet/roslyn/pull/83982))
   * Fix Razor diagnostics exception when HTML diagnostic range exceeds SourceText bounds (PR: [#84002](https://github.com/dotnet/roslyn/pull/84002))
   * Fix rename in VS Code from a C# document (PR: [#83971](https://github.com/dotnet/roslyn/pull/83971))
-  * Complete server shutdown when mutex is closed (PR: [#83921](https://github.com/dotnet/roslyn/pull/83921))
   * Only add reference counts on CodeLens elements that are supported (PR: [#82641](https://github.com/dotnet/roslyn/pull/82641))
 * Remove Razor logger (PR: [#9368](https://github.com/dotnet/vscode-csharp/pull/9368))
 * Update Roslyn to 5.9.0-1.26279.7 (PR: [#9367](https://github.com/dotnet/vscode-csharp/pull/9367))
