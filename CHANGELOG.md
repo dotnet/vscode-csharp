@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
-* Update Roslyn to 5.9.0-1.26308.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.9.0-1.26308.3 (PR: [#9403](https://github.com/dotnet/vscode-csharp/pull/9403))
   * Add baseline availability status to HTML completion tooltips (PR: [#84054](https://github.com/dotnet/roslyn/pull/84054))
   * Fix Razor breakpoint placement (PR: [#84029](https://github.com/dotnet/roslyn/pull/84029))
   * Enable parallel builds in the LSP when loading projects (PR: [#83982](https://github.com/dotnet/roslyn/pull/83982))
