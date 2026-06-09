@@ -739,6 +739,47 @@
         "uiTheme": "vs",
         "path": "./themes/vs2019_light.json"
       }
+    "name": "omnisharp",
+    "publisher": "ms-vscode",
+    "version": "0.3.3",
+    "displayName": "Legacy C# Support",
+    "description": "Legacy OmniSharp extension [originally bundled with VS Code]. Use this for Mono, Xamarin and Unity development on OS X and Linux.",
+    "author": "Microsoft Corporation",
+    "license": "MIT",
+    "main": "./out/omnisharpMain",
+    "scripts": {
+        "postinstall": "gulp omnisharp && tsc"
+    },
+    "dependencies": {
+        "run-in-terminal": "*",
+        "semver": "*"
+    },
+    "devDependencies": {
+        "vscode": "^0.10.1",
+        "del": "^2.0.2",
+        "event-stream": "^3.3.2",
+        "github-releases": "^0.3.0",
+        "gulp": "^3.8.9",
+        "gulp-decompress": "^1.2.0",
+        "tmp": "0.0.28",
+        "vinyl-fs": "^2.2.1",
+        "typescript": "^1.7.3",
+        "tslint": "^3.3.0",
+        "gulp-tslint": "^4.3.0",
+        "tslint-microsoft-contrib": "^2.0.0"
+    },
+    "engines": {
+        "vscode": "^0.10.1"
+    },
+    "activationEvents": [
+        "onLanguage:csharp",
+        "onCommand:o.restart",
+        "onCommand:o.pickProjectAndStart",
+        "onCommand:o.restore",
+        "onCommand:o.execute",
+        "onCommand:o.showOutput",
+        "onCommand:o.execute",
+        "onCommand:o.execute-last-command"
     ],
     "configuration": [
       {
