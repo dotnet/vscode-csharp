@@ -1,10 +1,8 @@
-## C# for Visual Studio Code (powered by OmniSharp)
+## C# for Visual Studio Code (powered by Android)
 
 |Master|Release|
 |:--:|:--:|
 |[![Master Build Status](https://travis-ci.org/OmniSharp/omnisharp-vscode.svg?branch=master)](https://travis-ci.org/OmniSharp/omnisharp-vscode)|[![Release Build Status](https://travis-ci.org/OmniSharp/omnisharp-vscode.svg?branch=release)](https://travis-ci.org/OmniSharp/omnisharp-vscode)|
-
-Welcome to the C# extension for Visual Studio Code! This preview provides the following features inside VS Code:
 
 * Lightweight development tools for [.NET Core](https://dotnet.github.io).
 * Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.
