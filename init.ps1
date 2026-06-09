@@ -4,6 +4,7 @@ Write-Host "`nStarting init..." -ForegroundColor Cyan
 
 # Cross-platform command execution with error checking
 function Run-Command($command, $arguments, $errorMsg) {
+    
     Write-Host "Running: $command $($arguments -join ' ')" -ForegroundColor Yellow
 
     # Check if command exists first
