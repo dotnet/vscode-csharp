@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.143.x
+* Update Roslyn to 5.9.0-1.26303.15 (PR: [#9404](https://github.com/dotnet/vscode-csharp/pull/9404))
+  * Fix Razor diagnostics exception when HTML diagnostic range exceeds SourceText bounds (PR: [#84002](https://github.com/dotnet/roslyn/pull/84002))
+  * Fix rename in VS Code from a C# document (PR: [#83971](https://github.com/dotnet/roslyn/pull/83971))
+  * Complete server shutdown when mutex is closed (PR: [#83921](https://github.com/dotnet/roslyn/pull/83921))
 * Remove Razor logger (PR: [#9368](https://github.com/dotnet/vscode-csharp/pull/9368))
 * Update Roslyn to 5.9.0-1.26279.7 (PR: [#9367](https://github.com/dotnet/vscode-csharp/pull/9367))
   * Log Razor messages to normal LSP log endpoint (PR: [#83935](https://github.com/dotnet/roslyn/pull/83935))
