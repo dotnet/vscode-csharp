@@ -87,13 +87,13 @@ export async function runJestIntegrationTest(
     suiteName: string,
     env: NodeJS.ProcessEnv = {},
     testFile: string | undefined = undefined
-) { 
+) {
     const logName = testFile ? `${suiteName}_${path.basename(testFile)}` : suiteName;
 
     // Set VSCode to produce logs in a unique directory for this test run.
     //
     // Since VSCode also uses this folder for creating sock files for IPC
-    // and those handles are limited to 103 characters, we will trim the 
+    // and those handles are limited to 103 characters, we will trim the
     // path to 85 characters.
     const userDataDir = path.join(outPath, 'userData', logName).substring(0, 85);
 
