@@ -9,7 +9,6 @@ import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
 import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browsers';
-import { RazorLogger } from '../razorLogger';
 import { ONLY_JS_DEBUG_NAME, MANAGED_DEBUG_NAME, JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
 import { isValidEvent, onDidTerminateDebugSession } from './terminateDebugHandler';
 import path = require('path');
@@ -79,9 +78,9 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     private static readonly trackedSessionIds = new Set<string>();
     private static readonly trackedSessionsById = new Map<string, vscode.DebugSession>();
 
-    constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) {}
+    constructor(private readonly logger: vscode.LogOutputChannel, private readonly vscodeType: typeof vscode) {}
 
-    public static register(logger: RazorLogger, vscodeType: typeof vscode) {
+    public static register(logger: vscode.LogOutputChannel, vscodeType: typeof vscode) {
         const provider = new BlazorDebugConfigurationProvider(logger, vscodeType);
         const disposables: vscode.Disposable[] = [];
 
@@ -161,10 +160,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
                 }
             }
         } catch (error: any) {
-            this.logger.logError(
-                '[DEBUGGER] Error while getting information from launchSettings.json: ',
-                error as Error
-            );
+            this.logger.error('[DEBUGGER] Error while getting information from launchSettings.json: ', error as Error);
         }
 
         await this.launchBrowser(folder, configuration, inspectUri, url);
@@ -222,7 +218,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
                 });
             }
         } catch (error) {
-            this.logger.logError('[DEBUGGER] Error when launching application: ', error as Error);
+            this.logger.error('[DEBUGGER] Error when launching application: ', error as Error);
         }
     }
 
@@ -305,7 +301,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
              */
             await this.vscodeType.debug.startDebugging(folder, browser);
         } catch (error) {
-            this.logger.logError('[DEBUGGER] Error when launching browser debugger: ', error as Error);
+            this.logger.error('[DEBUGGER] Error when launching browser debugger: ', error as Error);
             const message = vscode.l10n.t(
                 'There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.'
             );
@@ -369,7 +365,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
                 terminate.dispose();
             });
         } catch (error) {
-            this.logger.logError('[DEBUGGER] Error when launching application: ', error as Error);
+            this.logger.error('[DEBUGGER] Error when launching application: ', error as Error);
         }
         return [inspectUriRet, portBrowserDebug];
     }

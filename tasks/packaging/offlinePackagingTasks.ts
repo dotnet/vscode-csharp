@@ -23,7 +23,6 @@ import {
     rootPath,
     devKitDependenciesDirectory,
     xamlToolsDirectory,
-    razorExtensionDirectory,
 } from '../projectPaths';
 import { getPackageJSON } from '../packageJson';
 import { createPackageAsync, generateVsixManifest } from './vsceTasks';
@@ -91,12 +90,6 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
         packageJsonName: 'xamlTools',
         getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: xamlToolsDirectory,
-    },
-    razorExtension: {
-        getPackageName: (_platformInfo) => 'Microsoft.VisualStudioCode.RazorExtension',
-        packageJsonName: 'razor',
-        getPackageContentPath: (_platformInfo) => 'content',
-        vsixOutputPath: razorExtensionDirectory,
     },
 };
 

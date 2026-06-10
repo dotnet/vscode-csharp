@@ -26,7 +26,6 @@ import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
-import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
@@ -44,14 +43,13 @@ export async function activateRoslynLanguageServer(
     context: vscode.ExtensionContext,
     platformInfo: PlatformInformation,
     optionObservable: Observable<void>,
-    outputChannel: vscode.LogOutputChannel,
+    outputChannel: ObservableLogOutputChannel,
     reporter: TelemetryReporter,
-    languageServerEvents: RoslynLanguageServerEvents,
-    razorLogger: RazorLogger
+    languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
     // Wrap in ObservableLogOutputChannel to enable capturing logs regardless of UI log level.
-    _channel = new ObservableLogOutputChannel(outputChannel);
+    _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     const traceOutputChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
     _traceChannel = new ObservableLogOutputChannel(traceOutputChannel);
@@ -82,11 +80,11 @@ export async function activateRoslynLanguageServer(
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel, reporter, razorLogger);
+    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel, reporter);
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
-    registerRazorEndpoints(context, languageServer, razorLogger, platformInfo);
+    registerRazorEndpoints(context, languageServer, _channel, platformInfo);
 
     registerUnitTestingCommands(context, languageServer);
 
@@ -176,12 +174,9 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
 }
 
 /**
- * Creates an activity log capture that collects logs from the C#, LSP trace, and Razor channels.
+ * Creates an activity log capture that collects logs from the C# and LSP trace channels.
  * Sets log levels to Trace for capture. Call dispose() to stop capturing and restore log levels.
  */
-export async function createCaptureActivityLogs(
-    languageServer: RoslynLanguageServer,
-    razorLogger: RazorLogger
-): Promise<ActivityLogCapture> {
-    return createActivityLogCapture(languageServer, _channel, _traceChannel, razorLogger);
+export async function createCaptureActivityLogs(languageServer: RoslynLanguageServer): Promise<ActivityLogCapture> {
+    return createActivityLogCapture(languageServer, _channel, _traceChannel);
 }

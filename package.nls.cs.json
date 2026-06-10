@@ -27,7 +27,6 @@
   "command.o.reanalyze.allProjects": "Analyzovat všechny projekty",
   "command.o.reanalyze.currentProject": "Analyzovat aktuální projekt",
   "command.o.restart": "Restartovat OmniSharp",
-  "command.razor.reportIssue": "Nahlásit problém s Razorem",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": "Zobrazit tipy pro implicitní vytvoření objektu",
   "configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": "Zobrazit nápovědy pro proměnné s odvozenými typy",
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Zobrazit tipy pro indexery",

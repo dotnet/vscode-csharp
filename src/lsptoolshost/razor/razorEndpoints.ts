@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import {
     ColorPresentationRequest,
@@ -20,17 +21,14 @@ import {
     HoverRequest,
     ImplementationRequest,
     Location,
-    LogMessageParams,
     MarkupKind,
     MarkupContent,
-    NotificationType,
     ReferencesRequest,
     RequestHandler,
     RequestType,
     SignatureHelp,
     SignatureHelpRequest,
 } from 'vscode-languageclient';
-import { RazorLogger } from '../../razor/src/razorLogger';
 import { HtmlUpdateParameters } from './htmlUpdateParameters';
 import { UriConverter } from '../utils/uriConverter';
 import { PlatformInformation } from '../../shared/platform';
@@ -41,7 +39,6 @@ import { convertRangeToSerializable } from '../../razor/src/rpc/serializableRang
 import { FoldingRangeHandler } from '../../razor/src/folding/foldingRangeHandler';
 import { CompletionHandler } from '../../razor/src/completion/completionHandler';
 import { FormattingHandler } from '../../razor/src/formatting/formattingHandler';
-import { ReportIssueCommand } from '../../razor/src/diagnostics/reportIssueCommand';
 import { HtmlDocument } from './htmlDocument';
 import { HtmlForwardedRequest } from './htmlForwardedRequest';
 import { BlazorDebugConfigurationProvider } from '../../razor/src/blazorDebug/blazorDebugConfigurationProvider';
@@ -51,17 +48,13 @@ import { RazorLanguageConfiguration } from '../../razor/src/razorLanguageConfigu
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
     roslynLanguageServer: RoslynLanguageServer,
-    razorLogger: RazorLogger,
+    outputChannel: ObservableLogOutputChannel,
     platformInfo: PlatformInformation
 ) {
-    const logNotificationType = new NotificationType<LogMessageParams>('razor/log');
-    roslynLanguageServer.registerOnNotificationWithParams(logNotificationType, (params) =>
-        razorLogger.log(params.message, params.type)
-    );
-
+    initializeRazorToStringOverrides();
     registerCohostingEndpoints();
 
-    context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
+    context.subscriptions.push(BlazorDebugConfigurationProvider.register(outputChannel, vscode));
     context.subscriptions.push(ShowGeneratedDocumentCommand.register(roslynLanguageServer));
 
     const languageConfiguration = new RazorLanguageConfiguration();
@@ -73,11 +66,9 @@ export function registerRazorEndpoints(
     // Local Functions
     //
     function registerCohostingEndpoints() {
-        const documentManager = new HtmlDocumentManager(platformInfo, roslynLanguageServer, razorLogger);
-        const reportIssueCommand = new ReportIssueCommand(vscode, documentManager, roslynLanguageServer, razorLogger);
+        const documentManager = new HtmlDocumentManager(platformInfo, roslynLanguageServer, outputChannel);
         const updateHtmlRequestType = new RequestType<HtmlUpdateParameters, void, void>('razor/updateHtml');
         context.subscriptions.push(documentManager.register());
-        context.subscriptions.push(reportIssueCommand.register());
 
         registerMethodHandler(updateHtmlRequestType, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
@@ -98,7 +89,7 @@ export function registerRazorEndpoints(
                 document.uri
             );
 
-            return FoldingRangeHandler.convertFoldingRanges(results, razorLogger);
+            return FoldingRangeHandler.convertFoldingRanges(results, outputChannel);
         });
 
         registerNullableCohostHandler(HoverRequest.type, documentManager, async (document, params) => {
@@ -201,7 +192,7 @@ export function registerRazorEndpoints(
         );
     }
 
-    // Helper method that registers a request handler, and logs errors to the Razor logger.
+    // Helper method that registers a request handler, and logs errors to the C# output channel.
     function registerCohostHandler<Params, Result, Error>(
         type: RequestType<Params, Result, Error>,
         documentManager: HtmlDocumentManager,
@@ -255,13 +246,31 @@ export function registerRazorEndpoints(
             try {
                 return await invocation(params, token);
             } catch (error) {
-                razorLogger.logError(`Error: ${error}`, error);
+                outputChannel.error(`Error: ${error}`, error);
                 throw error;
             }
         }) as RequestHandler<Params, Result, Error>;
 
         roslynLanguageServer.registerOnRequest(type, handler);
     }
+}
+
+let hasInitializedRazorToStringOverrides = false;
+
+function initializeRazorToStringOverrides() {
+    if (hasInitializedRazorToStringOverrides) {
+        return;
+    }
+
+    hasInitializedRazorToStringOverrides = true;
+
+    vscode.Range.prototype.toString = function () {
+        return `[${this.start}, ${this.end}]`;
+    };
+
+    vscode.Position.prototype.toString = function () {
+        return `${this.line}:${this.character}`;
+    };
 }
 
 function rewriteHover(hover: vscode.Hover): Hover | undefined {

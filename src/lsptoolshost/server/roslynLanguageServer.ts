@@ -562,7 +562,7 @@ export class RoslynLanguageServer {
                 await this.openSolution(vscode.Uri.file(defaultSolution));
             } else {
                 // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
-                const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
+                const solutionUris = await vscode.workspace.findFiles('**/*.slnx?', '**/node_modules/**', 2);
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
                         await this.openSolution(solutionUris[0]);
@@ -672,19 +672,6 @@ export class RoslynLanguageServer {
             args.push('--sourceGeneratorExecutionPreference', sourceGeneratorExecution);
         }
 
-        let razorComponentPath = '';
-        getComponentPaths('razorExtension', languageServerOptions, channel).forEach((extPath) => {
-            additionalExtensionPaths.push(extPath);
-            razorComponentPath = path.dirname(extPath);
-        });
-
-        args.push('--razorSourceGenerator', path.join(razorComponentPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
-
-        args.push(
-            '--razorDesignTimePath',
-            path.join(razorComponentPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
-        );
-
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         if (csharpDevKitExtensionExports) {
             _wasActivatedWithCSharpDevkit = true;
@@ -710,6 +697,7 @@ export class RoslynLanguageServer {
 
             // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
             // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
+            const razorComponentPath = path.dirname(serverPath);
             args.push(
                 '--csharpDesignTimePath',
                 path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')

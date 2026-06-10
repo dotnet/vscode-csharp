@@ -8,8 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import archiver from 'archiver';
 import { execChildProcess } from '../../common';
-import { Message, ObservableLogOutputChannel } from './observableLogOutputChannel';
-import { RazorLogger } from '../../razor/src/razorLogger';
+import { ObservableLogOutputChannel } from './observableLogOutputChannel';
 import { ActivityLogCapture, ActivityLogResult } from '../../csharpExtensionExports';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 
@@ -309,7 +308,6 @@ export async function createZipWithLogs(
     context: vscode.ExtensionContext,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
-    razorLogger: RazorLogger,
     activityLogs: ActivityLogResult | undefined,
     outputPath: string,
     traceFilePath?: string,
@@ -318,11 +316,9 @@ export async function createZipWithLogs(
     // Read existing log files from disk
     const csharpLogPath = vscode.Uri.joinPath(context.logUri, outputChannel.name + '.log');
     const traceLogPath = vscode.Uri.joinPath(context.logUri, traceChannel.name + '.log');
-    const razorLogPath = vscode.Uri.joinPath(context.logUri, razorLogger.outputChannel.name + '.log');
 
     const csharpLogContent = await readLogFileContent(csharpLogPath, outputChannel);
     const traceLogContent = await readLogFileContent(traceLogPath, outputChannel);
-    const razorLogContent = await readLogFileContent(razorLogPath, outputChannel);
 
     return new Promise<void>((resolve, reject) => {
         const output = fs.createWriteStream(outputPath);
@@ -381,15 +377,11 @@ export async function createZipWithLogs(
         if (traceLogContent) {
             archive.append(traceLogContent, { name: 'csharp-lsp-trace.log' });
         }
-        if (razorLogContent) {
-            archive.append(razorLogContent, { name: 'razor.log' });
-        }
 
         // Add captured activity logs to the archive
         if (activityLogs) {
             archive.append(activityLogs.csharpLog, { name: 'csharp.activity.log' });
             archive.append(activityLogs.lspTraceLog, { name: 'csharp-lsp-trace.activity.log' });
-            archive.append(activityLogs.razorLog, { name: 'razor.activity.log' });
         }
 
         // Add current settings to the archive
@@ -502,76 +494,28 @@ export function getDefaultSaveUri(filePrefix: string = 'csharp-logs'): vscode.Ur
 }
 
 /**
- * Observes log messages from an RazorLogger and collects them until disposed.
- */
-export class RazorLogObserver {
-    private readonly _messages: Message[] = [];
-    private readonly _subscription: vscode.Disposable;
-
-    constructor(logger: RazorLogger) {
-        this._subscription = logger.onLog((message) => {
-            this._messages.push({ message, timestamp: new Date() });
-        });
-    }
-
-    /**
-     * Returns the collected messages as a formatted string suitable for a log file.
-     */
-    public getLog(): string {
-        return RazorLogObserver.formatLogMessages(this._messages);
-    }
-
-    /**
-     * Disposes the subscription and stops observing log messages.
-     */
-    public dispose(): void {
-        this._subscription.dispose();
-    }
-
-    /**
-     * Formats an array of log messages into a string suitable for a log file.
-     */
-    public static formatLogMessages(messages: Message[]): string {
-        return messages
-            .map((msg) => {
-                const timestamp = msg.timestamp.toISOString();
-                return `[${timestamp}] ${msg.message}`;
-            })
-            .join('\n');
-    }
-}
-
-/**
- * Creates an activity log capture that collects logs from the C#, LSP trace, and Razor channels.
+ * Creates an activity log capture that collects logs from the C# and LSP trace channels.
  * Sets log levels to Trace for capture. Call dispose() to stop capturing and restore log levels.
  */
 export async function createActivityLogCapture(
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel,
-    razorLogger: RazorLogger
+    traceChannel: ObservableLogOutputChannel
 ): Promise<ActivityLogCapture> {
     const csharpLogObserver = outputChannel.observe();
     const traceLogObserver = traceChannel.observe();
-    const razorLogObserver = new RazorLogObserver(razorLogger);
 
     const restoreLogLevels = await languageServer.setLogLevelsForCapture();
-    razorLogger.traceEnabled = true;
-    razorLogger.debugEnabled = true;
-    razorLogger.infoEnabled = true;
 
     return {
         getActivityLogs: () => ({
             csharpLog: csharpLogObserver.getLog(),
             lspTraceLog: traceLogObserver.getLog(),
-            razorLog: razorLogObserver.getLog(),
         }),
         dispose: async () => {
             csharpLogObserver.dispose();
             traceLogObserver.dispose();
-            razorLogObserver.dispose();
             await restoreLogLevels();
-            await razorLogger.updateLogLevelAsync();
         },
     };
 }
@@ -610,9 +554,8 @@ export function generateReadmeContent(options: LogsToCollect, archivePath: strin
     lines.push('');
     lines.push('| File | Description |');
     lines.push('| --- | --- |');
-    lines.push('| `csharp.log` | C# extension output log |');
+    lines.push('| `csharp.log` | C# extension output log, including Razor messages |');
     lines.push('| `csharp-lsp-trace.log` | LSP trace log between VS Code and the Roslyn language server |');
-    lines.push('| `razor.log` | Razor language support log |');
     lines.push('| `csharp-settings.json` | Current C# extension settings at time of capture |');
     lines.push('');
 
@@ -625,9 +568,10 @@ export function generateReadmeContent(options: LogsToCollect, archivePath: strin
         lines.push('');
         lines.push('| File | Description |');
         lines.push('| --- | --- |');
-        lines.push('| `csharp.activity.log` | C# output captured during the recording session |');
+        lines.push(
+            '| `csharp.activity.log` | C# output captured during the recording session, including Razor messages |'
+        );
         lines.push('| `csharp-lsp-trace.activity.log` | LSP trace captured during the recording session |');
-        lines.push('| `razor.activity.log` | Razor output captured during the recording session |');
         lines.push('');
     }
 

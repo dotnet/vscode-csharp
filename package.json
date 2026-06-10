@@ -40,11 +40,10 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.8.0-1.26262.9",
+    "roslyn": "5.9.0-1.26303.15",
     "omniSharp": "1.39.14",
-    "razor": "10.4.0-preview.26262.9",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "18.7.11727.258"
+    "xamlTools": "18.9.11909.33"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -98,7 +97,6 @@
     "test:unit": "npm run compileDev && npx ts-node tasks/tests/testUnit.ts",
     "updateChangelog": "npx ts-node tasks/snap/updateChangelog.ts",
     "updatePackageDependencies": "npx ts-node tasks/debugger/updatePackageDependencies.ts",
-    "updateRazorVersion": "npx ts-node tasks/packaging/updateRazorVersion.ts",
     "updateRoslynVersion": "npx ts-node tasks/packaging/updateRoslynVersion.ts",
     "updateVersionForStableRelease": "npx ts-node tasks/snap/updateVersionForStableRelease.ts",
     "verifyVsix": "npx ts-node tasks/signing/verifyVsix.ts",
@@ -160,7 +158,7 @@
     "mock-http-server": "1.4.2",
     "nerdbank-gitversioning": "^3.6.79-alpha",
     "prettier": "2.8.8",
-    "tmp": "0.2.4",
+    "tmp": "0.2.6",
     "ts-jest": "^29.1.1",
     "ts-node": "9.1.1",
     "typescript": "5.6.2",
@@ -1480,10 +1478,6 @@
               "roslynCopilot": {
                 "description": "%configuration.dotnet.server.componentPaths.roslynCopilot%",
                 "type": "string"
-              },
-              "razorExtension": {
-                "description": "%configuration.dotnet.server.componentPaths.razorExtension%",
-                "type": "string"
               }
             },
             "default": {}
@@ -2001,12 +1995,6 @@
       {
         "command": "extension.showRazorHtmlWindow",
         "title": "%command.extension.showRazorHtmlWindow%",
-        "category": "Razor",
-        "enablement": "isWorkspaceTrusted"
-      },
-      {
-        "command": "razor.reportIssue",
-        "title": "%command.razor.reportIssue%",
         "category": "Razor",
         "enablement": "isWorkspaceTrusted"
       },
@@ -5710,10 +5698,6 @@
         },
         {
           "command": "extension.showRazorHtmlWindow",
-          "when": "resourceLangId == aspnetcorerazor"
-        },
-        {
-          "command": "razor.reportIssue",
           "when": "resourceLangId == aspnetcorerazor"
         }
       ],

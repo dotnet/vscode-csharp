@@ -91,7 +91,11 @@ export async function runJestIntegrationTest(
     const logName = testFile ? `${suiteName}_${path.basename(testFile)}` : suiteName;
 
     // Set VSCode to produce logs in a unique directory for this test run.
-    const userDataDir = path.join(outPath, 'userData', logName);
+    //
+    // Since VSCode also uses this folder for creating sock files for IPC
+    // and those handles are limited to 103 characters, we will trim the
+    // path to 85 characters.
+    const userDataDir = path.join(outPath, 'userData', logName).substring(0, 85);
 
     // Test assets are always in a testAssets folder inside the integration test folder.
     const assetsPath = path.join(rootPath, testFolderName, 'testAssets');

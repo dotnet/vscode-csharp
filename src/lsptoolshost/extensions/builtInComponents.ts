@@ -29,11 +29,6 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
             'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll',
         ],
     },
-    razorExtension: {
-        defaultFolderName: '.razorExtension',
-        optionName: 'razorExtension',
-        componentDllPaths: ['Microsoft.VisualStudioCode.RazorExtension.dll'],
-    },
     roslynCopilot: {
         defaultFolderName: '.roslynCopilot',
         optionName: 'roslynCopilot',
