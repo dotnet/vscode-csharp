@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.144.x
+
 # 2.143.x
 * Update Roslyn to 5.9.0-1.26303.15 (PR: [#9404](https://github.com/dotnet/vscode-csharp/pull/9404))
   * Fix Razor diagnostics exception when HTML diagnostic range exceeds SourceText bounds (PR: [#84002](https://github.com/dotnet/roslyn/pull/84002))
