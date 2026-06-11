@@ -20,7 +20,8 @@
     "Debuggers",
     "Programming Languages",
     "Linters",
-    "Snippets"
+    "Snippets",
+    "Formatters"
   ],
   "keywords": [
     "multi-root ready",
