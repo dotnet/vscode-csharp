@@ -6,6 +6,15 @@
 # 2.144.x
 
 # 2.143.x
+* Revert "Update XamlTools to v18.9.11902.238 (#9382)" (PR: [#9391](https://github.com/dotnet/vscode-csharp/pull/9391))
+* Update XamlTools to v18.9.11902.238 (PR: [#9382](https://github.com/dotnet/vscode-csharp/pull/9382))
+* Add compiler side fix to the changelog (PR: [#9374](https://github.com/dotnet/vscode-csharp/pull/9374))
+* Bump multiparty from 4.2.1 to 4.3.0 (PR: [#9323](https://github.com/dotnet/vscode-csharp/pull/9323))
+* Update release notes skill (PR: [#9324](https://github.com/dotnet/vscode-csharp/pull/9324))
+* Bump qs and body-parser (PR: [#9345](https://github.com/dotnet/vscode-csharp/pull/9345))
+* Bump @nevware21/ts-utils from 0.10.1 to 0.14.0 (PR: [#9340](https://github.com/dotnet/vscode-csharp/pull/9340))
+* Bump tmp from 0.2.4 to 0.2.6 (PR: [#9356](https://github.com/dotnet/vscode-csharp/pull/9356))
+* Update roslyn to 5.8.0-1.26273.3 (PR: [#9348](https://github.com/dotnet/vscode-csharp/pull/9348))
 * Update Roslyn to 5.9.0-1.26303.15 (PR: [#9404](https://github.com/dotnet/vscode-csharp/pull/9404))
   * Fix Razor diagnostics exception when HTML diagnostic range exceeds SourceText bounds (PR: [#84002](https://github.com/dotnet/roslyn/pull/84002))
   * Fix rename in VS Code from a C# document (PR: [#83971](https://github.com/dotnet/roslyn/pull/83971))
