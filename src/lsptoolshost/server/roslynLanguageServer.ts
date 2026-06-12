@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import {
     CancellationToken,
     LanguageClientOptions,
@@ -63,6 +64,21 @@ export class RoslynLanguageServer {
      * The timeout for stopping the language server (in ms).
      */
     private static _stopTimeout = 10000;
+
+    /**
+     * The npm component name under which C# Dev Kit exposes the source-based test discovery
+     * Roslyn-host assembly in its `components` export map. Must match the package name in
+     * vs-green's server/src/CSDevKit.SourceTestDiscovery/package.json.
+     */
+    private static readonly sourceTestDiscoveryComponentName = '@microsoft/visualstudio-source-test-discovery';
+
+    /**
+     * The assembly that implements the source-based test discovery brokered service, loaded into the
+     * Roslyn language server via `--extension`. Must match the AssemblyName produced by vs-green's
+     * CSDevKit.SourceTestDiscovery project.
+     */
+    private static readonly sourceTestDiscoveryComponentDll =
+        'Microsoft.VisualStudio.CSharpDevKit.SourceTestDiscovery.dll';
 
     /**
      * The process Id of the currently running language server process.
@@ -681,7 +697,11 @@ export class RoslynLanguageServer {
             // Set command enablement as soon as we know devkit is available.
             await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'RoslynDevKit');
 
-            const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths, channel);
+            const csharpDevKitArgs = this.getCSharpDevKitExportArgs(
+                additionalExtensionPaths,
+                channel,
+                csharpDevKitExtensionExports
+            );
             args = args.concat(csharpDevKitArgs);
 
             await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevKitExtensionExports);
@@ -908,7 +928,8 @@ export class RoslynLanguageServer {
 
     private static getCSharpDevKitExportArgs(
         additionalExtensionPaths: string[],
-        channel: vscode.LogOutputChannel
+        channel: vscode.LogOutputChannel,
+        csharpDevKitExtensionExports: CSharpDevKitExports
     ): string[] {
         const args: string[] = [];
 
@@ -925,6 +946,35 @@ export class RoslynLanguageServer {
         if (languageServerOptions.enableXamlTools) {
             getComponentPaths('xamlTools', languageServerOptions, channel).forEach((path) =>
                 additionalExtensionPaths.push(path)
+            );
+        }
+
+        // Include the C# Dev Kit source-based test discovery component, if present. Unlike the other
+        // components above (which ship inside this extension), this one is built and shipped by C# Dev
+        // Kit itself and surfaced to us via its `components` export map. We load the assembly directly
+        // from the C# Dev Kit deployment folder, so there is no separate package to acquire here.
+        //
+        // It is optional: C# Dev Kit builds that predate this component won't have the map entry, in
+        // which case we skip it. The consumer of the discovery service is the C# Dev Kit server itself,
+        // so a marketplace version mismatch is benign — we only forward a path string to Roslyn.
+        const testDiscoveryComponentPath =
+            csharpDevKitExtensionExports.components?.[RoslynLanguageServer.sourceTestDiscoveryComponentName];
+        if (testDiscoveryComponentPath) {
+            const testDiscoveryDllPath = path.join(
+                testDiscoveryComponentPath,
+                RoslynLanguageServer.sourceTestDiscoveryComponentDll
+            );
+            if (fs.existsSync(testDiscoveryDllPath)) {
+                channel.info(`Including source-based test discovery component: ${testDiscoveryDllPath}`);
+                additionalExtensionPaths.push(testDiscoveryDllPath);
+            } else {
+                channel.warn(
+                    `C# Dev Kit reported a source-based test discovery component at '${testDiscoveryComponentPath}', but '${testDiscoveryDllPath}' was not found.`
+                );
+            }
+        } else {
+            channel.info(
+                'Source-based test discovery component was not provided by C# Dev Kit; skipping (this is expected on older C# Dev Kit versions).'
             );
         }
 
