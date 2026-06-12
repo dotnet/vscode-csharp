@@ -163,7 +163,9 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             this.logger.error('[DEBUGGER] Error while getting information from launchSettings.json: ', error as Error);
         }
 
-        await this.launchBrowser(folder, configuration, inspectUri, url);
+        if (BlazorDebugConfigurationProvider.shouldLaunchBrowser(configuration)) {
+            await this.launchBrowser(folder, configuration, inspectUri, url);
+        }
 
         /**
          * If `resolveDebugConfiguration` returns undefined, then the debugger
@@ -222,6 +224,10 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         }
     }
 
+    private static shouldLaunchBrowser(configuration: vscode.DebugConfiguration): boolean {
+        return configuration.launchBrowser !== false;
+    }
+
     private async launchBrowser(
         folder: vscode.WorkspaceFolder | undefined,
         configuration: vscode.DebugConfiguration,
@@ -229,12 +235,8 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         url: string
     ) {
         const originalInspectUri = inspectUri;
-        let folderPath = configuration.cwd;
-        if (folder && folderPath) {
-            folderPath = folderPath.replace('${workspaceFolder}', fileURLToPath(folder.uri.toString()));
-            folderPath = folderPath.replaceAll(/[\\/]/g, path.sep);
-        }
-        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg(folderPath ? folderPath : '');
+        const projectPath = BlazorDebugConfigurationProvider.resolveProjectPath(folder, configuration);
+        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg(projectPath);
         let portBrowserDebug = -1;
         if (useVSDbg) {
             [inspectUri, portBrowserDebug] = await this.attachToAppOnBrowser(folder, configuration, url);
@@ -315,6 +317,31 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             const ignoreButton = vscode.l10n.t('Ignore');
             showErrorMessage(this.vscodeType, message, viewDebugDocsButton, ignoreButton);
         }
+    }
+
+    private static resolveProjectPath(
+        folder: vscode.WorkspaceFolder | undefined,
+        configuration: vscode.DebugConfiguration
+    ): string {
+        const configuredProjectPath = configuration.projectPath as string | undefined;
+        if (configuredProjectPath) {
+            return BlazorDebugConfigurationProvider.resolveWorkspaceFolderToken(folder, configuredProjectPath);
+        }
+
+        const cwd = configuration.cwd as string | undefined;
+        if (cwd) {
+            return BlazorDebugConfigurationProvider.resolveWorkspaceFolderToken(folder, cwd);
+        }
+
+        return '';
+    }
+
+    private static resolveWorkspaceFolderToken(folder: vscode.WorkspaceFolder | undefined, value: string): string {
+        if (folder) {
+            value = value.replace('${workspaceFolder}', fileURLToPath(folder.uri.toString()));
+        }
+
+        return value.replaceAll(/[\\/]/g, path.sep);
     }
 
     private async attachToAppOnBrowser(
