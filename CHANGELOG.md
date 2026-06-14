@@ -4,6 +4,26 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.144.x
+* Update Roslyn to 5.9.0-1.26314.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Records: Avoid synthesized non-virtual calls to abstract methods (PR: [#84101](https://github.com/dotnet/roslyn/pull/84101))
+  * Reduce allocation churn in tag helper context discovery pools (PR: [#84123](https://github.com/dotnet/roslyn/pull/84123))
+  * Fix multiline lambda formatting in non-directive attributes (PR: [#84121](https://github.com/dotnet/roslyn/pull/84121))
+  * Strengthen NullableWalker.IsSlotMember against NullReferenceException (PR: [#84071](https://github.com/dotnet/roslyn/pull/84071))
+  * Allow disposable pooled objects in compiler (PR: [#84082](https://github.com/dotnet/roslyn/pull/84082))
+  * Fix file watching leaks for shared server (PR: [#84049](https://github.com/dotnet/roslyn/pull/84049))
+  * Fix Razor allowed child validation in code blocks (PR: [#84116](https://github.com/dotnet/roslyn/pull/84116))
+  * Add the server name to the LSP initialization result (PR: [#84109](https://github.com/dotnet/roslyn/pull/84109))
+  * Fix signature help selecting wrong overload for multiple type parameter extension methods (PR: [#84089](https://github.com/dotnet/roslyn/pull/84089))
+  * Fix design-time-builds from out-of-proc nodes returning empty data (PR: [#84096](https://github.com/dotnet/roslyn/pull/84096))
+  * Fix ArrayBuilder<SyntaxNode> pool leak in ComputeDeclarationAnalysisData (PR: [#84046](https://github.com/dotnet/roslyn/pull/84046))
+  * Fix mishandling of large embedded C# literals (PR: [#84043](https://github.com/dotnet/roslyn/pull/84043))
+  * Unsafe evolution: propagate unsafe context to constructor initializer (PR: [#83969](https://github.com/dotnet/roslyn/pull/83969))
+  * Add baseline availability status to HTML completion tooltips (PR: [#84054](https://github.com/dotnet/roslyn/pull/84054))
+  * Fix Razor breakpoint placement (PR: [#84029](https://github.com/dotnet/roslyn/pull/84029))
+  * Use xsd:anyURI type to detect external completion instead of vs:preferredextensions (PR: [#84033](https://github.com/dotnet/roslyn/pull/84033))
+  * SourceMemberMethodSymbol.IsMetadataVirtual should force complete declaring type when queried by a different module (PR: [#84013](https://github.com/dotnet/roslyn/pull/84013))
+  * Free pooled objects across cancellation exceptions (PR: [#83875](https://github.com/dotnet/roslyn/pull/83875))
+  * Enable parallel builds in the LSP when loading projects (PR: [#83982](https://github.com/dotnet/roslyn/pull/83982))
 
 # 2.143.x
 * Update Roslyn to 5.9.0-1.26303.15 (PR: [#9404](https://github.com/dotnet/vscode-csharp/pull/9404))
