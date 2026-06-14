@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.144.x
-* Update Roslyn to 5.9.0-1.26314.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.9.0-1.26314.1 (PR: [#9430](https://github.com/dotnet/vscode-csharp/pull/9430))
   * Records: Avoid synthesized non-virtual calls to abstract methods (PR: [#84101](https://github.com/dotnet/roslyn/pull/84101))
   * Reduce allocation churn in tag helper context discovery pools (PR: [#84123](https://github.com/dotnet/roslyn/pull/84123))
   * Fix multiline lambda formatting in non-directive attributes (PR: [#84121](https://github.com/dotnet/roslyn/pull/84121))
