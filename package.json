@@ -44,7 +44,8 @@
     "roslyn": "5.9.0-1.26303.15",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "18.9.11909.33"
+    "xamlTools": "18.9.11909.33",
+    "testDiscovery": "0.1.0-dev"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1478,6 +1479,10 @@
               },
               "roslynCopilot": {
                 "description": "%configuration.dotnet.server.componentPaths.roslynCopilot%",
+                "type": "string"
+              },
+              "testDiscovery": {
+                "description": "%configuration.dotnet.server.componentPaths.testDiscovery%",
                 "type": "string"
               }
             },
