@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
+import { spawnSync } from 'child_process';
 import minimist from 'minimist';
 import { Octokit } from '@octokit/rest';
 import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from '../packaging/offlinePackagingTasks';
@@ -34,8 +35,8 @@ async function createTagsRoslyn(): Promise<void> {
         options,
         'dotnet',
         'roslyn',
-        async (releaseCommit: string, githubPAT: string) =>
-            getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit, githubPAT),
+        async (releaseCommit: string, _githubPAT: string) =>
+            getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -183,32 +184,9 @@ function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
 }
 
-async function getCommitFromNugetAsync(
-    packageInfo: NugetPackageInfo,
-    releaseCommit: string,
-    githubPAT: string
-): Promise<string | null> {
-    // Fetch package.json from dotnet/vscode-csharp GitHub repo at the specific commit
-    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/vscode-csharp/${releaseCommit}/package.json`;
-
-    console.log(`Fetching package.json from ${packageJsonUrl}`);
-
-    let packageJson: { defaults?: { [key: string]: string } };
-    try {
-        const response = await fetch(packageJsonUrl, {
-            headers: {
-                Authorization: `token ${githubPAT}`,
-                Accept: 'application/vnd.github.v3.raw',
-            },
-        });
-        if (!response.ok) {
-            logError(`Failed to fetch package.json from ${packageJsonUrl}: ${response.status} ${response.statusText}`);
-            return null;
-        }
-        const packageJsonString = await response.text();
-        packageJson = JSON.parse(packageJsonString);
-    } catch (error) {
-        logError(`Error fetching package.json from GitHub: ${error}`);
+async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, releaseCommit: string): Promise<string | null> {
+    const packageJson = getPackageJsonFromReleaseCommit(releaseCommit);
+    if (!packageJson) {
         return null;
     }
 
@@ -257,4 +235,40 @@ async function getCommitFromNugetAsync(
     const commitNumber = results[1];
     console.log(`commitNumber is ${commitNumber}`);
     return commitNumber;
+}
+
+function getPackageJsonFromReleaseCommit(releaseCommit: string): { defaults?: { [key: string]: string } } | null {
+    const packageJsonPath = 'package.json';
+    const normalizedReleaseCommit = releaseCommit.trim().toLowerCase();
+
+    try {
+        const headCommit = getGitOutput(['rev-parse', 'HEAD']);
+        if (headCommit?.toLowerCase() === normalizedReleaseCommit) {
+            console.log(`Reading package.json from checked-out commit ${releaseCommit}`);
+            return JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        }
+
+        console.log(`Reading package.json from local git object ${releaseCommit}:${packageJsonPath}`);
+        const packageJsonString = getGitOutput(['show', `${releaseCommit}:${packageJsonPath}`]);
+        if (!packageJsonString) {
+            logError(
+                `Failed to read package.json from local git commit ${releaseCommit}. Ensure the release commit is fetched or checked out.`
+            );
+            return null;
+        }
+
+        return JSON.parse(packageJsonString);
+    } catch (error) {
+        logError(`Error reading package.json for commit ${releaseCommit}: ${error}`);
+        return null;
+    }
+}
+
+function getGitOutput(args: string[]): string | null {
+    const result = spawnSync('git', args, { encoding: 'utf8' });
+    if (result.status !== 0) {
+        return null;
+    }
+
+    return result.stdout.trim();
 }
