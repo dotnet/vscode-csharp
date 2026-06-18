@@ -266,7 +266,19 @@ function getPackageJsonFromReleaseCommit(releaseCommit: string): { defaults?: { 
 
 function getGitOutput(args: string[]): string | null {
     const result = spawnSync('git', args, { encoding: 'utf8' });
+    const gitCommand = `git ${args.join(' ')}`;
+    const cwd = process.cwd();
+
+    if (result.error) {
+        logError(`Failed to run '${gitCommand}' from '${cwd}': ${result.error.message}`);
+        return null;
+    }
+
     if (result.status !== 0) {
+        const stderr = result.stderr.trim();
+        const stdout = result.stdout.trim();
+        const failureDetails = stderr || stdout || `Exited with status ${result.status}.`;
+        logError(`Command '${gitCommand}' failed from '${cwd}': ${failureDetails}`);
         return null;
     }
 
