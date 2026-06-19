@@ -11,6 +11,7 @@ import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from '..
 import { PlatformInformation } from '../../src/shared/platform';
 import path from 'path';
 import { runTask } from '../runTask';
+import { rootPath } from '../projectPaths';
 
 runTask(createTags);
 
@@ -239,15 +240,12 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, releaseCom
 
 function getPackageJsonFromReleaseCommit(releaseCommit: string): { defaults?: { [key: string]: string } } | null {
     const packageJsonPath = 'package.json';
-    const normalizedReleaseCommit = releaseCommit.trim().toLowerCase();
 
     try {
-        const headCommit = getGitOutput(['rev-parse', 'HEAD']);
-        if (headCommit?.toLowerCase() === normalizedReleaseCommit) {
-            console.log(`Reading package.json from checked-out commit ${releaseCommit}`);
-            return JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-        }
-
+        // Read the committed package.json at the release commit directly from the local git object
+        // database. The release pipeline fetches full history (fetchDepth: 0) and checks out the
+        // release commit, so the object is always present. Reading the committed blob (rather than the
+        // working tree) ensures the tag references exactly what was released.
         console.log(`Reading package.json from local git object ${releaseCommit}:${packageJsonPath}`);
         const packageJsonString = getGitOutput(['show', `${releaseCommit}:${packageJsonPath}`]);
         if (!packageJsonString) {
@@ -265,9 +263,9 @@ function getPackageJsonFromReleaseCommit(releaseCommit: string): { defaults?: { 
 }
 
 function getGitOutput(args: string[]): string | null {
-    const result = spawnSync('git', args, { encoding: 'utf8' });
     const gitCommand = `git ${args.join(' ')}`;
-    const cwd = process.cwd();
+    const cwd = rootPath;
+    const result = spawnSync('git', args, { encoding: 'utf8', cwd });
 
     if (result.error) {
         logError(`Failed to run '${gitCommand}' from '${cwd}': ${result.error.message}`);

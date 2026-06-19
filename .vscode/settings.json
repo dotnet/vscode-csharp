@@ -22,7 +22,4 @@
     "eslint.lintTask.enable": true,
     "dotnet.defaultSolution": "disable",
     "jest.runMode": "on-demand",
-    "chat.tools.terminal.autoApprove": {
-        "npx eslint": true
-    },
 }
