@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.145.x
-* Update Roslyn to 5.9.0-1.26318.9 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.9.0-1.26318.9 (PR: [#9454](https://github.com/dotnet/vscode-csharp/pull/9454))
   * Use dedicated BindValueKind for left hand side of null coalescing assignment operator (PR: [#84172](https://github.com/dotnet/roslyn/pull/84172))
   * File-based apps: force using a single msbuild node for design-time builds (PR: [#84183](https://github.com/dotnet/roslyn/pull/84183))
   * Fix Razor source generator crash on misplaced preprocessor directive in disabled text (PR: [#84159](https://github.com/dotnet/roslyn/pull/84159))
