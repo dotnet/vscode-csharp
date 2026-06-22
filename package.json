@@ -41,7 +41,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.9.0-1.26303.15",
+    "roslyn": "5.9.0-1.26318.9",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.9.11909.33",
@@ -145,7 +145,7 @@
     "@vscode/l10n-dev": "^0.0.35",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "3.7.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-header": "^3.1.1",
@@ -160,7 +160,7 @@
     "mock-http-server": "1.4.2",
     "nerdbank-gitversioning": "^3.6.79-alpha",
     "prettier": "2.8.8",
-    "tmp": "0.2.6",
+    "tmp": "0.2.7",
     "ts-jest": "^29.1.1",
     "ts-node": "9.1.1",
     "typescript": "5.6.2",
@@ -4651,6 +4651,10 @@
                 "description": "The directory of the Blazor WebAssembly app, defaults to the workspace folder.",
                 "default": "${workspaceFolder}"
               },
+              "projectPath": {
+                "type": "string",
+                "description": "The path to the Blazor WebAssembly .csproj file. Used to determine target framework and managed WebAssembly debugging support."
+              },
               "url": {
                 "type": "string",
                 "description": "The URL of the application",
@@ -4691,6 +4695,11 @@
                 "type": "number",
                 "default": 30000,
                 "description": "Retry for this number of milliseconds to connect to browser."
+              },
+              "launchBrowser": {
+                "type": "boolean",
+                "description": "Controls whether the browser and WebAssembly debug sessions are launched. If false, only the Blazor WebAssembly app process is launched.",
+                "default": true
               },
               "program": {
                 "type": "string",
@@ -4792,6 +4801,10 @@
           },
           "attach": {
             "properties": {
+              "projectPath": {
+                "type": "string",
+                "description": "The path to the Blazor WebAssembly .csproj file. Used to determine target framework and managed WebAssembly debugging support."
+              },
               "url": {
                 "type": "string",
                 "description": "The URL of the application",
@@ -4832,6 +4845,18 @@
                 "type": "number",
                 "default": 30000,
                 "description": "Retry for this number of milliseconds to connect to browser."
+              },
+              "browserConfig": {
+                "description": "Options passed to the underlying browser debugger.",
+                "type": "object",
+                "required": [],
+                "default": {}
+              },
+              "dotNetConfig": {
+                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/dotnet/vscode-csharp/blob/main/debugger.md.",
+                "type": "object",
+                "required": [],
+                "default": {}
               }
             }
           }

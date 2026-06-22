@@ -3,7 +3,20 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.145.x
+* Update Roslyn to 5.9.0-1.26318.9 (PR: [#9454](https://github.com/dotnet/vscode-csharp/pull/9454))
+  * File-based apps: force using a single msbuild node for design-time builds (PR: [#84183](https://github.com/dotnet/roslyn/pull/84183))
+  * Fix Razor source generator crash on misplaced preprocessor directive in disabled text (PR: [#84159](https://github.com/dotnet/roslyn/pull/84159))
+  * Fix CodeLens missing references to extension block methods (PR: [#84157](https://github.com/dotnet/roslyn/pull/84157))
+  * Log LSP server info at startup (PR: [#84168](https://github.com/dotnet/roslyn/pull/84168))
+  * Don't assume documents being saved are documents (PR: [#84146](https://github.com/dotnet/roslyn/pull/84146))
+  * Don't warn about no additional files if the project is still loading (PR: [#84147](https://github.com/dotnet/roslyn/pull/84147))
+
 # 2.144.x
+* Update Roslyn to 5.9.0-1.26314.1 (PR: [#9430](https://github.com/dotnet/vscode-csharp/pull/9430))
+  * Fix multiline lambda formatting in non-directive attributes (PR: [#84121](https://github.com/dotnet/roslyn/pull/84121))
+  * Fix signature help selecting wrong overload for multiple type parameter extension methods (PR: [#84089](https://github.com/dotnet/roslyn/pull/84089))
+  * Enable parallel builds in the LSP when loading projects (PR: [#83982](https://github.com/dotnet/roslyn/pull/83982))
 
 # 2.143.x
 * Update Roslyn to 5.9.0-1.26303.15 (PR: [#9404](https://github.com/dotnet/vscode-csharp/pull/9404))
