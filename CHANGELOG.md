@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.145.x
+* Update Roslyn to 5.9.0-1.26319.6 (PR: [#9457](https://github.com/dotnet/vscode-csharp/pull/9457))
+  * Fixes Hot reload logging in DevKit (PR: [#84179](https://github.com/dotnet/roslyn/pull/84179))
+  * Cap Razor completion lists at 1000 items to avoid pooling issues with large JsonDocument byte[] (PR: [#84194](https://github.com/dotnet/roslyn/pull/84194))
+  * Include nullable annotations in quick-info tooltip for delegates (PR: [#84195](https://github.com/dotnet/roslyn/pull/84195))
 * Update Roslyn to 5.9.0-1.26318.9 (PR: [#9454](https://github.com/dotnet/vscode-csharp/pull/9454))
   * File-based apps: force using a single msbuild node for design-time builds (PR: [#84183](https://github.com/dotnet/roslyn/pull/84183))
   * Fix Razor source generator crash on misplaced preprocessor directive in disabled text (PR: [#84159](https://github.com/dotnet/roslyn/pull/84159))
