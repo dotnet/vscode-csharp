@@ -41,7 +41,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.9.0-1.26314.1",
+    "roslyn": "5.9.0-1.26319.6",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.9.11909.33"
@@ -4646,6 +4646,10 @@
                 "description": "The directory of the Blazor WebAssembly app, defaults to the workspace folder.",
                 "default": "${workspaceFolder}"
               },
+              "projectPath": {
+                "type": "string",
+                "description": "The path to the Blazor WebAssembly .csproj file. Used to determine target framework and managed WebAssembly debugging support."
+              },
               "url": {
                 "type": "string",
                 "description": "The URL of the application",
@@ -4686,6 +4690,11 @@
                 "type": "number",
                 "default": 30000,
                 "description": "Retry for this number of milliseconds to connect to browser."
+              },
+              "launchBrowser": {
+                "type": "boolean",
+                "description": "Controls whether the browser and WebAssembly debug sessions are launched. If false, only the Blazor WebAssembly app process is launched.",
+                "default": true
               },
               "program": {
                 "type": "string",
@@ -4787,6 +4796,10 @@
           },
           "attach": {
             "properties": {
+              "projectPath": {
+                "type": "string",
+                "description": "The path to the Blazor WebAssembly .csproj file. Used to determine target framework and managed WebAssembly debugging support."
+              },
               "url": {
                 "type": "string",
                 "description": "The URL of the application",
@@ -4827,6 +4840,18 @@
                 "type": "number",
                 "default": 30000,
                 "description": "Retry for this number of milliseconds to connect to browser."
+              },
+              "browserConfig": {
+                "description": "Options passed to the underlying browser debugger.",
+                "type": "object",
+                "required": [],
+                "default": {}
+              },
+              "dotNetConfig": {
+                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/dotnet/vscode-csharp/blob/main/debugger.md.",
+                "type": "object",
+                "required": [],
+                "default": {}
               }
             }
           }
