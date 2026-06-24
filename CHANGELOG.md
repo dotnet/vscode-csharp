@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.151.x
+
 # 2.145.x
 * Update Roslyn to 5.9.0-1.26319.6 (PR: [#9457](https://github.com/dotnet/vscode-csharp/pull/9457))
   * Fixes Hot reload logging in DevKit (PR: [#84179](https://github.com/dotnet/roslyn/pull/84179))
