@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WorkspaceConfiguration, workspace } from 'vscode';
+import { ConfigurationScope, WorkspaceConfiguration, workspace } from 'vscode';
 
 // By default we don't want to provide any fall back value for code style options.
 // These values are exceptions because they already exist in vscode's configuration.
@@ -18,13 +18,16 @@ const universalEditorConfigOptionsToReaderMap: Map<
     ['codeStyle.formatting.newLine.insertFinalNewline', readInsertFinalNewline],
 ]);
 
-export function readEquivalentVsCodeConfiguration(serverSideOptionName: string): string | undefined {
+export function readEquivalentVsCodeConfiguration(
+    serverSideOptionName: string,
+    scope: ConfigurationScope = { languageId: 'csharp' }
+): string | undefined {
     if (!universalEditorConfigOptionsToReaderMap.has(serverSideOptionName)) {
         return undefined;
     }
 
     const readerFunction = universalEditorConfigOptionsToReaderMap.get(serverSideOptionName)!;
-    const config = workspace.getConfiguration('', { languageId: 'csharp' });
+    const config = workspace.getConfiguration('', scope);
     return readerFunction(config);
 }
 
