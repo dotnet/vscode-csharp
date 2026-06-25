@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "逆コンパイラの使用契約条件を表示する",
   "command.dotnet.generateAssets.currentProject": "ビルド用およびデバッグ用の資産を生成する",
   "command.dotnet.openSolution": "ソリューションを開く",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "言語サーバーを再起動する",
   "command.dotnet.restore.all": "すべてのプロジェクトを復元する",
   "command.dotnet.restore.project": "プロジェクトの復元",

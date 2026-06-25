@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "Vereinbarung zu den Decompilerbedingungen anzeigen",
   "command.dotnet.generateAssets.currentProject": "Ressourcen für Build und Debuggen generieren",
   "command.dotnet.openSolution": "Projektmappe öffnen",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "Sprachserver neu starten",
   "command.dotnet.restore.all": "Alle Projekte wiederherstellen",
   "command.dotnet.restore.project": "Projekt wiederherstellen",
