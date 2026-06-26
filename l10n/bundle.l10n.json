@@ -207,7 +207,7 @@
   "Recording trace... Click Cancel to stop and save.": "Recording trace... Click Cancel to stop and save.",
   "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
   "Collecting C# Logs": "Collecting C# Logs",
-  "Only C# (.cs) files can be converted to a project.": "Only C# (.cs) files can be converted to a project.",
+  "Only C# files can be converted to a project.": "Only C# files can be converted to a project.",
   "No C# files found in the workspace.": "No C# files found in the workspace.",
   "Select a file-based C# app to convert to a project": "Select a file-based C# app to convert to a project",
   "dotnet project convert": "dotnet project convert",
