@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "顯示解編程式條款合約",
   "command.dotnet.generateAssets.currentProject": "產生用於建置和偵錯的資產",
   "command.dotnet.openSolution": "開啟方案",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "重新啟動語言伺服器",
   "command.dotnet.restore.all": "還原所有專案",
   "command.dotnet.restore.project": "還原專案",
