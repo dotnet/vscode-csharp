@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.151.x
-* Update Roslyn to 5.9.0-1.26326.7 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.9.0-1.26326.7 (PR: [#9480](https://github.com/dotnet/vscode-csharp/pull/9480))
   * Relax rules for completion of `fixed` keyword (PR: [#84133](https://github.com/dotnet/roslyn/pull/84133))
   * Unsafe evolution: extend compat mode to legacy callers (PR: [#83660](https://github.com/dotnet/roslyn/pull/83660))
   * Stop propagating union type information as soon as output value is explicitly narrowed to a specific type (PR: [#84248](https://github.com/dotnet/roslyn/pull/84248))
