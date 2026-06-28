@@ -4,6 +4,25 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.151.x
+* Update Roslyn to 5.9.0-1.26326.7 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Relax rules for completion of `fixed` keyword (PR: [#84133](https://github.com/dotnet/roslyn/pull/84133))
+  * Unsafe evolution: extend compat mode to legacy callers (PR: [#83660](https://github.com/dotnet/roslyn/pull/83660))
+  * Stop propagating union type information as soon as output value is explicitly narrowed to a specific type (PR: [#84248](https://github.com/dotnet/roslyn/pull/84248))
+  * Update RuntimeAsync error message (PR: [#84263](https://github.com/dotnet/roslyn/pull/84263))
+  * [labeled break/continue] Analyzer + fixer to prefer labeled break/continue over goto/flag workarounds (PR: [#84170](https://github.com/dotnet/roslyn/pull/84170))
+  * Add warning to 'make async Task' fixer regarding delegate return type change (PR: [#84142](https://github.com/dotnet/roslyn/pull/84142))
+  * Adjust decision Dag reachability based on nullable analysis when reporting unhandled `null` values in a switch expression (PR: [#84207](https://github.com/dotnet/roslyn/pull/84207))
+  * [labeled break/continue] Resolve label even when the target loop/switch is missing (experimental) (PR: [#83503](https://github.com/dotnet/roslyn/pull/83503))
+  * Use real MethodImplAttributes/Options when available (PR: [#84218](https://github.com/dotnet/roslyn/pull/84218))
+  * Treat more recoverable pipe failures as non-fatal (PR: [#84076](https://github.com/dotnet/roslyn/pull/84076))
+  * Extension indexers: validate basic IDE support (PR: [#84175](https://github.com/dotnet/roslyn/pull/84175))
+  * [labeled break/continue] Quick Info (PR: [#83203](https://github.com/dotnet/roslyn/pull/83203))
+  * [labeled break/continue] Find References and document highlight (PR: [#83202](https://github.com/dotnet/roslyn/pull/83202))
+  * [labeled break/continue] Keyword highlighting (PR: [#83201](https://github.com/dotnet/roslyn/pull/83201))
+  * [labeled break/continue] Go to Definition (PR: [#83200](https://github.com/dotnet/roslyn/pull/83200))
+  * [labeled break/continue] Completion of enclosing labels (PR: [#83199](https://github.com/dotnet/roslyn/pull/83199))
+  * [labeled break/continue] Binding, lowering, emit, and semantic model (PR: [#83198](https://github.com/dotnet/roslyn/pull/83198))
+  * Add syntax and parsing support for labeled break/continue (PR: [#83197](https://github.com/dotnet/roslyn/pull/83197))
 
 # 2.145.x
 * Update Roslyn to 5.9.0-1.26319.6 (PR: [#9457](https://github.com/dotnet/vscode-csharp/pull/9457))
