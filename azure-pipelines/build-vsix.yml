@@ -63,11 +63,6 @@ stages:
         versionNumberOverride: ${{ parameters.versionNumberOverride }}
         installDotNet: true
 
-    - task: UsePythonVersion@0
-      displayName: 'Use Python 3.11'
-      inputs:
-        versionSpec: 3.11
-
     # Non-windows signing requires .NET 8 installed on the machine.
     - task: UseDotNet@2
       displayName: Use .NET Core sdk 8.0.x
