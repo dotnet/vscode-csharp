@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect } from '@jest/globals';
+import { afterEach, describe, test, expect } from '@jest/globals';
+import * as fs from 'fs';
 import * as path from 'path';
 import {
     detectFileBasedAppKind,
@@ -174,5 +175,53 @@ describe('shouldShowConvertToProjectOption', () => {
 
     test('returns true for a file outside any csproj cone without directives', () => {
         expect(shouldShowConvertToProjectOption(fileOutsideCone, FileBasedAppKind.None, csprojDirs)).toBe(true);
+    });
+});
+
+describe('defaultReadFileHead (via detectFileBasedAppKind without custom reader)', () => {
+    const tempDir = path.join(__dirname, '.convertToProject-test-files');
+    const tempFiles: string[] = [];
+
+    afterEach(() => {
+        for (const filePath of tempFiles.splice(0)) {
+            try {
+                fs.unlinkSync(filePath);
+            } catch {
+                // Ignore cleanup failures.
+            }
+        }
+
+        try {
+            fs.rmSync(tempDir, { recursive: true, force: true });
+        } catch {
+            // Ignore cleanup failures.
+        }
+    });
+
+    function writeTempFile(content: string): string {
+        fs.mkdirSync(tempDir, { recursive: true });
+        const filePath = path.join(tempDir, `app-${Date.now()}-${tempFiles.length}.cs`);
+        fs.writeFileSync(filePath, content);
+        tempFiles.push(filePath);
+        return filePath;
+    }
+
+    test('returns Shebang for a file starting with #! using the default reader', () => {
+        const filePath = writeTempFile('#!/usr/bin/env dotnet\nConsole.WriteLine("hi");\n');
+        expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Shebang);
+    });
+
+    test('returns Directives for a file starting with #: using the default reader', () => {
+        const filePath = writeTempFile('#:package Foo@1.0.0\nConsole.WriteLine("hi");\n');
+        expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
+    });
+
+    test('returns None for a normal C# file using the default reader', () => {
+        const filePath = writeTempFile('using System;\nConsole.WriteLine("hi");\n');
+        expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
+    });
+
+    test('returns None when the default reader cannot read the file', () => {
+        expect(detectFileBasedAppKind('/nonexistent/path/that/does/not/exist.cs')).toBe(FileBasedAppKind.None);
     });
 });

@@ -10,14 +10,9 @@ import * as vscode from 'vscode';
 export const convertToProjectCommandName = 'dotnet.convertToProject';
 
 /**
- * Registers the command for converting a file-based C# app to a project-based app.
- *
- * This provides two entry points:
- * 1. Right-click on a C# file → "Convert to Project" → runs `dotnet project convert <file>`
- * 2. Command palette → "Convert C# File-based App to Project" → quick pick of discoverable
- *    file-based apps in the workspace, then runs conversion on the selected file.
- *
- * Requires .NET 10 SDK or later (the `dotnet project convert` command was introduced in .NET 10).
+ * Registers the `dotnet.convertToProject` command. When invoked with a URI (context menu)
+ * it converts that file directly; without a URI (command palette) it shows a quick pick of
+ * discoverable FBA entry points. Requires .NET 10 SDK or later.
  */
 export function registerConvertToProjectCommands(context: vscode.ExtensionContext): void {
     context.subscriptions.push(
@@ -38,9 +33,7 @@ export function registerConvertToProjectCommands(context: vscode.ExtensionContex
  * `dotnet project convert <file>` in an integrated terminal.
  */
 async function convertToProject(uri: vscode.Uri): Promise<void> {
-    // Use VS Code's language ID rather than the file extension, so that files VS Code
-    // recognises as C# (e.g. via a language association override) are accepted regardless
-    // of their extension.
+    // Use language ID (not extension) so files with custom language associations are accepted.
     const document =
         vscode.workspace.textDocuments.find((d) => d.uri.fsPath === uri.fsPath) ??
         (await vscode.workspace.openTextDocument(uri));
@@ -54,21 +47,11 @@ async function convertToProject(uri: vscode.Uri): Promise<void> {
 }
 
 /**
- * Shows a quick-pick list of discoverable file-based C# apps in the workspace and
- * converts the one the user selects.
+ * Shows a quick-pick list of discoverable FBA entry points and converts the one selected.
  *
- * All C# files are considered possible entry points by default.  C# files that have a
- * `.csproj` file in their directory cone are ignored.  C# files inside a `.csproj` cone
- * are re-included when they contain FBA-specific markers (`#!` shebang or `#:` directives).
- *
- * Open files are identified by VS Code's language ID (`csharp`) so that non-`.cs` files
- * that the user has associated with the C# language are also considered.  Workspace files
- * that are not currently open are matched by their `.cs` extension.
- *
- * This uses a client-side scan because the Roslyn language server does not currently
- * expose an authoritative file-based program entry-point request, and the .NET 10 SDK
- * (`dotnet project`) does not currently offer a CLI command to detect FBA entry points
- * without converting or running them.
+ * All C# files are candidates. Files inside a `.csproj` cone are filtered out unless they
+ * contain `#!` or `#:` markers. Open non-`.cs` files are included via language ID; closed
+ * files are matched by `.cs` extension (VS Code only exposes language IDs for open files).
  */
 async function pickAndConvertToProject(): Promise<void> {
     // Collect C# files from the workspace by extension, then augment with any already-open
@@ -206,13 +189,10 @@ export enum FileBasedAppKind {
 }
 
 /**
- * Reads the beginning of `filePath` to determine whether it looks like a file-based C#
- * app entry point.  This intentionally mirrors the heuristics used by the Roslyn
- * `FileBasedProgramsEntryPointDiscovery` class.
+ * Detects whether `filePath` looks like an FBA entry point by scanning the first few lines
+ * for `#!` or `#:` markers.  Mirrors Roslyn's `FileBasedProgramsEntryPointDiscovery`.
  *
- * An optional `readFileHead` function can be supplied (e.g. in tests) to replace the
- * default `fs`-based implementation.  It should return the raw file contents as a string,
- * or `null` if the file cannot be read.
+ * Supply `readFileHead` to override the default `fs`-based reader (e.g. in tests).
  */
 export function detectFileBasedAppKind(
     filePath: string,
