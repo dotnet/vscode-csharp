@@ -65,10 +65,10 @@ async function convertToProject(uri: vscode.Uri): Promise<void> {
  * C# files are identified by VS Code's language ID (`csharp`) so that non-`.cs` files
  * that the user has associated with the C# language are also considered.
  *
- * TODO: Replace the client-side scan with an authoritative LSP request
- *       (e.g. `workspace/_ms_fileBasedProgramEntryPoints`) once the Roslyn language
- *       server exposes one.  The .NET 10 SDK (`dotnet project`) does not currently offer
- *       a CLI command to detect FBA entry points without converting or running them.
+ * This uses a client-side scan because the Roslyn language server does not currently
+ * expose an authoritative file-based program entry-point request, and the .NET 10 SDK
+ * (`dotnet project`) does not currently offer a CLI command to detect FBA entry points
+ * without converting or running them.
  */
 async function pickAndConvertToProject(): Promise<void> {
     // Collect C# files from the workspace by extension, then augment with any already-open
