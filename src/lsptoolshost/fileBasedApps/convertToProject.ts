@@ -58,10 +58,9 @@ async function convertToProject(uri: vscode.Uri): Promise<void> {
  * converts the one the user selects.
  *
  * A file is included in the list when any of the following is true:
- * 1. It starts with the `#!` shebang sequence (Roslyn automatic-discovery algorithm).
- * 2. It contains `#:` directives near the top (package/sdk/property directives).
- * 3. It is not in the directory cone of any `.csproj` file in the workspace, meaning it
+ * 1. It is not in the directory cone of any `.csproj` file in the workspace, meaning it
  *    is a standalone C# file that is likely intended to be run as a file-based app.
+ * 2. If it is inside a `.csproj` cone, it contains a top-of-file `#:` directive.
  *
  * C# files are identified by VS Code's language ID (`csharp`) so that non-`.cs` files
  * that the user has associated with the C# language are also considered.
@@ -100,16 +99,7 @@ async function pickAndConvertToProject(): Promise<void> {
         const filePath = fileUri.fsPath;
         const kind = detectFileBasedAppKind(filePath);
 
-        let isEntryPoint = kind !== FileBasedAppKind.None;
-
-        // Also include files that are not inside any .csproj directory cone even when
-        // they lack explicit FBA markers, because such files have no project to belong
-        // to and are likely intended as file-based programs.
-        if (!isEntryPoint && !isInProjectCone(filePath, csprojDirs)) {
-            isEntryPoint = true;
-        }
-
-        if (isEntryPoint) {
+        if (shouldShowConvertToProjectOption(filePath, kind, csprojDirs)) {
             const label = path.basename(filePath);
             const description = vscode.workspace.asRelativePath(fileUri, true);
             entryPoints.push({ label, description, detail: filePath });
@@ -120,8 +110,8 @@ async function pickAndConvertToProject(): Promise<void> {
         vscode.window.showInformationMessage(
             vscode.l10n.t(
                 'No file-based C# apps were found in the workspace. ' +
-                    'A file-based app entry point must contain a `#!` or `#:` directive, ' +
-                    'or not be part of any `.csproj` project.'
+                    'A file-based app entry point must not be part of any `.csproj` project, ' +
+                    'unless it contains a top-of-file `#:` directive.'
             )
         );
         return;
@@ -151,6 +141,24 @@ export function isInProjectCone(filePath: string, csprojDirs: Set<string>): bool
     while (parent !== dir) {
         if (csprojDirs.has(dir)) {
             return true;
+        }
+
+        /**
+         * Returns `true` when the file should be shown as a "Convert to Project" option.
+         *
+         * Files outside all `.csproj` cones are always shown. Files inside a `.csproj` cone are
+         * hidden unless they contain a top-of-file `#:` directive.
+         */
+        export function shouldShowConvertToProjectOption(
+            filePath: string,
+            kind: FileBasedAppKind,
+            csprojDirs: Set<string>
+        ): boolean {
+            if (!isInProjectCone(filePath, csprojDirs)) {
+                return true;
+            }
+
+            return kind === FileBasedAppKind.Directives;
         }
         dir = parent;
         parent = path.dirname(dir);

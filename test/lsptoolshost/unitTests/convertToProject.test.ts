@@ -9,6 +9,7 @@ import {
     detectFileBasedAppKind,
     FileBasedAppKind,
     isInProjectCone,
+    shouldShowConvertToProjectOption,
 } from '../../../src/lsptoolshost/fileBasedApps/convertToProject';
 
 // ---------------------------------------------------------------------------
@@ -146,5 +147,32 @@ describe('isInProjectCone', () => {
     test('handles multiple csproj directories — returns true if any ancestor matches', () => {
         const csprojDirs = dirs(`${sep}workspace${sep}projectA`, `${sep}workspace${sep}projectB`);
         expect(isInProjectCone(`${sep}workspace${sep}projectB${sep}Foo.cs`, csprojDirs)).toBe(true);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// shouldShowConvertToProjectOption
+// ---------------------------------------------------------------------------
+
+describe('shouldShowConvertToProjectOption', () => {
+    const sep = path.sep;
+    const fileInCone = `${sep}workspace${sep}project${sep}app.cs`;
+    const fileOutsideCone = `${sep}workspace${sep}scripts${sep}app.cs`;
+    const csprojDirs = new Set([`${sep}workspace${sep}project`]);
+
+    test('returns false for a file in a csproj cone without file-based app directives', () => {
+        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.None, csprojDirs)).toBe(false);
+    });
+
+    test('returns false for a shebang file in a csproj cone', () => {
+        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.Shebang, csprojDirs)).toBe(false);
+    });
+
+    test('returns true for a directives file in a csproj cone', () => {
+        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.Directives, csprojDirs)).toBe(true);
+    });
+
+    test('returns true for a file outside any csproj cone without directives', () => {
+        expect(shouldShowConvertToProjectOption(fileOutsideCone, FileBasedAppKind.None, csprojDirs)).toBe(true);
     });
 });
