@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.151.x
+* Update Roslyn to 5.9.0-1.26326.7 (PR: [#9480](https://github.com/dotnet/vscode-csharp/pull/9480))
+  * Relax rules for completion of `fixed` keyword (PR: [#84133](https://github.com/dotnet/roslyn/pull/84133))
+  * Treat more recoverable pipe failures as non-fatal (PR: [#84076](https://github.com/dotnet/roslyn/pull/84076))
 
 # 2.145.x
 * Update Roslyn to 5.9.0-1.26319.6 (PR: [#9457](https://github.com/dotnet/vscode-csharp/pull/9457))
