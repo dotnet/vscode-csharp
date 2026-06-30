@@ -153,7 +153,7 @@ export function isInProjectCone(filePath: string, csprojDirs: Set<string>): bool
  * Returns `true` when the file should be shown as a "Convert to Project" option.
  *
  * Files outside all `.csproj` cones are always shown. Files inside a `.csproj` cone are
- * hidden unless they contain a top-of-file `#:` directive.
+ * shown only when they contain top-of-file file-based app markers (`#!` or `#:`).
  */
 export function shouldShowConvertToProjectOption(
     filePath: string,
@@ -164,7 +164,7 @@ export function shouldShowConvertToProjectOption(
         return true;
     }
 
-    return kind === FileBasedAppKind.Directives;
+    return kind === FileBasedAppKind.Shebang || kind === FileBasedAppKind.Directives;
 }
 
 /**

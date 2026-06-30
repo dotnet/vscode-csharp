@@ -164,8 +164,8 @@ describe('shouldShowConvertToProjectOption', () => {
         expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.None, csprojDirs)).toBe(false);
     });
 
-    test('returns false for a shebang file in a csproj cone', () => {
-        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.Shebang, csprojDirs)).toBe(false);
+    test('returns true for a shebang file in a csproj cone', () => {
+        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.Shebang, csprojDirs)).toBe(true);
     });
 
     test('returns true for a directives file in a csproj cone', () => {
