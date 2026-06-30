@@ -9,6 +9,7 @@
   * Treat more recoverable pipe failures as non-fatal (PR: [#84076](https://github.com/dotnet/roslyn/pull/84076))
 
 # 2.145.x
+* Add projectPath and launchBrowser options to blazorwasm debug configuration (PR: [#9427](https://github.com/dotnet/vscode-csharp/pull/9427))
 * Update Roslyn to 5.9.0-1.26319.6 (PR: [#9457](https://github.com/dotnet/vscode-csharp/pull/9457))
   * Fixes Hot reload logging in DevKit (PR: [#84179](https://github.com/dotnet/roslyn/pull/84179))
   * Cap Razor completion lists at 1000 items to avoid pooling issues with large JsonDocument byte[] (PR: [#84194](https://github.com/dotnet/roslyn/pull/84194))
