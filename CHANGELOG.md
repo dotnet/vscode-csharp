@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.151.x
-* Update Roslyn to 5.10.0-1.26330.4 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.10.0-1.26330.4 (PR: [#9485](https://github.com/dotnet/vscode-csharp/pull/9485))
   * Filter false CSS024 diagnostics from Html (PR: [#84320](https://github.com/dotnet/roslyn/pull/84320))
   * Ignore Razor comment edits from the Html formatter (PR: [#84318](https://github.com/dotnet/roslyn/pull/84318))
 * Update Roslyn to 5.9.0-1.26326.7 (PR: [#9480](https://github.com/dotnet/vscode-csharp/pull/9480))
