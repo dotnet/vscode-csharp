@@ -142,29 +142,29 @@ export function isInProjectCone(filePath: string, csprojDirs: Set<string>): bool
         if (csprojDirs.has(dir)) {
             return true;
         }
-
-        /**
-         * Returns `true` when the file should be shown as a "Convert to Project" option.
-         *
-         * Files outside all `.csproj` cones are always shown. Files inside a `.csproj` cone are
-         * hidden unless they contain a top-of-file `#:` directive.
-         */
-        export function shouldShowConvertToProjectOption(
-            filePath: string,
-            kind: FileBasedAppKind,
-            csprojDirs: Set<string>
-        ): boolean {
-            if (!isInProjectCone(filePath, csprojDirs)) {
-                return true;
-            }
-
-            return kind === FileBasedAppKind.Directives;
-        }
         dir = parent;
         parent = path.dirname(dir);
     }
     // Check the final (root) directory.
     return csprojDirs.has(dir);
+}
+
+/**
+ * Returns `true` when the file should be shown as a "Convert to Project" option.
+ *
+ * Files outside all `.csproj` cones are always shown. Files inside a `.csproj` cone are
+ * hidden unless they contain a top-of-file `#:` directive.
+ */
+export function shouldShowConvertToProjectOption(
+    filePath: string,
+    kind: FileBasedAppKind,
+    csprojDirs: Set<string>
+): boolean {
+    if (!isInProjectCone(filePath, csprojDirs)) {
+        return true;
+    }
+
+    return kind === FileBasedAppKind.Directives;
 }
 
 /**
