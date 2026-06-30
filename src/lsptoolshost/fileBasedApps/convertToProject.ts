@@ -57,13 +57,13 @@ async function convertToProject(uri: vscode.Uri): Promise<void> {
  * Shows a quick-pick list of discoverable file-based C# apps in the workspace and
  * converts the one the user selects.
  *
- * A file is included in the list when any of the following is true:
- * 1. It is not in the directory cone of any `.csproj` file in the workspace, meaning it
- *    is a standalone C# file that is likely intended to be run as a file-based app.
- * 2. If it is inside a `.csproj` cone, it contains a top-of-file `#:` directive.
+ * All C# files are considered possible entry points by default.  C# files that have a
+ * `.csproj` file in their directory cone are ignored.  C# files inside a `.csproj` cone
+ * are re-included when they contain FBA-specific markers (`#!` shebang or `#:` directives).
  *
- * C# files are identified by VS Code's language ID (`csharp`) so that non-`.cs` files
- * that the user has associated with the C# language are also considered.
+ * Open files are identified by VS Code's language ID (`csharp`) so that non-`.cs` files
+ * that the user has associated with the C# language are also considered.  Workspace files
+ * that are not currently open are matched by their `.cs` extension.
  *
  * This uses a client-side scan because the Roslyn language server does not currently
  * expose an authoritative file-based program entry-point request, and the .NET 10 SDK
@@ -152,7 +152,7 @@ export function isInProjectCone(filePath: string, csprojDirs: Set<string>): bool
 /**
  * Returns `true` when the file should be shown as a "Convert to Project" option.
  *
- * Files outside all `.csproj` cones are always shown. Files inside a `.csproj` cone are
+ * C# files outside all `.csproj` cones are always shown. C# files inside a `.csproj` cone are
  * shown only when they contain top-of-file file-based app markers (`#!` or `#:`).
  */
 export function shouldShowConvertToProjectOption(
