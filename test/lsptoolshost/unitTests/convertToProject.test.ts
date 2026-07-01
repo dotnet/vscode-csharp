@@ -82,6 +82,11 @@ describe('detectFileBasedAppKind', () => {
             expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
         });
 
+        test('returns Directives when #: appears after a blank line, a comment, and another blank line', () => {
+            const filePath = writeTempFile('\n// some comment\n\n#:package Foo@1.0.0\nConsole.WriteLine("hi");\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
+        });
+
         test('does not return Directives when #: appears after 5 non-blank lines', () => {
             const filePath = writeTempFile(
                 ['line1', 'line2', 'line3', 'line4', 'line5', '#:package Foo@1.0.0'].join('\n')
