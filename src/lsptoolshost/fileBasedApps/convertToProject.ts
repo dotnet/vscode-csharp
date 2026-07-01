@@ -51,7 +51,7 @@ async function updateFileBasedAppContext(editor: vscode.TextEditor | undefined):
         const csprojFiles = await vscode.workspace.findFiles('**/*.csproj');
         const csprojDirs = new Set(csprojFiles.map((u) => path.dirname(u.fsPath)));
         const kind = detectFileBasedAppKind(editor.document.uri.fsPath);
-        isFileBasedApp = shouldShowConvertToProjectOption(editor.document.uri.fsPath, kind, csprojDirs);
+        isFileBasedApp = isLikelyFbaEntryPoint(editor.document.uri.fsPath, kind, csprojDirs);
     }
     await vscode.commands.executeCommand('setContext', isFileBasedAppContextKey, isFileBasedApp);
 }
@@ -110,7 +110,7 @@ async function pickAndConvertToProject(): Promise<void> {
         const filePath = fileUri.fsPath;
         const kind = detectFileBasedAppKind(filePath);
 
-        if (shouldShowConvertToProjectOption(filePath, kind, csprojDirs)) {
+        if (isLikelyFbaEntryPoint(filePath, kind, csprojDirs)) {
             const label = path.basename(filePath);
             const description = vscode.workspace.asRelativePath(fileUri, true);
             entryPoints.push({ label, description, detail: filePath });
@@ -167,11 +167,7 @@ export function isInProjectCone(filePath: string, csprojDirs: Set<string>): bool
  * C# files outside all `.csproj` cones are always shown. C# files inside a `.csproj` cone are
  * shown only when they contain top-of-file file-based app markers (`#!` or `#:`).
  */
-export function shouldShowConvertToProjectOption(
-    filePath: string,
-    kind: FileBasedAppKind,
-    csprojDirs: Set<string>
-): boolean {
+export function isLikelyFbaEntryPoint(filePath: string, kind: FileBasedAppKind, csprojDirs: Set<string>): boolean {
     if (!isInProjectCone(filePath, csprojDirs)) {
         return true;
     }

@@ -10,7 +10,7 @@ import {
     detectFileBasedAppKind,
     FileBasedAppKind,
     isInProjectCone,
-    shouldShowConvertToProjectOption,
+    isLikelyFbaEntryPoint,
 } from '../../../src/lsptoolshost/fileBasedApps/convertToProject';
 
 // ---------------------------------------------------------------------------
@@ -152,29 +152,29 @@ describe('isInProjectCone', () => {
 });
 
 // ---------------------------------------------------------------------------
-// shouldShowConvertToProjectOption
+// isLikelyFbaEntryPoint
 // ---------------------------------------------------------------------------
 
-describe('shouldShowConvertToProjectOption', () => {
+describe('isLikelyFbaEntryPoint', () => {
     const sep = path.sep;
     const fileInCone = `${sep}workspace${sep}project${sep}app.cs`;
     const fileOutsideCone = `${sep}workspace${sep}scripts${sep}app.cs`;
     const csprojDirs = new Set([`${sep}workspace${sep}project`]);
 
     test('returns false for a file in a csproj cone without file-based app directives', () => {
-        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.None, csprojDirs)).toBe(false);
+        expect(isLikelyFbaEntryPoint(fileInCone, FileBasedAppKind.None, csprojDirs)).toBe(false);
     });
 
     test('returns true for a shebang file in a csproj cone', () => {
-        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.Shebang, csprojDirs)).toBe(true);
+        expect(isLikelyFbaEntryPoint(fileInCone, FileBasedAppKind.Shebang, csprojDirs)).toBe(true);
     });
 
     test('returns true for a directives file in a csproj cone', () => {
-        expect(shouldShowConvertToProjectOption(fileInCone, FileBasedAppKind.Directives, csprojDirs)).toBe(true);
+        expect(isLikelyFbaEntryPoint(fileInCone, FileBasedAppKind.Directives, csprojDirs)).toBe(true);
     });
 
     test('returns true for a file outside any csproj cone without directives', () => {
-        expect(shouldShowConvertToProjectOption(fileOutsideCone, FileBasedAppKind.None, csprojDirs)).toBe(true);
+        expect(isLikelyFbaEntryPoint(fileOutsideCone, FileBasedAppKind.None, csprojDirs)).toBe(true);
     });
 });
 
