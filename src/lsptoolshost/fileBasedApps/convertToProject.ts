@@ -106,6 +106,7 @@ async function pickAndConvertToProject(): Promise<void> {
         matchOnDetail: true,
     });
 
+    // If user clicks away, cancelling operation
     if (!picked?.detail) {
         return;
     }
