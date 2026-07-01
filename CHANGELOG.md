@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.151.x
+* Use local checkout for fetching package.json instead of accessing github directly (PR: [#9447](https://github.com/dotnet/vscode-csharp/pull/9447))
+* Update xamlTools to 18.9.11921.35 (PR: [#9461](https://github.com/dotnet/vscode-csharp/pull/9461))
 * Update Roslyn to 5.10.0-1.26330.4 (PR: [#9485](https://github.com/dotnet/vscode-csharp/pull/9485))
   * Filter false CSS024 diagnostics from Html (PR: [#84320](https://github.com/dotnet/roslyn/pull/84320))
   * Ignore Razor comment edits from the Html formatter (PR: [#84318](https://github.com/dotnet/roslyn/pull/84318))
