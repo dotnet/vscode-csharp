@@ -206,14 +206,9 @@ export enum FileBasedAppKind {
 /**
  * Detects whether `filePath` looks like an FBA entry point by scanning the first few lines
  * for `#!` or `#:` markers.  Mirrors Roslyn's `FileBasedProgramsEntryPointDiscovery`.
- *
- * Supply `readFileHead` to override the default `fs`-based reader (e.g. in tests).
  */
-export function detectFileBasedAppKind(
-    filePath: string,
-    readFileHead: (p: string) => string | null = defaultReadFileHead
-): FileBasedAppKind {
-    const content = readFileHead(filePath);
+export function detectFileBasedAppKind(filePath: string): FileBasedAppKind {
+    const content = defaultReadFileHead(filePath);
     if (content === null) {
         return FileBasedAppKind.None;
     }

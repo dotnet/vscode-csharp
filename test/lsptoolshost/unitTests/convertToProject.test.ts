@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { afterEach, describe, test, expect } from '@jest/globals';
+import { afterEach, beforeEach, describe, test, expect } from '@jest/globals';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
@@ -14,93 +14,110 @@ import {
 } from '../../../src/lsptoolshost/fileBasedApps/convertToProject';
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Creates a `readFileHead` stub that returns a fixed string. */
-function makeReader(content: string): (p: string) => string | null {
-    return (_p: string) => content;
-}
-
-/** A reader that always simulates an unreadable file. */
-const nullReader: (p: string) => string | null = (_p) => null;
-
-// ---------------------------------------------------------------------------
 // detectFileBasedAppKind
 // ---------------------------------------------------------------------------
 
 describe('detectFileBasedAppKind', () => {
+    const tempDir = path.join(__dirname, '.convertToProject-test-files');
+    const tempFiles: string[] = [];
+
+    beforeEach(() => {
+        fs.mkdirSync(tempDir, { recursive: true });
+    });
+
+    afterEach(() => {
+        for (const filePath of tempFiles.splice(0)) {
+            try {
+                fs.unlinkSync(filePath);
+            } catch {
+                // Ignore cleanup failures.
+            }
+        }
+
+        try {
+            fs.rmSync(tempDir, { recursive: true, force: true });
+        } catch {
+            // Ignore cleanup failures.
+        }
+    });
+
+    function writeTempFile(content: string): string {
+        const filePath = path.join(tempDir, `app-${Date.now()}-${tempFiles.length}.cs`);
+        fs.writeFileSync(filePath, content);
+        tempFiles.push(filePath);
+        return filePath;
+    }
+
     describe('Shebang detection', () => {
         test('returns Shebang for a file starting with #!', () => {
-            expect(
-                detectFileBasedAppKind('/a/app.cs', makeReader('#!/usr/bin/env dotnet\nConsole.WriteLine("hi");\n'))
-            ).toBe(FileBasedAppKind.Shebang);
+            const filePath = writeTempFile('#!/usr/bin/env dotnet\nConsole.WriteLine("hi");\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Shebang);
         });
 
         test('returns Shebang when file starts with BOM then #!', () => {
-            expect(
-                detectFileBasedAppKind(
-                    '/a/app.cs',
-                    makeReader('\uFEFF#!/usr/bin/env dotnet\nConsole.WriteLine("hi");\n')
-                )
-            ).toBe(FileBasedAppKind.Shebang);
+            const filePath = writeTempFile('\uFEFF#!/usr/bin/env dotnet\nConsole.WriteLine("hi");\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Shebang);
         });
 
         test('does not return Shebang when #! appears after a non-empty line', () => {
-            const content = 'using System;\n#!/usr/bin/env dotnet\n';
-            expect(detectFileBasedAppKind('/a/app.cs', makeReader(content))).toBe(FileBasedAppKind.None);
+            const filePath = writeTempFile('using System;\n#!/usr/bin/env dotnet\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
         });
     });
 
     describe('Directives detection', () => {
         test('returns Directives for a file starting with #: package directive', () => {
-            const content = '#:package Newtonsoft.Json@13.0.3\nConsole.WriteLine("hi");\n';
-            expect(detectFileBasedAppKind('/a/app.cs', makeReader(content))).toBe(FileBasedAppKind.Directives);
+            const filePath = writeTempFile('#:package Newtonsoft.Json@13.0.3\nConsole.WriteLine("hi");\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
         });
 
         test('returns Directives for a file starting with #: sdk directive', () => {
-            const content = '#:sdk Microsoft.NET.Sdk.Web\nConsole.WriteLine("hi");\n';
-            expect(detectFileBasedAppKind('/a/app.cs', makeReader(content))).toBe(FileBasedAppKind.Directives);
+            const filePath = writeTempFile('#:sdk Microsoft.NET.Sdk.Web\nConsole.WriteLine("hi");\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
         });
 
         test('returns Directives when #: directive is preceded only by blank lines', () => {
-            const content = '\n\n#:package Newtonsoft.Json@13.0.3\nConsole.WriteLine("hi");\n';
-            expect(detectFileBasedAppKind('/a/app.cs', makeReader(content))).toBe(FileBasedAppKind.Directives);
+            const filePath = writeTempFile('\n\n#:package Newtonsoft.Json@13.0.3\nConsole.WriteLine("hi");\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
         });
 
         test('returns Directives when BOM precedes a #: directive', () => {
-            const content = '\uFEFF#:package Newtonsoft.Json@13.0.3\nConsole.WriteLine("hi");\n';
-            expect(detectFileBasedAppKind('/a/app.cs', makeReader(content))).toBe(FileBasedAppKind.Directives);
+            const filePath = writeTempFile('\uFEFF#:package Newtonsoft.Json@13.0.3\nConsole.WriteLine("hi");\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
         });
 
         test('does not return Directives when #: appears after 5 non-blank lines', () => {
-            const content = ['line1', 'line2', 'line3', 'line4', 'line5', '#:package Foo@1.0.0'].join('\n');
-            expect(detectFileBasedAppKind('/a/app.cs', makeReader(content))).toBe(FileBasedAppKind.None);
+            const filePath = writeTempFile(
+                ['line1', 'line2', 'line3', 'line4', 'line5', '#:package Foo@1.0.0'].join('\n')
+            );
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
         });
     });
 
     describe('None cases', () => {
         test('returns None for a normal C# class file', () => {
-            const content = 'using System;\n\nnamespace Foo {\n    public class Bar {}\n}\n';
-            expect(detectFileBasedAppKind('/a/Bar.cs', makeReader(content))).toBe(FileBasedAppKind.None);
+            const filePath = writeTempFile('using System;\n\nnamespace Foo {\n    public class Bar {}\n}\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
         });
 
         test('returns None for an empty file', () => {
-            expect(detectFileBasedAppKind('/a/empty.cs', makeReader(''))).toBe(FileBasedAppKind.None);
+            const filePath = writeTempFile('');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
         });
 
-        test('returns None when the reader returns null (unreadable file)', () => {
-            expect(detectFileBasedAppKind('/a/unreadable.cs', nullReader)).toBe(FileBasedAppKind.None);
+        test('returns None when the file does not exist (unreadable)', () => {
+            expect(detectFileBasedAppKind('/nonexistent/path/that/does/not/exist.cs')).toBe(FileBasedAppKind.None);
         });
 
         test('returns None for a file that only has blank lines', () => {
-            expect(detectFileBasedAppKind('/a/blank.cs', makeReader('\n\n\n'))).toBe(FileBasedAppKind.None);
+            const filePath = writeTempFile('\n\n\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
         });
 
         test('returns None when #: appears inside a string literal on the first line', () => {
             // The algorithm checks trimmed lines; this line does NOT start with #:
-            const content = 'var s = "#: not a directive";\n';
-            expect(detectFileBasedAppKind('/a/app.cs', makeReader(content))).toBe(FileBasedAppKind.None);
+            const filePath = writeTempFile('var s = "#: not a directive";\n');
+            expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
         });
     });
 });
@@ -175,53 +192,5 @@ describe('isLikelyFbaEntryPoint', () => {
 
     test('returns true for a file outside any csproj cone without directives', () => {
         expect(isLikelyFbaEntryPoint(fileOutsideCone, FileBasedAppKind.None, csprojDirs)).toBe(true);
-    });
-});
-
-describe('defaultReadFileHead (via detectFileBasedAppKind without custom reader)', () => {
-    const tempDir = path.join(__dirname, '.convertToProject-test-files');
-    const tempFiles: string[] = [];
-
-    afterEach(() => {
-        for (const filePath of tempFiles.splice(0)) {
-            try {
-                fs.unlinkSync(filePath);
-            } catch {
-                // Ignore cleanup failures.
-            }
-        }
-
-        try {
-            fs.rmSync(tempDir, { recursive: true, force: true });
-        } catch {
-            // Ignore cleanup failures.
-        }
-    });
-
-    function writeTempFile(content: string): string {
-        fs.mkdirSync(tempDir, { recursive: true });
-        const filePath = path.join(tempDir, `app-${Date.now()}-${tempFiles.length}.cs`);
-        fs.writeFileSync(filePath, content);
-        tempFiles.push(filePath);
-        return filePath;
-    }
-
-    test('returns Shebang for a file starting with #! using the default reader', () => {
-        const filePath = writeTempFile('#!/usr/bin/env dotnet\nConsole.WriteLine("hi");\n');
-        expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Shebang);
-    });
-
-    test('returns Directives for a file starting with #: using the default reader', () => {
-        const filePath = writeTempFile('#:package Foo@1.0.0\nConsole.WriteLine("hi");\n');
-        expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.Directives);
-    });
-
-    test('returns None for a normal C# file using the default reader', () => {
-        const filePath = writeTempFile('using System;\nConsole.WriteLine("hi");\n');
-        expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
-    });
-
-    test('returns None when the default reader cannot read the file', () => {
-        expect(detectFileBasedAppKind('/nonexistent/path/that/does/not/exist.cs')).toBe(FileBasedAppKind.None);
     });
 });
