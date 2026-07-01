@@ -176,7 +176,7 @@ describe('pickAndConvertToProject', () => {
         expect(windowMock.showInformationMessage).toHaveBeenCalledWith(
             'No file-based C# apps were found in the workspace. ' +
                 'A file-based app entry point must not be part of any `.csproj` project, ' +
-                'unless it contains a top-of-file `#:` directive.'
+                'unless it contains a top-of-file `#!` or `#:` directive.'
         );
     });
 

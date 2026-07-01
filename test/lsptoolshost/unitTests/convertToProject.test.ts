@@ -145,7 +145,7 @@ describe('isInProjectCone', () => {
         expect(isInProjectCone(`${sep}workspace${sep}project${sep}a${sep}b${sep}c${sep}Foo.cs`, csprojDirs)).toBe(true);
     });
 
-    test('handles multiple csproj directories — returns true if any ancestor matches', () => {
+    test('handles multiple csproj directories -- returns true if any ancestor matches', () => {
         const csprojDirs = dirs(`${sep}workspace${sep}projectA`, `${sep}workspace${sep}projectB`);
         expect(isInProjectCone(`${sep}workspace${sep}projectB${sep}Foo.cs`, csprojDirs)).toBe(true);
     });

@@ -21,7 +21,7 @@ export function registerConvertToProjectCommands(context: vscode.ExtensionContex
                 // Invoked from the right-click context menu with a specific file.
                 await convertToProject(uri);
             } else {
-                // Invoked from the command palette — let the user pick from discoverable apps.
+                // Invoked from the command palette -- let the user pick from discoverable apps.
                 await pickAndConvertToProject();
             }
         })
@@ -94,7 +94,7 @@ async function pickAndConvertToProject(): Promise<void> {
             vscode.l10n.t(
                 'No file-based C# apps were found in the workspace. ' +
                     'A file-based app entry point must not be part of any `.csproj` project, ' +
-                    'unless it contains a top-of-file `#:` directive.'
+                    'unless it contains a top-of-file `#!` or `#:` directive.'
             )
         );
         return;
@@ -115,7 +115,7 @@ async function pickAndConvertToProject(): Promise<void> {
 
 /**
  * Returns `true` when `filePath` resides inside the directory cone of at least one
- * `.csproj` file — i.e. when any directory in `csprojDirs` is an ancestor of (or the
+ * `.csproj` file -- i.e. when any directory in `csprojDirs` is an ancestor of (or the
  * same directory as) the file's parent directory.
  */
 export function isInProjectCone(filePath: string, csprojDirs: Set<string>): boolean {
@@ -153,7 +153,7 @@ export function shouldShowConvertToProjectOption(
 /**
  * Runs `dotnet project convert <fileName>` in a new integrated terminal whose working
  * directory is set to the folder that contains the file.  A fresh terminal is always
- * created so that no shell-specific `cd` command is needed — the `cwd` option handles
+ * created so that no shell-specific `cd` command is needed -- the `cwd` option handles
  * the working directory in a way that works on Bash, PowerShell, and CMD alike.
  */
 async function runConvertCommand(filePath: string): Promise<void> {
@@ -223,7 +223,7 @@ export function detectFileBasedAppKind(
 
 /**
  * Default implementation of the `readFileHead` parameter for `detectFileBasedAppKind`.
- * Reads the first 4 KB of the file — sufficient to find `#!` / `#:` near the top
+ * Reads the first 4 KB of the file -- sufficient to find `#!` / `#:` near the top
  * without loading potentially large source files.
  */
 function defaultReadFileHead(filePath: string): string | null {
