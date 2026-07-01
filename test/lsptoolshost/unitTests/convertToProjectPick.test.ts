@@ -57,9 +57,14 @@ jest.mock('vscode', () => {
             registerCommand: jest.fn((_name: string, _handler: (uri?: { fsPath: string }) => Promise<void>) => ({
                 dispose: jest.fn(),
             })),
+            executeCommand: jest.fn().mockImplementation(async () => Promise.resolve()),
         },
         workspace,
-        window,
+        window: {
+            ...window,
+            activeTextEditor: undefined,
+            onDidChangeActiveTextEditor: jest.fn(() => ({ dispose: jest.fn() })),
+        },
         l10n: {
             t: (message: string) => message,
         },

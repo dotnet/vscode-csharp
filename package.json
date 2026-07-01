@@ -5741,7 +5741,7 @@
         },
         {
           "command": "dotnet.convertToProject",
-          "when": "resourceLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "when": "resourceLangId == csharp && dotnet.isFileBasedApp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
           "group": "2_dotnet@2"
         },
         {
@@ -5763,7 +5763,7 @@
         },
         {
           "command": "dotnet.convertToProject",
-          "when": "resourceLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "when": "resourceLangId == csharp && dotnet.isFileBasedApp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
           "group": "2_dotnet@2"
         }
       ],
