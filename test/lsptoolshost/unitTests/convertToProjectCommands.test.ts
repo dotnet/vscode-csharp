@@ -13,7 +13,6 @@ import {
 jest.mock('vscode', () => ({
     commands: {
         registerCommand: jest.fn((_name, _handler) => ({ dispose: jest.fn() })),
-        executeCommand: jest.fn().mockImplementation(async () => Promise.resolve()),
     },
     workspace: {
         textDocuments: [],
@@ -27,8 +26,6 @@ jest.mock('vscode', () => ({
         terminals: [],
         createTerminal: jest.fn(),
         showQuickPick: jest.fn(),
-        activeTextEditor: undefined,
-        onDidChangeActiveTextEditor: jest.fn(() => ({ dispose: jest.fn() })),
     },
     l10n: {
         t: jest.fn((message: string) => message),
@@ -51,8 +48,6 @@ type WindowMock = {
     terminals: MockTerminal[];
     createTerminal: jest.Mock<(options: { name: string; cwd: string }) => MockTerminal>;
     showQuickPick: jest.Mock;
-    activeTextEditor: vscode.TextEditor | undefined;
-    onDidChangeActiveTextEditor: jest.Mock;
 };
 
 const workspaceMock = vscode.workspace as unknown as WorkspaceMock;
@@ -60,7 +55,6 @@ const windowMock = vscode.window as unknown as WindowMock;
 const registerCommandMock = vscode.commands.registerCommand as unknown as jest.Mock<
     (name: string, handler: (uri?: vscode.Uri) => Promise<void>) => vscode.Disposable
 >;
-const executeCommandMock = vscode.commands.executeCommand as unknown as jest.Mock;
 
 function createTerminal(name = 'dotnet project convert'): MockTerminal {
     return {
@@ -85,9 +79,6 @@ beforeEach(() => {
     windowMock.terminals = [];
     windowMock.createTerminal.mockReset();
     windowMock.showQuickPick.mockReset();
-    windowMock.activeTextEditor = undefined;
-    windowMock.onDidChangeActiveTextEditor.mockReset().mockReturnValue({ dispose: jest.fn() });
-    executeCommandMock.mockReset().mockImplementation(async () => Promise.resolve());
 });
 
 describe('registerConvertToProjectCommands', () => {

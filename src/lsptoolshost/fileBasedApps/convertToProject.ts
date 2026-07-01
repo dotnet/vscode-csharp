@@ -9,16 +9,10 @@ import * as vscode from 'vscode';
 
 export const convertToProjectCommandName = 'dotnet.convertToProject';
 
-/** VS Code `when`-clause key set to `true` when the active editor is an FBA entry point. */
-export const isFileBasedAppContextKey = 'dotnet.isFileBasedApp';
-
 /**
  * Registers the `dotnet.convertToProject` command. When invoked with a URI (context menu)
  * it converts that file directly; without a URI (command palette) it shows a quick pick of
  * discoverable FBA entry points. Requires .NET 10 SDK or later.
- *
- * Also keeps the `dotnet.isFileBasedApp` context key in sync with the active editor so that
- * the context-menu entry is only visible for files that are FBA entry points.
  */
 export function registerConvertToProjectCommands(context: vscode.ExtensionContext): void {
     context.subscriptions.push(
@@ -32,28 +26,6 @@ export function registerConvertToProjectCommands(context: vscode.ExtensionContex
             }
         })
     );
-
-    // Keep the context key in sync so the menu entry is hidden for non-FBA files.
-    void updateFileBasedAppContext(vscode.window.activeTextEditor);
-    context.subscriptions.push(
-        vscode.window.onDidChangeActiveTextEditor((editor) => void updateFileBasedAppContext(editor))
-    );
-}
-
-/**
- * Updates the `dotnet.isFileBasedApp` context key based on whether `editor`'s file is an
- * FBA entry point.  The key is used in `when` clauses so the "Convert to Project" menu
- * option is only shown for relevant files.
- */
-async function updateFileBasedAppContext(editor: vscode.TextEditor | undefined): Promise<void> {
-    let isFileBasedApp = false;
-    if (editor !== undefined && editor.document.languageId === 'csharp') {
-        const csprojFiles = await vscode.workspace.findFiles('**/*.csproj');
-        const csprojDirs = new Set(csprojFiles.map((u) => path.dirname(u.fsPath)));
-        const kind = detectFileBasedAppKind(editor.document.uri.fsPath);
-        isFileBasedApp = isLikelyFbaEntryPoint(editor.document.uri.fsPath, kind, csprojDirs);
-    }
-    await vscode.commands.executeCommand('setContext', isFileBasedAppContextKey, isFileBasedApp);
 }
 
 /**
