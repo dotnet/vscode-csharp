@@ -93,7 +93,7 @@ describe('detectFileBasedAppKind', () => {
     });
 
     describe('None cases', () => {
-        test('returns None for a normal C# class file', () => {
+        test('returns None for a C# class file without directives', () => {
             const filePath = writeTempFile('using System;\n\nnamespace Foo {\n    public class Bar {}\n}\n');
             expect(detectFileBasedAppKind(filePath)).toBe(FileBasedAppKind.None);
         });
