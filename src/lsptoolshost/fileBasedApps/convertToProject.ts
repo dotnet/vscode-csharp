@@ -92,9 +92,7 @@ async function pickAndConvertToProject(): Promise<void> {
     if (entryPoints.length === 0) {
         vscode.window.showInformationMessage(
             vscode.l10n.t(
-                'No file-based C# apps were found in the workspace. ' +
-                    'A file-based app entry point must not be part of any `.csproj` project, ' +
-                    'unless it contains a top-of-file `#!` or `#:` directive.'
+                'No file-based C# apps were found in the workspace. A file-based app entry point must not be part of any `.csproj` project, unless it contains a top-of-file `#!` or `#:` directive.'
             )
         );
         return;
