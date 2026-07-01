@@ -171,7 +171,7 @@ async function runConvertCommand(filePath: string): Promise<void> {
 }
 
 export enum FileBasedAppKind {
-    /** The file is not a file-based app entry point. */
+    /** The file does not include `#!` or `#:` directives. */
     None,
     /** The file starts with `#!`, making it a discoverable entry point. */
     Shebang,
