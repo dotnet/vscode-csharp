@@ -237,7 +237,8 @@ export function detectFileBasedAppKind(
             return FileBasedAppKind.Directives;
         }
         // After encountering a line that is neither blank nor a directive, stop scanning.
-        // Real entry points put their directives at the very top.
+        // Real FBA entry points must put their directives before other C# tokens,
+        // though FBA directives can come after comments
         if (++checkedLines >= 5) {
             break;
         }
