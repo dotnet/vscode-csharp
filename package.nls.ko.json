@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "디컴파일러 계약 표시",
   "command.dotnet.generateAssets.currentProject": "빌드 및 디버그에 대한 자산 생성",
   "command.dotnet.openSolution": "솔루션 열기",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "언어 서버 다시 시작",
   "command.dotnet.restore.all": "모든 프로젝트 복원",
   "command.dotnet.restore.project": "프로젝트 복원",

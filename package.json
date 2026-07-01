@@ -2016,6 +2016,12 @@
         "title": "%command.dotnet.restartServer%",
         "category": ".NET",
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
+      },
+      {
+        "command": "dotnet.convertToProject",
+        "title": "%command.dotnet.convertToProject%",
+        "category": ".NET",
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
       }
     ],
     "keybindings": [
@@ -5734,6 +5740,11 @@
           "group": "2_dotnet@1"
         },
         {
+          "command": "dotnet.convertToProject",
+          "when": "resourceLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@2"
+        },
+        {
           "command": "dotnet.test.runTestsInContext",
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
           "group": "3_dotnet@1"
@@ -5749,6 +5760,11 @@
           "command": "csharp.changeProjectContextFileExplorer",
           "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
           "group": "2_dotnet@1"
+        },
+        {
+          "command": "dotnet.convertToProject",
+          "when": "resourceLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@2"
         }
       ],
       "issue/reporter": [

@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "Derleyici koşulları sözleşmesini göster",
   "command.dotnet.generateAssets.currentProject": "Derleme ve Hata Ayıklama için Varlıklar Oluşturun",
   "command.dotnet.openSolution": "Çözümü Aç",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "Dil Sunucusunu Yeniden Başlat",
   "command.dotnet.restore.all": "Tüm Projeleri Geri Yükleyin",
   "command.dotnet.restore.project": "Projeyi Geri Yükle",

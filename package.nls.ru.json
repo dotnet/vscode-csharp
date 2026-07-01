@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "Показать соглашение об условиях декомпиляции",
   "command.dotnet.generateAssets.currentProject": "Создание ресурсов для сборки и отладки",
   "command.dotnet.openSolution": "Открыть решение",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "Перезапустить языковой сервер",
   "command.dotnet.restore.all": "Восстановить все проекты",
   "command.dotnet.restore.project": "Восстановить проект",

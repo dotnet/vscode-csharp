@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "Zobrazit smlouvu o podmínkách dekompilátoru",
   "command.dotnet.generateAssets.currentProject": "Generovat prostředky pro sestavení a ladění",
   "command.dotnet.openSolution": "Otevřít řešení",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "Restartovat jazykový server",
   "command.dotnet.restore.all": "Obnovit všechny projekty",
   "command.dotnet.restore.project": "Obnovit projekt",

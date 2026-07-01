@@ -13,6 +13,7 @@
   "command.csharp.showDecompilationTerms": "显示反编译程序条款协议",
   "command.dotnet.generateAssets.currentProject": "生成用于生成和调试的资产",
   "command.dotnet.openSolution": "打开解决方案",
+  "command.dotnet.convertToProject": "Convert C# File-based App to Project",
   "command.dotnet.restartServer": "重启语言服务器",
   "command.dotnet.restore.all": "还原所有项目",
   "command.dotnet.restore.project": "还原项目",

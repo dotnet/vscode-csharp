@@ -20,6 +20,7 @@ import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
 import { registerRestoreCommands } from './projectRestore/restore';
+import { registerConvertToProjectCommands } from './fileBasedApps/convertToProject';
 import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
@@ -92,6 +93,8 @@ export async function activateRoslynLanguageServer(
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
     registerRestoreCommands(context, languageServer, _channel);
+
+    registerConvertToProjectCommands(context);
 
     registerSourceGeneratorRefresh(context, languageServer, _channel);
 
