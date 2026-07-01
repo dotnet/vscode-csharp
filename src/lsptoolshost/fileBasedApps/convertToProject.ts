@@ -176,22 +176,27 @@ export function isLikelyFbaEntryPoint(filePath: string, kind: FileBasedAppKind, 
 }
 
 /**
- * Runs `dotnet project convert <fileName>` in a new integrated terminal whose working
- * directory is set to the folder that contains the file.  A fresh terminal is always
- * created so that no shell-specific `cd` command is needed -- the `cwd` option handles
- * the working directory in a way that works on Bash, PowerShell, and CMD alike.
+ * Runs `dotnet project convert <filePath>` in an integrated terminal.  A terminal named
+ * "dotnet project convert" is reused when one already exists to avoid cluttering the
+ * terminal panel; otherwise a new terminal is created with its working directory set to
+ * the file's folder.  The full file path is always passed to the command so it runs
+ * correctly regardless of the terminal's current working directory.
  */
 async function runConvertCommand(filePath: string): Promise<void> {
-    const workingDir = path.dirname(filePath);
-    const fileName = path.basename(filePath);
+    const terminalName = vscode.l10n.t('dotnet project convert');
 
-    const terminal = vscode.window.createTerminal({
-        name: vscode.l10n.t('dotnet project convert'),
-        cwd: workingDir,
-    });
+    // Reuse an existing terminal with our known name to avoid creating many instances.
+    const existing = vscode.window.terminals.find((t) => t.name === terminalName);
+    const terminal =
+        existing ??
+        vscode.window.createTerminal({
+            name: terminalName,
+            cwd: path.dirname(filePath),
+        });
 
     terminal.show(/*preserveFocus:*/ true);
-    terminal.sendText(`dotnet project convert "${fileName}"`);
+    // Use the full path so the command works regardless of the terminal's current directory.
+    terminal.sendText(`dotnet project convert "${filePath}"`);
 }
 
 export enum FileBasedAppKind {

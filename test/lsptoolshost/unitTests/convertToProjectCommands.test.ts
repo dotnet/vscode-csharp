@@ -126,7 +126,7 @@ describe('convertToProject command handler', () => {
         });
         expect(terminal.show).toHaveBeenCalledWith(true);
         expect(terminal.sendText).toHaveBeenCalledTimes(1);
-        expect(terminal.sendText).toHaveBeenCalledWith('dotnet project convert "app.cs"');
+        expect(terminal.sendText).toHaveBeenCalledWith('dotnet project convert "/workspace/app.cs"');
     });
 
     test('opens a closed C# document and creates a new terminal', async () => {
@@ -148,27 +148,28 @@ describe('convertToProject command handler', () => {
         });
         expect(terminal.show).toHaveBeenCalledWith(true);
         expect(terminal.sendText).toHaveBeenCalledTimes(1);
-        expect(terminal.sendText).toHaveBeenCalledWith('dotnet project convert "app.cs"');
+        expect(terminal.sendText).toHaveBeenCalledWith('dotnet project convert "/workspace/app.cs"');
     });
 
-    test('always creates a new terminal even when one with the same name already exists', async () => {
-        const uri = { fsPath: '/workspace/app.cs' } as vscode.Uri;
+    test('reuses an existing terminal when one with the same name already exists', async () => {
+        const uri = { fsPath: '/workspace/nested/deep/app.cs' } as vscode.Uri;
         const document: MockDocument = { uri, languageId: 'csharp' };
-        const existingTerminal = createTerminal();
-        const newTerminal = createTerminal();
+        const existingTerminal = createTerminal('dotnet project convert');
         const context = { subscriptions: [] } as unknown as vscode.ExtensionContext;
 
         workspaceMock.textDocuments = [document];
         windowMock.terminals = [existingTerminal];
-        windowMock.createTerminal.mockReturnValue(newTerminal as vscode.Terminal);
 
         registerConvertToProjectCommands(context);
         await getRegisteredHandler()(uri);
 
-        expect(windowMock.createTerminal).toHaveBeenCalled();
-        expect(existingTerminal.sendText).not.toHaveBeenCalled();
-        expect(newTerminal.sendText).toHaveBeenCalledTimes(1);
-        expect(newTerminal.sendText).toHaveBeenCalledWith('dotnet project convert "app.cs"');
+        expect(windowMock.createTerminal).not.toHaveBeenCalled();
+        expect(existingTerminal.show).toHaveBeenCalledWith(true);
+        expect(existingTerminal.sendText).toHaveBeenCalledTimes(1);
+        // The full path must be used so the command is correct regardless of the terminal's cwd.
+        expect(existingTerminal.sendText).toHaveBeenCalledWith(
+            'dotnet project convert "/workspace/nested/deep/app.cs"'
+        );
     });
 
     test('does not send any cd command regardless of platform', async () => {

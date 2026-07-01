@@ -251,7 +251,7 @@ describe('pickAndConvertToProject', () => {
             cwd: path.join(workspaceRoot, 'scripts'),
         });
         expect(mockTerminal.sendText).toHaveBeenCalledTimes(1);
-        expect(mockTerminal.sendText).toHaveBeenCalledWith('dotnet project convert "Program.cs"');
+        expect(mockTerminal.sendText).toHaveBeenCalledWith(`dotnet project convert "${filePath}"`);
     });
 
     test('does not send any cd command when the user picks a file', async () => {
@@ -272,7 +272,7 @@ describe('pickAndConvertToProject', () => {
         }
     });
 
-    test('always creates a new terminal when converting a picked file', async () => {
+    test('reuses an existing terminal when converting a picked file', async () => {
         const filePath = path.join(workspaceRoot, 'scripts', 'Program.cs');
         const existingTerminal: MockTerminal = {
             name: 'dotnet project convert',
@@ -290,7 +290,9 @@ describe('pickAndConvertToProject', () => {
 
         await invokePickAndConvert();
 
-        expect(windowMock.createTerminal).toHaveBeenCalled();
-        expect(existingTerminal.sendText).not.toHaveBeenCalled();
+        expect(windowMock.createTerminal).not.toHaveBeenCalled();
+        expect(existingTerminal.show).toHaveBeenCalledWith(true);
+        expect(existingTerminal.sendText).toHaveBeenCalledTimes(1);
+        expect(existingTerminal.sendText).toHaveBeenCalledWith(`dotnet project convert "${filePath}"`);
     });
 });
