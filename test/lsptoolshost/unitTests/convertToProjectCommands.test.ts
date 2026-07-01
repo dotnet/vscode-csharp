@@ -120,24 +120,64 @@ describe('convertToProject command handler', () => {
         expect(terminal.sendText).toHaveBeenCalledWith('dotnet project convert "app.cs"');
     });
 
-    test('opens a closed C# document and reuses an existing terminal', async () => {
+    test('opens a closed C# document and creates a new terminal', async () => {
         const uri = { fsPath: '/workspace/app.cs' } as vscode.Uri;
         const document: MockDocument = { uri, languageId: 'csharp' };
         const terminal = createTerminal();
         const context = { subscriptions: [] } as unknown as vscode.ExtensionContext;
-        const expectedCdCommand = process.platform === 'win32' ? 'cd /d "/workspace"' : 'cd "/workspace"';
 
         workspaceMock.openTextDocument.mockResolvedValue(document as vscode.TextDocument);
-        windowMock.terminals = [terminal];
+        windowMock.createTerminal.mockReturnValue(terminal as vscode.Terminal);
 
         registerConvertToProjectCommands(context);
         await getRegisteredHandler()(uri);
 
         expect(workspaceMock.openTextDocument).toHaveBeenCalledWith(uri);
-        expect(windowMock.createTerminal).not.toHaveBeenCalled();
+        expect(windowMock.createTerminal).toHaveBeenCalledWith({
+            name: 'dotnet project convert',
+            cwd: '/workspace',
+        });
         expect(terminal.show).toHaveBeenCalledWith(true);
-        expect(terminal.sendText).toHaveBeenNthCalledWith(1, expectedCdCommand);
-        expect(terminal.sendText).toHaveBeenNthCalledWith(2, 'dotnet project convert "app.cs"');
+        expect(terminal.sendText).toHaveBeenCalledTimes(1);
+        expect(terminal.sendText).toHaveBeenCalledWith('dotnet project convert "app.cs"');
+    });
+
+    test('always creates a new terminal even when one with the same name already exists', async () => {
+        const uri = { fsPath: '/workspace/app.cs' } as vscode.Uri;
+        const document: MockDocument = { uri, languageId: 'csharp' };
+        const existingTerminal = createTerminal();
+        const newTerminal = createTerminal();
+        const context = { subscriptions: [] } as unknown as vscode.ExtensionContext;
+
+        workspaceMock.textDocuments = [document];
+        windowMock.terminals = [existingTerminal];
+        windowMock.createTerminal.mockReturnValue(newTerminal as vscode.Terminal);
+
+        registerConvertToProjectCommands(context);
+        await getRegisteredHandler()(uri);
+
+        expect(windowMock.createTerminal).toHaveBeenCalled();
+        expect(existingTerminal.sendText).not.toHaveBeenCalled();
+        expect(newTerminal.sendText).toHaveBeenCalledTimes(1);
+        expect(newTerminal.sendText).toHaveBeenCalledWith('dotnet project convert "app.cs"');
+    });
+
+    test('does not send any cd command regardless of platform', async () => {
+        const uri = { fsPath: '/workspace/app.cs' } as vscode.Uri;
+        const document: MockDocument = { uri, languageId: 'csharp' };
+        const terminal = createTerminal();
+        const context = { subscriptions: [] } as unknown as vscode.ExtensionContext;
+
+        workspaceMock.textDocuments = [document];
+        windowMock.createTerminal.mockReturnValue(terminal as vscode.Terminal);
+
+        registerConvertToProjectCommands(context);
+        await getRegisteredHandler()(uri);
+
+        const sentTexts = (terminal.sendText as jest.Mock).mock.calls.map((c) => c[0] as string);
+        for (const text of sentTexts) {
+            expect(text).not.toMatch(/^cd\b/);
+        }
     });
 
     test('shows an error for a non-C# document and does not run the convert command', async () => {

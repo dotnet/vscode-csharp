@@ -151,31 +151,21 @@ export function shouldShowConvertToProjectOption(
 }
 
 /**
- * Runs `dotnet project convert <filePath>` in an integrated terminal, targeting the
- * directory that contains the file so the SDK resolves paths correctly.
+ * Runs `dotnet project convert <fileName>` in a new integrated terminal whose working
+ * directory is set to the folder that contains the file.  A fresh terminal is always
+ * created so that no shell-specific `cd` command is needed — the `cwd` option handles
+ * the working directory in a way that works on Bash, PowerShell, and CMD alike.
  */
 async function runConvertCommand(filePath: string): Promise<void> {
     const workingDir = path.dirname(filePath);
     const fileName = path.basename(filePath);
 
-    // Reuse an existing terminal if one with our name already exists to keep the UI tidy.
-    const terminalName = vscode.l10n.t('dotnet project convert');
-    const existing = vscode.window.terminals.find((t) => t.name === terminalName);
-    const terminal =
-        existing ??
-        vscode.window.createTerminal({
-            name: terminalName,
-            cwd: workingDir,
-        });
+    const terminal = vscode.window.createTerminal({
+        name: vscode.l10n.t('dotnet project convert'),
+        cwd: workingDir,
+    });
 
     terminal.show(/*preserveFocus:*/ true);
-
-    // Change to the file's directory first in case the terminal was reused with a different cwd.
-    if (existing) {
-        const cdCommand = process.platform === 'win32' ? `cd /d "${workingDir}"` : `cd "${workingDir}"`;
-        terminal.sendText(cdCommand);
-    }
-
     terminal.sendText(`dotnet project convert "${fileName}"`);
 }
 

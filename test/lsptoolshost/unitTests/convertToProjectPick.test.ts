@@ -241,6 +241,51 @@ describe('pickAndConvertToProject', () => {
 
         await invokePickAndConvert();
 
+        expect(windowMock.createTerminal).toHaveBeenCalledWith({
+            name: 'dotnet project convert',
+            cwd: path.join(workspaceRoot, 'scripts'),
+        });
+        expect(mockTerminal.sendText).toHaveBeenCalledTimes(1);
         expect(mockTerminal.sendText).toHaveBeenCalledWith('dotnet project convert "Program.cs"');
+    });
+
+    test('does not send any cd command when the user picks a file', async () => {
+        const filePath = path.join(workspaceRoot, 'scripts', 'Program.cs');
+
+        workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]);
+        windowMock.showQuickPick.mockResolvedValue({
+            label: 'Program.cs',
+            description: path.join('scripts', 'Program.cs'),
+            detail: filePath,
+        });
+
+        await invokePickAndConvert();
+
+        const sentTexts = mockTerminal.sendText.mock.calls.map((c) => c[0] as string);
+        for (const text of sentTexts) {
+            expect(text).not.toMatch(/^cd\b/);
+        }
+    });
+
+    test('always creates a new terminal when converting a picked file', async () => {
+        const filePath = path.join(workspaceRoot, 'scripts', 'Program.cs');
+        const existingTerminal: MockTerminal = {
+            name: 'dotnet project convert',
+            show: jest.fn<(preserveFocus?: boolean) => void>(),
+            sendText: jest.fn<(text: string) => void>(),
+        };
+
+        workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]);
+        windowMock.terminals = [existingTerminal];
+        windowMock.showQuickPick.mockResolvedValue({
+            label: 'Program.cs',
+            description: path.join('scripts', 'Program.cs'),
+            detail: filePath,
+        });
+
+        await invokePickAndConvert();
+
+        expect(windowMock.createTerminal).toHaveBeenCalled();
+        expect(existingTerminal.sendText).not.toHaveBeenCalled();
     });
 });
