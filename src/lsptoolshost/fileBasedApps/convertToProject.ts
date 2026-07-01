@@ -50,7 +50,7 @@ async function convertToProject(uri: vscode.Uri): Promise<void> {
  * Shows a quick-pick list of discoverable FBA entry points and converts the one selected.
  *
  * All C# files are candidates. Files inside a `.csproj` cone are filtered out unless they
- * contain `#!` or `#:` markers. Open non-`.cs` files are included via language ID; closed
+ * contain `#!` or `#:` markers. Open files are included via language ID; closed
  * files are matched by `.cs` extension (VS Code only exposes language IDs for open files).
  */
 async function pickAndConvertToProject(): Promise<void> {
