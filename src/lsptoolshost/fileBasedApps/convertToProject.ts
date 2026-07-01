@@ -222,6 +222,7 @@ export function detectFileBasedAppKind(filePath: string): FileBasedAppKind {
 
     // Check the first few non-empty lines for `#:` directives.
     const lines = stripped.split(/\r?\n/);
+    const nonEmptyLinesToCheck = 5;
     let checkedLines = 0;
     for (const line of lines) {
         const trimmed = line.trim();
@@ -234,7 +235,7 @@ export function detectFileBasedAppKind(filePath: string): FileBasedAppKind {
         // After encountering a line that is neither blank nor a directive, stop scanning.
         // Real FBA entry points must put their directives before other C# tokens,
         // though FBA directives can come after comments
-        if (++checkedLines >= 5) {
+        if (++checkedLines >= nonEmptyLinesToCheck) {
             break;
         }
     }
@@ -244,12 +245,12 @@ export function detectFileBasedAppKind(filePath: string): FileBasedAppKind {
 
 /**
  * Default implementation of the `readFileHead` parameter for `detectFileBasedAppKind`.
- * Reads the first 4 KB of the file -- sufficient to find `#!` / `#:` near the top
+ * Reads the first 1 KB of the file -- sufficient to find `#!` / `#:` near the top
  * without loading potentially large source files.
  */
 function defaultReadFileHead(filePath: string): string | null {
     try {
-        const buffer = Buffer.alloc(4096);
+        const buffer = Buffer.alloc(1024);
         const fd = fs.openSync(filePath, 'r');
         const bytesRead = fs.readSync(fd, buffer, 0, buffer.length, 0);
         fs.closeSync(fd);

@@ -13,9 +13,7 @@ import {
     isLikelyFbaEntryPoint,
 } from '../../../src/lsptoolshost/fileBasedApps/convertToProject';
 
-// ---------------------------------------------------------------------------
-// detectFileBasedAppKind
-// ---------------------------------------------------------------------------
+//#region detectFileBasedAppKind
 
 describe('detectFileBasedAppKind', () => {
     const tempDir = path.join(__dirname, '.convertToProject-test-files');
@@ -121,10 +119,9 @@ describe('detectFileBasedAppKind', () => {
         });
     });
 });
+//#endregion detectFileBasedAppKind
 
-// ---------------------------------------------------------------------------
-// isInProjectCone
-// ---------------------------------------------------------------------------
+//#region isInProjectCone
 
 describe('isInProjectCone', () => {
     const sep = path.sep;
@@ -167,10 +164,9 @@ describe('isInProjectCone', () => {
         expect(isInProjectCone(`${sep}workspace${sep}projectB${sep}Foo.cs`, csprojDirs)).toBe(true);
     });
 });
+//#endregion isInProjectCone
 
-// ---------------------------------------------------------------------------
-// isLikelyFbaEntryPoint
-// ---------------------------------------------------------------------------
+//#region isLikelyFbaEntryPoint
 
 describe('isLikelyFbaEntryPoint', () => {
     const sep = path.sep;
@@ -194,3 +190,4 @@ describe('isLikelyFbaEntryPoint', () => {
         expect(isLikelyFbaEntryPoint(fileOutsideCone, FileBasedAppKind.None, csprojDirs)).toBe(true);
     });
 });
+//#endregion isLikelyFbaEntryPoint
