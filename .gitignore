@@ -16,6 +16,7 @@ out
 .razorExtension/
 .vscode-test/
 .roslynCopilot/
+.testDiscovery/
 msbuild/signing/signJs/*.log
 msbuild/signing/signVsix/*.log
 dist/
