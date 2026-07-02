@@ -156,8 +156,7 @@ function getRegisteredHandler(): (uri?: vscode.Uri) => Promise<void> {
 
 async function registerCommands(): Promise<void> {
     registerConvertToProjectCommands({ subscriptions: [] } as unknown as vscode.ExtensionContext);
-    await Promise.resolve();
-    await Promise.resolve();
+    await refreshConvertToProjectMenuContext();
     workspaceMock.findFiles.mockReset().mockResolvedValue([] as MockUri[]);
     executeCommandMock.mockClear();
     windowMock.showInformationMessage.mockReset();

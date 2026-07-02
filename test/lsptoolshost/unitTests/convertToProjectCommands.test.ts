@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import {
     convertToProjectCommandName,
     registerConvertToProjectCommands,
+    refreshConvertToProjectMenuContext,
 } from '../../../src/lsptoolshost/fileBasedApps/convertToProject';
 
 jest.mock('vscode', () => ({
@@ -60,6 +61,7 @@ type WindowMock = {
 
 const workspaceMock = vscode.workspace as unknown as WorkspaceMock;
 const windowMock = vscode.window as unknown as WindowMock;
+const executeCommandMock = vscode.commands.executeCommand as unknown as jest.Mock;
 const registerCommandMock = vscode.commands.registerCommand as unknown as jest.Mock<
     (name: string, handler: (uri?: vscode.Uri) => Promise<void>) => vscode.Disposable
 >;
@@ -86,9 +88,9 @@ function createDocument(uri: vscode.Uri, languageId: string, text = ''): MockDoc
 
 async function registerCommands(context: vscode.ExtensionContext): Promise<void> {
     registerConvertToProjectCommands(context);
-    await Promise.resolve();
-    await Promise.resolve();
+    await refreshConvertToProjectMenuContext();
     workspaceMock.findFiles.mockReset().mockResolvedValue([] as vscode.Uri[]);
+    executeCommandMock.mockClear();
     windowMock.showInformationMessage.mockReset();
 }
 
