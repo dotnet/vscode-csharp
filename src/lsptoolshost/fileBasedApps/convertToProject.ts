@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 export const convertToProjectCommandName = 'dotnet.convertToProject';
+export const likelyFbaEntryPointsContextKey = 'dotnet.likelyFbaEntryPoints';
 
 /**
  * Registers the `dotnet.convertToProject` command. When invoked with a URI (context menu)
@@ -15,6 +16,8 @@ export const convertToProjectCommandName = 'dotnet.convertToProject';
  * discoverable FBA entry points. Requires .NET 10 SDK or later.
  */
 export function registerConvertToProjectCommands(context: vscode.ExtensionContext): void {
+    const refreshMenuContext = async (): Promise<void> => refreshConvertToProjectMenuContext();
+
     context.subscriptions.push(
         vscode.commands.registerCommand(convertToProjectCommandName, async (uri?: vscode.Uri): Promise<void> => {
             if (uri !== undefined) {
@@ -24,8 +27,46 @@ export function registerConvertToProjectCommands(context: vscode.ExtensionContex
                 // Invoked from the command palette -- let the user pick from discoverable apps.
                 await pickAndConvertToProject();
             }
+        }),
+        vscode.workspace.onDidOpenTextDocument((document) => {
+            if (document.languageId === 'csharp' && path.extname(document.uri.fsPath) !== '.cs') {
+                void refreshMenuContext();
+            }
+        }),
+        vscode.workspace.onDidCloseTextDocument((document) => {
+            if (document.languageId === 'csharp' && path.extname(document.uri.fsPath) !== '.cs') {
+                void refreshMenuContext();
+            }
+        }),
+        vscode.workspace.onDidSaveTextDocument((document) => {
+            if (document.languageId === 'csharp' || path.extname(document.uri.fsPath) === '.csproj') {
+                void refreshMenuContext();
+            }
+        }),
+        vscode.workspace.onDidCreateFiles((event) => {
+            if (event.files.some((uri) => isConvertToProjectRefreshCandidate(uri))) {
+                void refreshMenuContext();
+            }
+        }),
+        vscode.workspace.onDidDeleteFiles((event) => {
+            if (event.files.some((uri) => isConvertToProjectRefreshCandidate(uri))) {
+                void refreshMenuContext();
+            }
+        }),
+        vscode.workspace.onDidRenameFiles((event) => {
+            if (
+                event.files.some(
+                    (file) =>
+                        isConvertToProjectRefreshCandidate(file.oldUri) ||
+                        isConvertToProjectRefreshCandidate(file.newUri)
+                )
+            ) {
+                void refreshMenuContext();
+            }
         })
     );
+
+    void refreshMenuContext();
 }
 
 /**
@@ -43,6 +84,14 @@ async function convertToProject(uri: vscode.Uri): Promise<void> {
         return;
     }
 
+    const kind = detectTextDocumentFileBasedAppKind(document);
+    if (!isLikelyFbaEntryPoint(uri.fsPath, kind, await getCsprojDirs())) {
+        vscode.window.showInformationMessage(
+            vscode.l10n.t('This file is not detected as a file-based app entry point.')
+        );
+        return;
+    }
+
     await runConvertCommand(uri.fsPath);
 }
 
@@ -54,33 +103,19 @@ async function convertToProject(uri: vscode.Uri): Promise<void> {
  * files are matched by `.cs` extension (VS Code only exposes language IDs for open files).
  */
 async function pickAndConvertToProject(): Promise<void> {
-    // Collect C# files from the workspace by extension, then augment with any already-open
-    // documents that VS Code treats as C# even if they lack a .cs extension.
-    const csFilesByExtension = await vscode.workspace.findFiles('**/*.cs', '**/obj/**');
-    const csFileSet = new Set(csFilesByExtension.map((u) => u.fsPath));
-
-    const allCsUris: vscode.Uri[] = [...csFilesByExtension];
-    for (const doc of vscode.workspace.textDocuments) {
-        if (doc.languageId === 'csharp' && !csFileSet.has(doc.uri.fsPath)) {
-            allCsUris.push(doc.uri);
-        }
-    }
+    const allCsUris = await findCandidateCsUris();
 
     if (allCsUris.length === 0) {
         vscode.window.showInformationMessage(vscode.l10n.t('No C# files found in the workspace.'));
         return;
     }
 
-    // Build a set of directories that contain a .csproj so we can quickly check whether
-    // a given .cs file lives inside a project cone.
-    const csprojFiles = await vscode.workspace.findFiles('**/*.csproj');
-    const csprojDirs = new Set(csprojFiles.map((u) => path.dirname(u.fsPath)));
-
     const entryPoints: vscode.QuickPickItem[] = [];
+    const csprojDirs = await getCsprojDirs();
 
     for (const fileUri of allCsUris) {
+        const kind = detectFileBasedAppKindForUri(fileUri);
         const filePath = fileUri.fsPath;
-        const kind = detectFileBasedAppKind(filePath);
 
         if (isLikelyFbaEntryPoint(filePath, kind, csprojDirs)) {
             const label = path.basename(filePath);
@@ -110,6 +145,12 @@ async function pickAndConvertToProject(): Promise<void> {
     }
 
     await runConvertCommand(picked.detail);
+}
+
+export async function refreshConvertToProjectMenuContext(): Promise<void> {
+    const entryPoints = await findLikelyFbaEntryPointUris();
+    const contextValue = Object.fromEntries(entryPoints.map((uri) => [uri.path, true]));
+    await vscode.commands.executeCommand('setContext', likelyFbaEntryPointsContextKey, contextValue);
 }
 
 /**
@@ -178,7 +219,19 @@ export enum FileBasedAppKind {
  * for `#!` or `#:` markers.  Mirrors Roslyn's `FileBasedProgramsEntryPointDiscovery`.
  */
 export function detectFileBasedAppKind(filePath: string): FileBasedAppKind {
-    const content = defaultReadFileHead(filePath);
+    return detectFileBasedAppKindFromContent(defaultReadFileHead(filePath));
+}
+
+function detectTextDocumentFileBasedAppKind(document: Pick<vscode.TextDocument, 'getText'>): FileBasedAppKind {
+    return detectFileBasedAppKindFromContent(document.getText().slice(0, 1024));
+}
+
+function detectFileBasedAppKindForUri(uri: vscode.Uri): FileBasedAppKind {
+    const openDocument = vscode.workspace.textDocuments.find((document) => document.uri.fsPath === uri.fsPath);
+    return openDocument ? detectTextDocumentFileBasedAppKind(openDocument) : detectFileBasedAppKind(uri.fsPath);
+}
+
+function detectFileBasedAppKindFromContent(content: string | null): FileBasedAppKind {
     if (content === null) {
         return FileBasedAppKind.None;
     }
@@ -211,6 +264,43 @@ export function detectFileBasedAppKind(filePath: string): FileBasedAppKind {
     }
 
     return FileBasedAppKind.None;
+}
+
+async function findCandidateCsUris(): Promise<vscode.Uri[]> {
+    // Collect C# files from the workspace by extension, then augment with any already-open
+    // documents that VS Code treats as C# even if they lack a .cs extension.
+    const csFilesByExtension = await vscode.workspace.findFiles('**/*.cs', '**/obj/**');
+    const csFileSet = new Set(csFilesByExtension.map((u) => u.fsPath));
+
+    const allCsUris: vscode.Uri[] = [...csFilesByExtension];
+    for (const doc of vscode.workspace.textDocuments) {
+        if (doc.languageId === 'csharp' && !csFileSet.has(doc.uri.fsPath)) {
+            allCsUris.push(doc.uri);
+        }
+    }
+
+    return allCsUris;
+}
+
+async function findLikelyFbaEntryPointUris(): Promise<vscode.Uri[]> {
+    const allCsUris = await findCandidateCsUris();
+    const csprojDirs = await getCsprojDirs();
+
+    return allCsUris.filter((fileUri) =>
+        isLikelyFbaEntryPoint(fileUri.fsPath, detectFileBasedAppKindForUri(fileUri), csprojDirs)
+    );
+}
+
+async function getCsprojDirs(): Promise<Set<string>> {
+    // Build a set of directories that contain a .csproj so we can quickly check whether
+    // a given .cs file lives inside a project cone.
+    const csprojFiles = await vscode.workspace.findFiles('**/*.csproj');
+    return new Set(csprojFiles.map((u) => path.dirname(u.fsPath)));
+}
+
+function isConvertToProjectRefreshCandidate(uri: vscode.Uri): boolean {
+    const extension = path.extname(uri.fsPath);
+    return extension === '.cs' || extension === '.csproj';
 }
 
 /**

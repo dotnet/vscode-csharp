@@ -208,6 +208,7 @@
   "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
   "Collecting C# Logs": "Collecting C# Logs",
   "Only C# files can be converted to a project.": "Only C# files can be converted to a project.",
+  "This file is not detected as a file-based app entry point.": "This file is not detected as a file-based app entry point.",
   "No C# files found in the workspace.": "No C# files found in the workspace.",
   "No file-based C# apps were found in the workspace. A file-based app entry point must not be part of any `.csproj` project, unless it contains a top-of-file `#!` or `#:` directive.": "No file-based C# apps were found in the workspace. A file-based app entry point must not be part of any `.csproj` project, unless it contains a top-of-file `#!` or `#:` directive.",
   "Select a file-based C# app to convert to a project": "Select a file-based C# app to convert to a project",

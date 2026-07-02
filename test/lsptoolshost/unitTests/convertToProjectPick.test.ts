@@ -4,14 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import * as fs from 'fs';
 import * as path from 'path';
 
 jest.mock('vscode', () => {
     const workspace = {
-        _textDocuments: [] as Array<{ languageId: string; uri: { fsPath: string } }>,
-        findFiles: jest.fn<(include: string, exclude: string) => Promise<Array<{ fsPath: string }>>>(),
+        _textDocuments: [] as Array<{ languageId: string; uri: { fsPath: string; path: string } }>,
+        findFiles: jest.fn<(include: string, exclude: string) => Promise<Array<{ fsPath: string; path: string }>>>(),
         openTextDocument: jest.fn(),
         asRelativePath: jest.fn<(uri: { fsPath: string }, includeWorkspace?: boolean) => string>(),
+        onDidOpenTextDocument: jest.fn(() => ({ dispose: jest.fn() })),
+        onDidCloseTextDocument: jest.fn(() => ({ dispose: jest.fn() })),
+        onDidSaveTextDocument: jest.fn(() => ({ dispose: jest.fn() })),
+        onDidCreateFiles: jest.fn(() => ({ dispose: jest.fn() })),
+        onDidDeleteFiles: jest.fn(() => ({ dispose: jest.fn() })),
+        onDidRenameFiles: jest.fn(() => ({ dispose: jest.fn() })),
     };
 
     Object.defineProperty(workspace, 'textDocuments', {
@@ -69,7 +76,7 @@ jest.mock('vscode', () => {
             t: (message: string) => message,
         },
         Uri: {
-            file: (filePath: string) => ({ fsPath: filePath }),
+            file: (filePath: string) => ({ fsPath: filePath, path: filePath }),
         },
     };
 });
@@ -77,11 +84,13 @@ jest.mock('vscode', () => {
 import * as vscode from 'vscode';
 import {
     convertToProjectCommandName,
+    likelyFbaEntryPointsContextKey,
     registerConvertToProjectCommands,
+    refreshConvertToProjectMenuContext,
 } from '../../../src/lsptoolshost/fileBasedApps/convertToProject';
 
-type MockUri = { fsPath: string };
-type MockTextDocument = { languageId: string; uri: MockUri };
+type MockUri = { fsPath: string; path: string };
+type MockTextDocument = { languageId: string; uri: MockUri; getText: () => string };
 type MockQuickPickItem = { label: string; description: string; detail: string };
 type MockTerminal = {
     name: string;
@@ -94,6 +103,12 @@ type WorkspaceMock = {
     openTextDocument: jest.Mock;
     findFiles: jest.Mock<(include: string, exclude: string) => Promise<MockUri[]>>;
     asRelativePath: jest.Mock<(uri: MockUri, includeWorkspace?: boolean) => string>;
+    onDidOpenTextDocument: jest.Mock;
+    onDidCloseTextDocument: jest.Mock;
+    onDidSaveTextDocument: jest.Mock;
+    onDidCreateFiles: jest.Mock;
+    onDidDeleteFiles: jest.Mock;
+    onDidRenameFiles: jest.Mock;
 };
 
 type WindowMock = {
@@ -121,17 +136,35 @@ const mockTerminal: MockTerminal = {
     sendText: jest.fn<(text: string) => void>(),
 };
 const workspaceRoot = path.join(path.sep, 'workspace');
+const executeCommandMock = vscode.commands.executeCommand as unknown as jest.Mock;
 
 function uri(filePath: string): MockUri {
     return vscode.Uri.file(filePath) as MockUri;
+}
+
+function createDocument(filePath: string, languageId = 'csharp', text = ''): MockTextDocument {
+    return {
+        languageId,
+        uri: uri(filePath),
+        getText: () => text,
+    };
 }
 
 function getRegisteredHandler(): (uri?: vscode.Uri) => Promise<void> {
     return registerCommandMock.mock.calls[0][1] as (uri?: vscode.Uri) => Promise<void>;
 }
 
-async function invokePickAndConvert(): Promise<void> {
+async function registerCommands(): Promise<void> {
     registerConvertToProjectCommands({ subscriptions: [] } as unknown as vscode.ExtensionContext);
+    await Promise.resolve();
+    await Promise.resolve();
+    workspaceMock.findFiles.mockReset().mockResolvedValue([] as MockUri[]);
+    executeCommandMock.mockClear();
+    windowMock.showInformationMessage.mockReset();
+}
+
+async function invokePickAndConvert(): Promise<void> {
+    await registerCommands();
     await getRegisteredHandler()();
 }
 
@@ -174,9 +207,10 @@ describe('pickAndConvertToProject', () => {
         const filePath = path.join(workspaceRoot, 'app', 'Program.cs');
         const projectPath = path.join(workspaceRoot, 'app', 'App.csproj');
 
+        await registerCommands();
         workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]).mockResolvedValueOnce([uri(projectPath)]);
 
-        await invokePickAndConvert();
+        await getRegisteredHandler()();
 
         expect(windowMock.showInformationMessage).toHaveBeenCalledWith(
             'No file-based C# apps were found in the workspace. ' +
@@ -188,10 +222,11 @@ describe('pickAndConvertToProject', () => {
     test('shows a quick pick for file-based apps outside project cones', async () => {
         const filePath = path.join(workspaceRoot, 'scripts', 'Program.cs');
 
+        await registerCommands();
         workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]);
         windowMock.showQuickPick.mockResolvedValue(undefined);
 
-        await invokePickAndConvert();
+        await getRegisteredHandler()();
 
         expect(windowMock.showQuickPick).toHaveBeenCalledWith(
             [{ label: 'Program.cs', description: path.join('scripts', 'Program.cs'), detail: filePath }],
@@ -208,14 +243,15 @@ describe('pickAndConvertToProject', () => {
         const openPath = path.join(workspaceRoot, 'scripts', 'app');
 
         workspaceMock.textDocuments = [
-            { languageId: 'csharp', uri: uri(discoveredPath) },
-            { languageId: 'csharp', uri: uri(openPath) },
-            { languageId: 'plaintext', uri: uri(path.join(workspaceRoot, 'notes.txt')) },
+            createDocument(discoveredPath),
+            createDocument(openPath),
+            createDocument(path.join(workspaceRoot, 'notes.txt'), 'plaintext'),
         ];
+        await registerCommands();
         workspaceMock.findFiles.mockResolvedValueOnce([uri(discoveredPath)]);
         windowMock.showQuickPick.mockResolvedValue(undefined);
 
-        await invokePickAndConvert();
+        await getRegisteredHandler()();
 
         expect(windowMock.showQuickPick).toHaveBeenCalledWith(
             expect.arrayContaining([{ label: 'app', description: path.join('scripts', 'app'), detail: openPath }]),
@@ -226,10 +262,11 @@ describe('pickAndConvertToProject', () => {
     test('does not run conversion when the user dismisses the quick pick', async () => {
         const filePath = path.join(workspaceRoot, 'scripts', 'Program.cs');
 
+        await registerCommands();
         workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]);
         windowMock.showQuickPick.mockResolvedValue(undefined);
 
-        await invokePickAndConvert();
+        await getRegisteredHandler()();
 
         expect(mockTerminal.sendText).not.toHaveBeenCalled();
     });
@@ -237,6 +274,7 @@ describe('pickAndConvertToProject', () => {
     test('runs the convert command when the user picks a file', async () => {
         const filePath = path.join(workspaceRoot, 'scripts', 'Program.cs');
 
+        await registerCommands();
         workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]);
         windowMock.showQuickPick.mockResolvedValue({
             label: 'Program.cs',
@@ -244,7 +282,7 @@ describe('pickAndConvertToProject', () => {
             detail: filePath,
         });
 
-        await invokePickAndConvert();
+        await getRegisteredHandler()();
 
         expect(windowMock.createTerminal).toHaveBeenCalledWith({
             name: 'dotnet project convert',
@@ -257,6 +295,7 @@ describe('pickAndConvertToProject', () => {
     test('does not send any cd command when the user picks a file', async () => {
         const filePath = path.join(workspaceRoot, 'scripts', 'Program.cs');
 
+        await registerCommands();
         workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]);
         windowMock.showQuickPick.mockResolvedValue({
             label: 'Program.cs',
@@ -264,7 +303,7 @@ describe('pickAndConvertToProject', () => {
             detail: filePath,
         });
 
-        await invokePickAndConvert();
+        await getRegisteredHandler()();
 
         const sentTexts = mockTerminal.sendText.mock.calls.map((c) => c[0] as string);
         for (const text of sentTexts) {
@@ -280,6 +319,7 @@ describe('pickAndConvertToProject', () => {
             sendText: jest.fn<(text: string) => void>(),
         };
 
+        await registerCommands();
         workspaceMock.findFiles.mockResolvedValueOnce([uri(filePath)]);
         windowMock.terminals = [existingTerminal];
         windowMock.showQuickPick.mockResolvedValue({
@@ -288,9 +328,46 @@ describe('pickAndConvertToProject', () => {
             detail: filePath,
         });
 
-        await invokePickAndConvert();
+        await getRegisteredHandler()();
 
         expect(windowMock.createTerminal).toHaveBeenCalled();
         expect(existingTerminal.sendText).not.toHaveBeenCalled();
+    });
+});
+
+describe('refreshConvertToProjectMenuContext', () => {
+    test('sets a resource-path membership map for likely FBA entry points', async () => {
+        const outsideProjectPath = path.join(workspaceRoot, 'scripts', 'Program.cs');
+        const insideProjectPath = path.join(workspaceRoot, 'app', 'Program.cs');
+        const openPath = path.join(workspaceRoot, 'scripts', 'app');
+        const projectPath = path.join(workspaceRoot, 'app', 'App.csproj');
+
+        workspaceMock.textDocuments = [createDocument(openPath)];
+        workspaceMock.findFiles.mockResolvedValueOnce([uri(outsideProjectPath), uri(insideProjectPath)]);
+        workspaceMock.findFiles.mockResolvedValueOnce([uri(projectPath)]);
+
+        await refreshConvertToProjectMenuContext();
+
+        expect(executeCommandMock).toHaveBeenCalledWith('setContext', likelyFbaEntryPointsContextKey, {
+            [uri(outsideProjectPath).path]: true,
+            [uri(openPath).path]: true,
+        });
+    });
+});
+
+describe('package contributions', () => {
+    test('use the likely-FBA context key in editor and explorer menus', () => {
+        const packageJson = JSON.parse(
+            fs.readFileSync('/home/runner/work/vscode-csharp/vscode-csharp/package.json', 'utf8')
+        );
+        const editorMenu = packageJson.contributes.menus['editor/context'].find(
+            (item: { command: string }) => item.command === convertToProjectCommandName
+        );
+        const explorerMenu = packageJson.contributes.menus['explorer/context'].find(
+            (item: { command: string }) => item.command === convertToProjectCommandName
+        );
+
+        expect(editorMenu.when).toContain(`resourcePath in ${likelyFbaEntryPointsContextKey}`);
+        expect(explorerMenu.when).toContain(`resourcePath in ${likelyFbaEntryPointsContextKey}`);
     });
 });
