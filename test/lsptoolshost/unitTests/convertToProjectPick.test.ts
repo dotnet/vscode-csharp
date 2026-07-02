@@ -356,9 +356,7 @@ describe('refreshConvertToProjectMenuContext', () => {
 
 describe('package contributions', () => {
     test('use the likely-FBA context key in editor and explorer menus', () => {
-        const packageJson = JSON.parse(
-            fs.readFileSync('/home/runner/work/vscode-csharp/vscode-csharp/package.json', 'utf8')
-        );
+        const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'package.json'), 'utf8'));
         const editorMenu = packageJson.contributes.menus['editor/context'].find(
             (item: { command: string }) => item.command === convertToProjectCommandName
         );
