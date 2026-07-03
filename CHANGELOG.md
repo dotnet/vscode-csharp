@@ -10,6 +10,9 @@
 * Update Roslyn to 5.9.0-1.26326.7 (PR: [#9480](https://github.com/dotnet/vscode-csharp/pull/9480))
   * Relax rules for completion of `fixed` keyword (PR: [#84133](https://github.com/dotnet/roslyn/pull/84133))
   * Treat more recoverable pipe failures as non-fatal (PR: [#84076](https://github.com/dotnet/roslyn/pull/84076))
+* Update xamlTools to 18.9.11921.35 (PR: [#9461](https://github.com/dotnet/vscode-csharp/pull/9461))
+  * MAUI Hot Reload exceptions reporting (PR: AzDO#749102)
+  * C# XAML Expressions (XEXPR) support improvements and fixes (PR: AzDO#748362)
 
 # 2.145.x
 * Add projectPath and launchBrowser options to blazorwasm debug configuration (PR: [#9427](https://github.com/dotnet/vscode-csharp/pull/9427))
@@ -24,9 +27,6 @@
   * Log LSP server info at startup (PR: [#84168](https://github.com/dotnet/roslyn/pull/84168))
   * Don't assume documents being saved are documents (PR: [#84146](https://github.com/dotnet/roslyn/pull/84146))
   * Don't warn about no additional files if the project is still loading (PR: [#84147](https://github.com/dotnet/roslyn/pull/84147))
-* Update xamlTools to 18.9.11921.35 (PR: [#9461](https://github.com/dotnet/vscode-csharp/pull/9461))
-  * MAUI Hot Reload exceptions reporting (PR: AzDO#749102)
-  * C# XAML Expressions (XEXPR) support improvements and fixes (PR: AzDO#748362)
 
 
 # 2.144.x
