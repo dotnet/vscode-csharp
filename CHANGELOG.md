@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.151.x
-* Update Roslyn to 5.10.0-1.26352.10 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.10.0-1.26352.10 (PR: [#9500](https://github.com/dotnet/vscode-csharp/pull/9500))
   * Fix formatting of hot reload unexpected errors (PR: [#84391](https://github.com/dotnet/roslyn/pull/84391))
   * Unsafe evolution: avoid errors inside nameof (PR: [#84325](https://github.com/dotnet/roslyn/pull/84325))
   * Respect object initializer severity for fade diagnostics (PR: [#84324](https://github.com/dotnet/roslyn/pull/84324))
