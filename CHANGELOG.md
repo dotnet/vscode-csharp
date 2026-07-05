@@ -6,13 +6,7 @@
 # 2.151.x
 * Update Roslyn to 5.10.0-1.26352.10 (PR: [#9500](https://github.com/dotnet/vscode-csharp/pull/9500))
   * Fix formatting of hot reload unexpected errors (PR: [#84391](https://github.com/dotnet/roslyn/pull/84391))
-  * Unsafe evolution: avoid errors inside nameof (PR: [#84325](https://github.com/dotnet/roslyn/pull/84325))
-  * Respect object initializer severity for fade diagnostics (PR: [#84324](https://github.com/dotnet/roslyn/pull/84324))
-  * Handle instrumented conditions in post-lowering passes (PR: [#84244](https://github.com/dotnet/roslyn/pull/84244))
-  * Dispose builders in declaration computer (PR: [#84339](https://github.com/dotnet/roslyn/pull/84339))
   * Offer fully-qualify code fix for unresolved types in cref attributes (PR: [#84346](https://github.com/dotnet/roslyn/pull/84346))
-  * Guard Razor semantic token spans (PR: [#84334](https://github.com/dotnet/roslyn/pull/84334))
-  * Don't assume a Razor buffer is non-null, until we know it's ours (PR: [#84337](https://github.com/dotnet/roslyn/pull/84337))
 * Update Roslyn to 5.10.0-1.26330.4 (PR: [#9485](https://github.com/dotnet/vscode-csharp/pull/9485))
   * Filter false CSS024 diagnostics from Html (PR: [#84320](https://github.com/dotnet/roslyn/pull/84320))
   * Ignore Razor comment edits from the Html formatter (PR: [#84318](https://github.com/dotnet/roslyn/pull/84318))
