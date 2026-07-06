@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.151.x
+* Update Roslyn to 5.10.0-1.26352.10 (PR: [#9500](https://github.com/dotnet/vscode-csharp/pull/9500))
+  * Fix formatting of hot reload unexpected errors (PR: [#84391](https://github.com/dotnet/roslyn/pull/84391))
+  * Offer fully-qualify code fix for unresolved types in cref attributes (PR: [#84346](https://github.com/dotnet/roslyn/pull/84346))
 * Update Roslyn to 5.10.0-1.26330.4 (PR: [#9485](https://github.com/dotnet/vscode-csharp/pull/9485))
   * Filter false CSS024 diagnostics from Html (PR: [#84320](https://github.com/dotnet/roslyn/pull/84320))
   * Ignore Razor comment edits from the Html formatter (PR: [#84318](https://github.com/dotnet/roslyn/pull/84318))
