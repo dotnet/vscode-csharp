@@ -3,6 +3,190 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.150.x
+
+This update brings improved C# language features, parallel project loading for faster startup, extensive new Razor code actions and navigation support, remote debugging capabilities, full XAML C# expression support for MAUI, and `.slnx` solution file support.
+
+## C# Language Support
+
+### Nullable annotations in Quick Info for delegates
+
+Quick Info tooltips now display nullable annotations for delegate types, giving clearer visibility into nullability contracts without navigating to the definition. ([roslyn#84195](https://github.com/dotnet/roslyn/pull/84195))
+
+### Interceptor information in Quick Info
+
+Quick Info now shows interceptor method information when hovering over intercepted calls, making it easier to understand source-generated code behavior. ([roslyn#83254](https://github.com/dotnet/roslyn/pull/83254))
+
+### CodeLens references for extension block methods
+
+CodeLens now correctly displays references for methods declared in extension blocks. Previously, these references were missing. ([roslyn#84157](https://github.com/dotnet/roslyn/pull/84157))
+
+### Move static members refactoring
+
+The "Move static members to another type" refactoring now works in VS Code. ([roslyn#83696](https://github.com/dotnet/roslyn/pull/83696))
+
+### Local functions in top-level statements
+
+The "Convert to local function" refactoring now works correctly in files using top-level statements. ([roslyn#83279](https://github.com/dotnet/roslyn/pull/83279))
+
+### `[method:]` attribute target for primary constructors
+
+The Forward Attribute With Method Name (`[method: MyGenerator]`) feature now supports targeting primary constructors. ([roslyn#79609](https://github.com/dotnet/roslyn/pull/79609))
+
+### Fixed false positive IDE0004 (unnecessary cast) for nullable generic types
+
+The "Remove unnecessary cast" diagnostic no longer fires incorrectly when casting nullable generic type arguments. ([roslyn#83326](https://github.com/dotnet/roslyn/pull/83326))
+
+### Fixed false positive for collection expression infinite constructor chains
+
+A spurious "infinite chain of calls" error no longer appears in collection expressions when the target type has both a parameterless constructor and a `params` constructor. ([roslyn#82591](https://github.com/dotnet/roslyn/pull/82591))
+
+### Fixed doc comment autocomplete corrupting existing `///` declarations
+
+Triggering XML doc comment completion on a member that already has a `///` prefix no longer duplicates or corrupts the declaration. ([roslyn#83648](https://github.com/dotnet/roslyn/pull/83648))
+
+### Fixed signature help selecting wrong overload for generic extension methods
+
+Signature help now correctly identifies the active overload when multiple extension methods differ only in the number of type parameters. ([roslyn#84089](https://github.com/dotnet/roslyn/pull/84089))
+
+### Fixed multiline lambda formatting in attributes
+
+Multiline lambda expressions inside non-directive attributes are now formatted correctly. ([roslyn#84121](https://github.com/dotnet/roslyn/pull/84121))
+
+### File-based app improvements
+
+- File-based apps now use a single MSBuild node for design-time builds, fixing reliability issues with concurrent builds. ([roslyn#84183](https://github.com/dotnet/roslyn/pull/84183))
+- Dot-prefixed directories (e.g., `.git`) are no longer incorrectly discovered as file-based app projects. ([roslyn#83547](https://github.com/dotnet/roslyn/pull/83547))
+
+## Performance
+
+### Parallel project loading
+
+The language server now loads projects in parallel using multiple MSBuild nodes, significantly reducing solution load times for large workspaces. ([roslyn#83982](https://github.com/dotnet/roslyn/pull/83982))
+
+### Progress reporting during project loading
+
+A percentage-based progress indicator now appears during project loading, providing better visibility into how far along the language server is in initializing your workspace. ([roslyn#83785](https://github.com/dotnet/roslyn/pull/83785))
+
+### Faster SuppressMessage attribute processing
+
+The language server no longer eagerly decodes all `SuppressMessageAttribute` instances up front, reducing initial load time and memory usage. ([roslyn#83087](https://github.com/dotnet/roslyn/pull/83087))
+
+### Reduced memory pressure from large Razor completion lists
+
+Razor completion lists are now capped at 1000 items to prevent memory pooling issues with large responses. ([roslyn#84194](https://github.com/dotnet/roslyn/pull/84194))
+
+### Fixed leaked event handlers
+
+A memory leak caused by event handlers in the refresh queue and project system has been fixed. ([roslyn#83561](https://github.com/dotnet/roslyn/pull/83561))
+
+## Razor
+
+### Razor is now built into the Roslyn language server
+
+Razor support is now a built-in feature of the Roslyn language server rather than a separate extension component. This simplifies the architecture and improves reliability. Razor logs now appear in the main C# output window. ([vscode-csharp#9277](https://github.com/dotnet/vscode-csharp/pull/9277), [vscode-csharp#9368](https://github.com/dotnet/vscode-csharp/pull/9368))
+
+### Type Hierarchy support
+
+Razor files now support the Type Hierarchy feature, allowing you to explore base types and derived types from within `.razor` and `.cshtml` files. ([roslyn#83637](https://github.com/dotnet/roslyn/pull/83637))
+
+### Call Hierarchy support
+
+You can now use Call Hierarchy in Razor files to navigate incoming and outgoing calls for C# methods referenced in your markup. ([roslyn#83548](https://github.com/dotnet/roslyn/pull/83548))
+
+### Selection Range support
+
+Smart selection expand/shrink now works in Razor files, respecting the structure of mixed HTML and C# content. ([roslyn#83514](https://github.com/dotnet/roslyn/pull/83514))
+
+### Prepare Rename support
+
+Razor now validates rename operations before prompting for a new name, preventing attempts to rename non-renameable symbols. ([roslyn#83599](https://github.com/dotnet/roslyn/pull/83599))
+
+### Implement Interface and Implement Abstract Class
+
+The **Implement Interface** and **Implement Abstract Class** code actions now work directly in Razor files. ([roslyn#83636](https://github.com/dotnet/roslyn/pull/83636), [roslyn#83638](https://github.com/dotnet/roslyn/pull/83638))
+
+### Generate Type, Constructor, Property, and Field
+
+Code actions for generating types, constructors, properties, and fields are now available in Razor files, reducing the need to switch to a separate C# file. ([roslyn#83491](https://github.com/dotnet/roslyn/pull/83491), [roslyn#83478](https://github.com/dotnet/roslyn/pull/83478), [roslyn#83450](https://github.com/dotnet/roslyn/pull/83450))
+
+### Parallelized completion requests
+
+HTML and Razor completion requests are now parallelized, improving completion responsiveness especially in large Razor files. ([razor#13092](https://github.com/dotnet/razor/pull/13092))
+
+### Fixed `@{` completion regression in CSHTML files
+
+Typing `@{` in `.cshtml` files once again correctly triggers code block completion. ([roslyn#83919](https://github.com/dotnet/roslyn/pull/83919))
+
+### Fixed "hintName must be unique" build error
+
+Some Razor projects that encountered a "hintName must be unique" error from the source generator no longer hit this issue. ([roslyn#83878](https://github.com/dotnet/roslyn/pull/83878))
+
+### Fixed source generator crash on misplaced preprocessor directives
+
+The Razor source generator no longer crashes when encountering a misplaced preprocessor directive in disabled text. ([roslyn#84159](https://github.com/dotnet/roslyn/pull/84159))
+
+### Fixed crash with generic component type arguments
+
+A crash that occurred when lowering a generic component type argument with mixed literal and expression content has been fixed. ([roslyn#83645](https://github.com/dotnet/roslyn/pull/83645))
+
+### Fixed formatting issues
+
+- Multiline expressions in attributes are now formatted correctly. ([roslyn#83566](https://github.com/dotnet/roslyn/pull/83566))
+- Self-closing multiline templates are now formatted correctly. ([razor#13069](https://github.com/dotnet/razor/pull/13069))
+- Single-line script tags are now formatted correctly. ([roslyn#83721](https://github.com/dotnet/roslyn/pull/83721))
+
+### Fixed completion issues
+
+- Snippets and tag helper completions are no longer shown in end-tag contexts. ([roslyn#83573](https://github.com/dotnet/roslyn/pull/83573))
+- Razor completion is no longer triggered when `@` is typed in an Emmet numbering context (e.g., `li*3>a@`). ([roslyn#83837](https://github.com/dotnet/roslyn/pull/83837))
+- Directive attribute completions now work correctly. ([roslyn#83559](https://github.com/dotnet/roslyn/pull/83559))
+- Tag helper attribute completions with `ParentTag` constraints now work correctly. ([roslyn#83455](https://github.com/dotnet/roslyn/pull/83455))
+- False-positive suggestion mode in implicit expression completions has been cleared. ([roslyn#83463](https://github.com/dotnet/roslyn/pull/83463))
+
+### Fixed `@using` code action with existing directives
+
+The "Add using" code action in Razor files no longer fails when other directives are already present at the top of the file. ([roslyn#83448](https://github.com/dotnet/roslyn/pull/83448))
+
+### Fixed `bind-*:after` property accessor collision
+
+Razor no longer generates conflicting `_` identifiers in `bind-*:after` property accessor code. ([roslyn#83572](https://github.com/dotnet/roslyn/pull/83572))
+
+## Debugging
+
+### Remote CoreCLR debugging
+
+The extension now supports attaching the .NET debugger to remote CoreCLR processes, enabling debugging of applications running on remote machines or containers. ([vscode-csharp#8667](https://github.com/dotnet/vscode-csharp/pull/8667))
+
+### Fixed crash with in-memory symbols
+
+A regression that caused the debugger to crash when debugging projects that use in-memory symbols (PDBs not written to disk) has been fixed. ([vscode-csharp#9335](https://github.com/dotnet/vscode-csharp/pull/9335))
+
+## MAUI
+
+### Full XAML C# Expression support
+
+XAML C# Expressions (XEXPR) are now fully supported, enabling richer data binding and expression evaluation in XAML files. ([vscode-csharp#9261](https://github.com/dotnet/vscode-csharp/pull/9261))
+
+### Hot Reload improvements
+
+- `MetadataUpdateHandlers` are now correctly invoked in all MAUI app scenarios, fixing cases where hot reload changes were not applied. ([vscode-csharp#9409](https://github.com/dotnet/vscode-csharp/pull/9409))
+- XAML Hot Reload reliability has been improved with end-to-end diagnostics support. ([vscode-csharp#9409](https://github.com/dotnet/vscode-csharp/pull/9409))
+
+## Editor Experience
+
+### `.slnx` solution file support
+
+The extension now recognizes `.slnx` solution files (the new XML-based solution format) wherever `.sln` files were previously supported, including the Open Solution command. ([vscode-csharp#9286](https://github.com/dotnet/vscode-csharp/pull/9286))
+
+### Roslyn Copilot component respects AI settings
+
+The Roslyn Copilot language server component is no longer installed or loaded when AI features are disabled in settings, reducing resource usage for users who don't use AI-assisted features. The extension prompts for reload when the setting changes. ([vscode-csharp#9196](https://github.com/dotnet/vscode-csharp/pull/9196))
+
+### Improved language server shutdown reliability
+
+The language server now shuts down cleanly when its mutex is closed and no longer blocks shutdown on JSON-RPC stream completion, reducing cases of orphaned server processes. ([roslyn#83921](https://github.com/dotnet/roslyn/pull/83921), [roslyn#83930](https://github.com/dotnet/roslyn/pull/83930))
+
 # 2.140.x
 
 This update brings new language features like Type Hierarchy and Call Hierarchy, major file-based apps improvements, significant performance gains, extensive Razor formatting and editing enhancements, Blazor WebAssembly debugging, and MAUI tooling improvements.
