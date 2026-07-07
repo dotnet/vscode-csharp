@@ -74,14 +74,7 @@ export function isWebProject(projectPath: string): [boolean, boolean] {
     ];
 }
 
-/**
- * Escape hatch: an explicit `enableWebAssemblyDebugging` flag on a launchSettings.json profile
- * unconditionally signals that the project requires Blazor WebAssembly (browser) debugging.
- *
- * The templates don't set this by default; it exists so users can force WebAssembly debugging on
- * when the static heuristics below don't recognize a non-standard project layout.
- */
-export function hasEnableWebAssemblyDebuggingSetting(projectPath: string): boolean {
+export async function isBlazorWebAssemblyProject(projectPath: string): Promise<boolean> {
     const projectDirectory = path.dirname(projectPath);
     const launchSettingsPath = path.join(projectDirectory, 'Properties', 'launchSettings.json');
 
@@ -90,39 +83,41 @@ export function hasEnableWebAssemblyDebuggingSetting(projectPath: string): boole
             return false;
         }
 
-        const launchSettingsContent = fs.readFileSync(launchSettingsPath, 'utf8');
-        if (!launchSettingsContent) {
+        const launchSettingContent = fs.readFileSync(launchSettingsPath);
+        if (!launchSettingContent) {
             return false;
         }
 
-        try {
-            const launchSettings = JSON.parse(launchSettingsContent);
-            const profiles = launchSettings?.profiles;
-            if (profiles && typeof profiles === 'object') {
-                for (const profileName of Object.keys(profiles)) {
-                    if (profiles[profileName]?.enableWebAssemblyDebugging === true) {
-                        return true;
-                    }
-                }
-            }
-        } catch {
-            // launchSettings.json may contain comments or otherwise fail to parse strictly; fall back
-            // to a lenient text match so the escape hatch still works.
-            return /"enableWebAssemblyDebugging"\s*:\s*true/i.test(launchSettingsContent);
+        if (launchSettingContent.indexOf('"inspectUri"') > 0) {
+            return true;
+        }
+
+        // Escape hatch for newer templates that no longer emit "inspectUri": an explicit
+        // "enableWebAssemblyDebugging" launch profile setting forces WebAssembly debugging on.
+        // Use indexOf (not JSON.parse) since launchSettings.json may contain comments.
+        if (launchSettingContent.indexOf('"enableWebAssemblyDebugging"') > 0) {
+            return true;
         }
     } catch {
-        // Swallow IO errors from reading the launchSettings.json files.
+        // Swallow IO errors from reading the launchSettings.json files
     }
 
     return false;
 }
 
-/**
- * Returns true when the project references Microsoft.AspNetCore.Components.WebAssembly.Server, the
- * package that brings in the Blazor WebAssembly debugging middleware. This is the static marker of
- * an ASP.NET Core host that serves and debugs a Blazor WebAssembly client.
- */
-function referencesWebAssemblyServerPackage(projectPath: string): boolean {
+// Detects an ASP.NET Core host that serves and debugs a Blazor WebAssembly client. Newer templates
+// no longer emit "inspectUri", so additionally recognize the host via the
+// Microsoft.AspNetCore.Components.WebAssembly.Server package reference, which brings in the
+// WebAssembly debugging middleware.
+export function isBlazorWebAssemblyHostedServer(
+    projectPath: string,
+    isExeProject: boolean,
+    isWebProject: boolean
+): boolean {
+    if (!isExeProject || !isWebProject) {
+        return false;
+    }
+
     try {
         const projectFileText = fs.readFileSync(projectPath, 'utf8').toLowerCase();
         return projectFileText.indexOf('microsoft.aspnetcore.components.webassembly.server') >= 0;
@@ -132,30 +127,27 @@ function referencesWebAssemblyServerPackage(projectPath: string): boolean {
     }
 }
 
-/**
- * Classifies a project as a standalone or hosted Blazor WebAssembly app for debugging purposes.
- *
- * Detection relies on static, project-code based signals, plus the `enableWebAssemblyDebugging`
- * launchSettings.json escape hatch for non-standard layouts:
- * - Hosted: an executable Web SDK project that references the WebAssembly.Server package (or that
- *   has the escape hatch set).
- * - Standalone: a Blazor WebAssembly SDK project (or a non-host project with the escape hatch set).
- */
-export function getBlazorWebAssemblyDebugInfo(
-    projectPath: string,
+export function isBlazorWebAssemblyHosted(
     isExeProject: boolean,
-    isWebSdkProject: boolean,
-    isWebAssemblySdkProject: boolean
-): { isBlazorWebAssemblyHosted: boolean; isBlazorWebAssemblyStandalone: boolean } {
-    const forceWebAssemblyDebugging = hasEnableWebAssemblyDebuggingSetting(projectPath);
+    isWebProject: boolean,
+    isProjectBlazorWebAssemblyProject: boolean,
+    targetsDotnetCore: boolean
+): boolean {
+    if (!isProjectBlazorWebAssemblyProject) {
+        return false;
+    }
 
-    const isBlazorWebAssemblyHosted =
-        isExeProject &&
-        isWebSdkProject &&
-        (referencesWebAssemblyServerPackage(projectPath) || forceWebAssemblyDebugging);
+    if (!isExeProject) {
+        return false;
+    }
 
-    const isBlazorWebAssemblyStandalone =
-        !isBlazorWebAssemblyHosted && (isWebAssemblySdkProject || forceWebAssemblyDebugging);
+    if (!isWebProject) {
+        return false;
+    }
 
-    return { isBlazorWebAssemblyHosted, isBlazorWebAssemblyStandalone };
+    if (targetsDotnetCore) {
+        return false;
+    }
+
+    return true;
 }

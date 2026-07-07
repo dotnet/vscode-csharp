@@ -7,11 +7,7 @@ import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { CreateTmpDir, TmpAsset } from '../../createTmpAsset';
-import {
-    getBlazorWebAssemblyDebugInfo,
-    hasEnableWebAssemblyDebuggingSetting,
-    isWebProject,
-} from '../../../src/shared/utils';
+import { isBlazorWebAssemblyHostedServer, isBlazorWebAssemblyProject, isWebProject } from '../../../src/shared/utils';
 
 const webSdkCsproj = `<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
@@ -61,96 +57,34 @@ describe('Blazor WebAssembly detection', () => {
         fs.writeFileSync(path.join(propertiesDir, 'launchSettings.json'), content);
     }
 
-    describe('getBlazorWebAssemblyDebugInfo', () => {
-        test('classifies a standalone Blazor WebAssembly SDK project as standalone', () => {
-            writeProject(wasmSdkCsproj);
-            const [webProject, webAssemblyProject] = isWebProject(projectPath);
-
-            const info = getBlazorWebAssemblyDebugInfo(projectPath, /*isExe*/ true, webProject, webAssemblyProject);
-
-            expect(info.isBlazorWebAssemblyStandalone).toBe(true);
-            expect(info.isBlazorWebAssemblyHosted).toBe(false);
-        });
-
-        test('classifies a Web SDK host referencing WebAssembly.Server as hosted', () => {
-            writeProject(hostedServerCsproj);
-            const [webProject, webAssemblyProject] = isWebProject(projectPath);
-
-            const info = getBlazorWebAssemblyDebugInfo(projectPath, /*isExe*/ true, webProject, webAssemblyProject);
-
-            expect(info.isBlazorWebAssemblyHosted).toBe(true);
-            expect(info.isBlazorWebAssemblyStandalone).toBe(false);
-        });
-
-        test('does not classify a plain Web SDK project as Blazor WebAssembly', () => {
+    describe('isBlazorWebAssemblyProject (launchSettings-based, additive escape hatch)', () => {
+        test('returns false when launchSettings.json is missing', async () => {
             writeProject(webSdkCsproj);
-            const [webProject, webAssemblyProject] = isWebProject(projectPath);
-
-            const info = getBlazorWebAssemblyDebugInfo(projectPath, /*isExe*/ true, webProject, webAssemblyProject);
-
-            expect(info.isBlazorWebAssemblyHosted).toBe(false);
-            expect(info.isBlazorWebAssemblyStandalone).toBe(false);
+            expect(await isBlazorWebAssemblyProject(projectPath)).toBe(false);
         });
 
-        test('does not classify a non-executable Web SDK host as hosted', () => {
-            writeProject(hostedServerCsproj);
-            const [webProject, webAssemblyProject] = isWebProject(projectPath);
-
-            const info = getBlazorWebAssemblyDebugInfo(projectPath, /*isExe*/ false, webProject, webAssemblyProject);
-
-            expect(info.isBlazorWebAssemblyHosted).toBe(false);
-        });
-
-        test('escape hatch forces a Web SDK host to be treated as hosted', () => {
-            writeProject(webSdkCsproj);
-            writeLaunchSettings(
-                JSON.stringify({ profiles: { https: { commandName: 'Project', enableWebAssemblyDebugging: true } } })
-            );
-            const [webProject, webAssemblyProject] = isWebProject(projectPath);
-
-            const info = getBlazorWebAssemblyDebugInfo(projectPath, /*isExe*/ true, webProject, webAssemblyProject);
-
-            expect(info.isBlazorWebAssemblyHosted).toBe(true);
-            expect(info.isBlazorWebAssemblyStandalone).toBe(false);
-        });
-
-        test('escape hatch forces a non-web project to be treated as standalone', () => {
-            writeProject(webSdkCsproj.replace('Microsoft.NET.Sdk.Web', 'Microsoft.NET.Sdk'));
-            writeLaunchSettings(
-                JSON.stringify({ profiles: { https: { commandName: 'Project', enableWebAssemblyDebugging: true } } })
-            );
-            const [webProject, webAssemblyProject] = isWebProject(projectPath);
-
-            const info = getBlazorWebAssemblyDebugInfo(projectPath, /*isExe*/ true, webProject, webAssemblyProject);
-
-            expect(info.isBlazorWebAssemblyStandalone).toBe(true);
-            expect(info.isBlazorWebAssemblyHosted).toBe(false);
-        });
-    });
-
-    describe('hasEnableWebAssemblyDebuggingSetting', () => {
-        test('returns false when launchSettings.json is missing', () => {
-            writeProject(webSdkCsproj);
-            expect(hasEnableWebAssemblyDebuggingSetting(projectPath)).toBe(false);
-        });
-
-        test('returns false when no profile enables WebAssembly debugging', () => {
-            writeProject(webSdkCsproj);
-            writeLaunchSettings(JSON.stringify({ profiles: { https: { commandName: 'Project' } } }));
-            expect(hasEnableWebAssemblyDebuggingSetting(projectPath)).toBe(false);
-        });
-
-        test('returns true when a profile enables WebAssembly debugging', () => {
+        test('returns true when a profile contains inspectUri (original behavior)', async () => {
             writeProject(webSdkCsproj);
             writeLaunchSettings(
                 JSON.stringify({
-                    profiles: { http: {}, https: { enableWebAssemblyDebugging: true } },
+                    profiles: {
+                        https: {
+                            inspectUri:
+                                '{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}',
+                        },
+                    },
                 })
             );
-            expect(hasEnableWebAssemblyDebuggingSetting(projectPath)).toBe(true);
+            expect(await isBlazorWebAssemblyProject(projectPath)).toBe(true);
         });
 
-        test('falls back to lenient matching when launchSettings.json has comments', () => {
+        test('returns true when a profile enables WebAssembly debugging (escape hatch)', async () => {
+            writeProject(webSdkCsproj);
+            writeLaunchSettings(JSON.stringify({ profiles: { https: { enableWebAssemblyDebugging: true } } }));
+            expect(await isBlazorWebAssemblyProject(projectPath)).toBe(true);
+        });
+
+        test('honors the escape hatch even when launchSettings.json contains comments', async () => {
             writeProject(webSdkCsproj);
             writeLaunchSettings(`{
                 // launch profiles
@@ -160,7 +94,48 @@ describe('Blazor WebAssembly detection', () => {
                     }
                 }
             }`);
-            expect(hasEnableWebAssemblyDebuggingSetting(projectPath)).toBe(true);
+            expect(await isBlazorWebAssemblyProject(projectPath)).toBe(true);
+        });
+
+        test('returns false when neither signal is present', async () => {
+            writeProject(webSdkCsproj);
+            writeLaunchSettings(JSON.stringify({ profiles: { https: { commandName: 'Project' } } }));
+            expect(await isBlazorWebAssemblyProject(projectPath)).toBe(false);
+        });
+    });
+
+    describe('isBlazorWebAssemblyHostedServer (project-based, additive)', () => {
+        test('detects a Web SDK host referencing WebAssembly.Server', () => {
+            writeProject(hostedServerCsproj);
+            const [webProject] = isWebProject(projectPath);
+            expect(isBlazorWebAssemblyHostedServer(projectPath, /*isExe*/ true, webProject)).toBe(true);
+        });
+
+        test('does not detect a plain Web SDK project', () => {
+            writeProject(webSdkCsproj);
+            const [webProject] = isWebProject(projectPath);
+            expect(isBlazorWebAssemblyHostedServer(projectPath, /*isExe*/ true, webProject)).toBe(false);
+        });
+
+        test('does not detect a non-executable host', () => {
+            writeProject(hostedServerCsproj);
+            const [webProject] = isWebProject(projectPath);
+            expect(isBlazorWebAssemblyHostedServer(projectPath, /*isExe*/ false, webProject)).toBe(false);
+        });
+
+        test('does not detect a non-web project', () => {
+            writeProject(wasmSdkCsproj);
+            const [webProject] = isWebProject(projectPath);
+            expect(isBlazorWebAssemblyHostedServer(projectPath, /*isExe*/ true, webProject)).toBe(false);
+        });
+    });
+
+    describe('isWebProject WebAssembly SDK signal (used additively for standalone)', () => {
+        test('recognizes a Blazor WebAssembly SDK project', () => {
+            writeProject(wasmSdkCsproj);
+            const [webProject, webAssemblyProject] = isWebProject(projectPath);
+            expect(webProject).toBe(false);
+            expect(webAssemblyProject).toBe(true);
         });
     });
 });
