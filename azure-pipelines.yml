@@ -57,6 +57,8 @@ schedules:
         - main
 
 variables:
+- name: AZP_AGENT_USE_NODE24_TO_START_CONTAINER
+  value: 'true'
 - name: testVSCodeVersion
   ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}:
     value: insiders

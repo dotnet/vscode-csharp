@@ -3,7 +3,22 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.146.x
+* Update Roslyn to 5.10.0-1.26352.10 (PR: [#9500](https://github.com/dotnet/vscode-csharp/pull/9500))
+  * Fix formatting of hot reload unexpected errors (PR: [#84391](https://github.com/dotnet/roslyn/pull/84391))
+  * Offer fully-qualify code fix for unresolved types in cref attributes (PR: [#84346](https://github.com/dotnet/roslyn/pull/84346))
+* Update Roslyn to 5.10.0-1.26330.4 (PR: [#9485](https://github.com/dotnet/vscode-csharp/pull/9485))
+  * Filter false CSS024 diagnostics from Html (PR: [#84320](https://github.com/dotnet/roslyn/pull/84320))
+  * Ignore Razor comment edits from the Html formatter (PR: [#84318](https://github.com/dotnet/roslyn/pull/84318))
+* Update Roslyn to 5.9.0-1.26326.7 (PR: [#9480](https://github.com/dotnet/vscode-csharp/pull/9480))
+  * Relax rules for completion of `fixed` keyword (PR: [#84133](https://github.com/dotnet/roslyn/pull/84133))
+  * Treat more recoverable pipe failures as non-fatal (PR: [#84076](https://github.com/dotnet/roslyn/pull/84076))
+* Update xamlTools to 18.9.11921.35 (PR: [#9461](https://github.com/dotnet/vscode-csharp/pull/9461))
+  * MAUI Hot Reload exceptions reporting (PR: AzDO#749102)
+  * C# XAML Expressions (XEXPR) support improvements and fixes (PR: AzDO#748362)
+
 # 2.145.x
+* Add projectPath and launchBrowser options to blazorwasm debug configuration (PR: [#9427](https://github.com/dotnet/vscode-csharp/pull/9427))
 * Update Roslyn to 5.9.0-1.26319.6 (PR: [#9457](https://github.com/dotnet/vscode-csharp/pull/9457))
   * Fixes Hot reload logging in DevKit (PR: [#84179](https://github.com/dotnet/roslyn/pull/84179))
   * Cap Razor completion lists at 1000 items to avoid pooling issues with large JsonDocument byte[] (PR: [#84194](https://github.com/dotnet/roslyn/pull/84194))
@@ -15,6 +30,7 @@
   * Log LSP server info at startup (PR: [#84168](https://github.com/dotnet/roslyn/pull/84168))
   * Don't assume documents being saved are documents (PR: [#84146](https://github.com/dotnet/roslyn/pull/84146))
   * Don't warn about no additional files if the project is still loading (PR: [#84147](https://github.com/dotnet/roslyn/pull/84147))
+
 
 # 2.144.x
 * Update Roslyn to 5.9.0-1.26314.1 (PR: [#9430](https://github.com/dotnet/vscode-csharp/pull/9430))
