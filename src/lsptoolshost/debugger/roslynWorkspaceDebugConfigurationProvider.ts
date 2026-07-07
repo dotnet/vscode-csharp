@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { mapAsync } from '../../common';
 import {
     IWorkspaceDebugInformationProvider,
     ProjectDebugInformation,
 } from '../../shared/IWorkspaceDebugInformationProvider';
-import { isBlazorWebAssemblyHosted, isBlazorWebAssemblyProject, isWebProject } from '../../shared/utils';
+import { getBlazorWebAssemblyDebugInfo, isWebProject } from '../../shared/utils';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import {
     ProjectDebugConfiguration,
@@ -48,9 +47,14 @@ export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugI
         }
 
         // LSP serializes and deserializes URIs as (URI formatted) strings not actual types.  So convert to the actual type here.
-        const projects: ProjectDebugInformation[] | undefined = await mapAsync(response, async (p) => {
+        const projects: ProjectDebugInformation[] = response.map((p) => {
             const [webProject, webAssemblyProject] = isWebProject(p.projectPath);
-            const webAssemblyBlazor = await isBlazorWebAssemblyProject(p.projectPath);
+            const { isBlazorWebAssemblyHosted, isBlazorWebAssemblyStandalone } = getBlazorWebAssemblyDebugInfo(
+                p.projectPath,
+                p.isExe,
+                webProject,
+                webAssemblyProject
+            );
             return {
                 projectPath: p.projectPath,
                 outputPath: p.outputPath,
@@ -59,13 +63,8 @@ export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugI
                 isExe: p.isExe,
                 isWebProject: webProject,
                 isWebAssemblyProject: webAssemblyProject,
-                isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted(
-                    p.isExe,
-                    webProject,
-                    webAssemblyBlazor,
-                    p.targetsDotnetCore
-                ),
-                isBlazorWebAssemblyStandalone: webAssemblyBlazor,
+                isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted,
+                isBlazorWebAssemblyStandalone: isBlazorWebAssemblyStandalone,
                 solutionPath: p.solutionPath,
             };
         });

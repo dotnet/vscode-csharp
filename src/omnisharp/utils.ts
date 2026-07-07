@@ -7,12 +7,7 @@ import { OmniSharpServer } from './server';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
 import { CancellationToken } from 'vscode-languageclient';
-import {
-    isWebProject,
-    isBlazorWebAssemblyProject,
-    isBlazorWebAssemblyHosted,
-    findNetCoreTargetFramework,
-} from '../shared/utils';
+import { isWebProject, getBlazorWebAssemblyDebugInfo } from '../shared/utils';
 
 export async function codeCheck(server: OmniSharpServer, request: protocol.Request, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, request, token);
@@ -171,20 +166,16 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
     if (response.MsBuild && response.MsBuild.Projects) {
         for (const project of response.MsBuild.Projects) {
             [project.IsWebProject, project.IsWebAssemblyProject] = isWebProject(project.Path);
-            const isProjectBlazorWebAssemblyProject = await isBlazorWebAssemblyProject(project.Path);
 
-            const targetsDotnetCore =
-                findNetCoreTargetFramework(project.TargetFrameworks.map((tf) => tf.ShortName)) !== undefined;
-            const isProjectBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(
+            const { isBlazorWebAssemblyHosted, isBlazorWebAssemblyStandalone } = getBlazorWebAssemblyDebugInfo(
+                project.Path,
                 project.IsExe,
                 project.IsWebProject,
-                isProjectBlazorWebAssemblyProject,
-                targetsDotnetCore
+                project.IsWebAssemblyProject
             );
 
-            project.IsBlazorWebAssemblyHosted = isProjectBlazorWebAssemblyHosted;
-            project.IsBlazorWebAssemblyStandalone =
-                isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
+            project.IsBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted;
+            project.IsBlazorWebAssemblyStandalone = isBlazorWebAssemblyStandalone;
         }
     }
 
