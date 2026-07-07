@@ -5,6 +5,7 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { parse as parseJsonc } from 'jsonc-parser';
 
 export function findNetFrameworkTargetFramework(tfmShortNames: string[]): string | undefined {
     const regexp = new RegExp('^net[1-4]');
@@ -83,20 +84,26 @@ export async function isBlazorWebAssemblyProject(projectPath: string): Promise<b
             return false;
         }
 
-        const launchSettingContent = fs.readFileSync(launchSettingsPath);
-        if (!launchSettingContent) {
+        const launchSettingsContent = fs.readFileSync(launchSettingsPath, 'utf8');
+        if (!launchSettingsContent) {
             return false;
         }
 
-        if (launchSettingContent.indexOf('"inspectUri"') > 0) {
-            return true;
-        }
-
-        // Escape hatch for newer templates that no longer emit "inspectUri": an explicit
-        // "enableWebAssemblyDebugging" launch profile setting forces WebAssembly debugging on.
-        // Use indexOf (not JSON.parse) since launchSettings.json may contain comments.
-        if (launchSettingContent.indexOf('"enableWebAssemblyDebugging"') > 0) {
-            return true;
+        // Tolerant JSONC parse: launchSettings.json may contain comments/trailing commas. Parsing
+        // (rather than text matching) also avoids false positives from commented-out properties and
+        // lets us check the actual boolean value of the escape hatch.
+        const launchSettings = parseJsonc(launchSettingsContent);
+        const profiles = launchSettings?.profiles;
+        if (profiles && typeof profiles === 'object') {
+            for (const profileName of Object.keys(profiles)) {
+                const profile = profiles[profileName];
+                // Original signal: an "inspectUri" is present on the profile. Newer templates no longer
+                // emit it, so also honor the "enableWebAssemblyDebugging" escape hatch that forces
+                // WebAssembly debugging on.
+                if (profile?.inspectUri || profile?.enableWebAssemblyDebugging === true) {
+                    return true;
+                }
+            }
         }
     } catch {
         // Swallow IO errors from reading the launchSettings.json files

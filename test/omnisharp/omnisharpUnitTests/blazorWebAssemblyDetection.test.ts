@@ -84,17 +84,36 @@ describe('Blazor WebAssembly detection', () => {
             expect(await isBlazorWebAssemblyProject(projectPath)).toBe(true);
         });
 
-        test('honors the escape hatch even when launchSettings.json contains comments', async () => {
+        test('honors the escape hatch when launchSettings.json contains comments (JSONC)', async () => {
             writeProject(webSdkCsproj);
             writeLaunchSettings(`{
                 // launch profiles
                 "profiles": {
                     "https": {
-                        "enableWebAssemblyDebugging": true
-                    }
+                        "enableWebAssemblyDebugging": true,
+                    },
                 }
             }`);
             expect(await isBlazorWebAssemblyProject(projectPath)).toBe(true);
+        });
+
+        test('ignores a commented-out escape hatch (no false positive)', async () => {
+            writeProject(webSdkCsproj);
+            writeLaunchSettings(`{
+                "profiles": {
+                    "https": {
+                        // "enableWebAssemblyDebugging": true
+                        "commandName": "Project"
+                    }
+                }
+            }`);
+            expect(await isBlazorWebAssemblyProject(projectPath)).toBe(false);
+        });
+
+        test('ignores an escape hatch explicitly set to false', async () => {
+            writeProject(webSdkCsproj);
+            writeLaunchSettings(JSON.stringify({ profiles: { https: { enableWebAssemblyDebugging: false } } }));
+            expect(await isBlazorWebAssemblyProject(projectPath)).toBe(false);
         });
 
         test('returns false when neither signal is present', async () => {
