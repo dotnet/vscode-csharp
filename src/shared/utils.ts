@@ -5,6 +5,7 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { parse as parseJsonc } from 'jsonc-parser';
 
 export function findNetFrameworkTargetFramework(tfmShortNames: string[]): string | undefined {
     const regexp = new RegExp('^net[1-4]');
@@ -83,19 +84,54 @@ export async function isBlazorWebAssemblyProject(projectPath: string): Promise<b
             return false;
         }
 
-        const launchSettingContent = fs.readFileSync(launchSettingsPath);
-        if (!launchSettingContent) {
+        const launchSettingsContent = fs.readFileSync(launchSettingsPath, 'utf8');
+        if (!launchSettingsContent) {
             return false;
         }
 
-        if (launchSettingContent.indexOf('"inspectUri"') > 0) {
-            return true;
+        // Tolerant JSONC parse: launchSettings.json may contain comments/trailing commas. Parsing
+        // (rather than text matching) also avoids false positives from commented-out properties and
+        // lets us check the actual boolean value of the escape hatch.
+        const launchSettings = parseJsonc(launchSettingsContent);
+        const profiles = launchSettings?.profiles;
+        if (profiles && typeof profiles === 'object') {
+            for (const profileName of Object.keys(profiles)) {
+                const profile = profiles[profileName];
+                // Original signal: an "inspectUri" is present on the profile. Newer templates no longer
+                // emit it, so also honor the "enableWebAssemblyDebugging" escape hatch that forces
+                // WebAssembly debugging on.
+                if (profile?.inspectUri || profile?.enableWebAssemblyDebugging === true) {
+                    return true;
+                }
+            }
         }
     } catch {
         // Swallow IO errors from reading the launchSettings.json files
     }
 
     return false;
+}
+
+// Detects an ASP.NET Core host that serves and debugs a Blazor WebAssembly client. Newer templates
+// no longer emit "inspectUri", so additionally recognize the host via the
+// Microsoft.AspNetCore.Components.WebAssembly.Server package reference, which brings in the
+// WebAssembly debugging middleware.
+export function isBlazorWebAssemblyHostedServer(
+    projectPath: string,
+    isExeProject: boolean,
+    isWebProject: boolean
+): boolean {
+    if (!isExeProject || !isWebProject) {
+        return false;
+    }
+
+    try {
+        const projectFileText = fs.readFileSync(projectPath, 'utf8').toLowerCase();
+        return projectFileText.indexOf('microsoft.aspnetcore.components.webassembly.server') >= 0;
+    } catch {
+        // Swallow IO errors from reading the project file.
+        return false;
+    }
 }
 
 export function isBlazorWebAssemblyHosted(

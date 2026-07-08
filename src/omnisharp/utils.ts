@@ -11,6 +11,7 @@ import {
     isWebProject,
     isBlazorWebAssemblyProject,
     isBlazorWebAssemblyHosted,
+    isBlazorWebAssemblyHostedServer,
     findNetCoreTargetFramework,
 } from '../shared/utils';
 
@@ -175,16 +176,22 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
 
             const targetsDotnetCore =
                 findNetCoreTargetFramework(project.TargetFrameworks.map((tf) => tf.ShortName)) !== undefined;
-            const isProjectBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(
-                project.IsExe,
-                project.IsWebProject,
-                isProjectBlazorWebAssemblyProject,
-                targetsDotnetCore
-            );
+            // Hosted detection is additive: the original launchSettings-based heuristic, plus the
+            // newer static heuristic (Web SDK host referencing the WebAssembly.Server package).
+            const isProjectBlazorWebAssemblyHosted =
+                isBlazorWebAssemblyHosted(
+                    project.IsExe,
+                    project.IsWebProject,
+                    isProjectBlazorWebAssemblyProject,
+                    targetsDotnetCore
+                ) || isBlazorWebAssemblyHostedServer(project.Path, project.IsExe, project.IsWebProject);
 
             project.IsBlazorWebAssemblyHosted = isProjectBlazorWebAssemblyHosted;
+            // Standalone detection is additive: the original launchSettings-based heuristic, plus the
+            // newer WebAssembly SDK project signal. A hosted project is never standalone.
             project.IsBlazorWebAssemblyStandalone =
-                isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
+                (isProjectBlazorWebAssemblyProject || project.IsWebAssemblyProject) &&
+                !project.IsBlazorWebAssemblyHosted;
         }
     }
 
