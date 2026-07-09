@@ -72,10 +72,7 @@ extends:
 
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                 displayName: Set BuildNumber
-              - task: UseNode@1
-                displayName: 'Install Node.js 24.x'
-                inputs:
-                  version: '24.x'
+              - template: /azure-pipelines/install-node.yml@self
               - task: AzureCLI@2
                 displayName: '🚀 Publish to Marketplace'
                 name: PublishToMarketplaceStep
