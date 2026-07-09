@@ -136,7 +136,7 @@ function Invoke-VscePublish {
         [string[]]$Arguments
     )
 
-    $maxAttempts = $retryDelaysInMinutes.Length + 1
+    $maxAttempts = $RetryDelaysInMinutes.Length + 1
 
     for ($attemptIndex = 0; $attemptIndex -lt $maxAttempts; $attemptIndex++) {
         $attempt = $attemptIndex + 1
@@ -163,7 +163,7 @@ function Invoke-VscePublish {
 
         $lastOutputExcerpt = Get-LastOutputExcerpt -CommandOutputLines $publishOutputLines
         if ($attempt -lt $maxAttempts) {
-            $delayMinutes = $retryDelaysInMinutes[$attemptIndex]
+            $delayMinutes = $RetryDelaysInMinutes[$attemptIndex]
             Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
             Start-Sleep -Seconds ($delayMinutes * $secondsPerMinute)
             continue
@@ -225,7 +225,7 @@ foreach ($vsix in $vsixFiles) {
         '--signaturePath', $signaturePath
     )
     if ($PreRelease) {
-        # Use the Marketplace CLI pre-release channel flag when publishing prerelease VSIX packages.
+        # Use the Marketplace CLI pre-release channel flag when publishing pre-release VSIX packages.
         $vsceArgs += '--pre-release'
     }
     $vsceArgs += '--azure-credential'
