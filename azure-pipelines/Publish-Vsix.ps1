@@ -46,7 +46,7 @@ $publisher = 'ms-dotnettools'
 $maxOutputExcerptLength = 200
 $retryDelaysInMinutes = @(1, 3, 5)
 $secondsPerMinute = 60
-$vscePackage = '@vscode/vsce@3.9.2'
+$vscePackage = '@vscode/vsce'
 
 if (-not $CI) {
     # Publishing authenticates with Azure credentials, so the Azure CLI must be installed
