@@ -162,6 +162,11 @@ extends:
                           Write-Host $publishOutput.TrimEnd()
                         }
 
+                        $publishFailureSummary = (($publishOutput -split '\r?\n' | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }) | Select-Object -Last 1)
+                        if ([string]::IsNullOrWhiteSpace($publishFailureSummary)) {
+                          $publishFailureSummary = "No output captured from vsce."
+                        }
+
                         if ($exitCode -eq 0) {
                           Write-Host "vsce publish succeeded."
                           $publishSucceeded = $true
@@ -169,14 +174,14 @@ extends:
                         }
 
                         if (Test-AlreadyPublishedFailure -CommandOutput $publishOutput) {
-                          Write-Warning "vsce publish reported that the package version already exists. Treating this rerun as successful."
+                          Write-Warning "vsce publish reported that the package version already exists. Treating this duplicate-package result as successful."
                           $publishSucceeded = $true
                           break
                         }
 
                         if ($attempt -lt $maxAttempts) {
                           $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
-                          Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Retrying in $delayMinutes minute(s)."
+                          Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $publishFailureSummary. Retrying in $delayMinutes minute(s)."
                           Start-Sleep -Seconds ($delayMinutes * 60)
                         }
                       }
