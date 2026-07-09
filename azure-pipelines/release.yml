@@ -145,7 +145,7 @@ extends:
                           return $false
                         }
 
-                        return $CommandOutput -match '(?m)^\s*ERROR\s+.+\s+v[0-9A-Za-z.-]+\s+already exists\.\s*$'
+                        return $CommandOutput -match '(?m)^\s*ERROR\s+.+\s+v[0-9A-Za-z.]+(?:-[0-9A-Za-z.]+)*\s+already exists\.\s*$'
                       }
 
                       $retryDelaysInMinutes = @(1, 3, 5)
