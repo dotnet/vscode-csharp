@@ -65,7 +65,7 @@ $npxCmd = Get-Command npx -ErrorAction SilentlyContinue
 if (-not $npxCmd) {
     throw "npx was not found on PATH. Install Node.js (which includes npx) and try again."
 }
-$vsce = $npxCmd.Source
+$npx = $npxCmd.Source
 $vscePrefixArgs = @('--yes', '@vscode/vsce')
 
 function Test-AlreadyPublishedFailure {
@@ -110,7 +110,7 @@ function Invoke-Vsce {
         [string[]]$Arguments
     )
 
-    $commandOutputLines = & $vsce @Arguments 2>&1 | Out-String -Stream
+    $commandOutputLines = & $npx @Arguments 2>&1 | Out-String -Stream
     $exitCode = $LASTEXITCODE
 
     if ($null -ne $commandOutputLines -and $commandOutputLines.Length -gt 0) {
@@ -131,7 +131,8 @@ function Invoke-VscePublish {
     $retryDelaysInMinutes = @(1, 3, 5)
     $maxAttempts = $retryDelaysInMinutes.Length + 1
 
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+    for ($attemptIndex = 0; $attemptIndex -lt $maxAttempts; $attemptIndex++) {
+        $attempt = $attemptIndex + 1
         Write-Host "Publish attempt $attempt of $maxAttempts."
         $publishResult = Invoke-Vsce -Arguments $Arguments
         $publishOutputLines = $publishResult.OutputLines
@@ -155,7 +156,7 @@ function Invoke-VscePublish {
 
         $lastOutputExcerpt = Get-LastOutputExcerpt -CommandOutputLines $publishOutputLines
         if ($attempt -lt $maxAttempts) {
-            $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
+            $delayMinutes = $retryDelaysInMinutes[$attemptIndex]
             Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
             Start-Sleep -Seconds ($delayMinutes * 60)
             continue
@@ -171,7 +172,7 @@ function Invoke-VscePublish {
 if ($WhatIfPreference) {
     Write-Host "Dry run mode enabled. Verifying Marketplace credentials."
     $verifyArgs = @($vscePrefixArgs + @('verify-pat', '--azure-credential', $publisher))
-    Write-Host "##[command]$vsce $($verifyArgs -join ' ')"
+    Write-Host "##[command]$npx $($verifyArgs -join ' ')"
     $verifyResult = Invoke-Vsce -Arguments $verifyArgs
     if ($verifyResult.ExitCode -ne 0) {
         throw "Marketplace credential verification failed with exit code $($verifyResult.ExitCode)."
@@ -221,7 +222,7 @@ foreach ($vsix in $vsixFiles) {
 
     if (-not $PSCmdlet.ShouldProcess($vsix.Name, "vsce publish")) {
         $displayArgs = $vsceArgs | Where-Object { $_ }
-        Write-Host "DryRun: $vsce $($displayArgs -join ' ')"
+        Write-Host "DryRun: $npx $($displayArgs -join ' ')"
         $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'WhatIf'; Detail = '' })
         continue
     }
