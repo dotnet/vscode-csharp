@@ -152,6 +152,8 @@ extends:
                         # Match duplicate-package error lines emitted by vsce, for example:
                         # "ERROR  ms-dotnettools.csharp (win32-x64) v2.146.2 already exists."
                         # "ERROR  ms-dotnettools.csharp (linux-x64) v2.146.2-beta.1 already exists."
+                        # These helper patterns are intentional regex fragments that are composed into the
+                        # fully anchored error-line match below.
                         foreach ($commandOutputLine in $CommandOutputLines) {
                           if ($commandOutputLine -match "^\s*ERROR\s+$vscePackagePattern\s+$vsceVersionPattern\s+already exists\.\s*$") {
                             return $true
@@ -202,7 +204,7 @@ extends:
                         if ($attempt -lt $maxAttempts) {
                           # This branch excludes the final attempt, so the 1-indexed attempt number maps safely
                           # to the 0-indexed retry delays array (attempt 1 -> delay[0], attempt 2 -> delay[1], etc.).
-                          $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
+                          $delayMinutes = $retryDelaysInMinutes[$attempt - 1] # Map 1-indexed attempt to 0-indexed delay.
                           Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
                           Start-Sleep -Seconds ($delayMinutes * 60)
                         }
