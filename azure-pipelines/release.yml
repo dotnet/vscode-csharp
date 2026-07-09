@@ -51,8 +51,6 @@ extends:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-                clean: true
               - pwsh: |
                   $artifactVersion = '$(resources.pipeline.officialBuildCI.runName)'
                   $artifactBranchName = '$(resources.pipeline.officialBuildCI.sourceBranch)' -replace 'refs/heads/',''
@@ -74,7 +72,10 @@ extends:
 
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                 displayName: Set BuildNumber
-              - template: /azure-pipelines/install-node.yml@self
+              - task: UseNode@1
+                displayName: 'Install Node.js 24.x'
+                inputs:
+                  version: '24.x'
               - task: AzureCLI@2
                 displayName: '🚀 Publish to Marketplace'
                 name: PublishToMarketplaceStep
@@ -108,7 +109,7 @@ extends:
 
                     $publishArtifacts = $allArtifacts[0]
                     Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
-                    $publishScript = Join-Path '$(Build.SourcesDirectory)' 'azure-pipelines/Publish-Vsix.ps1'
+                    $publishScript = Join-Path '$(Pipeline.Workspace)' 'Publish-Vsix.ps1'
                     $publishArgs = @('-Path', $publishArtifacts.FullName)
                     if ($uploadPrerelease) {
                       Write-Host "Publish to pre-release channel."
