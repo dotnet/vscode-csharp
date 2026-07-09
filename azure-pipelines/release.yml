@@ -145,7 +145,8 @@ extends:
                           return $false
                         }
 
-                        # Match versions like v2.146.2 and v2.146.2-beta.1.
+                        # Match versions like v2.146.2 and v2.146.2-beta.1, with prerelease identifiers
+                        # limited to semantic-version-style digits, lowercase letters, and dots.
                         $duplicatePublishVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
                         $duplicatePublishPackagePattern = '[A-Za-z0-9.-]+(?:\s+\([^)]+\))?'
                         # Match duplicate-package error lines emitted by vsce, for example:
@@ -165,7 +166,7 @@ extends:
                       $publishSucceeded = $false
 
                       if ($retryDelaysInMinutes.Length -ne ($maxAttempts - 1)) {
-                        throw "Retry delay configuration is invalid."
+                        throw "Retry delay configuration is invalid. Expected $($maxAttempts - 1) delays but found $($retryDelaysInMinutes.Length)."
                       }
 
                       for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
@@ -198,7 +199,8 @@ extends:
                         }
 
                         if ($attempt -lt $maxAttempts) {
-                          # This branch excludes the final attempt, so indexing into the 3 retry delays is safe.
+                          # This branch excludes the final attempt, so the 1-indexed attempt number maps safely
+                          # to the 0-indexed retry delays array (attempt 1 -> delay[0], attempt 2 -> delay[1], etc.).
                           $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
                           Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $publishFailureSummary. Retrying in $delayMinutes minute(s)."
                           Start-Sleep -Seconds ($delayMinutes * 60)
