@@ -69,8 +69,9 @@ if (-not $npxCmd) {
 }
 $npx = $npxCmd.Source
 $vscePrefixArgs = @('--yes', '@vscode/vsce')
-$vsceVersionRegexPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
-$vscePackageNameRegexPattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
+$vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
+$vscePackageNamePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
+$alreadyPublishedRegex = [regex]"^\s*ERROR\s+$vscePackageNamePattern\s+$vsceVersionPattern\s+already exists\.\s*$"
 
 function Test-AlreadyPublishedFailure {
     param(
@@ -82,7 +83,7 @@ function Test-AlreadyPublishedFailure {
     }
 
     foreach ($commandOutputLine in $CommandOutputLines) {
-        if ($commandOutputLine -match "^\s*ERROR\s+$vscePackageNameRegexPattern\s+$vsceVersionRegexPattern\s+already exists\.\s*$") {
+        if ($alreadyPublishedRegex.IsMatch($commandOutputLine)) {
             return $true
         }
     }
@@ -219,7 +220,10 @@ foreach ($vsix in $vsixFiles) {
         '--manifestPath',  $manifestPath
         '--signaturePath', $signaturePath
     )
-    if ($PreRelease) { $vsceArgs += '--pre-release' }
+    if ($PreRelease) {
+        # Use the Marketplace CLI pre-release channel flag when publishing prerelease VSIX packages.
+        $vsceArgs += '--pre-release'
+    }
     $vsceArgs += '--azure-credential'
 
     if (-not $PSCmdlet.ShouldProcess($vsix.Name, "vsce publish")) {

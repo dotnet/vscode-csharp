@@ -95,35 +95,35 @@ extends:
                         $uploadPrerelease = $false
                     } else {
                         throw "No artifacts are downloaded."
-                     }
+                    }
 
-                     Write-Host "Uploading artifacts from $artifactFolder with prerelease=$uploadPrerelease"
-                     Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]$($uploadPrerelease.ToString().ToLowerInvariant())"
+                    Write-Host "Uploading artifacts from $artifactFolder with prerelease=$uploadPrerelease"
+                    Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]$($uploadPrerelease.ToString().ToLowerInvariant())"
 
-                     # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-                     $allArtifacts = @(Get-ChildItem -Path "$artifactFolder*" | Sort-Object -Property Name -Descending)
-                     if ($allArtifacts.Length -eq 0) {
+                    # Our build pipeline would generate builds based on attempt number. Publish the latest attempt.
+                    $allArtifacts = @(Get-ChildItem -Path "$artifactFolder*" | Sort-Object -Property Name -Descending)
+                    if ($allArtifacts.Length -eq 0) {
                        throw "No artifacts in $artifactFolder"
-                     }
+                    }
 
-                     $publishArtifacts = $allArtifacts[0]
-                     Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
-                     $publishScript = Join-Path '$(Build.SourcesDirectory)' 'azure-pipelines/Publish-Vsix.ps1'
-                     $publishArgs = @('-Path', $publishArtifacts.FullName)
-                     if ($uploadPrerelease) {
-                       Write-Host "Publish to pre-release channel."
-                       $publishArgs += '-PreRelease'
-                     } else {
-                       Write-Host "Publish to release channel."
-                     }
+                    $publishArtifacts = $allArtifacts[0]
+                    Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+                    $publishScript = Join-Path '$(Build.SourcesDirectory)' 'azure-pipelines/Publish-Vsix.ps1'
+                    $publishArgs = @('-Path', $publishArtifacts.FullName)
+                    if ($uploadPrerelease) {
+                      Write-Host "Publish to pre-release channel."
+                      $publishArgs += '-PreRelease'
+                    } else {
+                      Write-Host "Publish to release channel."
+                    }
 
-                     if ("${{ parameters.test }}" -eq "true") {
-                       Write-Host "In test mode, publish commands are printed instead of run."
-                       $publishArgs += '-DryRun'
-                     }
+                    if ("${{ parameters.test }}" -eq "true") {
+                      Write-Host "In test mode, publish commands are printed instead of run."
+                      $publishArgs += '-DryRun'
+                    }
 
-                     Write-Host "##[command]& $publishScript $publishArgs"
-                     & $publishScript @publishArgs
+                    Write-Host "##[command]& $publishScript $publishArgs"
+                    & $publishScript @publishArgs
 
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'
