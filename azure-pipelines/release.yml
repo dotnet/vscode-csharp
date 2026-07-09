@@ -146,11 +146,12 @@ extends:
                         }
 
                         # Match versions like v2.146.2 and v2.146.2-beta.1.
-                        $duplicatePublishVersionPattern = 'v[0-9A-Za-z.]+(?:-[0-9A-Za-z.]+)*'
+                        $duplicatePublishVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
+                        $duplicatePublishPackagePattern = '[A-Za-z0-9.-]+(?:\s+\([^)]+\))?'
                         # Match the duplicate-package error format emitted by vsce, for example:
                         # "ERROR  ms-dotnettools.csharp (win32-x64) v2.146.2 already exists."
                         foreach ($commandOutputLine in ($CommandOutput -split '\r?\n')) {
-                          if ($commandOutputLine -match "^\s*ERROR\s+.+\s+$duplicatePublishVersionPattern\s+already exists\.\s*$") {
+                          if ($commandOutputLine -match "^\s*ERROR\s+$duplicatePublishPackagePattern\s+$duplicatePublishVersionPattern\s+already exists\.\s*$") {
                             return $true
                           }
                         }
@@ -193,6 +194,7 @@ extends:
                         }
 
                         if ($attempt -lt $maxAttempts) {
+                          # This branch excludes the final attempt, so indexing into the 3 retry delays is safe.
                           $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
                           Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $publishFailureSummary. Retrying in $delayMinutes minute(s)."
                           Start-Sleep -Seconds ($delayMinutes * 60)
