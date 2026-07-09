@@ -145,7 +145,15 @@ extends:
                           return $false
                         }
 
-                        return $CommandOutput -match '(?m)^\s*ERROR\s+.+\s+v[0-9A-Za-z.]+(?:-[0-9A-Za-z.]+)*\s+already exists\.\s*$'
+                        # Match the duplicate-package error format emitted by vsce, for example:
+                        # "ERROR  ms-dotnettools.csharp (win32-x64) v2.146.2 already exists."
+                        foreach ($commandOutputLine in ($CommandOutput -split '\r?\n')) {
+                          if ($commandOutputLine -match '^\s*ERROR\s+.+\s+v[0-9A-Za-z.]+(?:-[0-9A-Za-z.]+)*\s+already exists\.\s*$') {
+                            return $true
+                          }
+                        }
+
+                        return $false
                       }
 
                       $retryDelaysInMinutes = @(1, 3, 5)
@@ -162,7 +170,9 @@ extends:
                           Write-Host $publishOutput.TrimEnd()
                         }
 
-                        $publishFailureSummary = (($publishOutput -split '\r?\n' | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }) | Select-Object -Last 1)
+                        $publishOutputLines = $publishOutput -split '\r?\n'
+                        $nonEmptyPublishOutputLines = $publishOutputLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+                        $publishFailureSummary = $nonEmptyPublishOutputLines | Select-Object -Last 1
                         if ([string]::IsNullOrWhiteSpace($publishFailureSummary)) {
                           $publishFailureSummary = "No output captured from vsce."
                         }
