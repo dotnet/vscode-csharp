@@ -135,7 +135,55 @@ extends:
                     }
                     Else {
                       Write-Host "##[command]vsce $publishArgs"
-                      vsce @publishArgs
+
+                      function Test-AlreadyPublishedFailure {
+                        param(
+                          [string]$CommandOutput
+                        )
+
+                        if ([string]::IsNullOrWhiteSpace($CommandOutput)) {
+                          return $false
+                        }
+
+                        return $CommandOutput -match '(?m)^\s*ERROR\s+.+\s+v[0-9A-Za-z\.\-]+\s+already exists\.\s*$'
+                      }
+
+                      $retryDelaysInMinutes = @(1, 3, 5)
+                      $maxAttempts = $retryDelaysInMinutes.Length + 1
+                      $publishSucceeded = $false
+
+                      for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+                        Write-Host "Publish attempt $attempt of $maxAttempts."
+
+                        $publishOutput = & vsce @publishArgs 2>&1 | Out-String
+                        $exitCode = $LASTEXITCODE
+
+                        if (-not [string]::IsNullOrWhiteSpace($publishOutput)) {
+                          Write-Host $publishOutput.TrimEnd()
+                        }
+
+                        if ($exitCode -eq 0) {
+                          Write-Host "vsce publish succeeded."
+                          $publishSucceeded = $true
+                          break
+                        }
+
+                        if (Test-AlreadyPublishedFailure -CommandOutput $publishOutput) {
+                          Write-Warning "vsce publish reported that the package version already exists. Treating this rerun as successful."
+                          $publishSucceeded = $true
+                          break
+                        }
+
+                        if ($attempt -lt $maxAttempts) {
+                          $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
+                          Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Retrying in $delayMinutes minute(s)."
+                          Start-Sleep -Seconds ($delayMinutes * 60)
+                        }
+                      }
+
+                      if (-not $publishSucceeded) {
+                        throw "vsce publish failed after $maxAttempts attempts. See the logs above for the final error output."
+                      }
                     }
 
     - stage: 'TagRelease'
