@@ -75,7 +75,7 @@ $npx = $npxCmd.Source
 $vscePrefixArgs = @('--yes', '@vscode/vsce')
 $vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
 $vscePackageNamePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
-# Keep this regex aligned with the duplicate-package error format emitted by vsce.
+# Keep this regex aligned with the duplicate-package error format emitted by vsce in release pipeline logs.
 $alreadyPublishedRegex = [regex]"^\s*ERROR\s+$vscePackageNamePattern\s+$vsceVersionPattern\s+already exists\.\s*$"
 
 function Test-AlreadyPublishedFailure {
@@ -136,11 +136,11 @@ function Invoke-VscePublish {
         [string[]]$Arguments
     )
 
-    $maxAttempts = $RetryDelaysInMinutes.Length + 1
+    $totalAttempts = $RetryDelaysInMinutes.Length + 1
 
-    for ($attemptIndex = 0; $attemptIndex -lt $maxAttempts; $attemptIndex++) {
+    for ($attemptIndex = 0; $attemptIndex -lt $totalAttempts; $attemptIndex++) {
         $attempt = $attemptIndex + 1
-        Write-Host "Publish attempt $attempt of $maxAttempts."
+        Write-Host "Publish attempt $attempt of $totalAttempts."
         $publishResult = Invoke-Vsce -Arguments $Arguments
         $publishOutputLines = $publishResult.OutputLines
         $exitCode = $publishResult.ExitCode
@@ -162,16 +162,16 @@ function Invoke-VscePublish {
         }
 
         $lastOutputExcerpt = Get-LastOutputExcerpt -CommandOutputLines $publishOutputLines
-        if ($attempt -lt $maxAttempts) {
+        if ($attempt -lt $totalAttempts) {
             $delayMinutes = $RetryDelaysInMinutes[$attemptIndex]
-            Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
+            Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $totalAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
             Start-Sleep -Seconds ($delayMinutes * $secondsPerMinute)
             continue
         }
 
         return @{
             Status = 'Failed'
-            Detail = "vsce publish failed after $maxAttempts attempts. Last output: $lastOutputExcerpt"
+            Detail = "vsce publish failed after $totalAttempts attempts. Last output: $lastOutputExcerpt"
         }
     }
 }
@@ -269,3 +269,5 @@ if ($failed.Count -gt 0) {
     Write-Warning "$($failed.Count) package(s) failed to publish. See summary above."
     exit 1
 }
+
+exit 0
