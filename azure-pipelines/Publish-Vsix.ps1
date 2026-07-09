@@ -67,6 +67,8 @@ if (-not $npxCmd) {
 }
 $npx = $npxCmd.Source
 $vscePrefixArgs = @('--yes', '@vscode/vsce')
+$vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
+$vscePackagePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
 
 function Test-AlreadyPublishedFailure {
     param(
@@ -77,8 +79,6 @@ function Test-AlreadyPublishedFailure {
         return $false
     }
 
-    $vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
-    $vscePackagePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
     foreach ($commandOutputLine in $CommandOutputLines) {
         if ($commandOutputLine -match "^\s*ERROR\s+$vscePackagePattern\s+$vsceVersionPattern\s+already exists\.\s*$") {
             return $true
@@ -192,9 +192,9 @@ if (-not $vsixFiles) {
 $results = New-Object System.Collections.Generic.List[object]
 
 foreach ($vsix in $vsixFiles) {
-    $base         = [System.IO.Path]::GetFileNameWithoutExtension($vsix.Name)
-    $manifestPath = Join-Path $vsix.DirectoryName "$base.manifest"
-    $signaturePath = Join-Path $vsix.DirectoryName "$base.signature.p7s"
+    $vsixBaseName = [System.IO.Path]::GetFileNameWithoutExtension($vsix.Name)
+    $manifestPath = Join-Path $vsix.DirectoryName "$vsixBaseName.manifest"
+    $signaturePath = Join-Path $vsix.DirectoryName "$vsixBaseName.signature.p7s"
 
     Write-Host ""
     Write-Host "=== Publishing $($vsix.Name) ===" -ForegroundColor Cyan
