@@ -3,13 +3,13 @@
     Publishes signed VSIX packages in this folder to the Visual Studio Marketplace using vsce.
 
 .DESCRIPTION
-    For every *.vsix in the script directory, this script locates the matching
+    For every *.vsix in the target directory, this script locates the matching
     .manifest and .signature.p7s files and publishes the package with vsce (run via
     npx @vscode/vsce), passing --packagePath, --manifestPath and --signaturePath.
 
-    Publishing is tolerant of failures: if one package fails (for example because it
-    has already been published), the error is recorded and the script continues with
-    the remaining packages. A summary is printed at the end and the script exits with a
+    Publishing is tolerant of failures: duplicate-package responses are treated as
+    successful, transient failures are retried, and the script continues with the
+    remaining packages. A summary is printed at the end and the script exits with a
     non-zero code only if at least one package failed.
 
 .PARAMETER Path
@@ -21,6 +21,9 @@
 
 .PARAMETER WhatIf
     Show the vsce commands that would run without actually publishing.
+
+.PARAMETER DryRun
+    Enables WhatIf behavior and verifies Marketplace credentials without publishing.
 
 .NOTES
     Authentication uses Azure credentials (vsce --azure-credential). You must have the
