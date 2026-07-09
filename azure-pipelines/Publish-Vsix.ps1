@@ -19,14 +19,11 @@
 .PARAMETER PreRelease
     Publish the packages as pre-release versions.
 
-.PARAMETER WhatIf
-    Show the vsce commands that would run without actually publishing.
-
 .PARAMETER DryRun
-    Enables WhatIf behavior and verifies Marketplace credentials without publishing.
+    Enables DryRun behavior and verifies Marketplace credentials without publishing.
 
-.PARAMETER RetryDelaysInMinutes
-    Retry delays to use between publish attempts after a non-duplicate failure.
+.PARAMETER CI
+    Skips az credentials check when running in CI.
 
 .NOTES
     Authentication uses Azure credentials (vsce --azure-credential). You must have the
@@ -36,33 +33,33 @@
     az login
     ./Publish-Vsix.ps1 -PreRelease
 #>
-[CmdletBinding(SupportsShouldProcess = $true)]
+[CmdletBinding(SupportsShouldProcess = $false)]
 param(
     [string]$Path = $PSScriptRoot,
     [switch]$PreRelease,
     [switch]$DryRun,
-    [int[]]$RetryDelaysInMinutes = @(1, 3, 5)
+    [switch]$CI
 )
 
 $ErrorActionPreference = 'Stop'
 $publisher = 'ms-dotnettools'
 $maxOutputExcerptLength = 200
+$retryDelaysInMinutes = @(1, 3, 5)
 $secondsPerMinute = 60
+$vscePackage = '@vscode/vsce@3.9.2'
 
-if ($DryRun) {
-    $WhatIfPreference = $true
-}
+if (-not $CI) {
+    # Publishing authenticates with Azure credentials, so the Azure CLI must be installed
+    # and a user must be signed in (az login).
+    $azCmd = Get-Command az -ErrorAction SilentlyContinue
+    if (-not $azCmd) {
+        throw "The Azure CLI (az) was not found on PATH. Install it from https://aka.ms/azcli and run 'az login', then try again."
+    }
 
-# Publishing authenticates with Azure credentials, so the Azure CLI must be installed
-# and a user must be signed in (az login).
-$azCmd = Get-Command az -ErrorAction SilentlyContinue
-if (-not $azCmd) {
-    throw "The Azure CLI (az) was not found on PATH. Install it from https://aka.ms/azcli and run 'az login', then try again."
-}
-
-az account show 1>$null 2>$null
-if ($LASTEXITCODE -ne 0) {
-    throw "You are not logged in to the Azure CLI. Run 'az login' and try again."
+    az account show 1>$null 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        throw "You are not logged in to the Azure CLI. Run 'az login' and try again."
+    }
 }
 
 # Run vsce via npx so no global install is required. npx will fetch @vscode/vsce
@@ -71,10 +68,12 @@ $npxCmd = Get-Command npx -ErrorAction SilentlyContinue
 if (-not $npxCmd) {
     throw "npx was not found on PATH. Install Node.js (which includes npx) and try again."
 }
+
 $npx = $npxCmd.Source
-$vscePrefixArgs = @('--yes', '@vscode/vsce')
+
 $vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
 $vscePackageNamePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
+
 # Keep this regex aligned with the duplicate-package error format emitted by vsce in release pipeline logs.
 $alreadyPublishedRegex = [regex]"^\s*ERROR\s+$vscePackageNamePattern\s+$vsceVersionPattern\s+already exists\.\s*$"
 
@@ -115,10 +114,22 @@ function Get-LastOutputExcerpt {
 
 function Invoke-Vsce {
     param(
-        [string[]]$Arguments
+        [string[]]$Arguments,
+        [switch]$DryRun
     )
 
-    $commandOutputLines = & $npx @Arguments 2>&1 | Out-String -Stream
+    $commandArgs = @(@('--yes', '--package', $vscePackage, 'vsce') + $Arguments)
+
+    if ($DryRun) {
+        Write-Host "DryRun: $npx $($commandArgs -join ' ')"
+        return @{
+            OutputLines = @()
+            ExitCode = 0
+        }
+    }
+
+    Write-Host "##[command]$npx $($commandArgs -join ' ')"
+    $commandOutputLines = & $npx @commandArgs 2>&1 | Out-String -Stream
     $exitCode = $LASTEXITCODE
 
     if ($null -ne $commandOutputLines -and $commandOutputLines.Length -gt 0) {
@@ -133,15 +144,38 @@ function Invoke-Vsce {
 
 function Invoke-VscePublish {
     param(
-        [string[]]$Arguments
+        [string]$PackagePath,
+        [string]$ManifestPath,
+        [string]$SignaturePath
     )
 
-    $totalAttempts = $RetryDelaysInMinutes.Length + 1
+    $vsceArgs = @(
+        'publish',
+        '--packagePath',   $PackagePath
+        '--manifestPath',  $ManifestPath
+        '--signaturePath', $SignaturePath
+    )
+    if ($PreRelease) {
+        # Use the Marketplace CLI pre-release channel flag when publishing pre-release VSIX packages.
+        $vsceArgs += '--pre-release'
+    }
+    $vsceArgs += '--azure-credential'
+
+    if ($DryRun) {
+        Invoke-Vsce -Arguments $vsceArgs -DryRun | Out-Null
+        return @{
+            Status = 'DryRun'
+            Detail = ''
+        }
+    }
+
+    $totalAttempts = $retryDelaysInMinutes.Length + 1
 
     for ($attemptIndex = 0; $attemptIndex -lt $totalAttempts; $attemptIndex++) {
         $attempt = $attemptIndex + 1
         Write-Host "Publish attempt $attempt of $totalAttempts."
-        $publishResult = Invoke-Vsce -Arguments $Arguments
+
+        $publishResult = Invoke-Vsce -Arguments $vsceArgs
         $publishOutputLines = $publishResult.OutputLines
         $exitCode = $publishResult.ExitCode
 
@@ -163,7 +197,7 @@ function Invoke-VscePublish {
 
         $lastOutputExcerpt = Get-LastOutputExcerpt -CommandOutputLines $publishOutputLines
         if ($attempt -lt $totalAttempts) {
-            $delayMinutes = $RetryDelaysInMinutes[$attemptIndex]
+            $delayMinutes = $retryDelaysInMinutes[$attemptIndex]
             Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $totalAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
             Start-Sleep -Seconds ($delayMinutes * $secondsPerMinute)
             continue
@@ -173,16 +207,6 @@ function Invoke-VscePublish {
             Status = 'Failed'
             Detail = "vsce publish failed after $totalAttempts attempts. Last output: $lastOutputExcerpt"
         }
-    }
-}
-
-if ($WhatIfPreference) {
-    Write-Host "Dry run mode enabled. Verifying Marketplace credentials."
-    $verifyArgs = @($vscePrefixArgs + @('verify-pat', '--azure-credential', $publisher))
-    Write-Host "##[command]$npx $($verifyArgs -join ' ')"
-    $verifyResult = Invoke-Vsce -Arguments $verifyArgs
-    if ($verifyResult.ExitCode -ne 0) {
-        throw "Marketplace credential verification failed with exit code $($verifyResult.ExitCode)."
     }
 }
 
@@ -196,67 +220,66 @@ if (-not $vsixFiles) {
     return
 }
 
-$results = New-Object System.Collections.Generic.List[object]
-
+Write-Host "Verifying companion files for all packages..."
+$packages = [System.Collections.Generic.List[object]]::new()
+$missingCompanionFiles = @()
 foreach ($vsix in $vsixFiles) {
     $vsixBaseName = [System.IO.Path]::GetFileNameWithoutExtension($vsix.Name)
     $manifestPath = Join-Path $vsix.DirectoryName "$vsixBaseName.manifest"
     $signaturePath = Join-Path $vsix.DirectoryName "$vsixBaseName.signature.p7s"
 
+    if (-not (Test-Path -LiteralPath $manifestPath))  { $missingCompanionFiles += "manifest ($manifestPath)" }
+    if (-not (Test-Path -LiteralPath $signaturePath)) { $missingCompanionFiles += "signature ($signaturePath)" }
+
+    $packages.Add([pscustomobject]@{
+        PackagePath   = $vsix.FullName
+        PackageName   = $vsix.Name
+        ManifestPath  = $manifestPath
+        SignaturePath = $signaturePath
+    })
+}
+if ($missingCompanionFiles.Count -gt 0) {
+    throw "Verification check failed. Missing companion file(s):`n  $($missingCompanionFiles -join "`n  ")`nNo packages were published."
+}
+Write-Host "All companion files present." -ForegroundColor Green
+
+if ($DryRun) {
+    Write-Host "Dry run mode enabled. Verifying Marketplace credentials."
+    $verifyArgs = @('verify-pat', '--azure-credential', $publisher)
+    $verifyResult = Invoke-Vsce -Arguments $verifyArgs
+    if ($verifyResult.ExitCode -ne 0) {
+        throw "Marketplace credential verification failed with exit code $($verifyResult.ExitCode)."
+    }
+}
+
+$results = New-Object System.Collections.Generic.List[object]
+
+foreach ($package in $packages) {
     Write-Host ""
-    Write-Host "=== Publishing $($vsix.Name) ===" -ForegroundColor Cyan
-
-    # Verify the companion files exist before attempting to publish.
-    $missing = @()
-    if (-not (Test-Path -LiteralPath $manifestPath))  { $missing += "manifest ($manifestPath)" }
-    if (-not (Test-Path -LiteralPath $signaturePath)) { $missing += "signature ($signaturePath)" }
-    if ($missing.Count -gt 0) {
-        $reason = "Missing companion file(s): $($missing -join ', ')"
-        Write-Warning $reason
-        $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'Skipped'; Detail = $reason })
-        continue
-    }
-
-    $vsceArgs = @(
-        $vscePrefixArgs
-        'publish'
-        '--packagePath',   $vsix.FullName
-        '--manifestPath',  $manifestPath
-        '--signaturePath', $signaturePath
-    )
-    if ($PreRelease) {
-        # Use the Marketplace CLI pre-release channel flag when publishing pre-release VSIX packages.
-        $vsceArgs += '--pre-release'
-    }
-    $vsceArgs += '--azure-credential'
-
-    $publishTarget = "Publish $($vsix.Name) to Visual Studio Marketplace"
-    if (-not $PSCmdlet.ShouldProcess($publishTarget, 'vsce publish')) {
-        $displayArgs = $vsceArgs | Where-Object { $_ }
-        Write-Host "DryRun: $npx $($displayArgs -join ' ')"
-        $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'WhatIf'; Detail = '' })
-        continue
-    }
+    Write-Host "=== Publishing $($package.PackageName) ===" -ForegroundColor Cyan
 
     try {
-        $publishResult = Invoke-VscePublish -Arguments $vsceArgs
+        $publishResult = Invoke-VscePublish -PackagePath $package.PackagePath -ManifestPath $package.ManifestPath -SignaturePath $package.SignaturePath
         if ($publishResult.Status -eq 'Published') {
-            Write-Host "Published $($vsix.Name)" -ForegroundColor Green
-            $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'Published'; Detail = '' })
+            Write-Host "Published $($package.PackageName)" -ForegroundColor Green
+            $results.Add([pscustomobject]@{ Package = $package.PackageName; Status = 'Published'; Detail = '' })
         }
         elseif ($publishResult.Status -eq 'AlreadyPublished') {
-            Write-Host "$($vsix.Name) was already published" -ForegroundColor Yellow
-            $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'AlreadyPublished'; Detail = '' })
+            Write-Host "$($package.PackageName) was already published" -ForegroundColor Yellow
+            $results.Add([pscustomobject]@{ Package = $package.PackageName; Status = 'AlreadyPublished'; Detail = '' })
+        }
+        elseif ($publishResult.Status -eq 'DryRun') {
+            $results.Add([pscustomobject]@{ Package = $package.PackageName; Status = 'DryRun'; Detail = '' })
         }
         else {
             $reason = $publishResult.Detail
             Write-Warning $reason
-            $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'Failed'; Detail = $reason })
+            $results.Add([pscustomobject]@{ Package = $package.PackageName; Status = 'Failed'; Detail = $reason })
         }
     }
     catch {
-        Write-Warning "Error publishing $($vsix.Name): $($_.Exception.Message)"
-        $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'Failed'; Detail = $_.Exception.Message })
+        Write-Warning "Error publishing $($package.PackageName): $($_.Exception.Message)"
+        $results.Add([pscustomobject]@{ Package = $package.PackageName; Status = 'Failed'; Detail = $_.Exception.Message })
     }
 }
 

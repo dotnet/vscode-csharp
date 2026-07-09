@@ -122,6 +122,8 @@ extends:
                       $publishArgs += '-DryRun'
                     }
 
+                    $publishArgs += '-CI'
+
                     Write-Host "##[command]& $publishScript $publishArgs"
                     & $publishScript @publishArgs
 
