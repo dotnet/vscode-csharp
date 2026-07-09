@@ -101,7 +101,7 @@ extends:
                      Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]$($uploadPrerelease.ToString().ToLowerInvariant())"
 
                      # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-                     $allArtifacts = @(Get-ChildItem -Path "$artifactFolder*" | Sort-Object Name -Descending)
+                     $allArtifacts = @(Get-ChildItem -Path "$artifactFolder*" | Sort-Object -Property Name -Descending)
                      if ($allArtifacts.Length -eq 0) {
                        throw "No artifacts in $artifactFolder"
                      }

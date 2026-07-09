@@ -42,6 +42,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $publisher = 'ms-dotnettools'
+$maxOutputExcerptLength = 200
+$secondsPerMinute = 60
 
 if ($DryRun) {
     $WhatIfPreference = $true
@@ -67,8 +69,8 @@ if (-not $npxCmd) {
 }
 $npx = $npxCmd.Source
 $vscePrefixArgs = @('--yes', '@vscode/vsce')
-$vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
-$vscePackagePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
+$vsceVersionRegexPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
+$vscePackageNameRegexPattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
 
 function Test-AlreadyPublishedFailure {
     param(
@@ -80,7 +82,7 @@ function Test-AlreadyPublishedFailure {
     }
 
     foreach ($commandOutputLine in $CommandOutputLines) {
-        if ($commandOutputLine -match "^\s*ERROR\s+$vscePackagePattern\s+$vsceVersionPattern\s+already exists\.\s*$") {
+        if ($commandOutputLine -match "^\s*ERROR\s+$vscePackageNameRegexPattern\s+$vsceVersionRegexPattern\s+already exists\.\s*$") {
             return $true
         }
     }
@@ -98,8 +100,8 @@ function Get-LastOutputExcerpt {
         return 'No output captured from vsce.'
     }
 
-    if ($lastNonEmptyOutputLine.Length -gt 200) {
-        return $lastNonEmptyOutputLine.Substring(0, 200) + '...'
+    if ($lastNonEmptyOutputLine.Length -gt $maxOutputExcerptLength) {
+        return $lastNonEmptyOutputLine.Substring(0, $maxOutputExcerptLength) + '...'
     }
 
     return $lastNonEmptyOutputLine
@@ -158,7 +160,7 @@ function Invoke-VscePublish {
         if ($attempt -lt $maxAttempts) {
             $delayMinutes = $retryDelaysInMinutes[$attemptIndex]
             Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
-            Start-Sleep -Seconds ($delayMinutes * 60)
+            Start-Sleep -Seconds ($delayMinutes * $secondsPerMinute)
             continue
         }
 
