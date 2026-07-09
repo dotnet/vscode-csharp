@@ -147,13 +147,13 @@ extends:
 
                         # Match versions like v2.146.2 and v2.146.2-beta.1, with prerelease identifiers
                         # limited to semantic-version-style digits, lowercase letters, and dots.
-                        $duplicatePublishVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
-                        $duplicatePublishPackagePattern = '[A-Za-z0-9.-]+(?:\s+\([^)]+\))?'
+                        $vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
+                        $vscePackagePattern = '[A-Za-z0-9.-]+(?:\s+\([^)]+\))?'
                         # Match duplicate-package error lines emitted by vsce, for example:
                         # "ERROR  ms-dotnettools.csharp (win32-x64) v2.146.2 already exists."
                         # "ERROR  ms-dotnettools.csharp (linux-x64) v2.146.2-beta.1 already exists."
                         foreach ($commandOutputLine in $CommandOutputLines) {
-                          if ($commandOutputLine -match "^\s*ERROR\s+$duplicatePublishPackagePattern\s+$duplicatePublishVersionPattern\s+already exists\.\s*$") {
+                          if ($commandOutputLine -match "^\s*ERROR\s+$vscePackagePattern\s+$vsceVersionPattern\s+already exists\.\s*$") {
                             return $true
                           }
                         }
@@ -164,10 +164,6 @@ extends:
                       $retryDelaysInMinutes = @(1, 3, 5)
                       $maxAttempts = $retryDelaysInMinutes.Length + 1
                       $publishSucceeded = $false
-
-                      if ($retryDelaysInMinutes.Length -ne ($maxAttempts - 1)) {
-                        throw "Retry delay configuration is invalid. Expected $($maxAttempts - 1) delays but found $($retryDelaysInMinutes.Length)."
-                      }
 
                       for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
                         Write-Host "Publish attempt $attempt of $maxAttempts."
@@ -180,8 +176,7 @@ extends:
                           Write-Host ($publishOutputLines -join [Environment]::NewLine)
                         }
 
-                        $nonEmptyPublishOutputLines = $publishOutputLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-                        $publishFailureSummary = $nonEmptyPublishOutputLines | Select-Object -Last 1
+                        $publishFailureSummary = $publishOutputLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Last 1
                         if ([string]::IsNullOrWhiteSpace($publishFailureSummary)) {
                           $publishFailureSummary = "No output captured from vsce."
                         }
