@@ -138,19 +138,20 @@ extends:
 
                       function Test-AlreadyPublishedFailure {
                         param(
-                          [string]$CommandOutput
+                          [string[]]$CommandOutputLines
                         )
 
-                        if ([string]::IsNullOrWhiteSpace($CommandOutput)) {
+                        if ($null -eq $CommandOutputLines -or $CommandOutputLines.Length -eq 0) {
                           return $false
                         }
 
                         # Match versions like v2.146.2 and v2.146.2-beta.1.
                         $duplicatePublishVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
                         $duplicatePublishPackagePattern = '[A-Za-z0-9.-]+(?:\s+\([^)]+\))?'
-                        # Match the duplicate-package error format emitted by vsce, for example:
+                        # Match duplicate-package error lines emitted by vsce, for example:
                         # "ERROR  ms-dotnettools.csharp (win32-x64) v2.146.2 already exists."
-                        foreach ($commandOutputLine in ($CommandOutput -split '\r?\n')) {
+                        # "ERROR  ms-dotnettools.csharp (linux-x64) v2.146.2-beta.1 already exists."
+                        foreach ($commandOutputLine in $CommandOutputLines) {
                           if ($commandOutputLine -match "^\s*ERROR\s+$duplicatePublishPackagePattern\s+$duplicatePublishVersionPattern\s+already exists\.\s*$") {
                             return $true
                           }
@@ -163,18 +164,21 @@ extends:
                       $maxAttempts = $retryDelaysInMinutes.Length + 1
                       $publishSucceeded = $false
 
+                      if ($retryDelaysInMinutes.Length -ne ($maxAttempts - 1)) {
+                        throw "Retry delay configuration is invalid."
+                      }
+
                       for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
                         Write-Host "Publish attempt $attempt of $maxAttempts."
 
                         # Capture both stdout and stderr so duplicate detection can inspect the full vsce output.
-                        $publishOutput = & vsce @publishArgs 2>&1 | Out-String
+                        $publishOutputLines = & vsce @publishArgs 2>&1 | Out-String -Stream
                         $exitCode = $LASTEXITCODE
 
-                        if (-not [string]::IsNullOrWhiteSpace($publishOutput)) {
-                          Write-Host $publishOutput.TrimEnd()
+                        if ($null -ne $publishOutputLines -and $publishOutputLines.Length -gt 0) {
+                          Write-Host ($publishOutputLines -join [Environment]::NewLine)
                         }
 
-                        $publishOutputLines = $publishOutput -split '\r?\n'
                         $nonEmptyPublishOutputLines = $publishOutputLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
                         $publishFailureSummary = $nonEmptyPublishOutputLines | Select-Object -Last 1
                         if ([string]::IsNullOrWhiteSpace($publishFailureSummary)) {
@@ -187,7 +191,7 @@ extends:
                           break
                         }
 
-                        if (Test-AlreadyPublishedFailure -CommandOutput $publishOutput) {
+                        if (Test-AlreadyPublishedFailure -CommandOutputLines $publishOutputLines) {
                           Write-Warning "vsce publish reported that the package version already exists. Treating this duplicate-package result as successful."
                           $publishSucceeded = $true
                           break
