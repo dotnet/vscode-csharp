@@ -118,7 +118,7 @@ extends:
                     }
 
                     if ("${{ parameters.test }}" -eq "true") {
-                      Write-Host "In test mode, publish commands are printed instead of run."
+                      Write-Host "In test mode, publish commands are printed instead of executed."
                       $publishArgs += '-DryRun'
                     }
 

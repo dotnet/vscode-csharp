@@ -25,6 +25,9 @@
 .PARAMETER DryRun
     Enables WhatIf behavior and verifies Marketplace credentials without publishing.
 
+.PARAMETER RetryDelaysInMinutes
+    Retry delays to use between publish attempts after a non-duplicate failure.
+
 .NOTES
     Authentication uses Azure credentials (vsce --azure-credential). You must have the
     Azure CLI (az) installed and be logged in (run 'az login') before publishing.
@@ -37,7 +40,8 @@
 param(
     [string]$Path = $PSScriptRoot,
     [switch]$PreRelease,
-    [switch]$DryRun
+    [switch]$DryRun,
+    [int[]]$RetryDelaysInMinutes = @(1, 3, 5)
 )
 
 $ErrorActionPreference = 'Stop'
@@ -71,6 +75,7 @@ $npx = $npxCmd.Source
 $vscePrefixArgs = @('--yes', '@vscode/vsce')
 $vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
 $vscePackageNamePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
+# Keep this regex aligned with the duplicate-package error format emitted by vsce.
 $alreadyPublishedRegex = [regex]"^\s*ERROR\s+$vscePackageNamePattern\s+$vsceVersionPattern\s+already exists\.\s*$"
 
 function Test-AlreadyPublishedFailure {
@@ -131,7 +136,6 @@ function Invoke-VscePublish {
         [string[]]$Arguments
     )
 
-    $retryDelaysInMinutes = @(1, 3, 5)
     $maxAttempts = $retryDelaysInMinutes.Length + 1
 
     for ($attemptIndex = 0; $attemptIndex -lt $maxAttempts; $attemptIndex++) {
@@ -226,7 +230,8 @@ foreach ($vsix in $vsixFiles) {
     }
     $vsceArgs += '--azure-credential'
 
-    if (-not $PSCmdlet.ShouldProcess($vsix.Name, "vsce publish")) {
+    $publishTarget = "Publish $($vsix.Name) to Visual Studio Marketplace"
+    if (-not $PSCmdlet.ShouldProcess($publishTarget, 'vsce publish')) {
         $displayArgs = $vsceArgs | Where-Object { $_ }
         Write-Host "DryRun: $npx $($displayArgs -join ' ')"
         $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'WhatIf'; Detail = '' })
