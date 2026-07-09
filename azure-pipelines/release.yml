@@ -51,6 +51,8 @@ extends:
           runOnce:
             deploy:
               steps:
+              - checkout: self
+                clean: true
               - pwsh: |
                   $artifactVersion = '$(resources.pipeline.officialBuildCI.runName)'
                   $artifactBranchName = '$(resources.pipeline.officialBuildCI.sourceBranch)' -replace 'refs/heads/',''
@@ -73,9 +75,6 @@ extends:
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                 displayName: Set BuildNumber
               - template: /azure-pipelines/install-node.yml@self
-              - pwsh: |
-                  npm install --global @vscode/vsce
-                displayName: 'Install vsce'
               - task: AzureCLI@2
                 displayName: '🚀 Publish to Marketplace'
                 name: PublishToMarketplaceStep
@@ -96,124 +95,35 @@ extends:
                         $uploadPrerelease = $false
                     } else {
                         throw "No artifacts are downloaded."
-                    }
+                     }
 
-                    Write-Host "Uploading artifacts from $artifactFolder with prerelease=$uploadPrerelease"
+                     Write-Host "Uploading artifacts from $artifactFolder with prerelease=$uploadPrerelease"
+                     Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]$($uploadPrerelease.ToString().ToLowerInvariant())"
 
-                    # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-                    $allArtifacts = Get-ChildItem -Path "$artifactFolder*" | Sort-Object -Descending
-                    if ($allArtifacts.Length -eq 0) {
-                      throw "No artifacts in $artifactFolder"
-                    }
+                     # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
+                     $allArtifacts = @(Get-ChildItem -Path "$artifactFolder*" | Sort-Object Name -Descending)
+                     if ($allArtifacts.Length -eq 0) {
+                       throw "No artifacts in $artifactFolder"
+                     }
 
-                    $publishArtifacts = $allArtifacts[0]
-                    Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+                     $publishArtifacts = $allArtifacts[0]
+                     Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+                     $publishScript = Join-Path '$(Build.SourcesDirectory)' 'azure-pipelines/Publish-Vsix.ps1'
+                     $publishArgs = @('-Path', $publishArtifacts.FullName)
+                     if ($uploadPrerelease) {
+                       Write-Host "Publish to pre-release channel."
+                       $publishArgs += '-PreRelease'
+                     } else {
+                       Write-Host "Publish to release channel."
+                     }
 
-                    $basePublishArgs = , "publish"
-                    If ( $uploadPrerelease ) {
-                      $basePublishArgs += "--pre-release"
-                      Write-Host "Publish to pre-release channel."
-                      Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]true"
-                    } Else {
-                      Write-Host "Publish to release channel."
-                      Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]false"
-                    }
-                    $basePublishArgs += '--azure-credential'
-                    $basePublishArgs += '--packagePath'
-                    $publishArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix | Sort-Object Name -Descending |% { $_ })
-                    $publishArgs += '--manifestPath'
-                    $publishArgs += (Get-ChildItem $publishArtifacts\*.manifest | Sort-Object Name -Descending |% { $_ })
-                    $publishArgs += '--signaturePath'
-                    $publishArgs += (Get-ChildItem $publishArtifacts\*.signature.p7s | Sort-Object Name -Descending |% { $_ })
+                     if ("${{ parameters.test }}" -eq "true") {
+                       Write-Host "In test mode, publish commands are printed instead of run."
+                       $publishArgs += '-DryRun'
+                     }
 
-                    If ("${{ parameters.test }}" -eq "true") {
-                      Write-Host "In test mode, command is printed instead of run."
-                      Write-Host "##[command]vsce $publishArgs"
-
-                      Write-Host "🔒 Verify PAT."
-                      vsce verify-pat --azure-credential ms-dotnettools
-                    }
-                    Else {
-                      Write-Host "##[command]vsce $publishArgs"
-
-                      function Test-AlreadyPublishedFailure {
-                        param(
-                          [string[]]$CommandOutputLines
-                        )
-
-                        if ($null -eq $CommandOutputLines -or $CommandOutputLines.Length -eq 0) {
-                          return $false
-                        }
-
-                        # These helper patterns are intentional regex fragments that are composed into the
-                        # fully anchored error-line match below.
-                        # Match versions like v2.146.2 and v2.146.2-beta.1, with prerelease identifiers
-                        # limited to semantic version-style digits, lowercase letters, and dots.
-                        $vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
-                        $vscePackagePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
-                        # Match duplicate-package error lines emitted by vsce, for example:
-                        # "ERROR  ms-dotnettools.csharp (win32-x64) v2.146.2 already exists."
-                        # "ERROR  ms-dotnettools.csharp (linux-x64) v2.146.2-beta.1 already exists."
-                        foreach ($commandOutputLine in $CommandOutputLines) {
-                          if ($commandOutputLine -match "^\s*ERROR\s+$vscePackagePattern\s+$vsceVersionPattern\s+already exists\.\s*$") {
-                            return $true
-                          }
-                        }
-
-                        return $false
-                      }
-
-                      $retryDelaysInMinutes = @(1, 3, 5)
-                      $maxAttempts = $retryDelaysInMinutes.Length + 1
-                      $publishSucceeded = $false
-
-                      for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-                        Write-Host "Publish attempt $attempt of $maxAttempts."
-
-                        # Capture both stdout and stderr, and preserve line-by-line output so duplicate detection
-                        # can inspect the full vsce output without re-splitting it.
-                        $publishOutputLines = & vsce @publishArgs 2>&1 | Out-String -Stream
-                        $exitCode = $LASTEXITCODE
-
-                        if ($null -ne $publishOutputLines -and $publishOutputLines.Length -gt 0) {
-                          Write-Host ($publishOutputLines -join [Environment]::NewLine)
-                        }
-
-                        $lastNonEmptyOutputLine = $publishOutputLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Last 1
-                        if ([string]::IsNullOrWhiteSpace($lastNonEmptyOutputLine)) {
-                          $lastNonEmptyOutputLine = "No output captured from vsce."
-                        }
-
-                        $lastOutputExcerpt = $lastNonEmptyOutputLine
-                        if ($lastOutputExcerpt.Length -gt 200) {
-                          $lastOutputExcerpt = $lastOutputExcerpt.Substring(0, 200) + "..."
-                        }
-
-                        if ($exitCode -eq 0) {
-                          Write-Host "vsce publish succeeded."
-                          $publishSucceeded = $true
-                          break
-                        }
-
-                        if (Test-AlreadyPublishedFailure -CommandOutputLines $publishOutputLines) {
-                          Write-Warning "vsce publish reported that the package version already exists. Treating this duplicate-package result as successful."
-                          $publishSucceeded = $true
-                          break
-                        }
-
-                        if ($attempt -lt $maxAttempts) {
-                          # This branch excludes the final attempt, so the 1-indexed attempt number maps safely
-                          # to the 0-indexed retry delays array (attempt 1 -> delay[0], attempt 2 -> delay[1], etc.).
-                          $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
-                          Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
-                          Start-Sleep -Seconds ($delayMinutes * 60)
-                        }
-                      }
-
-                      if (-not $publishSucceeded) {
-                        throw "vsce publish failed after $maxAttempts attempts. See the logs above for the final error output."
-                      }
-                    }
+                     Write-Host "##[command]& $publishScript $publishArgs"
+                     & $publishScript @publishArgs
 
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'

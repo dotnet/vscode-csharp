@@ -33,10 +33,16 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [string]$Path = $PSScriptRoot,
-    [switch]$PreRelease
+    [switch]$PreRelease,
+    [switch]$DryRun
 )
 
 $ErrorActionPreference = 'Stop'
+$publisher = 'ms-dotnettools'
+
+if ($DryRun) {
+    $WhatIfPreference = $true
+}
 
 # Publishing authenticates with Azure credentials, so the Azure CLI must be installed
 # and a user must be signed in (az login).
@@ -58,6 +64,116 @@ if (-not $npxCmd) {
 }
 $vsce = $npxCmd.Source
 $vscePrefixArgs = @('--yes', '@vscode/vsce')
+
+function Test-AlreadyPublishedFailure {
+    param(
+        [string[]]$CommandOutputLines
+    )
+
+    if ($null -eq $CommandOutputLines -or $CommandOutputLines.Length -eq 0) {
+        return $false
+    }
+
+    $vsceVersionPattern = 'v[0-9.]+(?:-[0-9a-z.]+)*'
+    $vscePackagePattern = '[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?'
+    foreach ($commandOutputLine in $CommandOutputLines) {
+        if ($commandOutputLine -match "^\s*ERROR\s+$vscePackagePattern\s+$vsceVersionPattern\s+already exists\.\s*$") {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Get-LastOutputExcerpt {
+    param(
+        [string[]]$CommandOutputLines
+    )
+
+    $lastNonEmptyOutputLine = $CommandOutputLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Last 1
+    if ([string]::IsNullOrWhiteSpace($lastNonEmptyOutputLine)) {
+        return 'No output captured from vsce.'
+    }
+
+    if ($lastNonEmptyOutputLine.Length -gt 200) {
+        return $lastNonEmptyOutputLine.Substring(0, 200) + '...'
+    }
+
+    return $lastNonEmptyOutputLine
+}
+
+function Invoke-Vsce {
+    param(
+        [string[]]$Arguments
+    )
+
+    $commandOutputLines = & $vsce @Arguments 2>&1 | Out-String -Stream
+    $exitCode = $LASTEXITCODE
+
+    if ($null -ne $commandOutputLines -and $commandOutputLines.Length -gt 0) {
+        Write-Host ($commandOutputLines -join [Environment]::NewLine)
+    }
+
+    return @{
+        OutputLines = $commandOutputLines
+        ExitCode = $exitCode
+    }
+}
+
+function Invoke-VscePublish {
+    param(
+        [string[]]$Arguments
+    )
+
+    $retryDelaysInMinutes = @(1, 3, 5)
+    $maxAttempts = $retryDelaysInMinutes.Length + 1
+
+    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+        Write-Host "Publish attempt $attempt of $maxAttempts."
+        $publishResult = Invoke-Vsce -Arguments $Arguments
+        $publishOutputLines = $publishResult.OutputLines
+        $exitCode = $publishResult.ExitCode
+
+        if ($exitCode -eq 0) {
+            Write-Host 'vsce publish succeeded.'
+            return @{
+                Status = 'Published'
+                Detail = ''
+            }
+        }
+
+        if (Test-AlreadyPublishedFailure -CommandOutputLines $publishOutputLines) {
+            Write-Warning 'vsce publish reported that the package version already exists. Treating this duplicate-package result as successful.'
+            return @{
+                Status = 'AlreadyPublished'
+                Detail = ''
+            }
+        }
+
+        $lastOutputExcerpt = Get-LastOutputExcerpt -CommandOutputLines $publishOutputLines
+        if ($attempt -lt $maxAttempts) {
+            $delayMinutes = $retryDelaysInMinutes[$attempt - 1]
+            Write-Warning "vsce publish failed with exit code $exitCode on attempt $attempt of $maxAttempts. Last output: $lastOutputExcerpt. Retrying in $delayMinutes minute(s)."
+            Start-Sleep -Seconds ($delayMinutes * 60)
+            continue
+        }
+
+        return @{
+            Status = 'Failed'
+            Detail = "vsce publish failed after $maxAttempts attempts. Last output: $lastOutputExcerpt"
+        }
+    }
+}
+
+if ($WhatIfPreference) {
+    Write-Host "Dry run mode enabled. Verifying Marketplace credentials."
+    $verifyArgs = @($vscePrefixArgs + @('verify-pat', '--azure-credential', $publisher))
+    Write-Host "##[command]$vsce $($verifyArgs -join ' ')"
+    $verifyResult = Invoke-Vsce -Arguments $verifyArgs
+    if ($verifyResult.ExitCode -ne 0) {
+        throw "Marketplace credential verification failed with exit code $($verifyResult.ExitCode)."
+    }
+}
 
 if (-not (Test-Path -LiteralPath $Path)) {
     throw "Path '$Path' does not exist."
@@ -102,20 +218,23 @@ foreach ($vsix in $vsixFiles) {
 
     if (-not $PSCmdlet.ShouldProcess($vsix.Name, "vsce publish")) {
         $displayArgs = $vsceArgs | Where-Object { $_ }
-        Write-Host "WhatIf: $vsce $($displayArgs -join ' ')"
+        Write-Host "DryRun: $vsce $($displayArgs -join ' ')"
         $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'WhatIf'; Detail = '' })
         continue
     }
 
     try {
-        & $vsce @vsceArgs
-        $exit = $LASTEXITCODE
-        if ($exit -eq 0) {
+        $publishResult = Invoke-VscePublish -Arguments $vsceArgs
+        if ($publishResult.Status -eq 'Published') {
             Write-Host "Published $($vsix.Name)" -ForegroundColor Green
             $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'Published'; Detail = '' })
         }
+        elseif ($publishResult.Status -eq 'AlreadyPublished') {
+            Write-Host "$($vsix.Name) was already published" -ForegroundColor Yellow
+            $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'AlreadyPublished'; Detail = '' })
+        }
         else {
-            $reason = "vsce exited with code $exit (may already be published)."
+            $reason = $publishResult.Detail
             Write-Warning $reason
             $results.Add([pscustomobject]@{ Package = $vsix.Name; Status = 'Failed'; Detail = $reason })
         }
