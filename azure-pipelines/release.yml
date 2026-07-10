@@ -122,7 +122,7 @@ extends:
 
                     $publishArgs += '-CI'
 
-                    Write-Host "##[command]& $publishScript $publishArgs"
+Write-Host "##[command]& $publishScript $($publishArgs -join ' ')"
                     & $publishScript @publishArgs
 
     - stage: 'TagRelease'
