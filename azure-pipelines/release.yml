@@ -73,9 +73,6 @@ extends:
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                 displayName: Set BuildNumber
               - template: /azure-pipelines/install-node.yml@self
-              - pwsh: |
-                  npm install --global @vscode/vsce
-                displayName: 'Install vsce'
               - task: AzureCLI@2
                 displayName: '🚀 Publish to Marketplace'
                 name: PublishToMarketplaceStep
@@ -99,44 +96,34 @@ extends:
                     }
 
                     Write-Host "Uploading artifacts from $artifactFolder with prerelease=$uploadPrerelease"
+                    Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]$($uploadPrerelease.ToString().ToLowerInvariant())"
 
-                    # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-                    $allArtifacts = Get-ChildItem -Path "$artifactFolder*" | Sort-Object -Descending
+                    # Our build pipeline would generate builds based on attempt number. Publish the latest attempt.
+                    $allArtifacts = @(Get-ChildItem -Path "$artifactFolder*" | Sort-Object -Property Name -Descending)
                     if ($allArtifacts.Length -eq 0) {
-                      throw "No artifacts in $artifactFolder"
+                       throw "No artifacts in $artifactFolder"
                     }
 
                     $publishArtifacts = $allArtifacts[0]
                     Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
-
-                    $basePublishArgs = , "publish"
-                    If ( $uploadPrerelease ) {
-                      $basePublishArgs += "--pre-release"
+                    $publishScript = Join-Path '$(Pipeline.Workspace)' 'Publish-Vsix.ps1'
+                    $publishArgs = @('-Path', $publishArtifacts.FullName)
+                    if ($uploadPrerelease) {
                       Write-Host "Publish to pre-release channel."
-                      Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]true"
-                    } Else {
+                      $publishArgs += '-PreRelease'
+                    } else {
                       Write-Host "Publish to release channel."
-                      Write-Host "##vso[task.setvariable variable=isPrerelease;isOutput=true]false"
                     }
-                    $basePublishArgs += '--azure-credential'
-                    $basePublishArgs += '--packagePath'
-                    $publishArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix | Sort-Object Name -Descending |% { $_ })
-                    $publishArgs += '--manifestPath'
-                    $publishArgs += (Get-ChildItem $publishArtifacts\*.manifest | Sort-Object Name -Descending |% { $_ })
-                    $publishArgs += '--signaturePath'
-                    $publishArgs += (Get-ChildItem $publishArtifacts\*.signature.p7s | Sort-Object Name -Descending |% { $_ })
 
-                    If ("${{ parameters.test }}" -eq "true") {
-                      Write-Host "In test mode, command is printed instead of run."
-                      Write-Host "##[command]vsce $publishArgs"
+                    if ("${{ parameters.test }}" -eq "true") {
+                      Write-Host "In test mode, publish commands are printed instead of executed."
+                      $publishArgs += '-DryRun'
+                    }
 
-                      Write-Host "🔒 Verify PAT."
-                      vsce verify-pat --azure-credential ms-dotnettools
-                    }
-                    Else {
-                      Write-Host "##[command]vsce $publishArgs"
-                      vsce @publishArgs
-                    }
+                    $publishArgs += '-CI'
+
+Write-Host "##[command]& $publishScript $($publishArgs -join ' ')"
+                    & $publishScript @publishArgs
 
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'
