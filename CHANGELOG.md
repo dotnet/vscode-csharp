@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Update Roslyn to 5.10.0-1.26359.5 (PR: [#9519](https://github.com/dotnet/vscode-csharp/pull/9519))
+  * Fix Razor Find All References displaying lines inconsistently when directives span Razor/C# mapping boundaries (PR: [#84353](https://github.com/dotnet/roslyn/pull/84353))
+  * Fix Razor parsing for adjacent comment delimiters in code blocks (PR: [#84277](https://github.com/dotnet/roslyn/pull/84277))
+  * Ignore Razor comments in component attributes (PR: [#84276](https://github.com/dotnet/roslyn/pull/84276))
+  * Fix protocol version of ManagedHotReloadService descriptor used in DevKit (PR: [#84454](https://github.com/dotnet/roslyn/pull/84454))
+  * Enable import completion for types in cref doc comments (PR: [#84440](https://github.com/dotnet/roslyn/pull/84440))
+  * Parse markup inside switch expression lambda arms (PR: [#84425](https://github.com/dotnet/roslyn/pull/84425))
+  * Change the default for test.includeSourceGeneratedFilesInRealTimeDiscovery (PR: [#84452](https://github.com/dotnet/roslyn/pull/84452))
+  * Respect inherited AttributeUsage in attribute completion filtering (PR: [#84426](https://github.com/dotnet/roslyn/pull/84426))
+  * [LSP] Add progress when loading solution and progress (PR: [#84399](https://github.com/dotnet/roslyn/pull/84399))
 
 # 2.146.x
 * Update Roslyn to 5.10.0-1.26352.10 (PR: [#9500](https://github.com/dotnet/vscode-csharp/pull/9500))
