@@ -202,10 +202,9 @@ It is **included** when at least one of its commits is in `$range` **and** it ch
 Add an entry to `CHANGELOG.md` under the current in-development version section (the top-most `# 2.x.x` header). Use the AzDO reference format for the child entries:
 
 ```markdown
-* Update xamlTools to <new-version> (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update xamlTools to <new-version> (PR: #TBD)
   * <change description> (PR: AzDO#<number>)
   * <change description> (PR: AzDO#<number>, AzDO#<number>)
-```
 
 Notes:
 - Leave the vscode-csharp PR number blank initially (just `[#]`) — it is filled in after the PR is created (Step 8).
