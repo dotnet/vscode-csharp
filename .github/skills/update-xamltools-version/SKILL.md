@@ -66,7 +66,7 @@ Refresh the local component and ensure the package is present in the consumption
 npm run installDependencies
 ```
 
-`xamlTools` (`Microsoft.VisualStudio.DesignToolsBase`) is a **non-platform-specific** package, so unlike Roslyn there is no dedicated `updateXamlToolsVersion` task and no per-platform acquisition. Running `installDependencies` restores the single package for the current platform, which is sufficient to save it to the `msft_consumption` feed.
+`xamlTools` (`Microsoft.VisualStudio.DesignToolsBase`) is a **non-platform-specific** package, so unlike Roslyn there is no dedicated `updateXamlToolsVersion` task and no per-platform acquisition. Running `installDependencies` downloads and installs xamlTools into `./.xamlTools/`; a successful restore validates that the requested version is available via the `msft_consumption` feed (if it isn’t, follow [Ensure the Package Is Available in the Feed](#optional-ensure-the-package-is-available-in-the-feed)).
 
 **Note**: You may need the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) for interactive authentication. If the restore fails with a "package not found" error, the version is likely not yet saved to the feed — see [Ensure the Package Is Available in the Feed](#optional-ensure-the-package-is-available-in-the-feed).
 
