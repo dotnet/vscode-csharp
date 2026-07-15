@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Update xamlTools to 18.10.12014.341 (PR: [#9531](https://github.com/dotnet/vscode-csharp/pull/9531))
+  * Fix Hot Reload XmlException in CoreCLR MAUI apps (PR: AzDO#757560)
+  * Fix UI deadlock in GetDeclarations completion handling (PR: AzDO#751965)
+  * Skip XAML documents with XEXPR in legacy Hot Reload (PR: AzDO#755467)
+  * Fill in Hot Reload E2E telemetry gaps (PR: AzDO#754847)
+  * Fix DLL loading exceptions on extension initialization (PR: AzDO#754847)
+  * Report Maui.Controls version for E2E diagnostics (PR: AzDO#752606)
+  * Rework MAUI Hot Reload E2E reporting to fix duplicate events (PR: AzDO#751623)
+
 * Update Roslyn to 5.10.0-1.26359.5 (PR: [#9519](https://github.com/dotnet/vscode-csharp/pull/9519))
   * Fix Razor Find All References displaying lines inconsistently when directives span Razor/C# mapping boundaries (PR: [#84353](https://github.com/dotnet/roslyn/pull/84353))
   * Fix Razor parsing for adjacent comment delimiters in code blocks (PR: [#84277](https://github.com/dotnet/roslyn/pull/84277))
