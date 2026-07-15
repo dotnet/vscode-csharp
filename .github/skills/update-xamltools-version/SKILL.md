@@ -141,7 +141,9 @@ function Get-XamlCommits($version, $top) {
 }
 $boundary = (Get-XamlCommits $oldCommit 1)[0].commitId
 $range = New-Object System.Collections.Generic.List[object]
-foreach ($c in (Get-XamlCommits $newCommit 1000)) { if ($c.commitId -eq $boundary) { break }; $range.Add($c) }
+$foundBoundary = $false
+foreach ($c in (Get-XamlCommits $newCommit 1000)) { if ($c.commitId -eq $boundary) { $foundBoundary = $true; break }; $range.Add($c) }
+if (-not $foundBoundary) { throw "Boundary commit not found in first page of /src/Xaml history. Increase `$top or page results (searchCriteria.`$skip) and retry." }
 "in-range /src/Xaml commits: $($range.Count)"
 ```
 Use the *list* API as above; the single-commit `GET /commits/{sha}` endpoint is flaky in scripts and best avoided.
