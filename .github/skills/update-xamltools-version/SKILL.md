@@ -114,7 +114,7 @@ Copy-Item ./NuGet.config $probe -Force
   <ItemGroup><PackageReference Include="Microsoft.VisualStudio.DesignToolsBase" Version="$old" /></ItemGroup>
 </Project>
 "@ | Set-Content (Join-Path $probe 'probe.csproj')
-dotnet restore $probe --interactive | Out-Null
+dotnet restore (Join-Path $probe 'probe.csproj') --interactive | Out-Null
 ```
 Read the full SHA from either DLL using an **isolated load context** (both DLLs share the same assembly identity, so a plain `Assembly.LoadFrom` of the second would just return the first):
 ```powershell
