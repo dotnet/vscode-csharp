@@ -11,7 +11,7 @@ Unlike Roslyn (which lives on GitHub at `dotnet/roslyn`), `xamlTools` lives enti
 
 The general mechanism is the same as Roslyn: changes are merged into the VS repo, CI produces a NuGet package (`Microsoft.VisualStudio.DesignToolsBase`) that flows to the upstream feed, and updating vscode-csharp means bumping the version in `package.json`, refreshing the component, and adding a `CHANGELOG.md` entry via a PR.
 
-Because there is no cross-repo tooling equivalent to `roslyn-tools pr-finder`, the update is generally **simpler** than the Roslyn update, but the changelog entries and (optionally) the feed lookup are done manually.
+Because there is no cross-repo tooling equivalent to `roslyn-tools pr-finder`, the update is generally **simpler** than the Roslyn update, but the changelog still requires a manual review/trim step (even if the raw PR list is generated via the REST API).
 
 ## Input Required
 
