@@ -23,7 +23,7 @@ interface PackageJSONFile {
 const dottedVersionRegExp = /[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*/g;
 const dashedVersionRegExp = /[0-9]+-[0-9]+-[0-9]+/g;
 
-// The 'id's of the runtime dependencies published through ESRP. These are updated by GUID rather than by version.
+// The IDs of the runtime dependencies published through ESRP. These are updated by GUID rather than by version.
 const esrpPackageIds = ['Debugger', 'VSWebAssemblyBridge'];
 
 function readPackageJson(): PackageJSONFile {
@@ -53,7 +53,7 @@ function createDownloadAndGetHash(): (url: string) => Promise<string> {
         }
     });
     const networkSettingsProvider: NetworkSettingsProvider = () =>
-        new NetworkSettings(/*proxy:*/ '', /*stringSSL:*/ true);
+        new NetworkSettings(/*proxy:*/ '', /*strictSSL:*/ true);
 
     return async (url: string): Promise<string> => {
         console.log(`Downloading from '${url}'`);
