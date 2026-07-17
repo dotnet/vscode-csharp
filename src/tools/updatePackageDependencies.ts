@@ -26,15 +26,24 @@ const dashedVersionRegExp = /[0-9]+-[0-9]+-[0-9]+/g;
 // The 'id's of the runtime dependencies published through ESRP. These are updated by GUID rather than by version.
 const esrpPackageIds = ['Debugger', 'VSWebAssemblyBridge'];
 
-export async function updatePackageDependencies(): Promise<void> {
-    const newPrimaryUrls = process.env['NEW_DEPS_URLS'];
-    const newVersion = process.env['NEW_DEPS_VERSION'];
-    const oldVersion = process.env['OLD_DEPS_VERSION'] ?? ''; // Optional: Will fallback to trying to replace version with a regex.
-    const packageId = process.env['NEW_DEPS_ID'];
-    const newEsrpGuid = process.env['NEW_DEPS_ESRP_GUID'];
+function readPackageJson(): PackageJSONFile {
+    return JSON.parse(fs.readFileSync('package.json').toString());
+}
 
-    const packageJSON: PackageJSONFile = JSON.parse(fs.readFileSync('package.json').toString());
+function writePackageJson(packageJSON: PackageJSONFile): void {
+    let content = JSON.stringify(packageJSON, null, 2);
+    if (os.platform() === 'win32') {
+        content = content.replace(/\n/gm, '\r\n');
+    }
 
+    // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
+    // convert that from the readable escape sequence, to just an invisible character. Convert it back to the visible escape sequence.
+    content = content.replace(/\u200b/gm, '\\u200b');
+
+    fs.writeFileSync('package.json', content);
+}
+
+function createDownloadAndGetHash(): (url: string) => Promise<string> {
     const eventStream = new EventStream();
     eventStream.subscribe((event: Event.BaseEvent) => {
         switch (event.type) {
@@ -46,24 +55,19 @@ export async function updatePackageDependencies(): Promise<void> {
     const networkSettingsProvider: NetworkSettingsProvider = () =>
         new NetworkSettings(/*proxy:*/ '', /*stringSSL:*/ true);
 
-    const downloadAndGetHash = async (url: string): Promise<string> => {
+    return async (url: string): Promise<string> => {
         console.log(`Downloading from '${url}'`);
         const buffer: Buffer = await DownloadFile(url, eventStream, networkSettingsProvider, url);
         return getBufferIntegrityHash(buffer);
     };
+}
 
-    const writePackageJson = (): void => {
-        let content = JSON.stringify(packageJSON, null, 2);
-        if (os.platform() === 'win32') {
-            content = content.replace(/\n/gm, '\r\n');
-        }
-
-        // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
-        // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
-        content = content.replace(/\u200b/gm, '\\u200b');
-
-        fs.writeFileSync('package.json', content);
-    };
+export async function updatePackageDependencies(): Promise<void> {
+    const newPrimaryUrls = process.env['NEW_DEPS_URLS'];
+    const newVersion = process.env['NEW_DEPS_VERSION'];
+    const oldVersion = process.env['OLD_DEPS_VERSION'] ?? ''; // Optional: Will fallback to trying to replace version with a regex.
+    const packageId = process.env['NEW_DEPS_ID'];
+    const newEsrpGuid = process.env['NEW_DEPS_ESRP_GUID'];
 
     // The debugger and VSWebAssemblyBridge are published through ESRP, which assigns each release a GUID rather than a
     // version number. When a GUID is provided we rewrite the matching package URLs to point at the new ESRP download
@@ -88,6 +92,9 @@ export async function updatePackageDependencies(): Promise<void> {
                 "Unexpected 'NEW_DEPS_ESRP_GUID' value. Expected a GUID similar to: 00000000-0000-0000-0000-000000000000."
             );
         }
+
+        const packageJSON = readPackageJson();
+        const downloadAndGetHash = createDownloadAndGetHash();
 
         let packageFound = false;
         for (const dependency of packageJSON.runtimeDependencies) {
@@ -114,7 +121,7 @@ export async function updatePackageDependencies(): Promise<void> {
             throw new Error(`Failed to find package with 'id' of '${packageId}'.`);
         }
 
-        writePackageJson();
+        writePackageJson(packageJSON);
         return;
     }
 
@@ -157,6 +164,9 @@ export async function updatePackageDependencies(): Promise<void> {
     if (oldVersion.length > 0 && !/^[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*$/.test(oldVersion)) {
         throw new Error("Unexpected 'OLD_DEPS_VERSION' value. Expected format similar to: 1.2.2.");
     }
+
+    const packageJSON = readPackageJson();
+    const downloadAndGetHash = createDownloadAndGetHash();
 
     const updateDependency = async (dependency: Package): Promise<void> => {
         dependency.integrity = await downloadAndGetHash(dependency.url);
@@ -262,7 +272,7 @@ export async function updatePackageDependencies(): Promise<void> {
         }
     }
 
-    writePackageJson();
+    writePackageJson(packageJSON);
 }
 
 function replaceVersion(fileName: string, oldVersion: string, newVersion: string): string;
