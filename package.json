@@ -426,7 +426,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -436,12 +436,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "5043FA5790848CA925B0412ABA0BD8BF0C6DE1D66CAD203FD0CCC64C755C9D52"
+      "integrity": "BFB2C7AFCF07D9B2158861F753025E00104F1DCBA466EE2890B228CF2C665D95"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-win10-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -450,12 +450,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "BB0F3E33238521101B723B2C8DAEA66426913B8CC6B9DE39B92C611D6EBF67CC"
+      "integrity": "1B947657EE3F335B6C2CC749C13A3D613192569A0DC494878655A2582194C4C2"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -469,12 +469,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "FBFBDD59116845894731BCA59ED88EFDA391F495FA489F5FD8E60AD796AD250C"
+      "integrity": "F191F31DB355805AC8652751717391320CA8D1E314D38439D31393BD12A51BB5"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-osx-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -487,12 +487,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "7D146354B9E86CD4EE9FE9E609BC0BC3D2F11F85B5C3F444EE6E9C07C48EAFFE"
+      "integrity": "BF933293B572B82B3912CB56055C8961858B1F220110F9A3B3633CD69A0074EF"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-linux-arm.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -505,12 +505,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "883742C1A41976B29322D26E4BDBC9AD950321E7866BC1B18D6053831AF0A06F"
+      "integrity": "9F357EBA4BD0EAA3F3AF5FF99B6C840B252C9F850FA6C0D0F0599A8352DFB2AD"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-linux-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -523,12 +523,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "7C3A6C702688A326A0E6AEB9D649B230A69049C583B677F9C415BDD8F972583A"
+      "integrity": "19D5DE263909C03F4D4422E9AEA56F91475CF31FF7F342544E7333AFD4F5076F"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -541,12 +541,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "1F43DEEF83C428D9ECC8FCF72F6BAF00CE7DF379944F500F4074DC0DAB1F2F78"
+      "integrity": "C9BA94FC4323827ABAD63E659FDDB32A7F91500EB080C07D35DA9CCE22072E46"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -559,12 +559,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "259E76A41CBBCDBD705FEF4890090145A4AB26DBFCEAA0D0552F018C5DFB6ECC"
+      "integrity": "D7A8FDCF600E51E14BFB540200E74959148D5708973A053F2A3CF7790B1C75A0"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-141-1/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/41afcf17-a7cd-4e7a-87d3-1559a2f1b9a1/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -577,7 +577,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "55595A399AD5D7B04815DC694E3F1F1F835B673529F72593650BEDF127E751C4"
+      "integrity": "3CA508D05379DC4D0412EB543598E559D6ED0CF338F9C261ADF716A17496DFCC"
     },
     {
       "id": "RazorOmnisharp",
@@ -696,7 +696,7 @@
     {
       "id": "VSWebAssemblyBridge",
       "description": "VSWebAssemblyBridge (Platform Agnostic)",
-      "url": "https://vsdebugger.blob.core.windows.net/vswebassemblybridge-9-0-705702/vswebassemblybridge.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/7c7c246e-d1c9-4ff5-b951-1ac7801eb55f/vswebassemblybridge.zip",
       "installPath": ".vswebassemblybridge",
       "platforms": [
         "win32",
@@ -708,7 +708,7 @@
         "x86_64",
         "arm64"
       ],
-      "integrity": "9FDBDC91E2D79028A8932C1A96D3ABCFC7F40472FBC8F226E3FB1F6A1B5C97E7"
+      "integrity": "F319130CF57E7E1233532895EC3105FC9FD8952CEFA36215DE3B68E50248A697"
     }
   ],
   "engines": {

@@ -23,38 +23,15 @@ interface PackageJSONFile {
 const dottedVersionRegExp = /[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*/g;
 const dashedVersionRegExp = /[0-9]+-[0-9]+-[0-9]+/g;
 
+// The 'id's of the runtime dependencies published through ESRP. These are updated by GUID rather than by version.
+const esrpPackageIds = ['Debugger', 'VSWebAssemblyBridge'];
+
 export async function updatePackageDependencies(): Promise<void> {
     const newPrimaryUrls = process.env['NEW_DEPS_URLS'];
     const newVersion = process.env['NEW_DEPS_VERSION'];
     const oldVersion = process.env['OLD_DEPS_VERSION'] ?? ''; // Optional: Will fallback to trying to replace version with a regex.
     const packageId = process.env['NEW_DEPS_ID'];
-
-    if ((!packageId && !newPrimaryUrls) || !newVersion) {
-        console.log();
-        console.log("'npm run gulp updatePackageDependencies' will update package.json with new URLs of dependencies.");
-        console.log();
-        console.log('To use:');
-        const setEnvVarPrefix = os.platform() === 'win32' ? 'set ' : 'export ';
-        const setEnvVarQuote = os.platform() === 'win32' ? '' : "'";
-        console.log(
-            `  ${setEnvVarPrefix}NEW_DEPS_URLS=${setEnvVarQuote}https://example1/foo-osx.zip,https://example1/foo-win.zip,https://example1/foo-linux.zip${setEnvVarQuote}`
-        );
-        console.log('-or-');
-        console.log(`  ${setEnvVarPrefix}NEW_DEPS_ID=${setEnvVarQuote}Debugger${setEnvVarQuote}`);
-        console.log('-and-');
-        console.log(`  ${setEnvVarPrefix}NEW_DEPS_VERSION=${setEnvVarQuote}1.2.3${setEnvVarQuote}`);
-        console.log('  npm run gulp updatePackageDependencies');
-        console.log();
-        return;
-    }
-
-    if (!/^[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*$/.test(newVersion)) {
-        throw new Error("Unexpected 'NEW_DEPS_VERSION' value. Expected format similar to: 1.2.3.");
-    }
-
-    if (oldVersion.length > 0 && !/^[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*$/.test(oldVersion)) {
-        throw new Error("Unexpected 'OLD_DEPS_VERSION' value. Expected format similar to: 1.2.2.");
-    }
+    const newEsrpGuid = process.env['NEW_DEPS_ESRP_GUID'];
 
     const packageJSON: PackageJSONFile = JSON.parse(fs.readFileSync('package.json').toString());
 
@@ -74,6 +51,112 @@ export async function updatePackageDependencies(): Promise<void> {
         const buffer: Buffer = await DownloadFile(url, eventStream, networkSettingsProvider, url);
         return getBufferIntegrityHash(buffer);
     };
+
+    const writePackageJson = (): void => {
+        let content = JSON.stringify(packageJSON, null, 2);
+        if (os.platform() === 'win32') {
+            content = content.replace(/\n/gm, '\r\n');
+        }
+
+        // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
+        // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
+        content = content.replace(/\u200b/gm, '\\u200b');
+
+        fs.writeFileSync('package.json', content);
+    };
+
+    // The debugger and VSWebAssemblyBridge are published through ESRP, which assigns each release a GUID rather than a
+    // version number. When a GUID is provided we rewrite the matching package URLs to point at the new ESRP download
+    // rather than replacing a version substring. This flow is only supported for the ESRP-published packages.
+    if (newEsrpGuid) {
+        if (!packageId || !esrpPackageIds.includes(packageId)) {
+            throw new Error(
+                `'NEW_DEPS_ESRP_GUID' is only supported for ${esrpPackageIds.join(
+                    ', '
+                )}. Set 'NEW_DEPS_ID' to one of these.`
+            );
+        }
+
+        if (newVersion || oldVersion) {
+            throw new Error(
+                "'NEW_DEPS_VERSION' and 'OLD_DEPS_VERSION' are not supported when 'NEW_DEPS_ESRP_GUID' is used."
+            );
+        }
+
+        if (!/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(newEsrpGuid)) {
+            throw new Error(
+                "Unexpected 'NEW_DEPS_ESRP_GUID' value. Expected a GUID similar to: 00000000-0000-0000-0000-000000000000."
+            );
+        }
+
+        let packageFound = false;
+        for (const dependency of packageJSON.runtimeDependencies) {
+            if (dependency.id !== packageId) {
+                continue;
+            }
+            packageFound = true;
+
+            dependency.url = replaceEsrpGuid(dependency.url, newEsrpGuid);
+            dependency.integrity = await downloadAndGetHash(dependency.url);
+
+            if (dependency.fallbackUrl) {
+                dependency.fallbackUrl = replaceEsrpGuid(dependency.fallbackUrl, newEsrpGuid);
+                const fallbackUrlIntegrity = await downloadAndGetHash(dependency.fallbackUrl);
+                if (dependency.integrity !== fallbackUrlIntegrity) {
+                    throw new Error(
+                        `File downloaded from primary URL '${dependency.url}' doesn't match '${dependency.fallbackUrl}'.`
+                    );
+                }
+            }
+        }
+
+        if (!packageFound) {
+            throw new Error(`Failed to find package with 'id' of '${packageId}'.`);
+        }
+
+        writePackageJson();
+        return;
+    }
+
+    // The ESRP-published packages must be updated by GUID, not by version.
+    if (packageId && esrpPackageIds.includes(packageId)) {
+        throw new Error(
+            `'${packageId}' is published through ESRP and must be updated with 'NEW_DEPS_ESRP_GUID' rather than 'NEW_DEPS_VERSION'.`
+        );
+    }
+
+    if ((!packageId && !newPrimaryUrls) || !newVersion) {
+        console.log();
+        console.log("'npm run gulp updatePackageDependencies' will update package.json with new URLs of dependencies.");
+        console.log();
+        console.log('To use:');
+        const setEnvVarPrefix = os.platform() === 'win32' ? 'set ' : 'export ';
+        const setEnvVarQuote = os.platform() === 'win32' ? '' : "'";
+        console.log(
+            `  ${setEnvVarPrefix}NEW_DEPS_URLS=${setEnvVarQuote}https://example1/foo-osx.zip,https://example1/foo-win.zip,https://example1/foo-linux.zip${setEnvVarQuote}`
+        );
+        console.log('-or-');
+        console.log(`  ${setEnvVarPrefix}NEW_DEPS_ID=${setEnvVarQuote}OmniSharp${setEnvVarQuote}`);
+        console.log('-and-');
+        console.log(`  ${setEnvVarPrefix}NEW_DEPS_VERSION=${setEnvVarQuote}1.2.3${setEnvVarQuote}`);
+        console.log(`-or, to update a package published through ESRP (${esrpPackageIds.join(', ')})-`);
+        console.log(`  ${setEnvVarPrefix}NEW_DEPS_ID=${setEnvVarQuote}${esrpPackageIds[0]}${setEnvVarQuote}`);
+        console.log('-and-');
+        console.log(
+            `  ${setEnvVarPrefix}NEW_DEPS_ESRP_GUID=${setEnvVarQuote}00000000-0000-0000-0000-000000000000${setEnvVarQuote}`
+        );
+        console.log('  npm run gulp updatePackageDependencies');
+        console.log();
+        return;
+    }
+
+    if (!/^[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*$/.test(newVersion)) {
+        throw new Error("Unexpected 'NEW_DEPS_VERSION' value. Expected format similar to: 1.2.3.");
+    }
+
+    if (oldVersion.length > 0 && !/^[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*$/.test(oldVersion)) {
+        throw new Error("Unexpected 'OLD_DEPS_VERSION' value. Expected format similar to: 1.2.2.");
+    }
 
     const updateDependency = async (dependency: Package): Promise<void> => {
         dependency.integrity = await downloadAndGetHash(dependency.url);
@@ -179,16 +262,7 @@ export async function updatePackageDependencies(): Promise<void> {
         }
     }
 
-    let content = JSON.stringify(packageJSON, null, 2);
-    if (os.platform() === 'win32') {
-        content = content.replace(/\n/gm, '\r\n');
-    }
-
-    // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
-    // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
-    content = content.replace(/\u200b/gm, '\\u200b');
-
-    fs.writeFileSync('package.json', content);
+    writePackageJson();
 }
 
 function replaceVersion(fileName: string, oldVersion: string, newVersion: string): string;
@@ -216,6 +290,11 @@ function replaceVersion(fileName: string | undefined, oldVersion: string, newVer
     }
 
     return fileName.replace(regex, newValue);
+}
+
+function replaceEsrpGuid(url: string, newEsrpGuid: string): string {
+    const fileName = url.substring(url.lastIndexOf('/') + 1);
+    return `https://download.visualstudio.microsoft.com/download/pr/${newEsrpGuid}/${fileName}`;
 }
 
 function verifyVersionSubstringCount(value: string | undefined, shouldContainVersion = false): void {
