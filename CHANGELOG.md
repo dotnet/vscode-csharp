@@ -4,6 +4,21 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Update Roslyn to 5.10.0-1.26367.9 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Add project and state unloading to the BuildHost  (PR: [#84524](https://github.com/dotnet/roslyn/pull/84524))
+  * Prevent generated Razor methods from being mapped as user edits (PR: [#84526](https://github.com/dotnet/roslyn/pull/84526))
+  * Reuse our fault reporting code from Visual Studio (PR: [#84509](https://github.com/dotnet/roslyn/pull/84509))
+  * Emit a null check in the compiler-synthesized inline-array helpers (PR: [#84488](https://github.com/dotnet/roslyn/pull/84488))
+  * Allow try/catch/finally blocks to collapse independently (PR: [#84507](https://github.com/dotnet/roslyn/pull/84507))
+  * Closed classes: enrich exhaustiveness for type parameter constrained to closed type (PR: [#83979](https://github.com/dotnet/roslyn/pull/83979))
+  * Preserve tracked implicit record members in PublicApi stale-sibling cleanup (PR: [#84466](https://github.com/dotnet/roslyn/pull/84466))
+  * Fix typo in resource string for stale project message (PR: [#84471](https://github.com/dotnet/roslyn/pull/84471))
+  * Allow literals to be used in attributes that target unions (PR: [#84247](https://github.com/dotnet/roslyn/pull/84247))
+  * Exclude `[Embedded]` APIs from public/internal API tracking (PR: [#84437](https://github.com/dotnet/roslyn/pull/84437))
+  * Skip internal API tracking when IVT only targets test/mock assemblies (PR: [#84438](https://github.com/dotnet/roslyn/pull/84438))
+  * Don't fail when formatting blank lines in string literals (PR: [#84461](https://github.com/dotnet/roslyn/pull/84461))
+  * Fix NullReferenceException parsing an incomplete switch expression (PR: [#84456](https://github.com/dotnet/roslyn/pull/84456))
+
 * Update xamlTools to 18.10.12014.341 (PR: [#9531](https://github.com/dotnet/vscode-csharp/pull/9531))
   * Fix Hot Reload XmlException in CoreCLR MAUI apps (PR: AzDO#757560)
   * Fix UI deadlock in GetDeclarations completion handling (PR: AzDO#751965)
