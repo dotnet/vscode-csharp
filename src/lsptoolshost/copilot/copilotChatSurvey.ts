@@ -33,7 +33,7 @@ export function registerCopilotChatSurvey(
     reporter: ITelemetryReporter,
     channel: vscode.LogOutputChannel
 ): void {
-    if (hasSurveyBeenShown(context)) {
+    if (hasSurveyBeenShown(context) || isSnoozed(context)) {
         return;
     }
 
@@ -78,6 +78,9 @@ function whenProjectInitialized(
         }
         disposable = languageServerEvents.onServerStateChange((e) => {
             if (e.state === ServerState.ProjectInitializationComplete) {
+                // Dispose as soon as we're initialized rather than waiting for the (possibly
+                // long-lived) toast to be dismissed; the finally in the caller is a safety net.
+                disposable?.dispose();
                 resolve();
             }
         });
@@ -133,10 +136,12 @@ async function showSurveyPrompt(
     );
 
     try {
-        // Count as shown up front: the toast is non-modal and may never be interacted with.
+        // Start the toast first, then record "shown"; if showInformationMessage fails
+        // synchronously we won't report a prompt that was never presented.
+        const resultPromise = vscode.window.showInformationMessage(message, takeAction, dismiss);
         reporter.sendTelemetryEvent(TelemetryEventNames.CopilotChatSurvey, { outcome: 'shown' });
 
-        const result = await vscode.window.showInformationMessage(message, takeAction, dismiss);
+        const result = await resultPromise;
 
         if (result === takeAction) {
             // Only retire once the browser actually opened; otherwise snooze so it can resurface.
