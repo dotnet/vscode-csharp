@@ -23,6 +23,7 @@ import {
     rootPath,
     devKitDependenciesDirectory,
     xamlToolsDirectory,
+    testDiscoveryDirectory,
 } from '../projectPaths';
 import { getPackageJSON } from '../packageJson';
 import { createPackageAsync, generateVsixManifest } from './vsceTasks';
@@ -90,6 +91,12 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
         packageJsonName: 'xamlTools',
         getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: xamlToolsDirectory,
+    },
+    testDiscovery: {
+        getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.CSharpDevKit.SourceTestDiscovery',
+        packageJsonName: 'testDiscovery',
+        getPackageContentPath: (_platformInfo) => 'content',
+        vsixOutputPath: testDiscoveryDirectory,
     },
 };
 
