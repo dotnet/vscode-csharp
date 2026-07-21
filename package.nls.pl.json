@@ -73,6 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Zastępuje ścieżkę folderu składnika rozszerzenia Razor serwera języka",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Przesłania ścieżkę folderu dla składnika .roslynCopilot serwera językowego",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Przesłania ścieżkę folderu dla składnika roslynDevKit serwera językowego",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
   "configuration.dotnet.server.componentPaths.xamlTools": "Zastępuje ścieżkę folderu dla składnika xamlTools serwera języka",
   "configuration.dotnet.server.crashDumpPath": "Ustawia ścieżkę folderu, w której są zapisywane zrzuty awaryjne w przypadku awarii serwera języka.  Użytkownik musi mieć możliwość zapisu. (Wymaga ponownego uruchomienia rozszerzenia)",
   "configuration.dotnet.server.environmentVariables": "Niestandardowe zmienne środowiskowe przekazywane do procesu serwera języka. Określ je jako pary klucz-wartość, na przykład: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Wymaga ponownego uruchomienia rozszerzenia)",

@@ -73,6 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Переопределяет путь к папке для компонента расширения Razor языкового сервера",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Переопределяет путь к папке для компонента .roslynCopilot языкового сервера",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Переопределяет путь к папке для компонента .roslynDevKit языкового сервера.",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
   "configuration.dotnet.server.componentPaths.xamlTools": "Переопределяет путь к папке для компонента .xamlTools языкового сервера.",
   "configuration.dotnet.server.crashDumpPath": "Задает путь к папке, в которую записываются аварийные дампы в случае сбоя языкового сервера.  Должен быть доступен для записи пользователем. (Требуется перезапуск расширения)",
   "configuration.dotnet.server.environmentVariables": "Пользовательские переменные среды для передачи процессу языкового сервера. Указывайте их в виде пар \"ключ-значение\", например: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Требуется перезапуск расширения)",
