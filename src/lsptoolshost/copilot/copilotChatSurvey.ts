@@ -87,8 +87,9 @@ function onceProjectInitialized(
  */
 async function isCopilotChatAvailable(): Promise<boolean> {
     try {
-        const models = await vscode.lm.selectChatModels({ vendor: 'copilot' });
-        return models.length > 0;
+        // vscode.lm may be absent in older/limited hosts; optional chaining keeps this never-throws.
+        const models = await vscode.lm?.selectChatModels({ vendor: 'copilot' });
+        return (models?.length ?? 0) > 0;
     } catch {
         return false;
     }
@@ -107,11 +108,13 @@ function isSnoozed(state: SurveyState): boolean {
 }
 
 async function snoozeSurvey(context: vscode.ExtensionContext): Promise<void> {
+    const state = getState(context);
     // globalState is shared across windows — never downgrade a terminal choice made elsewhere.
-    if (getState(context).surveyShown) {
+    if (state.surveyShown) {
         return;
     }
     await context.globalState.update(globalStateKey, {
+        ...state,
         surveyShown: false,
         snoozedUntil: new Date(Date.now() + ignoredSnoozeMs).toISOString(),
     });
