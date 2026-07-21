@@ -45,7 +45,7 @@
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.9.11921.35",
-    "testDiscovery": "0.1.0-dev"
+    "testDiscovery": "9.9.179-gc20357"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
