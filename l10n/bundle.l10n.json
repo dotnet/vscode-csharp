@@ -214,6 +214,8 @@
   "No": "No",
   ".NET: Generate Assets for Build and Debug": ".NET: Generate Assets for Build and Debug",
   "The '{0}' command is not recommended to be used when C# Dev Kit extension is installed. Would you like build and debug using a dynamic configuration instead?": "The '{0}' command is not recommended to be used when C# Dev Kit extension is installed. Would you like build and debug using a dynamic configuration instead?",
+  "Take Survey": "Take Survey",
+  "You've been using GitHub Copilot Chat with the C# experience. We'd appreciate your feedback!": "You've been using GitHub Copilot Chat with the C# experience. We'd appreciate your feedback!",
   "Failed to set extension directory": "Failed to set extension directory",
   "Failed to set debugadpter directory": "Failed to set debugadpter directory",
   "Failed to set install complete file path": "Failed to set install complete file path",

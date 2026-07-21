@@ -73,6 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Esegue l'override del percorso della cartella per il componente di estensione Razor del server di linguaggio",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Esegue l'override del percorso della cartella per il componente roslynCopilot del server di linguaggio",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Esegue l'override del percorso della cartella per il componente .roslynDevKit del server di linguaggio",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
   "configuration.dotnet.server.componentPaths.xamlTools": "Esegue l'override del percorso della cartella per il componente .xamlTools del server di linguaggio",
   "configuration.dotnet.server.crashDumpPath": "Imposta un percorso cartella in cui vengono scritti i dump di arresto anomalo del sistema in caso di arresto anomalo del server di linguaggio.  Deve essere scrivibile dall'utente. (Richiede il riavvio dell'estensione)",
   "configuration.dotnet.server.environmentVariables": "Variabili di ambiente personalizzate da passare al processo del server di linguaggio. Specificare come coppie chiave-valore, ad esempio: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Richiede il riavvio dell'estensione)",
