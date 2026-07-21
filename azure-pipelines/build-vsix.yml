@@ -110,6 +110,13 @@ stages:
         SourceFolder: '$(Build.SourcesDirectory)/vsix'
         TargetFolder: '$(Build.SourcesDirectory)/Packages/VSIX_$(channel)'
 
+    - task: CopyFiles@2
+      displayName: 'Copy Publish-Vsix script to Packages'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/azure-pipelines'
+        Contents: 'Publish-Vsix.ps1'
+        TargetFolder: '$(Build.SourcesDirectory)/Packages'
+
     - ${{ if eq(parameters.isOfficial, true) }}:
       - script: npm run verifyVsix
         condition: and( succeeded(), eq('$(SignType)', 'Real'))

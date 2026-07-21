@@ -3,13 +3,48 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# 2.151.x
+# 2.147.x
+* Update Roslyn to 5.10.0-1.26367.9 (PR: [#9547](https://github.com/dotnet/vscode-csharp/pull/9547))
+  * Add project and state unloading to the BuildHost  (PR: [#84524](https://github.com/dotnet/roslyn/pull/84524))
+  * Prevent generated Razor methods from being mapped as user edits (PR: [#84526](https://github.com/dotnet/roslyn/pull/84526))
+  * Reuse our fault reporting code from Visual Studio (PR: [#84509](https://github.com/dotnet/roslyn/pull/84509))
+  * Allow try/catch/finally blocks to collapse independently (PR: [#84507](https://github.com/dotnet/roslyn/pull/84507))
+  * Don't fail when formatting blank lines in string literals (PR: [#84461](https://github.com/dotnet/roslyn/pull/84461))
+  * Fix NullReferenceException parsing an incomplete switch expression (PR: [#84456](https://github.com/dotnet/roslyn/pull/84456))
+
+* Update xamlTools to 18.10.12014.341 (PR: [#9531](https://github.com/dotnet/vscode-csharp/pull/9531))
+  * Fix Hot Reload XmlException in CoreCLR MAUI apps (PR: AzDO#757560)
+  * Fix UI deadlock in GetDeclarations completion handling (PR: AzDO#751965)
+  * Skip XAML documents with XEXPR in legacy Hot Reload (PR: AzDO#755467)
+  * Fill in Hot Reload E2E telemetry gaps (PR: AzDO#754847)
+  * Fix DLL loading exceptions on extension initialization (PR: AzDO#754847)
+  * Report Maui.Controls version for E2E diagnostics (PR: AzDO#752606)
+  * Rework MAUI Hot Reload E2E reporting to fix duplicate events (PR: AzDO#751623)
+
+* Update Roslyn to 5.10.0-1.26359.5 (PR: [#9519](https://github.com/dotnet/vscode-csharp/pull/9519))
+  * Fix Razor Find All References displaying lines inconsistently when directives span Razor/C# mapping boundaries (PR: [#84353](https://github.com/dotnet/roslyn/pull/84353))
+  * Fix Razor parsing for adjacent comment delimiters in code blocks (PR: [#84277](https://github.com/dotnet/roslyn/pull/84277))
+  * Ignore Razor comments in component attributes (PR: [#84276](https://github.com/dotnet/roslyn/pull/84276))
+  * Fix protocol version of ManagedHotReloadService descriptor used in DevKit (PR: [#84454](https://github.com/dotnet/roslyn/pull/84454))
+  * Enable import completion for types in cref doc comments (PR: [#84440](https://github.com/dotnet/roslyn/pull/84440))
+  * Parse markup inside switch expression lambda arms (PR: [#84425](https://github.com/dotnet/roslyn/pull/84425))
+  * Change the default for test.includeSourceGeneratedFilesInRealTimeDiscovery (PR: [#84452](https://github.com/dotnet/roslyn/pull/84452))
+  * Respect inherited AttributeUsage in attribute completion filtering (PR: [#84426](https://github.com/dotnet/roslyn/pull/84426))
+  * [LSP] Add progress when loading solution and progress (PR: [#84399](https://github.com/dotnet/roslyn/pull/84399))
+
+# 2.146.x
+* Update Roslyn to 5.10.0-1.26352.10 (PR: [#9500](https://github.com/dotnet/vscode-csharp/pull/9500))
+  * Fix formatting of hot reload unexpected errors (PR: [#84391](https://github.com/dotnet/roslyn/pull/84391))
+  * Offer fully-qualify code fix for unresolved types in cref attributes (PR: [#84346](https://github.com/dotnet/roslyn/pull/84346))
 * Update Roslyn to 5.10.0-1.26330.4 (PR: [#9485](https://github.com/dotnet/vscode-csharp/pull/9485))
   * Filter false CSS024 diagnostics from Html (PR: [#84320](https://github.com/dotnet/roslyn/pull/84320))
   * Ignore Razor comment edits from the Html formatter (PR: [#84318](https://github.com/dotnet/roslyn/pull/84318))
 * Update Roslyn to 5.9.0-1.26326.7 (PR: [#9480](https://github.com/dotnet/vscode-csharp/pull/9480))
   * Relax rules for completion of `fixed` keyword (PR: [#84133](https://github.com/dotnet/roslyn/pull/84133))
   * Treat more recoverable pipe failures as non-fatal (PR: [#84076](https://github.com/dotnet/roslyn/pull/84076))
+* Update xamlTools to 18.9.11921.35 (PR: [#9461](https://github.com/dotnet/vscode-csharp/pull/9461))
+  * MAUI Hot Reload exceptions reporting (PR: AzDO#749102)
+  * C# XAML Expressions (XEXPR) support improvements and fixes (PR: AzDO#748362)
 
 # 2.145.x
 * Add projectPath and launchBrowser options to blazorwasm debug configuration (PR: [#9427](https://github.com/dotnet/vscode-csharp/pull/9427))
@@ -24,9 +59,6 @@
   * Log LSP server info at startup (PR: [#84168](https://github.com/dotnet/roslyn/pull/84168))
   * Don't assume documents being saved are documents (PR: [#84146](https://github.com/dotnet/roslyn/pull/84146))
   * Don't warn about no additional files if the project is still loading (PR: [#84147](https://github.com/dotnet/roslyn/pull/84147))
-* Update xamlTools to 18.9.11921.35 (PR: [#9461](https://github.com/dotnet/vscode-csharp/pull/9461))
-  * MAUI Hot Reload exceptions reporting (PR: AzDO#749102)
-  * C# XAML Expressions (XEXPR) support improvements and fixes (PR: AzDO#748362)
 
 
 # 2.144.x
