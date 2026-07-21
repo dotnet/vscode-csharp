@@ -4,23 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import type { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
 import { ITelemetryReporter } from '../../shared/telemetryReporter';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
 
-const globalStateKey = 'csharp.copilotChatSurvey';
+// Stored under separate keys so a snooze write can never overwrite a terminal "shown"
+// value set in another window (globalState.update replaces the whole value for a key).
+const shownStateKey = 'csharp.copilotChatSurvey.shown';
+const snoozedUntilStateKey = 'csharp.copilotChatSurvey.snoozedUntil';
 
 // Snooze applied after an ignored/closed toast, after which the survey becomes eligible again.
 const ignoredSnoozeMs = 60 * 60 * 1000;
 
 const surveyUrl = 'https://aka.ms/vscode-csharp-dotnetskills-general-survey';
-
-interface SurveyState {
-    // Terminal one-shot: set only on an explicit choice ("Take Survey" / "Not Now").
-    surveyShown: boolean;
-    // ISO timestamp; while in the future the survey is snoozed (suppressed but not retired).
-    snoozedUntil?: string;
-}
 
 /**
  * Offers a one-time feedback survey to C# extension customers using GitHub Copilot Chat.
@@ -31,54 +28,61 @@ interface SurveyState {
  */
 export function registerCopilotChatSurvey(
     context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
     languageServerEvents: LanguageServerEvents,
     reporter: ITelemetryReporter,
     channel: vscode.LogOutputChannel
 ): void {
-    if (getState(context).surveyShown === true) {
+    if (hasSurveyBeenShown(context)) {
         return;
     }
 
     // Registration is gated on an async availability probe; fire-and-forget it.
-    void registerSurveyWhenChatAvailable(context, languageServerEvents, reporter, channel);
+    void registerSurveyWhenChatAvailable(context, languageServer, languageServerEvents, reporter, channel);
 }
 
 async function registerSurveyWhenChatAvailable(
     context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
     languageServerEvents: LanguageServerEvents,
     reporter: ITelemetryReporter,
     channel: vscode.LogOutputChannel
 ): Promise<void> {
-    // Bail before registering anything if the customer can't use Copilot Chat.
-    if (!(await isCopilotChatAvailable())) {
-        return;
-    }
+    // Start observing before the async probe so an initialization that completes while the
+    // probe is in flight (or already completed before we ran) isn't missed.
+    const initialized = whenProjectInitialized(languageServer, languageServerEvents);
+    try {
+        if (!(await isCopilotChatAvailable())) {
+            return;
+        }
+        await initialized.completed;
 
-    // Wait for the first project initialization; the listener self-disposes so repeat
-    // events (e.g. solution reload) are ignored.
-    await onceProjectInitialized(context, languageServerEvents);
-
-    const state = getState(context);
-    if (state.surveyShown === true || isSnoozed(state)) {
-        return;
+        if (hasSurveyBeenShown(context) || isSnoozed(context)) {
+            return;
+        }
+        await showSurveyPrompt(context, reporter, channel);
+    } finally {
+        initialized.dispose();
     }
-    await showSurveyPrompt(context, reporter, channel);
 }
 
-// eslint-disable-next-line @typescript-eslint/promise-function-async
-function onceProjectInitialized(
-    context: vscode.ExtensionContext,
+function whenProjectInitialized(
+    languageServer: RoslynLanguageServer,
     languageServerEvents: LanguageServerEvents
-): Promise<void> {
-    return new Promise<void>((resolve) => {
-        const disposable = languageServerEvents.onServerStateChange((e) => {
+): { completed: Promise<void>; dispose: () => void } {
+    let disposable: vscode.Disposable | undefined;
+    const completed = new Promise<void>((resolve) => {
+        if (languageServer.state === ServerState.ProjectInitializationComplete) {
+            resolve();
+            return;
+        }
+        disposable = languageServerEvents.onServerStateChange((e) => {
             if (e.state === ServerState.ProjectInitializationComplete) {
-                disposable.dispose();
                 resolve();
             }
         });
-        context.subscriptions.push(disposable);
     });
+    return { completed, dispose: () => disposable?.dispose() };
 }
 
 /**
@@ -95,29 +99,26 @@ async function isCopilotChatAvailable(): Promise<boolean> {
     }
 }
 
-function getState(context: vscode.ExtensionContext): SurveyState {
-    return context.globalState.get<SurveyState>(globalStateKey, { surveyShown: false });
+function hasSurveyBeenShown(context: vscode.ExtensionContext): boolean {
+    return context.globalState.get<boolean>(shownStateKey, false);
 }
 
-function isSnoozed(state: SurveyState): boolean {
-    if (!state.snoozedUntil) {
+function isSnoozed(context: vscode.ExtensionContext): boolean {
+    const snoozedUntil = context.globalState.get<string>(snoozedUntilStateKey);
+    if (!snoozedUntil) {
         return false;
     }
-    const until = Date.parse(state.snoozedUntil);
+    const until = Date.parse(snoozedUntil);
     return !Number.isNaN(until) && until > Date.now();
 }
 
+async function markSurveyShown(context: vscode.ExtensionContext): Promise<void> {
+    await context.globalState.update(shownStateKey, true);
+}
+
 async function snoozeSurvey(context: vscode.ExtensionContext): Promise<void> {
-    const state = getState(context);
-    // globalState is shared across windows — never downgrade a terminal choice made elsewhere.
-    if (state.surveyShown) {
-        return;
-    }
-    await context.globalState.update(globalStateKey, {
-        ...state,
-        surveyShown: false,
-        snoozedUntil: new Date(Date.now() + ignoredSnoozeMs).toISOString(),
-    });
+    // Touches only the snooze key, so it can't clobber a terminal "shown" set in another window.
+    await context.globalState.update(snoozedUntilStateKey, new Date(Date.now() + ignoredSnoozeMs).toISOString());
 }
 
 async function showSurveyPrompt(
@@ -141,13 +142,13 @@ async function showSurveyPrompt(
             // Only retire once the browser actually opened; otherwise snooze so it can resurface.
             const opened = await vscode.env.openExternal(vscode.Uri.parse(surveyUrl));
             if (opened) {
-                await context.globalState.update(globalStateKey, { surveyShown: true });
+                await markSurveyShown(context);
                 reporter.sendTelemetryEvent(TelemetryEventNames.CopilotChatSurvey, { outcome: 'accepted' });
             } else {
                 await snoozeSurvey(context);
             }
         } else if (result === dismiss) {
-            await context.globalState.update(globalStateKey, { surveyShown: true });
+            await markSurveyShown(context);
             reporter.sendTelemetryEvent(TelemetryEventNames.CopilotChatSurvey, { outcome: 'dismissed' });
         } else {
             // Ignored or closed without a choice — snooze rather than retire.
@@ -157,7 +158,7 @@ async function showSurveyPrompt(
         // Only the error type is sent, never user content.
         channel.error('Failed to show C# Copilot Chat survey prompt', error);
         reporter.sendTelemetryErrorEvent(TelemetryEventNames.CopilotChatSurveyError, {
-            error: error instanceof Error ? error.name : 'error',
+            'error.name': error instanceof Error ? error.name : 'error',
         });
     }
 }
