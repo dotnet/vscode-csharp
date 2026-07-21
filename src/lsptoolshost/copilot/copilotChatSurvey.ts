@@ -54,27 +54,31 @@ async function registerSurveyWhenChatAvailable(
         return;
     }
 
-    // ProjectInitializationComplete can fire more than once per session (e.g. solution reload),
-    // so dispose after the first prompt attempt.
-    const disposable = languageServerEvents.onServerStateChange(async (e) => {
-        if (e.state !== ServerState.ProjectInitializationComplete) {
-            return;
-        }
+    // Wait for the first project initialization; the listener self-disposes so repeat
+    // events (e.g. solution reload) are ignored.
+    await onceProjectInitialized(context, languageServerEvents);
 
-        const state = getState(context);
-        if (state.surveyShown === true) {
-            disposable.dispose();
-            return;
-        }
-        // Snoozed: stay registered so a later initialization can re-surface it once it lapses.
-        if (isSnoozed(state)) {
-            return;
-        }
+    const state = getState(context);
+    if (state.surveyShown === true || isSnoozed(state)) {
+        return;
+    }
+    await showSurveyPrompt(context, reporter, channel);
+}
 
-        disposable.dispose();
-        await showSurveyPrompt(context, reporter, channel);
+// eslint-disable-next-line @typescript-eslint/promise-function-async
+function onceProjectInitialized(
+    context: vscode.ExtensionContext,
+    languageServerEvents: LanguageServerEvents
+): Promise<void> {
+    return new Promise<void>((resolve) => {
+        const disposable = languageServerEvents.onServerStateChange((e) => {
+            if (e.state === ServerState.ProjectInitializationComplete) {
+                disposable.dispose();
+                resolve();
+            }
+        });
+        context.subscriptions.push(disposable);
     });
-    context.subscriptions.push(disposable);
 }
 
 /**
