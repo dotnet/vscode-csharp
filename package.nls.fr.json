@@ -73,6 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Remplace le chemin d’accès du dossier pour le composant d’extension Razor du serveur de langage",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Remplace le chemin d’accès du dossier pour le composant .roslynCopilot du serveur de langage",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Remplace le chemin d’accès au dossier du composant .roslynDevKit du serveur de langage",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
   "configuration.dotnet.server.componentPaths.xamlTools": "Remplace le chemin d’accès du dossier pour le composant .xamlTools du serveur de langage",
   "configuration.dotnet.server.crashDumpPath": "Définit un chemin de dossier dans lequel les vidages sur incident sont écrits en cas de panne du serveur de langue.  Doit être accessible en écriture par l’utilisateur(-trice). (Nécessite le redémarrage de l’extension)",
   "configuration.dotnet.server.environmentVariables": "Variables d’environnement personnalisées à transmettre au processus du serveur de langage. Spécifiez-les sous forme de paires clé-valeur, par exemple : { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Nécessite le redémarrage de l’extension)",

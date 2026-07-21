@@ -73,6 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Dil sunucusundaki Razor uzantısı bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Dil sunucusunun .roslynCopilot bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Dil sunucusundaki .roslynDevKit bileşeninin klasör yolunu geçersiz kılar",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
   "configuration.dotnet.server.componentPaths.xamlTools": "Dil sunucusundaki .xamlTools bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.crashDumpPath": "Dil sunucusunun çökmesi durumunda kilitlenme dökümlerinin yazılacağı klasör yolunu ayarlar.  Kullanıcı tarafından yazılabilir olmalıdır. (Uzantının yeniden başlatılması gerekir)",
   "configuration.dotnet.server.environmentVariables": "Dil sunucusu işlemine geçirilecek özel ortam değişkenleri. Anahtar-değer çiftleri olarak belirtin, örneğin: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Uzantının yeniden başlatılması gerekir)",
