@@ -73,7 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "言語サーバーの Razor 拡張機能コンポーネントのフォルダー パスを上書きします",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "言語サーバーの .roslynCopilot コンポーネントのフォルダー パスをオーバーライドします",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "言語サーバーの .roslynDevKit コンポーネントのフォルダー パスをオーバーライドします",
-  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "言語サーバーの .testDiscovery コンポーネントに対するフォルダー パスをオーバーライドします",
   "configuration.dotnet.server.componentPaths.xamlTools": "言語サーバーの .xamlTools コンポーネントのフォルダー パスをオーバーライドします",
   "configuration.dotnet.server.crashDumpPath": "言語サーバーがクラッシュした場合にクラッシュ ダンプの書き込み先フォルダー パスを設定します。 ユーザーによる書き込みが可能であることが必要です。(拡張機能の再起動が必要)",
   "configuration.dotnet.server.environmentVariables": "言語サーバー プロセスに渡すカスタム環境変数。キーと値のペアとして指定します 。例: { \"DOTNET_GCName\": \"libclrgc.dylib\" }。(拡張機能の再起動が必要)",

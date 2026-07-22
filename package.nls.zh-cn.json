@@ -73,7 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "替代语言服务器的 Razor 扩展组件的文件夹路径",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "替代语言服务器的 .roslynCopilot 组件的文件夹路径",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "替代语言服务器的 .roslynDevKit 组件的文件夹路径",
-  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "覆盖语言服务器的 .testDiscovery 组件的文件夹路径",
   "configuration.dotnet.server.componentPaths.xamlTools": "替代语言服务器的 .xamlTools 组件的文件夹路径",
   "configuration.dotnet.server.crashDumpPath": "设置在语言服务器崩溃时在其中写入故障转储的文件夹路径。 用户必须可以写入。(需要重启扩展)",
   "configuration.dotnet.server.environmentVariables": "要传递给语言服务器进程的自定义环境变量。请以键值对的形式指定，例如: { \"DOTNET_GCName\": \"libclrgc.dylib\" }。(需要重启扩展)",
