@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Update xamlTools to 18.10.12021.405 (PR: [#9567](https://github.com/dotnet/vscode-csharp/pull/9567))
+  * Fix two MAUI Hot Reload E2E minor telemetry issues (PR: AzDO#759404)
 * Update Debugger and MonowebAssemblyBridge (PR: [#9543](https://github.com/dotnet/vscode-csharp/pull/9543))
 * Add one-time feedback survey for Copilot Chat users (PR: [#9551](https://github.com/dotnet/vscode-csharp/pull/9551))
 * Optional source based test discovery support in C# Dev Kit. (PR: [#9426](https://github.com/dotnet/vscode-csharp/pull/9426))

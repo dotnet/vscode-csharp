@@ -44,7 +44,7 @@
     "roslyn": "5.10.0-1.26367.9",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "18.10.12014.341",
+    "xamlTools": "18.10.12021.405",
     "testDiscovery": "9.9.179-gc20357"
   },
   "main": "./dist/extension",
