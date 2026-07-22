@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Update Debugger and MonowebAssemblyBridge (PR: [#9543](https://github.com/dotnet/vscode-csharp/pull/9543))
+* Add one-time feedback survey for Copilot Chat users (PR: [#9551](https://github.com/dotnet/vscode-csharp/pull/9551))
+* Optional source based test discovery support in C# Dev Kit. (PR: [#9426](https://github.com/dotnet/vscode-csharp/pull/9426))
+* Defer OmniSharp and download-stack loads out of activation (PR: [#9553](https://github.com/dotnet/vscode-csharp/pull/9553))
+* Detect Blazor WebAssembly apps without inspectUri (PR: [#9507](https://github.com/dotnet/vscode-csharp/pull/9507))
 * Update Roslyn to 5.10.0-1.26367.9 (PR: [#9547](https://github.com/dotnet/vscode-csharp/pull/9547))
   * Add project and state unloading to the BuildHost  (PR: [#84524](https://github.com/dotnet/roslyn/pull/84524))
   * Prevent generated Razor methods from being mapped as user edits (PR: [#84526](https://github.com/dotnet/roslyn/pull/84526))
