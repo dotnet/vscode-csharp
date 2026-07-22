@@ -39,11 +39,27 @@ This is normally the user's responsibility, but here is the full process to loca
 
 ## Process
 
+### Step 0: Sync With Upstream Repos (do this first)
+
+Before computing anything, make sure both local clones are fully synced with their upstreams. This is critical: the changelog delta is computed from `main`'s **current** xamlTools version, so a stale `main` produces the wrong range (and may re-do an already-merged bump).
+
+1. **vscode-csharp**: fetch the `dotnet/vscode-csharp` mainline and base your work on it. The upstream remote may be named `origin` or differently — pick whichever points at `github.com/dotnet/vscode-csharp`.
+   ```powershell
+   git fetch <upstream-remote> main
+   # start the update branch (Step 1) from the freshly-fetched upstream main
+   ```
+   Confirm the current `defaults.xamlTools` in `package.json` on that upstream `main` — that value is the **old version** for the changelog delta, not whatever your local branch happened to have.
+2. **VS source repo** (the one hosting `src/Xaml`): pull `main` so the AzDO REST/enlistment history in Step 4 sees all commits.
+   ```powershell
+   git -C <vs-repo-path> checkout main
+   git -C <vs-repo-path> pull --ff-only
+   ```
+
 ### Step 1: Create a New Branch
 
-Create a new git branch for the update:
+Create a new git branch for the update, based on the freshly-fetched upstream `main`:
 ```powershell
-git checkout -B update/xamltools-<version>
+git checkout -B update/xamltools-<version> <upstream-remote>/main
 ```
 Replace `<version>` with the new xamlTools version, using dashes instead of dots for the branch name (e.g., `update/xamltools-18-9-11921-35`).
 
