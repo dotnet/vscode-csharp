@@ -9,6 +9,7 @@
 * Optional source based test discovery support in C# Dev Kit. (PR: [#9426](https://github.com/dotnet/vscode-csharp/pull/9426))
 * Defer OmniSharp and download-stack loads out of activation (PR: [#9553](https://github.com/dotnet/vscode-csharp/pull/9553))
 * Detect Blazor WebAssembly apps without inspectUri (PR: [#9507](https://github.com/dotnet/vscode-csharp/pull/9507))
+* Update Roslyn to 5.10.0-1.26367.9 (PR: [#9547](https://github.com/dotnet/vscode-csharp/pull/9547))
   * Add project and state unloading to the BuildHost  (PR: [#84524](https://github.com/dotnet/roslyn/pull/84524))
   * Prevent generated Razor methods from being mapped as user edits (PR: [#84526](https://github.com/dotnet/roslyn/pull/84526))
   * Reuse our fault reporting code from Visual Studio (PR: [#84509](https://github.com/dotnet/roslyn/pull/84509))
