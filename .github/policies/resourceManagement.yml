@@ -25,12 +25,6 @@ configuration:
       - weekday:
           day: Friday
           time: 0:0
-      - weekday:
-          day: Saturday
-          time: 0:0
-      - weekday:
-          day: Sunday
-          time: 0:0
       filters:
       - isIssue
       - isOpen
