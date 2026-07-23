@@ -10,8 +10,27 @@ configuration:
     scheduledSearches:
     - description: 'Close inactive issues that need more information'
       frequencies:
-      - daily:
-          time: 12:00
+      - weekday:
+          day: Monday
+          time: 0:0
+      - weekday:
+          day: Tuesday
+          time: 0:0
+      - weekday:
+          day: Wednesday
+          time: 0:0
+      - weekday:
+          day: Thursday
+          time: 0:0
+      - weekday:
+          day: Friday
+          time: 0:0
+      - weekday:
+          day: Saturday
+          time: 0:0
+      - weekday:
+          day: Sunday
+          time: 0:0
       filters:
       - isIssue
       - isOpen
