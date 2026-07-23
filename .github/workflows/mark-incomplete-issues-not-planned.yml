@@ -1,0 +1,30 @@
+name: Mark incomplete issues as not planned
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  mark-not-planned:
+    if: github.actor == 'dotnet-policy-service[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Update close reason
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body ?? '';
+            const isIncompleteBugReport =
+              /Type: <b>Bug<\/b>\s*## Issue Description ##\s*## Steps to Reproduce ##\s*## Expected Behavior ##\s*## Actual Behavior ##\s*Extension version:\s*/.test(body) &&
+              !/### C# log ###\s*<details>/.test(body);
+
+            if (isIncompleteBugReport) {
+              await github.rest.issues.update({
+                ...context.repo,
+                issue_number: context.issue.number,
+                state: 'closed',
+                state_reason: 'not_planned',
+              });
+            }
