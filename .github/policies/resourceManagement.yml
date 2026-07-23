@@ -109,7 +109,8 @@ configuration:
       then:
       - addReply:
           reply: If you are running into problems, please open a new issue and provide the requested information. See "[How to file an issue](https://github.com/dotnet/vscode-csharp/blob/main/SUPPORT.md#how-to-file-an-issue)" for instructions. Thanks!
-      - closeIssue
+      - closeIssue:
+          reason: not_planned
 
 onFailure: 
 onSuccess:
