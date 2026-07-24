@@ -73,7 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Überschreibt den Ordnerpfad für die Razor-Erweiterungskomponente des Sprachservers",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Überschreibt den Ordnerpfad für die .roslynCopilot-Komponente des Sprachservers",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Überschreibt den Ordnerpfad für die Komponente .roslynDevKit des Sprachservers",
-  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Überschreibt den Ordnerpfad für die .testDiscovery-Komponente des Sprachservers",
   "configuration.dotnet.server.componentPaths.xamlTools": "Überschreibt den Ordnerpfad für die Komponente .xamlTools des Sprachservers",
   "configuration.dotnet.server.crashDumpPath": "Legt einen Ordnerpfad fest, in den Absturzabbilder geschrieben werden, wenn der Sprachserver abstürzt.  Muss vom Benutzer beschreibbar sein. (Erfordert Neustart der Erweiterung)",
   "configuration.dotnet.server.environmentVariables": "Benutzerdefinierte Umgebungsvariablen, die an den Sprachserverprozess übergeben werden. Geben Sie diese als Schlüsselwertpaare an, zum Beispiel: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Erfordert Neustart der Erweiterung)",
