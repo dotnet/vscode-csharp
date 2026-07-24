@@ -33,6 +33,8 @@ configuration:
       - noActivitySince:
           days: 14
       actions:
+      - addReply:
+          reply: Closing due to inactivity while waiting for more information. If you can provide the requested details, feel free to comment and we can continue investigating.
       - closeIssue
 
     eventResponderTasks:
