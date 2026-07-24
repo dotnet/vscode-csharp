@@ -73,7 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Invalida la ruta de acceso de la carpeta para el componente de extensión Razor del servidor de lenguaje",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Invalida la ruta de acceso de la carpeta para el componente .roslynCopilot del servidor de lenguaje",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Invalida la ruta de acceso de la carpeta para el componente .roslynDevKit del servidor de lenguaje.",
-  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Invalida la ruta de acceso de la carpeta para el componente .testDiscovery del servidor de lenguaje",
   "configuration.dotnet.server.componentPaths.xamlTools": "Invalida la ruta de acceso de la carpeta para el componente .xamlTools del servidor de lenguaje.",
   "configuration.dotnet.server.crashDumpPath": "Establece una ruta de acceso de carpeta en la que se escriben los volcados de memoria si el servidor de lenguaje se bloquea.  El usuario debe poder escribir en él. (Requiere reiniciar la extensión)",
   "configuration.dotnet.server.environmentVariables": "Variables de entorno personalizadas para pasar al proceso del servidor de lenguaje. Especifique como pares clave-valor, por ejemplo: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Requiere reiniciar la extensión)",

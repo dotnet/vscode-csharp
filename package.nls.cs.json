@@ -73,7 +73,7 @@
   "configuration.dotnet.server.componentPaths.razorExtension": "Přepíše cestu ke složce pro komponentu rozšíření Razor jazykového serveru",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Přepíše cestu ke složce pro komponentu .roslynCopilot jazykového serveru.",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Přepíše cestu ke složce pro komponentu .roslynDevKit jazykového serveru.",
-  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Přepíše cestu ke složce pro komponentu .testDiscovery jazykového serveru.",
   "configuration.dotnet.server.componentPaths.xamlTools": "Přepíše cestu ke složce pro komponentu .xamlTools jazykového serveru.",
   "configuration.dotnet.server.crashDumpPath": "Nastaví cestu ke složce, do které se zapisují výpisy stavu systému, pokud dojde k chybovému ukončení jazykového serveru.  Musí být zapisovatelný uživatelem. (Vyžaduje restartování rozšíření)",
   "configuration.dotnet.server.environmentVariables": "Vlastní proměnné prostředí, které se mají předat procesu jazykového serveru. Zadejte je jako páry klíč-hodnota, například: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Vyžaduje restartování rozšíření)",
