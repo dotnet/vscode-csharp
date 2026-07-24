@@ -7,6 +7,35 @@ disabled: false
 where: 
 configuration:
   resourceManagementConfiguration:
+    scheduledSearches:
+    - description: 'Close inactive issues that need more information'
+      frequencies:
+      - weekday:
+          day: Monday
+          time: 0:0
+      - weekday:
+          day: Tuesday
+          time: 0:0
+      - weekday:
+          day: Wednesday
+          time: 0:0
+      - weekday:
+          day: Thursday
+          time: 0:0
+      - weekday:
+          day: Friday
+          time: 0:0
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Needs More Info
+      - noActivitySince:
+          days: 14
+      actions:
+      - addReply:
+          reply: Closing due to 14 days of inactivity while waiting for more information. If you can provide the requested details, please comment and re-open.
+      - closeIssue
 
     eventResponderTasks:
 
