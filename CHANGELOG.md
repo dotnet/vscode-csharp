@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
-* Update Roslyn to 5.10.0-1.26376.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.10.0-1.26376.1 (PR: [#9584](https://github.com/dotnet/vscode-csharp/pull/9584))
   * Don't throw exceptions for nested, prefixed, tag helpers (PR: [#84611](https://github.com/dotnet/roslyn/pull/84611))
   * Prevent diagnostic port inheritance by child processes (PR: [#84620](https://github.com/dotnet/roslyn/pull/84620))
   * Implement LSP daemon mode (PR: [#84199](https://github.com/dotnet/roslyn/pull/84199))
