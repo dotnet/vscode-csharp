@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Update Roslyn to 5.10.0-1.26376.1 (PR: [#9584](https://github.com/dotnet/vscode-csharp/pull/9584))
+  * Don't throw exceptions for nested, prefixed, tag helpers (PR: [#84611](https://github.com/dotnet/roslyn/pull/84611))
+  * File-based apps: avoid running a few irrelevant editor features (PR: [#84575](https://github.com/dotnet/roslyn/pull/84575))
+  * Fix linked editing for empty tag pairs (PR: [#84562](https://github.com/dotnet/roslyn/pull/84562))
 * Update Debugger and MonowebAssemblyBridge (PR: [#9543](https://github.com/dotnet/vscode-csharp/pull/9543))
 * Add one-time feedback survey for Copilot Chat users (PR: [#9551](https://github.com/dotnet/vscode-csharp/pull/9551))
 * Optional source based test discovery support in C# Dev Kit. (PR: [#9426](https://github.com/dotnet/vscode-csharp/pull/9426))
