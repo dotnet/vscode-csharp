@@ -22,7 +22,6 @@
   * Allow try/catch/finally blocks to collapse independently (PR: [#84507](https://github.com/dotnet/roslyn/pull/84507))
   * Don't fail when formatting blank lines in string literals (PR: [#84461](https://github.com/dotnet/roslyn/pull/84461))
   * Fix NullReferenceException parsing an incomplete switch expression (PR: [#84456](https://github.com/dotnet/roslyn/pull/84456))
-
 * Update xamlTools to 18.10.12014.341 (PR: [#9531](https://github.com/dotnet/vscode-csharp/pull/9531))
   * Fix Hot Reload XmlException in CoreCLR MAUI apps (PR: AzDO#757560)
   * Fix UI deadlock in GetDeclarations completion handling (PR: AzDO#751965)
@@ -31,7 +30,6 @@
   * Fix DLL loading exceptions on extension initialization (PR: AzDO#754847)
   * Report Maui.Controls version for E2E diagnostics (PR: AzDO#752606)
   * Rework MAUI Hot Reload E2E reporting to fix duplicate events (PR: AzDO#751623)
-
 * Update Roslyn to 5.10.0-1.26359.5 (PR: [#9519](https://github.com/dotnet/vscode-csharp/pull/9519))
   * Fix Razor Find All References displaying lines inconsistently when directives span Razor/C# mapping boundaries (PR: [#84353](https://github.com/dotnet/roslyn/pull/84353))
   * Fix Razor parsing for adjacent comment delimiters in code blocks (PR: [#84277](https://github.com/dotnet/roslyn/pull/84277))
@@ -71,7 +69,6 @@
   * Don't assume documents being saved are documents (PR: [#84146](https://github.com/dotnet/roslyn/pull/84146))
   * Don't warn about no additional files if the project is still loading (PR: [#84147](https://github.com/dotnet/roslyn/pull/84147))
 
-
 # 2.144.x
 * Update Roslyn to 5.9.0-1.26314.1 (PR: [#9430](https://github.com/dotnet/vscode-csharp/pull/9430))
   * Fix multiline lambda formatting in non-directive attributes (PR: [#84121](https://github.com/dotnet/roslyn/pull/84121))
@@ -105,7 +102,6 @@
   * Hot Reload E2E diagnostics fundamentals (PR: AzDO#731599)
   * Fix MetadataUpdateHandlers were not called in some cases in MAUI apps (PR: AzDO#731599)
   * XAML Language server telemetry (PR: AzDO#733556)
-
 * Update Roslyn to 5.8.0-1.26267.2 (PR: [#9321](https://github.com/dotnet/vscode-csharp/pull/9321))
   * Fix racecondition on UnsuedDirectiveCache.Set (PR: [#83693](https://github.com/dotnet/roslyn/pull/83693))
   * Fix single line script tag formatting (PR: [#83721](https://github.com/dotnet/roslyn/pull/83721))
@@ -166,7 +162,6 @@
 * Update xamlTools to 18.7.11727.258 (PR: [#9261](https://github.com/dotnet/vscode-csharp/pull/9261))
   * XAML C# Expressions (XEXPR) full support (PR: AzDO#728266, AzDO#730837)
 
-
 # 2.136.x
 * Update Roslyn to 5.7.0-1.26220.12 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
   * File-based apps: Adjust heuristics to properly handle transitive directives (PR: [#83185](https://github.com/dotnet/roslyn/pull/83185))
@@ -190,7 +185,6 @@
   * Fix SslStream disposal crash (Issues: [9146](https://github.com/dotnet/vscode-csharp/issues/9146), [9183](https://github.com/dotnet/vscode-csharp/issues/9183), [9175](https://github.com/dotnet/vscode-csharp/issues/9175), PR: AzDO#728722)
   * Fix XAML Hot Reload error reporting when exceptions originate from indirectly-loaded views (PR: AzDO#729745)
   * XAML C# Expressions (XEXPR) limited support (PR: AzDO#721767)
- 
 
 # 2.135.x
 * Bump lodash from 4.17.23 to 4.18.1 (PR: [#9152](https://github.com/dotnet/vscode-csharp/pull/9152))
