@@ -4,6 +4,18 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Remove Needs More Info label when issue author replies (PR: [#9580](https://github.com/dotnet/vscode-csharp/pull/9580))
+* Close inactive issues awaiting more information (PR: [#9570](https://github.com/dotnet/vscode-csharp/pull/9570))
+* NPM Audit Fix (PR: [#9558](https://github.com/dotnet/vscode-csharp/pull/9558))
+* Bump immutable from 4.3.8 to 4.3.9 (PR: [#9556](https://github.com/dotnet/vscode-csharp/pull/9556))
+* Bump linkify-it from 5.0.1 to 5.0.2 (PR: [#9555](https://github.com/dotnet/vscode-csharp/pull/9555))
+* Fix reply message formatting in resourceManagement.yml (PR: [#9549](https://github.com/dotnet/vscode-csharp/pull/9549))
+* Enhance issue reporting reply with instructions (PR: [#9533](https://github.com/dotnet/vscode-csharp/pull/9533))
+* Bump dotnet-sdk from 10.0.300 to 10.0.302 in /msbuild (PR: [#9529](https://github.com/dotnet/vscode-csharp/pull/9529))
+* Add skill for updating the xamlTools version (PR: [#9532](https://github.com/dotnet/vscode-csharp/pull/9532))
+* Fix command syntax in release.yml (PR: [#9520](https://github.com/dotnet/vscode-csharp/pull/9520))
+* Make marketplace publish reruns tolerant of duplicate package failures (PR: [#9516](https://github.com/dotnet/vscode-csharp/pull/9516))
+* Update version numbers for additional prereleases (PR: [#9510](https://github.com/dotnet/vscode-csharp/pull/9510))
 * Update Roslyn to 5.10.0-1.26376.1 (PR: [#9584](https://github.com/dotnet/vscode-csharp/pull/9584))
   * Don't throw exceptions for nested, prefixed, tag helpers (PR: [#84611](https://github.com/dotnet/roslyn/pull/84611))
   * File-based apps: avoid running a few irrelevant editor features (PR: [#84575](https://github.com/dotnet/roslyn/pull/84575))
