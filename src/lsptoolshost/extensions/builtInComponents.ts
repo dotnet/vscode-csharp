@@ -35,6 +35,12 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         componentDllPaths: ['Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll'],
         isOptional: true,
     },
+    testDiscovery: {
+        defaultFolderName: '.testDiscovery',
+        optionName: 'testDiscovery',
+        componentDllPaths: ['Microsoft.VisualStudio.CSharpDevKit.SourceTestDiscovery.dll'],
+        isOptional: true,
+    },
 };
 
 export function getComponentPaths(

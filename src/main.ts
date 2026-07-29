@@ -16,10 +16,8 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { vscodeNetworkSettingsProvider } from './networkSettings';
 import createOptionStream from './shared/observables/createOptionStream';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
-import { downloadAndInstallPackages } from './packageManager/downloadAndInstallPackages';
 import { IInstallDependencies } from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './installRuntimeDependencies';
-import { isValidDownload } from './packageManager/isValidDownload';
 import { MigrateOptions } from './shared/migrateOptions';
 import { CSharpExtensionExports, LimitedExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { getCSharpDevKit } from './utils/getCSharpDevKit';
@@ -27,7 +25,6 @@ import { commonOptions, omnisharpOptions } from './shared/options';
 import { TelemetryEventNames } from './shared/telemetryEventNames';
 import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion';
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
-import { activateOmniSharp } from './activateOmniSharp';
 import { activateRoslyn } from './activateRoslyn';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
 
@@ -85,8 +82,19 @@ export async function activate(
 
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
-    const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) =>
-        downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, reporter);
+    const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => {
+        // Defer loading the download/zip stack (yauzl, proxy agents, fs-extra, etc.) until a
+        // component actually needs to be downloaded, which normally never happens after install.
+        const { downloadAndInstallPackages } = await import('./packageManager/downloadAndInstallPackages');
+        const { isValidDownload } = await import('./packageManager/isValidDownload');
+        return downloadAndInstallPackages(
+            dependencies,
+            networkSettingsProvider,
+            eventStream,
+            isValidDownload,
+            reporter
+        );
+    };
 
     const runtimeDependenciesExist = await installRuntimeDependencies(
         context.extension.packageJSON,
@@ -142,6 +150,9 @@ export async function activate(
                 getCoreClrDebugPromise
             );
         } else {
+            // Defer loading the OmniSharp implementation and its module graph until we actually
+            // activate it, so the default Roslyn activations don't pay to compile/execute it.
+            const { activateOmniSharp } = await import('./activateOmniSharp');
             exports = activateOmniSharp(
                 context,
                 platformInfo,

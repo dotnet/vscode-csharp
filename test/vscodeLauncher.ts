@@ -55,13 +55,19 @@ export async function prepareVSCodeAndExecuteTests(
         await execChildProcess(`${dotnetPath} build ${sln}`, workspacePath, process.env);
     }
 
+    const launchArgs = [workspacePath, '-n', '--user-data-dir', userDataDir, '--log', 'ms-dotnettools.csharp:trace'];
+    if (process.platform === 'linux') {
+        // CI containers have a small /dev/shm allocation, which can cause the renderer to crash.
+        launchArgs.push('--disable-dev-shm-usage');
+    }
+
     // Download VS Code, unzip it and run the integration test
     const exitCode = await runTests({
         vscodeExecutablePath: vscodeExecutablePath,
         extensionDevelopmentPath: extensionDevelopmentPath,
         extensionTestsPath: extensionTestsPath,
         // Launch with info logging as anything else is way too verbose and will hide test results.
-        launchArgs: [workspacePath, '-n', '--user-data-dir', userDataDir, '--log', 'ms-dotnettools.csharp:trace'],
+        launchArgs,
         extensionTestsEnv: env,
     });
 

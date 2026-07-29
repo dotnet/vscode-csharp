@@ -26,6 +26,7 @@ import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
+import { registerCopilotChatSurvey } from './copilot/copilotChatSurvey';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
@@ -78,6 +79,7 @@ export async function activateRoslynLanguageServer(
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
     registerCopilotContextProviders(context, languageServer, _channel);
+    registerCopilotChatSurvey(context, languageServer, languageServerEvents, reporter, _channel);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel, reporter);

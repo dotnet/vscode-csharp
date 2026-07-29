@@ -35,6 +35,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Overrides the folder path for the .roslynDevKit component of the language server",
   "configuration.dotnet.server.componentPaths.xamlTools": "Overrides the folder path for the .xamlTools component of the language server",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Overrides the folder path for the .roslynCopilot component of the language server",
+  "configuration.dotnet.server.componentPaths.testDiscovery": "Overrides the folder path for the .testDiscovery component of the language server",
   "configuration.dotnet.server.componentPaths.razorExtension": "Overrides the folder path for the Razor extension component of the language server",
   "configuration.dotnet.server.startTimeout": "Specifies a timeout (in ms) for the client to successfully start and connect to the language server.",
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached. (Requires extension restart)",

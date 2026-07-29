@@ -9,7 +9,12 @@ import {
     IWorkspaceDebugInformationProvider,
     ProjectDebugInformation,
 } from '../../shared/IWorkspaceDebugInformationProvider';
-import { isBlazorWebAssemblyHosted, isBlazorWebAssemblyProject, isWebProject } from '../../shared/utils';
+import {
+    isBlazorWebAssemblyHosted,
+    isBlazorWebAssemblyHostedServer,
+    isBlazorWebAssemblyProject,
+    isWebProject,
+} from '../../shared/utils';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import {
     ProjectDebugConfiguration,
@@ -48,9 +53,14 @@ export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugI
         }
 
         // LSP serializes and deserializes URIs as (URI formatted) strings not actual types.  So convert to the actual type here.
-        const projects: ProjectDebugInformation[] | undefined = await mapAsync(response, async (p) => {
+        const projects: ProjectDebugInformation[] = await mapAsync(response, async (p) => {
             const [webProject, webAssemblyProject] = isWebProject(p.projectPath);
             const webAssemblyBlazor = await isBlazorWebAssemblyProject(p.projectPath);
+            // Hosted detection is additive: the original launchSettings-based heuristic, plus the
+            // newer static heuristic (Web SDK host referencing the WebAssembly.Server package).
+            const hosted =
+                isBlazorWebAssemblyHosted(p.isExe, webProject, webAssemblyBlazor, p.targetsDotnetCore) ||
+                isBlazorWebAssemblyHostedServer(p.projectPath, p.isExe, webProject);
             return {
                 projectPath: p.projectPath,
                 outputPath: p.outputPath,
@@ -59,13 +69,10 @@ export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugI
                 isExe: p.isExe,
                 isWebProject: webProject,
                 isWebAssemblyProject: webAssemblyProject,
-                isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted(
-                    p.isExe,
-                    webProject,
-                    webAssemblyBlazor,
-                    p.targetsDotnetCore
-                ),
-                isBlazorWebAssemblyStandalone: webAssemblyBlazor,
+                isBlazorWebAssemblyHosted: hosted,
+                // Standalone detection is additive: the original launchSettings-based heuristic, plus
+                // the newer WebAssembly SDK project signal. A hosted project is never standalone.
+                isBlazorWebAssemblyStandalone: (webAssemblyBlazor || webAssemblyProject) && !hosted,
                 solutionPath: p.solutionPath,
             };
         });
