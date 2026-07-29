@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
+* Update Roslyn to 5.11.0-1.26379.2 (PR: [#9592](https://github.com/dotnet/vscode-csharp/pull/9592))
+  * Unsafe evolution: ensure diagnostics are picked up by IDE (PR: [#84603](https://github.com/dotnet/roslyn/pull/84603))
+  * Ensure we don't log errors when we are cancelling loading (PR: [#84622](https://github.com/dotnet/roslyn/pull/84622))
+  * Trim lsp dispatch allocations (PR: [#84651](https://github.com/dotnet/roslyn/pull/84651))
+  * Reduce LSP request handling allocations (PR: [#84623](https://github.com/dotnet/roslyn/pull/84623))
+  * Preserve line breaks after collapsed Razor blocks (PR: [#84630](https://github.com/dotnet/roslyn/pull/84630))
+  * Honour C# new line settings in Razor auto insert (PR: [#84632](https://github.com/dotnet/roslyn/pull/84632))
 * Update Roslyn to 5.10.0-1.26376.1 (PR: [#9584](https://github.com/dotnet/vscode-csharp/pull/9584))
   * Don't throw exceptions for nested, prefixed, tag helpers (PR: [#84611](https://github.com/dotnet/roslyn/pull/84611))
   * File-based apps: avoid running a few irrelevant editor features (PR: [#84575](https://github.com/dotnet/roslyn/pull/84575))

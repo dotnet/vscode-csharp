@@ -41,11 +41,11 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.10.0-1.26376.1",
+    "roslyn": "5.11.0-1.26379.2",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.10.12014.341",
-    "testDiscovery": "9.9.179-gc20357"
+    "testDiscovery": "9.9.223-ge3811b"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -143,7 +143,7 @@
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
     "@vscode/l10n-dev": "^0.0.35",
-    "@vscode/test-electron": "^2.5.2",
+    "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "3.7.0",
     "esbuild": "^0.28.1",
     "eslint": "^8.43.0",
