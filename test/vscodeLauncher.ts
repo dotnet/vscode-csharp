@@ -15,9 +15,7 @@ export async function prepareVSCodeAndExecuteTests(
     userDataDir: string,
     env: NodeJS.ProcessEnv
 ): Promise<number> {
-    // Normally we test against 'insiders' but have pinned to a previous release due to
-    // issues in the MacOS test legs.
-    let vscodeVersion = '1.130';
+    let vscodeVersion = 'insiders';
     if (process.env.CODE_VERSION) {
         console.log(`VSCode version overriden to ${process.env.CODE_VERSION}.`);
         vscodeVersion = process.env.CODE_VERSION;
