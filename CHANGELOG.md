@@ -27,7 +27,6 @@
   * Allow try/catch/finally blocks to collapse independently (PR: [#84507](https://github.com/dotnet/roslyn/pull/84507))
   * Don't fail when formatting blank lines in string literals (PR: [#84461](https://github.com/dotnet/roslyn/pull/84461))
   * Fix NullReferenceException parsing an incomplete switch expression (PR: [#84456](https://github.com/dotnet/roslyn/pull/84456))
-
 * Update xamlTools to 18.10.12014.341 (PR: [#9531](https://github.com/dotnet/vscode-csharp/pull/9531))
   * Fix Hot Reload XmlException in CoreCLR MAUI apps (PR: AzDO#757560)
   * Fix UI deadlock in GetDeclarations completion handling (PR: AzDO#751965)
@@ -36,7 +35,6 @@
   * Fix DLL loading exceptions on extension initialization (PR: AzDO#754847)
   * Report Maui.Controls version for E2E diagnostics (PR: AzDO#752606)
   * Rework MAUI Hot Reload E2E reporting to fix duplicate events (PR: AzDO#751623)
-
 * Update Roslyn to 5.10.0-1.26359.5 (PR: [#9519](https://github.com/dotnet/vscode-csharp/pull/9519))
   * Fix Razor Find All References displaying lines inconsistently when directives span Razor/C# mapping boundaries (PR: [#84353](https://github.com/dotnet/roslyn/pull/84353))
   * Fix Razor parsing for adjacent comment delimiters in code blocks (PR: [#84277](https://github.com/dotnet/roslyn/pull/84277))
@@ -669,7 +667,13 @@
 * Update Debugger to 2.90.0 (PR: [#8572](https://github.com/dotnet/vscode-csharp/pull/8572))
 
 # 2.90.x
-* Bump Roslyn to 5.0.0-2.25424.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
+* Register the CSharp context provider with Copilot Chat as well. (PR: [#8565](https://github.com/dotnet/vscode-csharp/pull/8565))
+* Improve the limited activation experience (PR: [#8564](https://github.com/dotnet/vscode-csharp/pull/8564))
+* Do not create a proxy agent if proxy url is empty string. (PR: [#8564](https://github.com/dotnet/vscode-csharp/pull/8581))
+* Bump Roslyn to 5.0.0-2.25428.10 (PR: [#8576](https://github.com/dotnet/vscode-csharp/pull/8576))
+  * Fix issue reporting workspace diagnostics in Razor files (PR: [#80071](https://github.com/dotnet/roslyn/pull/80071))
+  * Cache project analyzers (PR: [#80050](https://github.com/dotnet/roslyn/pull/80050))
+  * Cache diagnostic analyzer computation (PR: [#80045](https://github.com/dotnet/roslyn/pull/80045))
   * Generate `init` accessor for required properties inside `readonly struct`s (PR: [#80004](https://github.com/dotnet/roslyn/pull/80004))
   * Allow Razor cohosting to work with non-Razor SDK projects (PR: [#79953](https://github.com/dotnet/roslyn/pull/79953))
   * Update 'use expr body' to be a purely syntactic analyzer (PR: [#79979](https://github.com/dotnet/roslyn/pull/79979))
@@ -745,7 +749,9 @@
   * Update Roslyn to 4.14.0-3.25168.13 (PR: [omnisharp-roslyn/#2664](https://github.com/OmniSharp/omnisharp-roslyn/pull/2664))
 
 # 2.87.x
-* Bump Roslyn to 5.0.0-2.25371.17 (PR: [#8436](https://github.com/dotnet/vscode-csharp/pull/8436))
+* Fix acquisition of components with proxies (PR: [#8462](https://github.com/dotnet/vscode-csharp/pull/8462))
+* Bump Roslyn to 5.0.0-2.25404.10 (PR: [#8490](https://github.com/dotnet/vscode-csharp/pull/8490))
+  * Fix file based programs getting stuck in the host workspace (PR: [#79730](https://github.com/dotnet/roslyn/pull/79730))
   * Fix exception in additional file diagnostics (PR: [#79501](https://github.com/dotnet/roslyn/pull/79501))
   * Simplify stale project handling in hot reload (PR: [#79386](https://github.com/dotnet/roslyn/pull/79386))
   * Fix static extension method not showing up on enum type (PR: [#79454](https://github.com/dotnet/roslyn/pull/79454))
