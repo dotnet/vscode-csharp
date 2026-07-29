@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.147.x
-* Update Roslyn to 5.11.0-1.26379.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.11.0-1.26379.2 (PR: [#9592](https://github.com/dotnet/vscode-csharp/pull/9592))
   * Unsafe evolution: ensure diagnostics are picked up by IDE (PR: [#84603](https://github.com/dotnet/roslyn/pull/84603))
   * Fix daemon relay exit classification (PR: [#84666](https://github.com/dotnet/roslyn/pull/84666))
   * Ensure we don't log errors when we are cancelling loading (PR: [#84622](https://github.com/dotnet/roslyn/pull/84622))
