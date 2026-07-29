@@ -1623,6 +1623,12 @@
             "scope": "window",
             "default": false,
             "description": "%configuration.razor.razor.completion.commitElementsWithSpace%"
+          },
+          "razor.advanced.showAllCSharpCodeActions": {
+            "type": "boolean",
+            "scope": "window",
+            "default": false,
+            "description": "%configuration.razor.razor.advanced.showAllCSharpCodeActions%"
           }
         }
       },
