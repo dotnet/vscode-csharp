@@ -111,10 +111,12 @@ stages:
         TargetFolder: '$(Build.SourcesDirectory)/Packages/VSIX_$(channel)'
 
     - task: CopyFiles@2
-      displayName: 'Copy Publish-Vsix script to Packages'
+      displayName: 'Copy VSIX publisher to Packages'
       inputs:
         SourceFolder: '$(Build.SourcesDirectory)/azure-pipelines'
-        Contents: 'Publish-Vsix.ps1'
+        Contents: |
+          Publish-Vsix.cs
+          Publish-Vsix.ps1
         TargetFolder: '$(Build.SourcesDirectory)/Packages'
 
     - ${{ if eq(parameters.isOfficial, true) }}:
