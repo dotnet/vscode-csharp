@@ -61,8 +61,8 @@ var packages = Directory.GetFiles(path, "*.vsix", SearchOption.TopDirectoryOnly)
 
 if (packages.Length == 0)
 {
-    Console.WriteLine($"No .vsix files found in '{path}'. Nothing to publish.");
-    return 0;
+    throw new InvalidOperationException(
+        $"No .vsix files found in '{path}'.");
 }
 
 foreach (var package in packages)
