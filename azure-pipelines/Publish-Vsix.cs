@@ -1,10 +1,13 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 var path = GetSourceDirectory();
 var preRelease = false;
 var dryRun = false;
 var ci = false;
+const string AlreadyPublishedPattern =
+    @"^\s*ERROR\s+[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*(?:\s+\([^)]+\))?\s+v[0-9.]+(?:-[0-9a-z.]+)*\s+already exists\.\s*$";
 
 for (var index = 0; index < args.Length; index++)
 {
@@ -111,7 +114,25 @@ foreach (var package in packages)
     }
     else
     {
-        RunVsce(arguments);
+        var publishArguments = GetVsceArguments(arguments);
+        var result = RunCommandWithOutput(npx, publishArguments);
+        if (result.ExitCode == 0)
+        {
+            continue;
+        }
+
+        if (Regex.IsMatch(
+            result.Output,
+            AlreadyPublishedPattern,
+            RegexOptions.Multiline))
+        {
+            Console.WriteLine(
+                $"{Path.GetFileName(package.PackagePath)} was already published.");
+            continue;
+        }
+
+        throw new InvalidOperationException(
+            $"'{npx}' exited with code {result.ExitCode}.");
     }
 }
 
@@ -127,6 +148,45 @@ static void RunCommand(string fileName, IReadOnlyList<string> arguments)
 {
     PrintCommand(fileName, arguments, "##[command]");
 
+    using var process = Process.Start(CreateStartInfo(fileName, arguments))
+        ?? throw new InvalidOperationException($"Failed to start '{fileName}'.");
+    process.WaitForExit();
+
+    if (process.ExitCode != 0)
+    {
+        throw new InvalidOperationException(
+            $"'{fileName}' exited with code {process.ExitCode}.");
+    }
+}
+
+static (int ExitCode, string Output) RunCommandWithOutput(
+    string fileName,
+    IReadOnlyList<string> arguments)
+{
+    PrintCommand(fileName, arguments, "##[command]");
+
+    var startInfo = CreateStartInfo(fileName, arguments);
+    startInfo.RedirectStandardOutput = true;
+    startInfo.RedirectStandardError = true;
+
+    using var process = Process.Start(startInfo)
+        ?? throw new InvalidOperationException($"Failed to start '{fileName}'.");
+    var standardOutput = process.StandardOutput.ReadToEndAsync();
+    var standardError = process.StandardError.ReadToEndAsync();
+    process.WaitForExit();
+
+    var capturedStandardOutput = standardOutput.GetAwaiter().GetResult();
+    var capturedStandardError = standardError.GetAwaiter().GetResult();
+    Console.Write(capturedStandardOutput);
+    Console.Error.Write(capturedStandardError);
+
+    return (process.ExitCode, $"{capturedStandardOutput}{Environment.NewLine}{capturedStandardError}");
+}
+
+static ProcessStartInfo CreateStartInfo(
+    string fileName,
+    IReadOnlyList<string> arguments)
+{
     // Disabling shell execution keeps stdout and stderr attached to the pipeline console.
     // In this mode Windows does not resolve extensionless command shims, so GetCommandName appends .cmd.
     var startInfo = new ProcessStartInfo(fileName)
@@ -138,15 +198,7 @@ static void RunCommand(string fileName, IReadOnlyList<string> arguments)
         startInfo.ArgumentList.Add(argument);
     }
 
-    using var process = Process.Start(startInfo)
-        ?? throw new InvalidOperationException($"Failed to start '{fileName}'.");
-    process.WaitForExit();
-
-    if (process.ExitCode != 0)
-    {
-        throw new InvalidOperationException(
-            $"'{fileName}' exited with code {process.ExitCode}.");
-    }
+    return startInfo;
 }
 
 static void PrintCommand(
