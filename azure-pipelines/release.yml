@@ -107,22 +107,27 @@ extends:
                     $publishArtifacts = $allArtifacts[0]
                     Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
                     $publishScript = Join-Path '$(Pipeline.Workspace)' 'Publish-Vsix.ps1'
-                    $publishArgs = @('-Path', $publishArtifacts.FullName)
+                    # Use a hashtable (not an array) for splatting so arguments bind by name.
+                    # An array splat binds positionally, which would pass '-Path' itself as the
+                    # positional value of $Path and then fail to bind the actual folder path.
+                    $publishArgs = @{
+                      Path = $publishArtifacts.FullName
+                      CI   = $true
+                    }
                     if ($uploadPrerelease) {
                       Write-Host "Publish to pre-release channel."
-                      $publishArgs += '-PreRelease'
+                      $publishArgs['PreRelease'] = $true
                     } else {
                       Write-Host "Publish to release channel."
                     }
 
                     if ("${{ parameters.test }}" -eq "true") {
                       Write-Host "In test mode, publish commands are printed instead of executed."
-                      $publishArgs += '-DryRun'
+                      $publishArgs['DryRun'] = $true
                     }
 
-                    $publishArgs += '-CI'
-
-                    Write-Host "##[command]& $publishScript $($publishArgs -join ' ')"
+                    $publishArgsDisplay = ($publishArgs.GetEnumerator() | ForEach-Object { "-$($_.Key) $($_.Value)" }) -join ' '
+                    Write-Host "##[command]& $publishScript $publishArgsDisplay"
                     & $publishScript @publishArgs
 
     - stage: 'TagRelease'
