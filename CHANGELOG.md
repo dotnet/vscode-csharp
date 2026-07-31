@@ -5,6 +5,10 @@
 
 # 2.148.x
 
+* Update Roslyn to 5.11.0-1.26380.4 (PR: [#9601](https://github.com/dotnet/vscode-csharp/pull/9601))
+  * Fix on-type and code action formatting on Razor explicit statements (PR: [#84699](https://github.com/dotnet/roslyn/pull/84699))
+  * Allow showing all C# code actions in Razor in VS Code (PR: [#84673](https://github.com/dotnet/roslyn/pull/84673))
+
 # 2.147.x
 * Update Roslyn to 5.11.0-1.26379.2 (PR: [#9592](https://github.com/dotnet/vscode-csharp/pull/9592))
   * Unsafe evolution: ensure diagnostics are picked up by IDE (PR: [#84603](https://github.com/dotnet/roslyn/pull/84603))
