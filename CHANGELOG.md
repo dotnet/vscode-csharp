@@ -5,6 +5,15 @@
 
 # 2.148.x
 
+* Update Roslyn to 5.11.0-1.26380.4 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Fix on-type and code action formatting on Razor explicit statements (PR: [#84699](https://github.com/dotnet/roslyn/pull/84699))
+  * Allow MSBuildWorkspace to open file-based apps (PR: [#84139](https://github.com/dotnet/roslyn/pull/84139))
+  * Allow submitting rename conflicts and rename unambiguous erroneous references (PR: [#84686](https://github.com/dotnet/roslyn/pull/84686))
+  * Allow showing all C# code actions in Razor in VS Code (PR: [#84673](https://github.com/dotnet/roslyn/pull/84673))
+  * Do not report hidden pattern diagnostics (PR: [#84576](https://github.com/dotnet/roslyn/pull/84576))
+  * Stream project.assets.json when checking for unresolved package references (PR: [#84647](https://github.com/dotnet/roslyn/pull/84647))
+  * Fix: LINQ implicit anonymous type property allows stack-only type, causing runtime TypeLoadException (PR: [#84485](https://github.com/dotnet/roslyn/pull/84485))
+
 # 2.147.x
 * Update Roslyn to 5.11.0-1.26379.2 (PR: [#9592](https://github.com/dotnet/vscode-csharp/pull/9592))
   * Unsafe evolution: ensure diagnostics are picked up by IDE (PR: [#84603](https://github.com/dotnet/roslyn/pull/84603))
