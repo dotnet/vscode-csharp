@@ -5,7 +5,7 @@
 
 # 2.148.x
 
-* Update Roslyn to 5.11.0-1.26380.4 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.11.0-1.26380.4 (PR: [#9601](https://github.com/dotnet/vscode-csharp/pull/9601))
   * Fix on-type and code action formatting on Razor explicit statements (PR: [#84699](https://github.com/dotnet/roslyn/pull/84699))
   * Allow MSBuildWorkspace to open file-based apps (PR: [#84139](https://github.com/dotnet/roslyn/pull/84139))
   * Allow submitting rename conflicts and rename unambiguous erroneous references (PR: [#84686](https://github.com/dotnet/roslyn/pull/84686))
