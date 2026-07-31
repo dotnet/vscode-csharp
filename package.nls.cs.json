@@ -132,6 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Určuje, jestli má server OmniSharp používat nastavení editoru VS Code pro formátování kódu C# (použití tabulátorů, velikost odsazení).",
   "configuration.omnisharp.useModernNet.description": "Použijte build serveru OmniSharp pro .NET 6. Tato verze _nepodporuje_ projekty .NET Framework, které nejsou ve stylu sady SDK, včetně Unity. U projektů Framework, .NET Core a .NET 5+, které jsou ve stylu sady SDK, byste měli zaznamenat výrazné zlepšení výkonu.",
   "configuration.omnisharp.useModernNet.title": "Použít build serveru OmniSharp pro .NET 6",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Show all C# code actions in Razor files. These actions are untested in Razor and may introduce syntax errors when applied. If this happens, please report a bug.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Určuje, jestli se má potvrdit pomocný element značky a elementy komponenty s mezerou.",
   "configuration.razor.razor.format.attributeIndentStyle": "Určuje styl odsazení pro atributy HTML a značek komponent v souborech Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Vynutí, aby levá složená závorka za direktivou @code nebo @functions byla na následujícím řádku.",
