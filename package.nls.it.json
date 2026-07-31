@@ -132,6 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Specifica se OmniSharp deve usare le impostazioni dell'editor VS Code per la formattazione del codice C# (uso di tabulazioni, dimensioni rientro).",
   "configuration.omnisharp.useModernNet.description": "Usare la build OmniSharp per .NET 6. Questa versione _non_ supporta i progetti .NET Framework non di tipo SDK, tra cui Unity. I progetti Framework, .NET Core e .NET 5+ di tipo SDK devono vedere miglioramenti significativi delle prestazioni.",
   "configuration.omnisharp.useModernNet.title": "Usare la build .NET 6 di OmniSharp",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Show all C# code actions in Razor files. These actions are untested in Razor and may introduce syntax errors when applied. If this happens, please report a bug.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Specifica se eseguire il commit dell'helper tag e degli elementi del componente con uno spazio.",
   "configuration.razor.razor.format.attributeIndentStyle": "Specifica lo stile di rientro per gli attributi HTML e i tag dei componenti nei file Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Forza la parentesi graffa aperta dopo una direttiva @code o @functions nella riga seguente.",

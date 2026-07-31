@@ -132,6 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Указывает, следует ли OmniSharp использовать параметры редактора VS Code для форматирования кода C# (использование вкладок, размер отступа).",
   "configuration.omnisharp.useModernNet.description": "Используйте сборку OmniSharp для .NET 6. Эта версия _не_ поддерживает проекты .NET Framework не в стиле SDK, в том числе Unity. Проекты .NET Core, .NET 5+ и платформы .NET Framework в стиле SDK должны значительно повысить производительность.",
   "configuration.omnisharp.useModernNet.title": "Использовать сборку .NET 6 для OmniSharp",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Show all C# code actions in Razor files. These actions are untested in Razor and may introduce syntax errors when applied. If this happens, please report a bug.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Указывает, следует ли зафиксировать вспомогательное приложение тегов и элементы компонентов с пробелом.",
   "configuration.razor.razor.format.attributeIndentStyle": "Указывает стиль отступа для атрибутов HTML и тегов компонентов в файлах Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Принудительно добавляет открывающую фигурную скобку после директивы @code или @functions на следующей строке.",
