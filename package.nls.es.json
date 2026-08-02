@@ -132,7 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Especifica si OmniSharp debe usar la configuración VS Code del editor para el formato de código de C# (uso de tabulaciones, tamaño de sangría).",
   "configuration.omnisharp.useModernNet.description": "Use la compilación de OmniSharp para .NET 6. Esta versión no admite proyectos de .NET Framework que no sean de tipo SDK, incluido Unity. Los proyectos framework de estilo SDK, .NET Core y .NET 5+ deben ver mejoras significativas en el rendimiento.",
   "configuration.omnisharp.useModernNet.title": "Usar la compilación de .NET 6 de OmniSharp",
-  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Show all C# code actions in Razor files. These actions are untested in Razor and may introduce syntax errors when applied. If this happens, please report a bug.",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Mostrar todas las acciones de código de C# en archivos de Razor. Estas acciones no se prueban en Razor y pueden introducir errores de sintaxis cuando se aplican. Si esto ocurre, notifique un error.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Especifica si se deben confirmar los elementos auxiliares de etiquetas y componentes con un espacio.",
   "configuration.razor.razor.format.attributeIndentStyle": "Especifica el estilo de sangría de los atributos html y de etiqueta de componente en los archivos de Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Fuerza la llave de apertura después de una directiva @code o @functions a estar en la línea siguiente.",
