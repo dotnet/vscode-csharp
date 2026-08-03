@@ -125,6 +125,22 @@ stages:
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
       containerName: mcr.microsoft.com/dotnet/sdk:10.0-noble
 
+- stage:
+  displayName: Test Linux (.NET 11)
+  dependsOn: []
+  jobs:
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
+      os: linux
+      # Prefer the dotnet from the container.
+      installDotNet: false
+      testVSCodeVersion: $(testVSCodeVersion)
+      installAdditionalLinuxDependencies: true
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+      containerName: mcr.microsoft.com/dotnet/sdk:11.0-preview
+
 - stage: Test_Windows_Stage
   displayName: Test Windows
   dependsOn: []
