@@ -41,7 +41,5 @@
         "test",
         "typings",
         "__mocks__",
-        "jest.config.ts",
-        "baseJestConfig.ts",
     ],
 }

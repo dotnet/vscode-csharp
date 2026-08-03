@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { runIntegrationTests } from '../../runIntegrationTests';
-import { jestIntegrationTestProjectName } from './jest.config';
+import { jestProjectNames } from '../../jestProjectNames.mjs';
 
 export async function run() {
     process.env.RUNNING_INTEGRATION_TESTS = 'true';
 
-    await runIntegrationTests(jestIntegrationTestProjectName);
+    await runIntegrationTests(jestProjectNames.omnisharpIntegration);
 }
