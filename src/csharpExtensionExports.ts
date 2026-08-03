@@ -57,7 +57,7 @@ export interface CSharpExtensionExperimentalExports {
         Response,
         PartialResult,
         Error,
-        RegistrationOptions
+        RegistrationOptions,
     >(
         type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
         params: RequestParam<Params>,

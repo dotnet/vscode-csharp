@@ -11,7 +11,10 @@ import getPort from 'get-port';
 const ServerMock = require('mock-http-server');
 
 export default class MockHttpsServer {
-    constructor(private server: any, public readonly baseUrl: string) {}
+    constructor(
+        private server: any,
+        public readonly baseUrl: string
+    ) {}
 
     public addRequestHandler(
         method: string,

@@ -39,8 +39,7 @@ export class ProjectContextFeature implements DynamicFeature<RoslynProtocol.Proj
     }
     fillInitializeParams?: ((params: InitializeParams) => void) | undefined;
     preInitialize?:
-        | ((capabilities: ServerCapabilities<any>, documentSelector: DocumentSelector | undefined) => void)
-        | undefined;
+        ((capabilities: ServerCapabilities<any>, documentSelector: DocumentSelector | undefined) => void) | undefined;
     registrationType: RegistrationType<RoslynProtocol.ProjectContextRegistrationOptions>;
     register(data: RegistrationData<RoslynProtocol.ProjectContextRegistrationOptions>): void {
         if (!data.registerOptions.documentSelector) {

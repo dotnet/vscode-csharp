@@ -77,7 +77,10 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     private static readonly trackedSessionIds = new Set<string>();
     private static readonly trackedSessionsById = new Map<string, vscode.DebugSession>();
 
-    constructor(private readonly logger: vscode.LogOutputChannel, private readonly vscodeType: typeof vscode) {}
+    constructor(
+        private readonly logger: vscode.LogOutputChannel,
+        private readonly vscodeType: typeof vscode
+    ) {}
 
     public static register(logger: vscode.LogOutputChannel, vscodeType: typeof vscode) {
         const provider = new BlazorDebugConfigurationProvider(logger, vscodeType);
@@ -358,8 +361,8 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             configBrowser === 'edge'
                 ? BlazorDebugConfigurationProvider.edgeBrowserType
                 : configBrowser === 'chrome'
-                ? BlazorDebugConfigurationProvider.chromeBrowserType
-                : await BlazorDebugConfigurationProvider.determineBrowserType();
+                  ? BlazorDebugConfigurationProvider.chromeBrowserType
+                  : await BlazorDebugConfigurationProvider.determineBrowserType();
         if (!browserType) {
             return debugConfigurations;
         }
