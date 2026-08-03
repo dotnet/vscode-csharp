@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Subscription } from 'rxjs';
-import Disposable, { IDisposable } from './disposable';
+import Disposable, { IDisposable } from './disposable.js';
 
 export default class CompositeDisposable extends Disposable {
     private disposables = new Subscription();

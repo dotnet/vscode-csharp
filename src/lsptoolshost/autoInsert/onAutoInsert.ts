@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as RoslynProtocol from '../server/roslynProtocol';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import * as RoslynProtocol from '../server/roslynProtocol.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
 import { FormattingOptions, InsertTextFormat, Range, TextDocumentIdentifier } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import archiver from 'archiver';
-import { TestFile } from './testFile';
+import { TestFile } from './testFile.js';
 
 export default class TestZip {
     constructor(

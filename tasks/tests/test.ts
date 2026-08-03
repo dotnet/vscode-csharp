@@ -10,8 +10,8 @@ import {
     testIntegrationRazorCohost,
     testIntegrationUntrusted,
     testUnit,
-} from './testTasks';
-import { runTask } from '../runTask';
+} from './testTasks.js';
+import { runTask } from '../runTask.js';
 
 runTask(test);
 

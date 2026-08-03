@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider';
-import { OmniSharpServer } from '../server';
-import * as protocol from '../protocol';
-import * as serverUtils from '../utils';
-import { toRange } from '../typeConversion';
+import AbstractSupport from './abstractProvider.js';
+import { OmniSharpServer } from '../server.js';
+import * as protocol from '../protocol.js';
+import * as serverUtils from '../utils.js';
+import { toRange } from '../typeConversion.js';
 import { CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind, Location } from 'vscode';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
-import { omnisharpOptions } from '../../shared/options';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
+import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider.js';
+import { omnisharpOptions } from '../../shared/options.js';
 
 export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
     constructor(

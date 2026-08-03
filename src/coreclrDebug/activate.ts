@@ -5,23 +5,23 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as common from '../common';
-import { CoreClrDebugUtil, getTargetArchitecture, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util';
-import { PlatformInformation } from '../shared/platform';
+import * as common from '../common.js';
+import { CoreClrDebugUtil, getTargetArchitecture, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util.js';
+import { PlatformInformation } from '../shared/platform.js';
 import {
     DebuggerPrerequisiteWarning,
     DebuggerPrerequisiteFailure,
     DebuggerNotInstalledFailure,
-} from '../shared/loggingEvents';
-import { EventStream } from '../eventStream';
-import { getRuntimeDependencyPackageWithId } from '../tools/runtimeDependencyPackageUtils';
-import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { RemoteAttachPicker } from '../shared/processPicker';
-import CompositeDisposable from '../compositeDisposable';
-import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
-import { omnisharpOptions } from '../shared/options';
-import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage';
-import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+} from '../shared/loggingEvents.js';
+import { EventStream } from '../eventStream.js';
+import { getRuntimeDependencyPackageWithId } from '../tools/runtimeDependencyPackageUtils.js';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo.js';
+import { RemoteAttachPicker } from '../shared/processPicker.js';
+import CompositeDisposable from '../compositeDisposable.js';
+import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider.js';
+import { omnisharpOptions } from '../shared/options.js';
+import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage.js';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit.js';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,

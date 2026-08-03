@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as crypto from 'crypto';
-import { EventStream } from '../eventStream';
-import { IntegrityCheckSuccess, DownloadValidation } from '../shared/loggingEvents';
+import { EventStream } from '../eventStream.js';
+import { IntegrityCheckSuccess, DownloadValidation } from '../shared/loggingEvents.js';
 
 export interface DownloadValidator {
     (buffer: Buffer, integrity: string | undefined, eventStream: EventStream): boolean;

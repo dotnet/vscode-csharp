@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { getUriPath } from '../../razor/src/uriPaths';
+import { getUriPath } from '../../razor/src/uriPaths.js';
 
 export class HtmlDocument {
     public readonly path: string;

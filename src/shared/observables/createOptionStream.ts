@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from '../../vscodeAdapter';
+import { vscode } from '../../vscodeAdapter.js';
 import { Observable, Observer } from 'rxjs';
 import { publishBehavior } from 'rxjs/operators';
 

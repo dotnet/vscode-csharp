@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { convertRangeFromSerializable, convertRangeToSerializable, SerializableRange } from './serializableRange';
+import { convertRangeFromSerializable, convertRangeToSerializable, SerializableRange } from './serializableRange.js';
 
 // We'd typically just use vscode.TextEdit here; however, that type doesn't serialize properly over the wire.
 export interface SerializableTextEdit {

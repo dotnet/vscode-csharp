@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { ISolutionSnapshotProvider, SolutionSnapshotId } from './ISolutionSnapshotProvider';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
+import { ISolutionSnapshotProvider, SolutionSnapshotId } from './ISolutionSnapshotProvider.js';
 
 /**
  * Brokered service implementation.

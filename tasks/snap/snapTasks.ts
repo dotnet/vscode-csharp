@@ -6,7 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { rootPath } from '../projectPaths';
+import { rootPath } from '../projectPaths.js';
 
 /**
  * Calculate the next release (stable) version from the current version.

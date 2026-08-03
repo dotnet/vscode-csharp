@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { StatusBarItem } from '../../../../src/vscodeAdapter';
-import { OmnisharpBackgroundDiagnosticStatus } from '../../../../src/omnisharp/omnisharpLoggingEvents';
-import { BackgroundWorkStatusBarObserver } from '../../../../src/omnisharp/observers/backgroundWorkStatusBarObserver';
-import { BackgroundDiagnosticStatus } from '../../../../src/omnisharp/protocol';
+import { StatusBarItem } from '../../../../src/vscodeAdapter.js';
+import { OmnisharpBackgroundDiagnosticStatus } from '../../../../src/omnisharp/omnisharpLoggingEvents.js';
+import { BackgroundWorkStatusBarObserver } from '../../../../src/omnisharp/observers/backgroundWorkStatusBarObserver.js';
+import { BackgroundDiagnosticStatus } from '../../../../src/omnisharp/protocol.js';
 
 describe('BackgroundWorkStatusBarObserver', () => {
     let showCalled: boolean;

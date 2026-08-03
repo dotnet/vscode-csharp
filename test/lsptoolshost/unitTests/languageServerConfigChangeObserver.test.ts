@@ -5,11 +5,11 @@
 
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
-import { registerLanguageServerOptionChanges } from '../../../src/lsptoolshost/options/optionChanges';
+import { registerLanguageServerOptionChanges } from '../../../src/lsptoolshost/options/optionChanges.js';
 
 import { describe, beforeEach, test, expect } from '@jest/globals';
 import * as vscode from 'vscode';
-import { getVSCodeWithConfig, updateConfig } from '../../fakes';
+import { getVSCodeWithConfig, updateConfig } from '../../fakes.js';
 
 describe('Option changes observer', () => {
     let doClickOk: () => void;

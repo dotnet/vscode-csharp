@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { OmnisharpExtensionExports } from './csharpExtensionExports';
-import { PlatformInformation } from './shared/platform';
+import { OmnisharpExtensionExports } from './csharpExtensionExports.js';
+import { PlatformInformation } from './shared/platform.js';
 import { Observable } from 'rxjs';
-import { NetworkSettingsProvider } from './networkSettings';
-import TelemetryReporter from '@vscode/extension-telemetry';
-import { activateOmniSharpLanguageServer } from './omnisharp/omnisharpLanguageServer';
-import { EventStream } from './eventStream';
-import { razorOptions } from './shared/options';
-import { activateRazorOmniSharpExtension } from './razor/razorOmnisharp';
+import { NetworkSettingsProvider } from './networkSettings.js';
+import { ITelemetryReporter } from './shared/telemetryReporter.js';
+import { activateOmniSharpLanguageServer } from './omnisharp/omnisharpLanguageServer.js';
+import { EventStream } from './eventStream.js';
+import { razorOptions } from './shared/options.js';
+import { activateRazorOmniSharpExtension } from './razor/razorOmnisharp.js';
 
 export function activateOmniSharp(
     context: vscode.ExtensionContext,
@@ -21,7 +21,7 @@ export function activateOmniSharp(
     networkSettingsProvider: NetworkSettingsProvider,
     eventStream: EventStream,
     csharpChannel: vscode.OutputChannel,
-    reporter: TelemetryReporter,
+    reporter: ITelemetryReporter,
     getCoreClrDebugPromise: (languageServerStarted: Promise<any>) => Promise<void>
 ): OmnisharpExtensionExports {
     // activate language services

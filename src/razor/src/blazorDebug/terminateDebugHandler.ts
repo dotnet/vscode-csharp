@@ -6,7 +6,7 @@
 import psList from 'ps-list';
 import { DebugSession } from 'vscode';
 import { LogOutputChannel } from 'vscode';
-import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
+import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants.js';
 
 export const isValidEvent = (name: string) => {
     // The name can be of the form: `Debug Blazor Web Assembly in Browser: https://localhost:7291`

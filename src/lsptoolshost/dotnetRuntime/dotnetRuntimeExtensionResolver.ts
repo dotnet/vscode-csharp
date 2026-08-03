@@ -5,21 +5,21 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { HostExecutableInformation } from '../../shared/constants/hostExecutableInformation';
-import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import { PlatformInformation } from '../../shared/platform';
-import { languageServerOptions } from '../../shared/options';
+import { HostExecutableInformation } from '../../shared/constants/hostExecutableInformation.js';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.js';
+import { PlatformInformation } from '../../shared/platform.js';
+import { languageServerOptions } from '../../shared/options.js';
 import { existsSync } from 'fs';
-import { CSharpExtensionId } from '../../constants/csharpExtensionId';
+import { CSharpExtensionId } from '../../constants/csharpExtensionId.js';
 import { readFile } from 'fs/promises';
 import {
     DotnetInstallMode,
     IDotnetAcquireContext,
     IDotnetAcquireResult,
     IDotnetFindPathContext,
-} from './dotnetRuntimeExtensionApi';
-import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
+} from './dotnetRuntimeExtensionApi.js';
+import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion.js';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit.js';
 
 const DotNetMajorVersion = '10';
 const DotNetMinorVersion = '0';

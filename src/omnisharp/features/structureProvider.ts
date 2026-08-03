@@ -11,9 +11,9 @@ import {
     FoldingRange,
     FoldingRangeKind,
 } from 'vscode';
-import AbstractSupport from './abstractProvider';
-import { blockStructure } from '../utils';
-import { V2 } from '../protocol';
+import AbstractSupport from './abstractProvider.js';
+import { blockStructure } from '../utils.js';
+import { V2 } from '../protocol.js';
 
 export class OmniSharpStructureProvider extends AbstractSupport implements FoldingRangeProvider {
     async provideFoldingRanges(

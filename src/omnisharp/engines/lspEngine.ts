@@ -3,37 +3,43 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as protocol from '../protocol';
-import { CancellationToken } from '../../vscodeAdapter';
-import { configure } from '../launcher';
-import { LaunchTarget } from '../../shared/launchTarget';
+import * as protocol from '../protocol.js';
+import { CancellationToken } from '../../vscodeAdapter.js';
+import { configure } from '../launcher.js';
+import { LaunchTarget } from '../../shared/launchTarget.js';
 import { EventEmitter } from 'events';
 import { setTimeout } from 'timers';
-import * as ObservableEvents from '../omnisharpLoggingEvents';
-import { EventStream } from '../../eventStream';
-import CompositeDisposable from '../../compositeDisposable';
-import Disposable from '../../disposable';
+import * as ObservableEvents from '../omnisharpLoggingEvents.js';
+import { EventStream } from '../../eventStream.js';
+import CompositeDisposable from '../../compositeDisposable.js';
+import Disposable from '../../disposable.js';
 import { ExtensionContext, CancellationTokenSource, LogOutputChannel, Location, CodeLens, Uri } from 'vscode';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import { Events, OmniSharpServer } from '../server';
-import { IEngine } from './IEngine';
-import { PlatformInformation } from '../../shared/platform';
-import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import { Command, RequestType, Trace } from 'vscode-languageclient';
-import { DynamicFeature, LanguageClientOptions, StaticFeature } from 'vscode-languageclient';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
+import { Events, OmniSharpServer } from '../server.js';
+import { IEngine } from './IEngine.js';
+import { PlatformInformation } from '../../shared/platform.js';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.js';
+import {
+    CallHierarchyPrepareRequest,
+    Command,
+    DeclarationRequest,
+    DidChangeWorkspaceFoldersNotification,
+    DocumentColorRequest,
+    DocumentDiagnosticRequest,
+    DocumentLinkRequest,
+    DynamicFeature,
+    InlineValueRequest,
+    LanguageClientOptions,
+    NotebookDocumentSyncRegistrationType,
+    RequestType,
+    SelectionRangeRequest,
+    StaticFeature,
+    Trace,
+    TypeHierarchyPrepareRequest,
+} from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
-import { SelectionRangeFeature } from 'vscode-languageclient/selectionRange';
-import { ColorProviderFeature } from 'vscode-languageclient/colorProvider';
-import { WorkspaceFoldersFeature } from 'vscode-languageclient/workspaceFolder';
-import { DeclarationFeature } from 'vscode-languageclient/declaration';
-import { DocumentLinkFeature } from 'vscode-languageclient/documentLink';
-import { InlineValueFeature } from 'vscode-languageclient/inlineValue';
-import { DiagnosticFeature } from 'vscode-languageclient/diagnostic';
-import { NotebookDocumentSyncFeature } from 'vscode-languageclient/notebook';
-import { TypeHierarchyFeature } from 'vscode-languageclient/typeHierarchy';
-import { CallHierarchyFeature } from 'vscode-languageclient/callHierarchy';
-import { Advisor } from '../features/diagnosticsProvider';
-import dotnetTest from '../features/dotnetTest';
+import { Advisor } from '../features/diagnosticsProvider.js';
+import dotnetTest from '../features/dotnetTest.js';
 
 export class LspEngine implements IEngine {
     client: LanguageClient | undefined;
@@ -246,41 +252,44 @@ export class LspEngine implements IEngine {
         // The goal here is to disable all the features and light them up over time.
         const features: (StaticFeature | DynamicFeature<any>)[] = (client as any)._features;
 
-        function disableFeature(ctor: { new (...args: any[]): StaticFeature | DynamicFeature<any> }): void {
-            const index = features.findIndex((z) => z instanceof ctor);
+        function disableFeature(featureId: string): void {
+            const index = features.findIndex((feature) => {
+                const state = feature.getState();
+                return state.kind !== 'static' && state.id === featureId;
+            });
             if (index > -1) {
                 features.splice(index, 1);
             }
         }
 
-        disableFeature(CallHierarchyFeature); // Not implemented in O#
+        disableFeature(CallHierarchyPrepareRequest.method); // Not implemented in O#
         //disableFeature(CodeActionFeature);
         //disableFeature(CodeLensFeature); // Only supports Reference codelens at this time. Does not support Run/Debug Test codelens.
-        disableFeature(ColorProviderFeature); // Not implemented in O#
+        disableFeature(DocumentColorRequest.method); // Not implemented in O#
         //disableFeature(CompletionItemFeature);
-        disableFeature(DeclarationFeature); // Not implemented in O#
+        disableFeature(DeclarationRequest.method); // Not implemented in O#
         //disableFeature(DefinitionFeature); // Needs metadata document/source generated document support
-        disableFeature(DiagnosticFeature);
+        disableFeature(DocumentDiagnosticRequest.method);
         //disableFeature(DocumentFormattingFeature);
         //disableFeature(DocumentRangeFormattingFeature);
         //disableFeature(DocumentOnTypeFormattingFeature); // This feature does not seem to be triggering
         //disableFeature(DocumentHighlightFeature);
-        disableFeature(DocumentLinkFeature); // Not implemented in O#
+        disableFeature(DocumentLinkRequest.method); // Not implemented in O#
         //disableFeature(DocumentSymbolFeature);
         //disableFeature(FoldingRangeFeature);
         //disableFeature(HoverFeature); // This feature does not always seem to be working. Wonder if requests are coming in too early.
         //disableFeature(ImplementationFeature); // Needs metadata document/source generated document support
         //disableFeature(InlayHintsFeature); // The csharp-language-server-protocol library needs to update with 3.17 changes
-        disableFeature(InlineValueFeature); // Not implemented in O#
-        disableFeature(NotebookDocumentSyncFeature); // Not implemented in O#
+        disableFeature(InlineValueRequest.method); // Not implemented in O#
+        disableFeature(NotebookDocumentSyncRegistrationType.method); // Not implemented in O#
         //disableFeature(ReferencesFeature); // Needs metadata document/source generated document support
         //disableFeature(RenameFeature);
-        disableFeature(SelectionRangeFeature); // Not implemented in O#
+        disableFeature(SelectionRangeRequest.method); // Not implemented in O#
         //disableFeature(SemanticTokensFeature); // This feature does not always seem to be working. Wonder if requests are coming in too early.
         //disableFeature(SignatureHelpFeature);
         //disableFeature(TypeDefinitionFeature); // Needs metadata document/source generated document support
-        disableFeature(TypeHierarchyFeature); // Not implemented in O#
-        disableFeature(WorkspaceFoldersFeature); // Not implemented in O#
+        disableFeature(TypeHierarchyPrepareRequest.method); // Not implemented in O#
+        disableFeature(DidChangeWorkspaceFoldersNotification.method); // Not implemented in O#
         //disableFeature(WorkspaceSymbolFeature);
 
         const interopFeature = this.createInteropFeature(client);

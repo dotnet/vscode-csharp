@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from '../../shared/platform';
-import { BaseEvent, InstallationFailure } from '../../shared/loggingEvents';
+import { PlatformInformation } from '../../shared/platform.js';
+import { BaseEvent, InstallationFailure } from '../../shared/loggingEvents.js';
 import {
     TestExecutionCountReport,
     TelemetryEventWithMeasures,
@@ -12,13 +12,13 @@ import {
     ProjectConfiguration,
     TelemetryErrorEvent,
     OmnisharpInitialisation,
-} from '../omnisharpLoggingEvents';
-import { PackageError } from '../../packageManager/packageError';
-import { EventType } from '../../shared/eventType';
-import { getDotnetInfo } from '../../shared/utils/getDotnetInfo';
-import { DotnetInfo } from '../../shared/utils/dotnetInfo';
-import { ITelemetryReporter, getTelemetryProps } from '../../shared/telemetryReporter';
-import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration';
+} from '../omnisharpLoggingEvents.js';
+import { PackageError } from '../../packageManager/packageError.js';
+import { EventType } from '../../shared/eventType.js';
+import { getDotnetInfo } from '../../shared/utils/getDotnetInfo.js';
+import { DotnetInfo } from '../../shared/utils/dotnetInfo.js';
+import { ITelemetryReporter, getTelemetryProps } from '../../shared/telemetryReporter.js';
+import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration.js';
 
 export class TelemetryObserver {
     private reporter: ITelemetryReporter;

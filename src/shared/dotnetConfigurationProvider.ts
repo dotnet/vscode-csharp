@@ -3,18 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as vscode from 'vscode';
-import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider';
-import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, getBuildOperations } from './assets';
-import { getServiceBroker } from '../lsptoolshost/serviceBroker/brokeredServicesHosting';
-import Descriptors from '../lsptoolshost/solutionSnapshot/descriptors';
+import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider.js';
+import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, getBuildOperations } from './assets.js';
+import { getServiceBroker } from '../lsptoolshost/serviceBroker/brokeredServicesHosting.js';
+import Descriptors from '../lsptoolshost/solutionSnapshot/descriptors.js';
 import {
     DotnetDebugConfigurationServiceErrorKind,
     IDotnetDebugConfigurationService,
     IDotnetDebugConfigurationServiceResult,
-} from '../lsptoolshost/debugger/IDotnetDebugConfigurationService';
-import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
+} from '../lsptoolshost/debugger/IDotnetDebugConfigurationService.js';
+import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider.js';
 
 // User errors that can be shown to the user.
 class LaunchServiceError extends Error {}

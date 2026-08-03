@@ -8,9 +8,9 @@ import {
     allNugetPackages,
     installDependencies,
     updateNugetPackageVersion,
-} from './offlinePackagingTasks';
-import { runTask } from '../runTask';
-import { getPackageJSON } from '../packageJson';
+} from './offlinePackagingTasks.js';
+import { runTask } from '../runTask.js';
+import { getPackageJSON } from '../packageJson.js';
 
 runTask(updateRoslynVersion);
 

@@ -6,13 +6,13 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
     getCompletionsAsync,
     openFileInWorkspaceAsync,
-} from './integrationHelpers';
+} from './integrationHelpers.js';
 
 describe(`Completion Tests`, () => {
     beforeAll(async () => {

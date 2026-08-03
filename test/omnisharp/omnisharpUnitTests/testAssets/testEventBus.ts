@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { EventStream } from '../../../../src/eventStream';
-import { BaseEvent } from '../../../../src/shared/loggingEvents';
-import Disposable, { IDisposable } from '../../../../src/disposable';
+import { EventStream } from '../../../../src/eventStream.js';
+import { BaseEvent } from '../../../../src/shared/loggingEvents.js';
+import Disposable, { IDisposable } from '../../../../src/disposable.js';
 
 export default class TestEventBus {
     private eventBus: Array<BaseEvent>;

@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../src/vscodeAdapter';
-import * as protocol from '../src/omnisharp/protocol';
-import { ITelemetryReporter } from '../src/shared/telemetryReporter';
+import * as vscode from '../src/vscodeAdapter.js';
+import * as protocol from '../src/omnisharp/protocol.js';
+import { ITelemetryReporter } from '../src/shared/telemetryReporter.js';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerOnError,
     OmnisharpServerUnresolvedDependencies,
     WorkspaceInformationUpdated,
-} from '../src/omnisharp/omnisharpLoggingEvents';
+} from '../src/omnisharp/omnisharpLoggingEvents.js';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     const returnChannel: vscode.OutputChannel = {

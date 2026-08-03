@@ -12,6 +12,7 @@ import {
     NotificationHandler0,
     NotificationType,
     PartialResultParams,
+    Protocol2CodeConverter,
     ProtocolRequestType,
     RequestHandler,
     RequestParam,
@@ -22,37 +23,37 @@ import {
     Trace,
 } from 'vscode-languageclient';
 import { Executable, TransportKind } from 'vscode-languageclient/node';
-import { PlatformInformation } from '../../shared/platform';
-import { readConfigurations } from '../options/configurationMiddleware';
-import * as RoslynProtocol from './roslynProtocol';
-import { CSharpDevKitExports } from '../../csharpDevKitExports';
-import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
-import TelemetryReporter from '@vscode/extension-telemetry';
-import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { PlatformInformation } from '../../shared/platform.js';
+import { readConfigurations } from '../options/configurationMiddleware.js';
+import * as RoslynProtocol from './roslynProtocol.js';
+import { CSharpDevKitExports } from '../../csharpDevKitExports.js';
+import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider.js';
+import { ITelemetryReporterWithLevel } from '../../shared/telemetryReporter.js';
+import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit.js';
 
 import { randomUUID } from 'crypto';
-import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import { RoslynLanguageClient } from './roslynLanguageClient';
-import { provideDiagnostics, provideWorkspaceDiagnostics } from '../diagnostics/diagnosticMiddleware';
-import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration';
-import { getDotnetInfo } from '../../shared/utils/getDotnetInfo';
-import { DotnetInfo } from '../../shared/utils/dotnetInfo';
-import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents';
-import { registerShowToastNotification } from '../handlers/showToastNotification';
-import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
-import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
-import { VSTextDocumentIdentifier } from './roslynProtocol';
-import { IDisposable } from '../../disposable';
-import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
-import { getComponentPaths } from '../extensions/builtInComponents';
-import { OnAutoInsertFeature } from '../autoInsert/onAutoInsertFeature';
-import { ProjectContextService } from '../projectContext/projectContextService';
-import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage';
-import { TelemetryEventNames } from '../../shared/telemetryEventNames';
-import { getProfilingEnvVars } from '../logging/profiling';
-import { getServerPath } from '../activate';
-import { UriConverter } from '../utils/uriConverter';
-import { ProjectContextFeature } from '../projectContext/projectContextFeature';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.js';
+import { RoslynLanguageClient } from './roslynLanguageClient.js';
+import { provideDiagnostics, provideWorkspaceDiagnostics } from '../diagnostics/diagnosticMiddleware.js';
+import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration.js';
+import { getDotnetInfo } from '../../shared/utils/getDotnetInfo.js';
+import { DotnetInfo } from '../../shared/utils/dotnetInfo.js';
+import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents.js';
+import { registerShowToastNotification } from '../handlers/showToastNotification.js';
+import { registerOnAutoInsert } from '../autoInsert/onAutoInsert.js';
+import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options.js';
+import { VSTextDocumentIdentifier } from './roslynProtocol.js';
+import { IDisposable } from '../../disposable.js';
+import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService.js';
+import { getComponentPaths } from '../extensions/builtInComponents.js';
+import { OnAutoInsertFeature } from '../autoInsert/onAutoInsertFeature.js';
+import { ProjectContextService } from '../projectContext/projectContextService.js';
+import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage.js';
+import { TelemetryEventNames } from '../../shared/telemetryEventNames.js';
+import { getProfilingEnvVars } from '../logging/profiling.js';
+import { getServerPath } from '../activate.js';
+import { UriConverter } from '../utils/uriConverter.js';
+import { ProjectContextFeature } from '../projectContext/projectContextFeature.js';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -91,7 +92,7 @@ export class RoslynLanguageServer {
         private _languageClient: RoslynLanguageClient,
         private _platformInfo: PlatformInformation,
         private _context: vscode.ExtensionContext,
-        private _telemetryReporter: TelemetryReporter,
+        private _telemetryReporter: ITelemetryReporterWithLevel,
         private _languageServerEvents: RoslynLanguageServerEvents,
         private _channel: vscode.LogOutputChannel,
         private _traceChannel: vscode.LogOutputChannel
@@ -123,6 +124,10 @@ export class RoslynLanguageServer {
 
     public get state(): ServerState {
         return this._state;
+    }
+
+    public get protocol2CodeConverter(): Protocol2CodeConverter {
+        return this._languageClient.protocol2CodeConverter;
     }
 
     public static get processId(): number | undefined {
@@ -265,7 +270,7 @@ export class RoslynLanguageServer {
         platformInfo: PlatformInformation,
         hostExecutableResolver: IHostExecutableResolver,
         context: vscode.ExtensionContext,
-        telemetryReporter: TelemetryReporter,
+        telemetryReporter: ITelemetryReporterWithLevel,
         additionalExtensionPaths: string[],
         languageServerEvents: RoslynLanguageServerEvents,
         channel: vscode.LogOutputChannel,
@@ -641,7 +646,7 @@ export class RoslynLanguageServer {
         platformInfo: PlatformInformation,
         hostExecutableResolver: IHostExecutableResolver,
         context: vscode.ExtensionContext,
-        telemetryReporter: TelemetryReporter,
+        telemetryReporter: ITelemetryReporterWithLevel,
         additionalExtensionPaths: string[],
         channel: vscode.LogOutputChannel,
         csharpDevKitExtensionExports?: CSharpDevKitExports

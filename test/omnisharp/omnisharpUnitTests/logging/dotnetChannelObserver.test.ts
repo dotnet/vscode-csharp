@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { DotNetChannelObserver } from '../../../../src/omnisharp/observers/dotnetChannelObserver';
-import { getNullChannel } from '../../../fakes';
-import { CommandDotNetRestoreStart } from '../../../../src/omnisharp/omnisharpLoggingEvents';
+import { DotNetChannelObserver } from '../../../../src/omnisharp/observers/dotnetChannelObserver.js';
+import { getNullChannel } from '../../../fakes.js';
+import { CommandDotNetRestoreStart } from '../../../../src/omnisharp/omnisharpLoggingEvents.js';
 
 describe('DotnetChannelObserver', () => {
     let hasShown: boolean;

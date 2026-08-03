@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { getNullChannel } from '../../../fakes';
-import { RazorLoggerObserver } from '../../../../src/omnisharp/observers/razorLoggerObserver';
+import { getNullChannel } from '../../../fakes.js';
+import { RazorLoggerObserver } from '../../../../src/omnisharp/observers/razorLoggerObserver.js';
 import {
     RazorPluginPathSpecified,
     RazorPluginPathDoesNotExist,
     RazorDevModeActive,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents.js';
 
 describe('RazorLoggerObserver', () => {
     let logOutput = '';

@@ -3,18 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as jsonc from 'jsonc-parser';
 import { FormattingOptions, ModificationOptions } from 'jsonc-parser';
 import * as os from 'os';
 import * as path from 'path';
 import * as tasks from 'vscode-tasks';
-import * as util from '../common';
+import * as util from '../common.js';
 import * as vscode from 'vscode';
 
-import { tolerantParse } from '../json';
-import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider';
-import { showErrorMessage } from './observers/utils/showMessage';
+import { tolerantParse } from '../json.js';
+import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider.js';
+import { showErrorMessage } from './observers/utils/showMessage.js';
 
 type DebugConsoleOptions = { console: string };
 

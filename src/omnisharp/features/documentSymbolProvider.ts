@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../utils';
+import AbstractSupport from './abstractProvider.js';
+import * as protocol from '../protocol.js';
+import * as serverUtils from '../utils.js';
 import * as vscode from 'vscode';
 
 import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
-import { toRange3 } from '../typeConversion';
+import { toRange3 } from '../typeConversion.js';
 
 export default class OmniSharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
     async provideDocumentSymbols(

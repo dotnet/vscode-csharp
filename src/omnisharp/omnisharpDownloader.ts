@@ -3,23 +3,23 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GetPackagesFromVersion } from './omnisharpPackageCreator';
-import { PlatformInformation } from '../shared/platform';
+import { GetPackagesFromVersion } from './omnisharpPackageCreator.js';
+import { PlatformInformation } from '../shared/platform.js';
 import {
     PackageInstallation,
     LogPlatformInfo,
     InstallationSuccess,
     InstallationFailure,
-} from '../shared/loggingEvents';
-import { EventStream } from '../eventStream';
-import { NetworkSettingsProvider } from '../networkSettings';
-import { downloadAndInstallPackages } from '../packageManager/downloadAndInstallPackages';
-import { DownloadFile } from '../packageManager/fileDownloader';
-import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackageUtils';
-import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
-import { isValidDownload } from '../packageManager/isValidDownload';
-import { LatestBuildDownloadStart } from './omnisharpLoggingEvents';
-import { ITelemetryReporter } from '../shared/telemetryReporter';
+} from '../shared/loggingEvents.js';
+import { EventStream } from '../eventStream.js';
+import { NetworkSettingsProvider } from '../networkSettings.js';
+import { downloadAndInstallPackages } from '../packageManager/downloadAndInstallPackages.js';
+import { DownloadFile } from '../packageManager/fileDownloader.js';
+import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackageUtils.js';
+import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall.js';
+import { isValidDownload } from '../packageManager/isValidDownload.js';
+import { LatestBuildDownloadStart } from './omnisharpLoggingEvents.js';
+import { ITelemetryReporter } from '../shared/telemetryReporter.js';
 
 export class OmnisharpDownloader {
     public constructor(

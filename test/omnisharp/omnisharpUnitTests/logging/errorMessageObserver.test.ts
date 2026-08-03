@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { MessageItem, vscode } from '../../../../src/vscodeAdapter';
-import { ErrorMessageObserver } from '../../../../src/omnisharp/observers/errorMessageObserver';
-import { ZipError, EventWithMessage, IntegrityCheckFailure } from '../../../../src/shared/loggingEvents';
-import { getFakeVsCode } from '../../../fakes';
-import { DotNetTestDebugStartFailure, DotNetTestRunFailure } from '../../../../src/omnisharp/omnisharpLoggingEvents';
+import { MessageItem, vscode } from '../../../../src/vscodeAdapter.js';
+import { ErrorMessageObserver } from '../../../../src/omnisharp/observers/errorMessageObserver.js';
+import { ZipError, EventWithMessage, IntegrityCheckFailure } from '../../../../src/shared/loggingEvents.js';
+import { getFakeVsCode } from '../../../fakes.js';
+import { DotNetTestDebugStartFailure, DotNetTestRunFailure } from '../../../../src/omnisharp/omnisharpLoggingEvents.js';
 
 describe('ErrorMessageObserver', () => {
     const vscode: vscode = getFakeVsCode();

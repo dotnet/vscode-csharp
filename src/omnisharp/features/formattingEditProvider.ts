@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../utils';
+import AbstractSupport from './abstractProvider.js';
+import * as protocol from '../protocol.js';
+import * as serverUtils from '../utils.js';
 import {
     DocumentRangeFormattingEditProvider,
     FormattingOptions,

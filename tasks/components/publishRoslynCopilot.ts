@@ -14,9 +14,9 @@ import {
     createPullRequest,
     doesBranchExist,
     findPRByTitle,
-} from '../gitTasks';
-import { updatePackageDependencies } from '../../src/tools/updatePackageDependencies';
-import { runTask } from '../runTask';
+} from '../gitTasks.js';
+import { updatePackageDependencies } from '../../src/tools/updatePackageDependencies.js';
+import { runTask } from '../runTask.js';
 
 type Options = {
     userName?: string;

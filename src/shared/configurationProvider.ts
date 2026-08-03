@@ -4,24 +4,24 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { ParsedEnvironmentFile } from '../coreclrDebug/parsedEnvironmentFile';
-import { debugSessionTracker } from '../coreclrDebug/provisionalDebugSessionTracker';
+import { ParsedEnvironmentFile } from '../coreclrDebug/parsedEnvironmentFile.js';
+import { debugSessionTracker } from '../coreclrDebug/provisionalDebugSessionTracker.js';
 
-import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/dotnetDevCertsHttps';
+import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/dotnetDevCertsHttps.js';
 import {
     AttachItem,
     RemoteAttachPicker,
     DotNetAttachItemsProviderFactory,
     AttachPicker,
-} from '../shared/processPicker';
-import { PlatformInformation } from './platform';
-import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+} from '../shared/processPicker.js';
+import { PlatformInformation } from './platform.js';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit.js';
 import {
     ActionOption,
     showErrorMessageWithOptions,
     showInformationMessage,
     showWarningMessage,
-} from './observers/utils/showMessage';
+} from './observers/utils/showMessage.js';
 
 /**
  * Class used for debug configurations that will be sent to the debugger registered by {@link DebugAdapterExecutableFactory}
