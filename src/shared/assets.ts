@@ -27,7 +27,10 @@ export class AssetGenerator {
     private startupProject: ProjectDebugInformation | undefined;
     private fallbackBuildProject: ProjectDebugInformation | undefined;
 
-    public constructor(projects: ProjectDebugInformation[], private workspaceFolder: vscode.WorkspaceFolder) {
+    public constructor(
+        projects: ProjectDebugInformation[],
+        private workspaceFolder: vscode.WorkspaceFolder
+    ) {
         this.vscodeFolder = path.join(this.workspaceFolder.uri.fsPath, '.vscode');
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');

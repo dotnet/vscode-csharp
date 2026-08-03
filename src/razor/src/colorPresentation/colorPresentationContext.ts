@@ -7,5 +7,8 @@ import * as vscode from 'vscode';
 import { Range } from 'vscode-languageclient';
 
 export class ColorPresentationContext {
-    constructor(public readonly uri: vscode.Uri, public readonly range: Range) {}
+    constructor(
+        public readonly uri: vscode.Uri,
+        public readonly range: Range
+    ) {}
 }

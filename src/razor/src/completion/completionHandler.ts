@@ -37,8 +37,8 @@ export class CompletionHandler {
             completions instanceof Array
                 ? completions // was vscode.CompletionItem[]
                 : completions
-                ? completions.items // was vscode.CompletionList
-                : [];
+                  ? completions.items // was vscode.CompletionList
+                  : [];
 
         const convertedCompletionItems: CompletionItem[] = new Array(completionItems.length);
         for (let i = 0; i < completionItems.length; i++) {

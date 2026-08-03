@@ -40,7 +40,7 @@ export default defineConfig([
         },
         plugins: {
             header: compatibleHeaderPlugin,
-            prettier: fixupPluginRules(prettierPlugin),
+            prettier: prettierPlugin,
             unicorn: unicornPlugin,
         },
         rules: {

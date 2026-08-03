@@ -15,7 +15,5 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-declare module 'vscode' {
-
-}
+declare module 'vscode' {}
 /* tslint:enable:max-classes-per-file */
