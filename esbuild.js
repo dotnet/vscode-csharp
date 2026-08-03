@@ -48,12 +48,15 @@ async function main() {
             'src/main.ts'
         ],
         bundle: true,
-        format: 'cjs',
+        format: 'esm',
+        banner: {
+            js: `import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);`,
+        },
         minify: production,
         sourcemap: !production,
         sourcesContent: false,
         platform: 'node',
-        outfile: 'dist/extension.js',
+        outfile: 'dist/extension.mjs',
         external: ['vscode', 'applicationinsights-native-metrics', '@opentelemetry/tracing'],
         logLevel: 'info',
         plugins: [

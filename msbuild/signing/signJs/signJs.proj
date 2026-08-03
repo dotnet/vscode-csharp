@@ -21,5 +21,8 @@
         <FilesToSign Include="$(OutDir)*.js">
             <Authenticode>MicrosoftSHA2</Authenticode>
         </FilesToSign>
+        <FilesToSign Include="$(OutDir)*.mjs">
+            <Authenticode>MicrosoftSHA2</Authenticode>
+        </FilesToSign>
     </ItemGroup>
 </Project>

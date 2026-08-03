@@ -47,7 +47,7 @@
     "xamlTools": "18.10.12014.341",
     "testDiscovery": "9.9.179-gc20357"
   },
-  "main": "./dist/extension",
+  "main": "./dist/extension.mjs",
   "l10n": "./l10n",
   "brokeredServices": [
     {
@@ -81,7 +81,7 @@
     "omnisharptest": "npm run packageDev && npx ts-node tasks/tests/omnisharptest.ts",
     "omnisharptest:integration": "npm run packageDev && npx ts-node tasks/tests/omnisharptestIntegration.ts",
     "omnisharptest:unit": "npm run compileDev && npx ts-node tasks/tests/omnisharptestUnit.ts",
-    "package": "npm run compile && npm run signJs && node esbuild.js --production",
+    "package": "npm run compile && node esbuild.js --production && npm run signJs",
     "packageDev": "npm run compileDev && node esbuild.js",
     "prepare": "npm run installDependencies",
     "profiling": "npm run package && npx ts-node tasks/profiling/profiling.ts",
