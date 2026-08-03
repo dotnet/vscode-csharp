@@ -147,7 +147,7 @@ export function getJUnitFileName(logName: string) {
 export async function runJestTest(project: string) {
     process.env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(project);
     process.env.JEST_SUITE_NAME = project;
-    const configPath = path.join(rootPath, 'jest.config.ts');
+    const configPath = path.join(rootPath, 'jest.config.mjs');
 
     const { results } = await jest.runCLI(
         {

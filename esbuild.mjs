@@ -1,5 +1,5 @@
-const esbuild = require("esbuild");
-const fs = require('fs/promises');
+import esbuild from 'esbuild';
+import fs from 'node:fs/promises';
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -44,9 +44,7 @@ const umdEsmLoaderPlugin = {
 
 async function main() {
     const ctx = await esbuild.context({
-        entryPoints: [
-            'src/main.ts'
-        ],
+        entryPoints: ['src/main.ts'],
         bundle: true,
         format: 'esm',
         banner: {
@@ -81,7 +79,7 @@ async function main() {
     }
 }
 
-main().catch(e => {
+main().catch((e) => {
     console.error(e);
     process.exit(1);
 });

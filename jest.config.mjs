@@ -2,19 +2,18 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { Config } from 'jest';
-
-const config: Config = {
+/** @type {import('jest').Config} */
+const config = {
     projects: [
-        '<rootDir>/test/lsptoolshost/artifactTests/jest.config.ts',
-        '<rootDir>/test/lsptoolshost/integrationTests/jest.config.ts',
-        '<rootDir>/test/lsptoolshost/unitTests/jest.config.ts',
-        '<rootDir>/test/omnisharp/omnisharpIntegrationTests/jest.config.ts',
-        '<rootDir>/test/omnisharp/omnisharpUnitTests/jest.config.ts',
-        '<rootDir>/test/razor/razorIntegrationTests/jest.config.ts',
-        '<rootDir>/test/razor/razorTests/jest.config.ts',
-        '<rootDir>/test/untrustedWorkspace/integrationTests/jest.config.ts',
-        '<rootDir>/test/tasks/jest.config.ts',
+        '<rootDir>/test/lsptoolshost/artifactTests/jest.config.mjs',
+        '<rootDir>/test/lsptoolshost/integrationTests/jest.config.mjs',
+        '<rootDir>/test/lsptoolshost/unitTests/jest.config.mjs',
+        '<rootDir>/test/omnisharp/omnisharpIntegrationTests/jest.config.mjs',
+        '<rootDir>/test/omnisharp/omnisharpUnitTests/jest.config.mjs',
+        '<rootDir>/test/razor/razorIntegrationTests/jest.config.mjs',
+        '<rootDir>/test/razor/razorTests/jest.config.mjs',
+        '<rootDir>/test/untrustedWorkspace/integrationTests/jest.config.mjs',
+        '<rootDir>/test/tasks/jest.config.mjs',
     ],
     // Reporters are a global jest configuration property and cannot be set in the project jest config.
     // This configuration will create a 'junit.xml' file in the output directory, no matter which test project is running.

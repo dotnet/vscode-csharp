@@ -13,7 +13,7 @@ export async function runIntegrationTests(projectName: string) {
         throw new Error('CODE_EXTENSIONS_PATH not set.');
     }
 
-    const jestConfigPath = path.join(repoRoot, 'jest.config.ts');
+    const jestConfigPath = path.join(repoRoot, 'jest.config.mjs');
     const jestConfig = {
         config: jestConfigPath,
         selectProjects: [projectName],
