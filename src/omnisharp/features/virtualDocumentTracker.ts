@@ -101,12 +101,6 @@ async function openVirtualDocument(document: TextDocument, server: OmniSharpServ
 }
 
 async function changeVirtualDocument(document: TextDocument, server: OmniSharpServer, eventStream: EventStream) {
-    let path = document.uri.fsPath;
-
-    if (!path) {
-        path = document.uri.path;
-    }
-
     try {
         await serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName });
     } catch (error) {

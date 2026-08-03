@@ -17,7 +17,6 @@ export async function createPackageAsync(
     vscodePlatformId?: string
 ): Promise<string> {
     const vsceArgs = [];
-    let packagePath = undefined;
 
     if (!(await util.fileExists(vscePath))) {
         throw new Error(`vsce does not exist at expected location: '${vscePath}'`);
@@ -31,7 +30,7 @@ export async function createPackageAsync(
     }
 
     vsceArgs.push('-o');
-    packagePath = path.join(outputFolder, packageName);
+    const packagePath = path.join(outputFolder, packageName);
     vsceArgs.push(packagePath);
 
     if (vscodePlatformId !== undefined) {
