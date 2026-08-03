@@ -94,6 +94,7 @@
     "test:integration": "npm run test:integration:csharp && npm run test:integration:devkit && npm run test:integration:razor:cohost && npm run test:integration:untrusted",
     "test:integration:csharp": "npm run packageDev && npx ts-node tasks/tests/testIntegrationCsharp.ts",
     "test:integration:devkit": "npm run packageDev && npx ts-node tasks/tests/testIntegrationDevkit.ts",
+    "test:integration:macos-pr": "npm run packageDev && npx ts-node tasks/tests/testIntegrationMacOspr.ts",
     "test:integration:razor:cohost": "npm run packageDev && npx ts-node tasks/tests/testIntegrationRazorCohost.ts",
     "test:integration:untrusted": "npm run packageDev && npx ts-node tasks/tests/testIntegrationUntrusted.ts",
     "test:unit": "npm run compileDev && npx ts-node tasks/tests/testUnit.ts",

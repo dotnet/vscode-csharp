@@ -4,11 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers';
+import {
+    basicSlnTestProject,
+    integrationTestProjects,
+    runDevKitIntegrationTests,
+    runIntegrationTest,
+    runJestTest,
+} from './testHelpers';
 import { jestArtifactTestsProjectName } from '../../test/lsptoolshost/artifactTests/jest.config';
 import { jestUnitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config';
 import { razorTestProjectName } from '../../test/razor/razorTests/jest.config';
 import { jestTasksTestProjectName } from '../../test/tasks/jest.config';
+import { rootPath } from '../projectPaths';
 
 const razorIntegrationTestProjects = ['RazorApp'];
 
@@ -30,6 +37,29 @@ export async function testIntegrationDevkit(): Promise<void> {
             `DevKit-${projectName}`
         );
     }
+}
+
+// Full macOS integration runs are frequently the PR long pole. Exercise extension activation, project loading,
+// and completion through both C# and Dev Kit here.  Full feature coverage is handled by both non-macOS legs
+// and in non-PR builds for macOS.
+export async function testIntegrationMacOSPR(): Promise<void> {
+    const testFolderName = path.join('lsptoolshost', 'integrationTests');
+    const completionTestFile = path.join(rootPath, 'test', testFolderName, 'completion.integration.test.ts');
+
+    await runIntegrationTest(
+        basicSlnTestProject,
+        testFolderName,
+        'CSharp-macOS-PR',
+        `${basicSlnTestProject}.code-workspace`,
+        completionTestFile
+    );
+    await runIntegrationTest(
+        basicSlnTestProject,
+        testFolderName,
+        'DevKit-macOS-PR',
+        `devkit_${basicSlnTestProject}.code-workspace`,
+        completionTestFile
+    );
 }
 
 export async function testIntegrationRazorCohost(): Promise<void> {
