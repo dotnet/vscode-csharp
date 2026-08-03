@@ -8,7 +8,7 @@
             "runtimeExecutable": "${execPath}",
             "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}"],
             "preLaunchTask": "packageDev"
         },
         {
@@ -33,7 +33,7 @@
           },
           "sourceMaps": true,
           "outFiles": [
-            "${workspaceRoot}/dist/*.js",
+            "${workspaceRoot}/dist/*.{js,mjs}",
             "${workspaceRoot}/out/test/**/*.js"
           ],
           "resolveSourceMapLocations": [
@@ -66,7 +66,7 @@
                 "RoslynWaiterEnabled": "true"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev",
             "internalConsoleOptions": "openOnSessionStart"
@@ -94,7 +94,7 @@
                 "RoslynWaiterEnabled": "true"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev",
             "internalConsoleOptions": "openOnSessionStart"
@@ -121,7 +121,7 @@
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev",
             "internalConsoleOptions": "openOnSessionStart"
@@ -147,7 +147,7 @@
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev"
         },
@@ -172,7 +172,7 @@
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev"
         },
