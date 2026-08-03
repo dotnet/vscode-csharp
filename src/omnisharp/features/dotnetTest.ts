@@ -465,8 +465,8 @@ export default class TestManager extends AbstractProvider {
         let projectInfo: protocol.ProjectInformationResponse;
         try {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
-        } catch (_) {
-            throw new Error('Could not determine project type.');
+        } catch (error) {
+            throw new Error('Could not determine project type.', { cause: error });
         }
 
         if (!projectInfo.MsBuildProject) {

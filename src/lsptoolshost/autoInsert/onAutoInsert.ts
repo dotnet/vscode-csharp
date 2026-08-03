@@ -123,7 +123,7 @@ async function applyAutoInsertEdit(
         const startPosition = new vscode.Position(textEdit.range.start.line, textEdit.range.start.character);
         const endPosition = new vscode.Position(textEdit.range.end.line, textEdit.range.end.character);
 
-        let textEdits: (vscode.TextEdit | vscode.SnippetTextEdit)[] = [];
+        let textEdits: (vscode.TextEdit | vscode.SnippetTextEdit)[];
         if (response._vs_textEditFormat === InsertTextFormat.Snippet) {
             const docComment = new vscode.SnippetString(textEdit.newText);
             const edit = vscode.SnippetTextEdit.replace(new vscode.Range(startPosition, endPosition), docComment);
