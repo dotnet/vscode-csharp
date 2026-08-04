@@ -5,10 +5,10 @@
 
 import * as path from 'path';
 import * as semver from 'semver';
-import * as util from '../common';
-import { OmnisharpDownloader } from './omnisharpDownloader';
-import { PlatformInformation } from '../shared/platform';
-import { modernNetVersion } from './omnisharpPackageCreator';
+import * as util from '../common.ts';
+import { OmnisharpDownloader } from './omnisharpDownloader.ts';
+import { PlatformInformation } from '../shared/platform.ts';
+import { modernNetVersion } from './omnisharpPackageCreator.ts';
 
 export class OmnisharpManager {
     private readonly latestVersionFileServerPath = 'releases/versioninfo.txt';

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
-import { getExtensionPath } from '../common';
-import { commonOptions, omnisharpOptions } from '../shared/options';
+import { getExtensionPath } from '../common.ts';
+import { commonOptions, omnisharpOptions } from '../shared/options.ts';
 
 // Will return true if `dotnet dev-certs https --check` succesfully finds a trusted development certificate.
 export async function hasDotnetDevCertsHttps(): Promise<ExecReturnData> {

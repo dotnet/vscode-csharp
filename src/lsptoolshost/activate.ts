@@ -6,32 +6,33 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { registerCommands } from './commands';
-import { registerDebugger } from './debugger/debugger';
-import { PlatformInformation } from '../shared/platform';
-import TelemetryReporter from '@vscode/extension-telemetry';
-import { getCSharpDevKit } from '../utils/getCSharpDevKit';
-import { DotnetRuntimeExtensionResolver } from './dotnetRuntime/dotnetRuntimeExtensionResolver';
-import { registerUnitTestingCommands } from './testing/unitTesting';
-import { registerLanguageServerOptionChanges } from './options/optionChanges';
+import { fileURLToPath } from 'url';
+import { registerCommands } from './commands.ts';
+import { registerDebugger } from './debugger/debugger.ts';
+import { PlatformInformation } from '../shared/platform.ts';
+import { ITelemetryReporterWithLevel } from '../shared/telemetryReporter.ts';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit.ts';
+import { DotnetRuntimeExtensionResolver } from './dotnetRuntime/dotnetRuntimeExtensionResolver.ts';
+import { registerUnitTestingCommands } from './testing/unitTesting.ts';
+import { registerLanguageServerOptionChanges } from './options/optionChanges.ts';
 import { Observable } from 'rxjs';
-import { RoslynLanguageServerEvents } from './server/languageServerEvents';
-import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction';
-import { commonOptions, languageServerOptions } from '../shared/options';
-import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
-import { registerRestoreCommands } from './projectRestore/restore';
-import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier';
-import { TelemetryEventNames } from '../shared/telemetryEventNames';
-import { WorkspaceStatus } from './workspace/workspaceStatus';
-import { ProjectContextStatus } from './projectContext/projectContextStatus';
-import { RoslynLanguageServer } from './server/roslynLanguageServer';
-import { registerCopilotContextProviders } from './copilot/contextProviders';
-import { registerCopilotChatSurvey } from './copilot/copilotChatSurvey';
-import { registerRazorEndpoints } from './razor/razorEndpoints';
-import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
-import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
-import { ActivityLogCapture } from '../csharpExtensionExports';
-import { createActivityLogCapture } from './logging/loggingUtils';
+import { RoslynLanguageServerEvents } from './server/languageServerEvents.ts';
+import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction.ts';
+import { commonOptions, languageServerOptions } from '../shared/options.ts';
+import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction.ts';
+import { registerRestoreCommands } from './projectRestore/restore.ts';
+import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier.ts';
+import { TelemetryEventNames } from '../shared/telemetryEventNames.ts';
+import { WorkspaceStatus } from './workspace/workspaceStatus.ts';
+import { ProjectContextStatus } from './projectContext/projectContextStatus.ts';
+import { RoslynLanguageServer } from './server/roslynLanguageServer.ts';
+import { registerCopilotContextProviders } from './copilot/contextProviders.ts';
+import { registerCopilotChatSurvey } from './copilot/copilotChatSurvey.ts';
+import { registerRazorEndpoints } from './razor/razorEndpoints.ts';
+import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel.ts';
+import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh.ts';
+import { ActivityLogCapture } from '../csharpExtensionExports.ts';
+import { createActivityLogCapture } from './logging/loggingUtils.ts';
 
 let _channel: ObservableLogOutputChannel;
 let _traceChannel: ObservableLogOutputChannel;
@@ -45,7 +46,7 @@ export async function activateRoslynLanguageServer(
     platformInfo: PlatformInformation,
     optionObservable: Observable<void>,
     outputChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter,
+    reporter: ITelemetryReporterWithLevel,
     languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
@@ -158,7 +159,7 @@ export function getServerPath(platformInfo: PlatformInformation) {
 }
 
 function getInstalledServerPath(platformInfo: PlatformInformation): string {
-    const clientRoot = __dirname;
+    const clientRoot = path.dirname(fileURLToPath(import.meta.url));
     const serverFilePath = path.join(clientRoot, '..', '.roslyn', 'Microsoft.CodeAnalysis.LanguageServer');
 
     let extension = '';

@@ -5,10 +5,8 @@
 
 import * as vscode from 'vscode';
 import { CodeAction, CodeActionResolveRequest, LSPAny } from 'vscode-languageclient';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { URIConverter, createConverter } from 'vscode-languageclient/protocolConverter';
-import { UriConverter } from '../utils/uriConverter';
-import { getFixAllResponse } from './fixAllCodeAction';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { getFixAllResponse } from './fixAllCodeAction.ts';
 
 export function registerNestedCodeActionCommands(
     context: vscode.ExtensionContext,
@@ -72,10 +70,7 @@ async function registerNestedResolveCodeAction(
                             throw new Error('Tried to retrieve a code action edit, but an error occurred.');
                         }
 
-                        const uriConverter: URIConverter = (value: string): vscode.Uri =>
-                            UriConverter.deserialize(value);
-                        const protocolConverter = createConverter(uriConverter, true, true, true);
-                        const fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
+                        const fixAllEdit = await languageServer.protocol2CodeConverter.asWorkspaceEdit(response.edit);
                         if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
                             const componentName = '[roslyn.client.nestedCodeAction]';
                             const errorMessage = 'Failed to make am edit for completion.';

@@ -8,7 +8,7 @@
             "runtimeExecutable": "${execPath}",
             "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}"],
             "preLaunchTask": "packageDev"
         },
         {
@@ -24,7 +24,7 @@
             "csharp-test-profile",
             "${workspaceRoot}/test/untrustedWorkspace/integrationTests/testAssets/empty/.vscode/empty.code-workspace",
             "--extensionDevelopmentPath=${workspaceRoot}",
-            "--extensionTestsPath=${workspaceRoot}/out/test/untrustedWorkspace/integrationTests",
+            "--extensionTestsPath=${workspaceRoot}/out/test/untrustedWorkspace/integrationTests/index.js",
             "--log",
             "ms-dotnettools.csharp:trace"
           ],
@@ -33,7 +33,7 @@
           },
           "sourceMaps": true,
           "outFiles": [
-            "${workspaceRoot}/dist/*.js",
+            "${workspaceRoot}/dist/*.{js,mjs}",
             "${workspaceRoot}/out/test/**/*.js"
           ],
           "resolveSourceMapLocations": [
@@ -56,7 +56,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests/index.js",
                 "--log",
                 "ms-dotnettools.csharp:trace"
             ],
@@ -66,7 +66,7 @@
                 "RoslynWaiterEnabled": "true"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev",
             "internalConsoleOptions": "openOnSessionStart"
@@ -84,7 +84,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/devkit_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests/index.js",
                 "--log",
                 "ms-dotnettools.csharp:trace"
             ],
@@ -94,7 +94,7 @@
                 "RoslynWaiterEnabled": "true"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev",
             "internalConsoleOptions": "openOnSessionStart"
@@ -112,7 +112,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/RazorApp/.vscode/RazorApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests/index.js",
                 "--log",
                 "ms-dotnettools.csharp:trace"
             ],
@@ -121,7 +121,7 @@
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev",
             "internalConsoleOptions": "openOnSessionStart"
@@ -139,7 +139,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests/index.js"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -147,7 +147,7 @@
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev"
         },
@@ -164,7 +164,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests/index.js"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -172,7 +172,7 @@
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "outFiles": ["${workspaceRoot}/dist/*.{js,mjs}", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "packageDev"
         },
@@ -181,8 +181,8 @@
             "request": "launch",
             "name": "Debug task",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-            "args": ["tasks/${input:taskScript}"],
+            "runtimeArgs": ["--import", "tsx"],
+            "program": "${workspaceFolder}/tasks/${input:taskScript}",
             "cwd": "${workspaceFolder}"
         },
         {
@@ -190,8 +190,8 @@
             "request": "launch",
             "name": "Update OmniSharp package dependencies",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-            "args": ["tasks/debugger/updatePackageDependencies.ts"],
+            "runtimeArgs": ["--import", "tsx"],
+            "program": "${workspaceFolder}/tasks/debugger/updatePackageDependencies.ts",
             "env": {
                 "NEW_DEPS_ID": "OmniSharp",
                 "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x86.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64-net6.0.zip",
@@ -205,8 +205,8 @@
             "request": "launch",
             "name": "Update razor telemetry package dependencies",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-            "args": ["tasks/debugger/updatePackageDependencies.ts"],
+            "runtimeArgs": ["--import", "tsx"],
+            "program": "${workspaceFolder}/tasks/debugger/updatePackageDependencies.ts",
             "env": {
                 "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/704e369c5905f9ece819ebce77fb78d8/devkittelemetry-linux-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4049a66147717a53860bbc969bf32faa/devkittelemetry-linux-musl-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/c75e84ff813be5c9833d96dc2066a364/devkittelemetry-linux-musl-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/f58cf629939f0df77d142be881f9e233/devkittelemetry-linux-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/1c912419ea45c8d95cfa28a8a04640dc/devkittelemetry-osx-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/36545ba0998f1fc380e877e38b2f35f1/devkittelemetry-osx-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/0a32698e8ba1ab93489d79f34f8ae8d0/devkittelemetry-platformagnostic-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4f16ff826fedd33ad80d265c5409588b/devkittelemetry-win-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/5a98d8f4e481dbb7ae3cdb3695b75c46/devkittelemetry-win-x64-7.0.0-preview.24178.4.zip",
                 "NEW_DEPS_VERSION": "7.0.0-preview.24178.4",
@@ -219,8 +219,8 @@
             "request": "launch",
             "name": "Generate debugger options schema",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-            "args": ["tasks/debugger/generateOptionsSchema.ts"],
+            "runtimeArgs": ["--import", "tsx"],
+            "program": "${workspaceFolder}/tasks/debugger/generateOptionsSchema.ts",
             "cwd": "${workspaceFolder}"
         },
         {
@@ -228,8 +228,8 @@
             "request": "launch",
             "name": "Razor Cohost integration tests",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-            "args": ["tasks/tests/testIntegrationRazorCohost.ts"],
+            "runtimeArgs": ["--import", "tsx"],
+            "program": "${workspaceFolder}/tasks/tests/testIntegrationRazorCohost.ts",
             "cwd": "${workspaceFolder}"
         }
     ],

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import minimist from 'minimist';
-import { addChangelogSection, getNextReleaseVersion, readVersionJson, writeVersionJson } from './snapTasks';
-import { runTask } from '../runTask';
+import { addChangelogSection, getNextReleaseVersion, readVersionJson, writeVersionJson } from './snapTasks.ts';
+import { runTask } from '../runTask.ts';
 
 runTask(incrementVersion);
 

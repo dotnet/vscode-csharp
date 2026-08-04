@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as packageDependencyUpdater from '../../src/tools/updatePackageDependencies';
-import { runTask } from '../runTask';
+import * as packageDependencyUpdater from '../../src/tools/updatePackageDependencies.ts';
+import { runTask } from '../runTask.ts';
 
 runTask(packageDependencyUpdater.updatePackageDependencies);

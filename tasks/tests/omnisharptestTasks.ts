@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { codeExtensionPath, rootPath } from '../projectPaths';
-import { runJestIntegrationTest, runJestTest } from './testHelpers';
-import { jestOmniSharpUnitTestProjectName } from '../../test/omnisharp/omnisharpUnitTests/jest.config';
+import { codeExtensionPath, rootPath } from '../projectPaths.ts';
+import { runJestIntegrationTest, runJestTest } from './testHelpers.ts';
+import { jestProjectNames } from '../../test/jestProjectNames.mjs';
 
 const omnisharpIntegrationTestProjects = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'BasicRazorApp2_1'];
 
 export async function omnisharpTestUnit(): Promise<void> {
-    await runJestTest(jestOmniSharpUnitTestProjectName);
+    await runJestTest(jestProjectNames.omnisharpUnit);
 }
 
 export async function omnisharpTestIntegration(skipLsp: boolean = false): Promise<void> {

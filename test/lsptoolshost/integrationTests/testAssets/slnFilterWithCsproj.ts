@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ITestAssetWorkspace } from './testAssets';
+import { ITestAssetWorkspace } from './testAssets.ts';
 
 const workspace: ITestAssetWorkspace = {
     description: "sln filter with a csproj's",

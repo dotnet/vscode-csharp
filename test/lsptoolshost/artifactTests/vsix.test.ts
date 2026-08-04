@@ -4,11 +4,38 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import * as fs from 'fs-extra';
-import * as glob from 'glob';
+import fs from 'fs-extra';
+import glob from 'glob';
 import * as path from 'path';
+import * as yauzl from 'yauzl';
 
 const vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
+const packageJson = fs.readJsonSync(path.resolve('package.json'));
+const extensionEntry = path.posix.join('extension', packageJson.main.replace(/^\.\//, ''));
+
+async function getVsixEntries(vsixPath: string): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+        yauzl.open(vsixPath, { lazyEntries: true }, (error, zipFile) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            if (!zipFile) {
+                reject(new Error(`Unable to open ${vsixPath}`));
+                return;
+            }
+
+            const entries: string[] = [];
+            zipFile.on('entry', (entry) => {
+                entries.push(entry.fileName);
+                zipFile.readEntry();
+            });
+            zipFile.on('end', () => resolve(entries));
+            zipFile.on('error', reject);
+            zipFile.readEntry();
+        });
+    });
+}
 
 describe('Vscode VSIX', () => {
     test('At least one vsix file should be produced', () => {
@@ -30,6 +57,10 @@ describe('Vscode VSIX', () => {
             test(`Then it should not be empty`, async () => {
                 const stats = await fs.stat(element);
                 expect(stats.size).toBeGreaterThan(0);
+            });
+
+            test('Then it should contain the declared extension entry', async () => {
+                await expect(getVsixEntries(element)).resolves.toContain(extensionEntry);
             });
         });
     });

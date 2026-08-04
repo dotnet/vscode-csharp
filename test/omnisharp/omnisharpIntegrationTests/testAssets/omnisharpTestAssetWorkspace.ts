@@ -4,12 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { EventStream } from '../../../../src/eventStream';
-import { EventType } from '../../../../src/shared/eventType';
-import { BaseEvent } from '../../../../src/shared/loggingEvents';
-import { poll } from '../poll';
-import { ITestAssetWorkspace, TestAssetWorkspace } from '../../../lsptoolshost/integrationTests/testAssets/testAssets';
-import { ActivationResult } from '../integrationHelpers';
+import { EventStream } from '../../../../src/eventStream.ts';
+import { EventType } from '../../../../src/shared/eventType.ts';
+import { BaseEvent } from '../../../../src/shared/loggingEvents.ts';
+import { poll } from '../poll.ts';
+import {
+    ITestAssetWorkspace,
+    TestAssetWorkspace,
+} from '../../../lsptoolshost/integrationTests/testAssets/testAssets.ts';
+import { ActivationResult } from '../integrationHelpers.ts';
 
 export class OmnisharpTestAssetWorkspace extends TestAssetWorkspace {
     constructor(workspace: ITestAssetWorkspace) {

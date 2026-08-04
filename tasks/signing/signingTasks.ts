@@ -5,7 +5,7 @@
 
 import * as cp from 'child_process';
 import * as fs from 'fs';
-import { rootPath } from '../projectPaths';
+import { rootPath } from '../projectPaths.ts';
 import path from 'path';
 
 export function getLogPath(): string {

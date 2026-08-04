@@ -5,14 +5,14 @@
 
 import { expect, beforeAll, afterAll, describe } from '@jest/globals';
 import * as vscode from 'vscode';
-import { activateCSharpExtension, testIfCSharp, testIfDevKit } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { activateCSharpExtension, testIfCSharp, testIfDevKit } from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
 import {
     RoslynDevKitCommands,
     RoslynStandaloneCommands,
     UnexpectedRoslynDevKitCommands,
     UnexpectedRoslynStandaloneCommands,
-} from './expectedCommands';
+} from './expectedCommands.ts';
 
 describe(`Command Enablement Tests`, () => {
     beforeAll(async () => {

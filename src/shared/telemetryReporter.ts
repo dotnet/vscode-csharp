@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from './platform';
+import { PlatformInformation } from './platform.ts';
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(
@@ -14,9 +14,12 @@ export interface ITelemetryReporter {
     sendTelemetryErrorEvent(
         eventName: string,
         properties?: { [key: string]: string },
-        measures?: { [key: string]: number },
-        errorProps?: string[]
+        measures?: { [key: string]: number }
     ): void;
+}
+
+export interface ITelemetryReporterWithLevel extends ITelemetryReporter {
+    telemetryLevel: 'all' | 'error' | 'crash' | 'off';
 }
 
 export function getTelemetryProps(platformInfo: PlatformInformation) {

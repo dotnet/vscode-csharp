@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { languageServerOptions } from './options';
-import { RazorLanguage } from '../razor/src/razorLanguage';
-import { combineDocumentSelectors } from './utils/combineDocumentSelectors';
+import { languageServerOptions } from './options.ts';
+import { RazorLanguage } from '../razor/src/razorLanguage.ts';
+import { combineDocumentSelectors } from './utils/combineDocumentSelectors.ts';
 
 export class LimitedActivationStatus {
     static createStatusItem(context: vscode.ExtensionContext) {

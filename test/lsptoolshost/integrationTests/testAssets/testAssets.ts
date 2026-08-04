@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import spawnGit from './spawnGit';
-import { execChildProcess } from '../../../../src/common';
+import spawnGit from './spawnGit.ts';
+import { execChildProcess } from '../../../../src/common.ts';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {

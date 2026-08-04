@@ -5,16 +5,16 @@
 
 import * as cp from 'child_process';
 import * as fs from 'fs';
-import * as fsextra from 'fs-extra';
+import fsextra from 'fs-extra';
 import * as nbgv from 'nerdbank-gitversioning';
-import { Logger } from '../../src/logger';
-import { PlatformInformation } from '../../src/shared/platform';
-import { CsharpLoggerObserver } from '../../src/shared/observers/csharpLoggerObserver';
-import { EventStream } from '../../src/eventStream';
-import NetworkSettings from '../../src/networkSettings';
-import { downloadAndInstallPackages } from '../../src/packageManager/downloadAndInstallPackages';
-import { getRuntimeDependenciesPackages } from '../../src/tools/runtimeDependencyPackageUtils';
-import { getAbsolutePathPackagesToInstall } from '../../src/packageManager/getAbsolutePathPackagesToInstall';
+import { Logger } from '../../src/logger.ts';
+import { PlatformInformation } from '../../src/shared/platform.ts';
+import { CsharpLoggerObserver } from '../../src/shared/observers/csharpLoggerObserver.ts';
+import { EventStream } from '../../src/eventStream.ts';
+import NetworkSettings from '../../src/networkSettings.ts';
+import { downloadAndInstallPackages } from '../../src/packageManager/downloadAndInstallPackages.ts';
+import { getRuntimeDependenciesPackages } from '../../src/tools/runtimeDependencyPackageUtils.ts';
+import { getAbsolutePathPackagesToInstall } from '../../src/packageManager/getAbsolutePathPackagesToInstall.ts';
 import {
     codeExtensionPath,
     packedVsixOutputRoot,
@@ -24,10 +24,10 @@ import {
     devKitDependenciesDirectory,
     xamlToolsDirectory,
     testDiscoveryDirectory,
-} from '../projectPaths';
-import { getPackageJSON } from '../packageJson';
-import { createPackageAsync, generateVsixManifest } from './vsceTasks';
-import { isValidDownload } from '../../src/packageManager/isValidDownload';
+} from '../projectPaths.ts';
+import { getPackageJSON } from '../packageJson.ts';
+import { createPackageAsync, generateVsixManifest } from './vsceTasks.ts';
+import { isValidDownload } from '../../src/packageManager/isValidDownload.ts';
 import path from 'path';
 import { CancellationToken } from 'vscode';
 

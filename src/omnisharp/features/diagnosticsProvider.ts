@@ -3,21 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmniSharpServer } from '../server';
-import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../utils';
-import { toRange } from '../typeConversion';
+import { OmniSharpServer } from '../server.ts';
+import AbstractSupport from './abstractProvider.ts';
+import * as protocol from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
+import { toRange } from '../typeConversion.ts';
 import * as vscode from 'vscode';
-import CompositeDisposable from '../../compositeDisposable';
-import { IDisposable } from '../../disposable';
-import { isVirtualCSharpDocument } from './virtualDocumentTracker';
-import { TextDocument } from '../../vscodeAdapter';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import { IDisposable } from '../../disposable.ts';
+import { isVirtualCSharpDocument } from './virtualDocumentTracker.ts';
+import { TextDocument } from '../../vscodeAdapter.ts';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { BackgroundDiagnosticStatus } from '../protocol';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import { omnisharpOptions } from '../../shared/options';
+import { BackgroundDiagnosticStatus } from '../protocol.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import { omnisharpOptions } from '../../shared/options.ts';
 
 export class Advisor {
     private _disposable: CompositeDisposable;

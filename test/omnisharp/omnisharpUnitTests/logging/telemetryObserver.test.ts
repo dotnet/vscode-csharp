@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { beforeEach, test, describe, expect } from '@jest/globals';
-import { TelemetryObserver } from '../../../../src/omnisharp/observers/telemetryObserver';
-import { PlatformInformation } from '../../../../src/shared/platform';
-import { PackageInstallation, InstallationFailure, InstallationSuccess } from '../../../../src/shared/loggingEvents';
+import { TelemetryObserver } from '../../../../src/omnisharp/observers/telemetryObserver.ts';
+import { PlatformInformation } from '../../../../src/shared/platform.ts';
+import { PackageInstallation, InstallationFailure, InstallationSuccess } from '../../../../src/shared/loggingEvents.ts';
 import {
     TestExecutionCountReport,
     TelemetryEventWithMeasures,
@@ -15,18 +15,17 @@ import {
     TelemetryEvent,
     ProjectConfiguration,
     TelemetryErrorEvent,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents';
-import { getNullTelemetryReporter } from '../../../fakes';
-import { Package } from '../../../../src/packageManager/package';
-import { PackageError } from '../../../../src/packageManager/packageError';
-import { isNotNull } from '../../testUtil';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents.ts';
+import { getNullTelemetryReporter } from '../../../fakes.ts';
+import { Package } from '../../../../src/packageManager/package.ts';
+import { PackageError } from '../../../../src/packageManager/packageError.ts';
+import { isNotNull } from '../../testUtil.ts';
 
 describe('TelemetryReporterObserver', () => {
     const platformInfo = new PlatformInformation('linux', 'architecture');
     let name = '';
     let property: { [key: string]: string } | undefined = undefined;
     let measure: { [key: string]: number }[] = [];
-    let errorProp: string[] = [];
     const useModernNet = true;
     const observer = new TelemetryObserver(
         platformInfo,
@@ -45,15 +44,11 @@ describe('TelemetryReporterObserver', () => {
                 sendTelemetryErrorEvent: (
                     eventName: string,
                     properties?: { [key: string]: string },
-                    measures?: { [key: string]: number },
-                    errorProps?: string[]
+                    measures?: { [key: string]: number }
                 ) => {
                     name += eventName;
                     property = properties;
                     measure.push(measures!);
-                    errorProps!.forEach((prop) => {
-                        errorProp.push(prop);
-                    });
                 },
             };
         },
@@ -64,7 +59,6 @@ describe('TelemetryReporterObserver', () => {
         name = '';
         property = undefined;
         measure = [];
-        errorProp = [];
     });
 
     test('PackageInstallation: AcquisitionStart is reported', async () => {
@@ -141,13 +135,12 @@ describe('TelemetryReporterObserver', () => {
         expect(property).toEqual(event.properties);
     });
 
-    test(`${TelemetryErrorEvent.name}: SendTelemetry error event is called with the name, properties, measures, and errorProps`, async () => {
+    test(`${TelemetryErrorEvent.name}: SendTelemetry error event is called with the name, properties, and measures`, async () => {
         const event = new TelemetryErrorEvent('someName', { key: 'value' }, { someKey: 1 }, ['StackTrace']);
         await observer.post(event);
         expect(name).toContain(event.eventName);
         expect(measure).toMatchObject([event.measures!]);
         expect(property).toEqual(event.properties);
-        expect(errorProp).toEqual(event.errorProps!);
     });
 
     describe('InstallationFailure', () => {

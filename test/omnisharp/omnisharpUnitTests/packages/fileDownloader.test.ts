@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { EventStream } from '../../../../src/eventStream';
-import { DownloadFile } from '../../../../src/packageManager/fileDownloader';
-import NetworkSettings from '../../../../src/networkSettings';
+import { EventStream } from '../../../../src/eventStream.ts';
+import { DownloadFile } from '../../../../src/packageManager/fileDownloader.ts';
+import NetworkSettings from '../../../../src/networkSettings.ts';
 import {
     DownloadStart,
     DownloadSizeObtained,
@@ -14,9 +14,9 @@ import {
     DownloadSuccess,
     DownloadFallBack,
     DownloadFailure,
-} from '../../../../src/shared/loggingEvents';
-import MockHttpsServer from '../testAssets/mockHttpsServer';
-import TestEventBus from '../testAssets/testEventBus';
+} from '../../../../src/shared/loggingEvents.ts';
+import MockHttpsServer from '../testAssets/mockHttpsServer.ts';
+import TestEventBus from '../testAssets/testEventBus.ts';
 
 describe('FileDownloader', () => {
     const fileDescription = 'Test file';

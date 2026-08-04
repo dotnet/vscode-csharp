@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as vscode from 'vscode';
 
 import {
@@ -13,12 +13,12 @@ import {
     createAttachConfiguration,
     createFallbackLaunchConfiguration,
     getBuildOperations,
-} from './assets';
+} from './assets.ts';
 import { parse } from 'jsonc-parser';
-import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider';
-import { PlatformInformation } from './platform';
-import { BaseVsDbgConfigurationProvider } from './configurationProvider';
-import { showErrorMessage } from './observers/utils/showMessage';
+import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider.ts';
+import { PlatformInformation } from './platform.ts';
+import { BaseVsDbgConfigurationProvider } from './configurationProvider.ts';
+import { showErrorMessage } from './observers/utils/showMessage.ts';
 
 /**
  * This class will be used for providing debug configurations given workspace information.

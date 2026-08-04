@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { TextDocument, TextDocumentContentProvider, Uri, workspace } from 'vscode';
-import { MetadataResponse } from '../protocol';
-import { IDisposable } from '../../disposable';
+import { MetadataResponse } from '../protocol.ts';
+import { IDisposable } from '../../disposable.ts';
 
 export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, IDisposable {
     readonly scheme = 'omnisharp-metadata';

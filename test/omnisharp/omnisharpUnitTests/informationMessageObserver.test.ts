@@ -5,8 +5,8 @@
 
 import * as vscode from 'vscode';
 import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { InformationMessageObserver } from '../../../src/omnisharp/observers/informationMessageObserver';
-import { getUnresolvedDependenices, getWorkspaceConfiguration } from '../../fakes';
+import { InformationMessageObserver } from '../../../src/omnisharp/observers/informationMessageObserver.ts';
+import { getUnresolvedDependenices, getWorkspaceConfiguration } from '../../fakes.ts';
 import { Subject, from as observableFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 

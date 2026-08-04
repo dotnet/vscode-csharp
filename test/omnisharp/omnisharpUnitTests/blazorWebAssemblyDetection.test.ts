@@ -4,10 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { CreateTmpDir, TmpAsset } from '../../createTmpAsset';
-import { isBlazorWebAssemblyHostedServer, isBlazorWebAssemblyProject, isWebProject } from '../../../src/shared/utils';
+import { CreateTmpDir, TmpAsset } from '../../createTmpAsset.ts';
+import {
+    isBlazorWebAssemblyHostedServer,
+    isBlazorWebAssemblyProject,
+    isWebProject,
+} from '../../../src/shared/utils.ts';
 
 const webSdkCsproj = `<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>

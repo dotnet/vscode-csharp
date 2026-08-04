@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { commandLineOptions } from './commandLineArguments';
-import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents';
+import { fileURLToPath } from 'url';
+import { commandLineOptions } from './commandLineArguments.ts';
+import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents.ts';
 
-export const rootPath = path.resolve(__dirname, '..');
+export const rootPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, '@vscode', 'vsce', 'vsce');

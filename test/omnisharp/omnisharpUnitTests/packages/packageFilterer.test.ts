@@ -3,19 +3,25 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { PlatformInformation } from '../../../../src/shared/platform';
-import { getNotInstalledPackagesForPlatform } from '../../../../src/packageManager/packageFilterer';
-import { Package } from '../../../../src/packageManager/package';
-import { AbsolutePathPackage } from '../../../../src/packageManager/absolutePathPackage';
+import { Package } from '../../../../src/packageManager/package.ts';
+import type { AbsolutePathPackage as AbsolutePathPackageType } from '../../../../src/packageManager/absolutePathPackage.ts';
 import { MockedFunction } from 'jest-mock';
-import * as fs from 'fs';
+import type * as fs from 'fs';
 import { join } from 'path';
 
-// Necessary when spying on module members.
-jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
+const mockStat = jest.fn() as unknown as MockedFunction<
+    (path: fs.PathLike, callback: (err: NodeJS.ErrnoException | null, stats: fs.Stats | undefined) => void) => void
+>;
+jest.unstable_mockModule('fs', async () => ({
+    ...(await import('node:fs')),
+    stat: mockStat,
+}));
+const { PlatformInformation } = await import('../../../../src/shared/platform.ts');
+const { getNotInstalledPackagesForPlatform } = await import('../../../../src/packageManager/packageFilterer.ts');
+const { AbsolutePathPackage } = await import('../../../../src/packageManager/absolutePathPackage.ts');
 
 describe(`${getNotInstalledPackagesForPlatform.name}`, () => {
-    let absolutePathPackages: AbsolutePathPackage[];
+    let absolutePathPackages: AbsolutePathPackageType[];
     const extensionPath = '/ExtensionPath';
     const packages = <Package[]>[
         {
@@ -79,13 +85,7 @@ describe(`${getNotInstalledPackagesForPlatform.name}`, () => {
         absolutePathPackages = packages.map((pkg) => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
         const installLockPath = join(absolutePathPackages[1].installPath.value, 'install.Lock');
         //mock the install lock path so the package should be filtered
-        const statSpy = jest.spyOn(fs, 'stat') as unknown as MockedFunction<
-            (
-                path: fs.PathLike,
-                callback: (err: NodeJS.ErrnoException | null, stats: fs.Stats | undefined) => void
-            ) => void
-        >;
-        statSpy.mockImplementation((path, callback) => {
+        mockStat.mockImplementation((path, callback) => {
             if (installLockPath === path) {
                 callback(null, { isFile: () => true } as unknown as fs.Stats);
             } else {

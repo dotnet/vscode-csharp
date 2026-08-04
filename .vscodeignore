@@ -49,7 +49,7 @@ package-lock.json
 tsconfig.json
 version.json
 wallaby.js
-esbuild.js
+esbuild.mjs
 !src/razor/language-configuration.json
 !src/razor/syntaxes/*
 

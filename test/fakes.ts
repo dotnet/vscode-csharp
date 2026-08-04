@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../src/vscodeAdapter';
-import * as protocol from '../src/omnisharp/protocol';
-import { ITelemetryReporter } from '../src/shared/telemetryReporter';
+import * as vscode from '../src/vscodeAdapter.ts';
+import * as protocol from '../src/omnisharp/protocol.ts';
+import { ITelemetryReporter } from '../src/shared/telemetryReporter.ts';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerOnError,
     OmnisharpServerUnresolvedDependencies,
     WorkspaceInformationUpdated,
-} from '../src/omnisharp/omnisharpLoggingEvents';
+} from '../src/omnisharp/omnisharpLoggingEvents.ts';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     const returnChannel: vscode.OutputChannel = {
@@ -50,8 +50,7 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
         sendTelemetryErrorEvent: (
             _eventName: string,
             _properties?: { [key: string]: string },
-            _measures?: { [key: string]: number },
-            _errorProps?: string[]
+            _measures?: { [key: string]: number }
         ) => {
             /** empty */
         },

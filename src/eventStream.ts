@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Subject, Subscription } from 'rxjs';
-import { BaseEvent } from './shared/loggingEvents';
+import { BaseEvent } from './shared/loggingEvents.ts';
 
 export class EventStream {
     private sink: Subject<BaseEvent>;

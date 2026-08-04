@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { join } from 'path';
-import { execChildProcess } from '../common';
-import { CoreClrDebugUtil } from '../coreclrDebug/util';
+import { execChildProcess } from '../common.ts';
+import { CoreClrDebugUtil } from '../coreclrDebug/util.ts';
 
 let _msbuildVersion: string | undefined;
 

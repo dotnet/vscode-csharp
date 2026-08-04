@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { SerializableRange } from '../rpc/serializableRange';
+import { SerializableRange } from '../rpc/serializableRange.ts';
 
 export class SerializableColorInformation {
     constructor(

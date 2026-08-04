@@ -3,21 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageError } from './packageError';
-import { NestedError } from '../nestedError';
-import { DownloadFile } from './fileDownloader';
-import { InstallZip } from './zipInstaller';
-import { EventStream } from '../eventStream';
-import { NetworkSettingsProvider } from '../networkSettings';
-import { AbsolutePathPackage } from './absolutePathPackage';
-import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from '../common';
-import { InstallationFailure, IntegrityCheckFailure } from '../shared/loggingEvents';
-import { mkdirpSync } from 'fs-extra';
-import { PackageInstallStart } from '../shared/loggingEvents';
-import { DownloadValidator } from './isValidDownload';
+import { PackageError } from './packageError.ts';
+import { NestedError } from '../nestedError.ts';
+import { DownloadFile } from './fileDownloader.ts';
+import { InstallZip } from './zipInstaller.ts';
+import { EventStream } from '../eventStream.ts';
+import { NetworkSettingsProvider } from '../networkSettings.ts';
+import { AbsolutePathPackage } from './absolutePathPackage.ts';
+import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from '../common.ts';
+import { InstallationFailure, IntegrityCheckFailure } from '../shared/loggingEvents.ts';
+import fsExtra from 'fs-extra';
+import { PackageInstallStart } from '../shared/loggingEvents.ts';
+import { DownloadValidator } from './isValidDownload.ts';
 import { CancellationToken } from 'vscode';
-import { ITelemetryReporter } from '../shared/telemetryReporter';
-import { DependencyInstallationStatus } from './IInstallDependencies';
+import { ITelemetryReporter } from '../shared/telemetryReporter.ts';
+import { DependencyInstallationStatus } from './IInstallDependencies.ts';
 
 export async function downloadAndInstallPackages(
     packages: AbsolutePathPackage[],
@@ -32,7 +32,7 @@ export async function downloadAndInstallPackages(
     for (const pkg of packages) {
         let installationStage = 'touchBeginFile';
         try {
-            mkdirpSync(pkg.installPath.value);
+            fsExtra.mkdirpSync(pkg.installPath.value);
             await touchInstallFile(pkg.installPath, InstallFileType.Begin);
             let count = 1;
             const willTryInstallingPackage = () => count <= 2; // try 2 times

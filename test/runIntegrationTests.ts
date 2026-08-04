@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as jest from 'jest';
+import jest from 'jest';
 import { Config } from '@jest/types';
 import * as path from 'path';
 
@@ -13,7 +13,7 @@ export async function runIntegrationTests(projectName: string) {
         throw new Error('CODE_EXTENSIONS_PATH not set.');
     }
 
-    const jestConfigPath = path.join(repoRoot, 'jest.config.ts');
+    const jestConfigPath = path.join(repoRoot, 'jest.config.mjs');
     const jestConfig = {
         config: jestConfigPath,
         selectProjects: [projectName],

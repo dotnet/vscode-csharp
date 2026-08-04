@@ -6,7 +6,7 @@
 import { expect, test, beforeAll, afterAll, describe } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
 
 const onTypeFormatProviderCommand = 'vscode.executeFormatOnTypeProvider';
 
