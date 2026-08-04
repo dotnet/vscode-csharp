@@ -1,5 +1,7 @@
 import esbuild from 'esbuild';
 import fs from 'node:fs/promises';
+import path from 'node:path';
+import { auditBundle } from './tasks/compilation/bundleAudit.mjs';
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -42,17 +44,62 @@ const umdEsmLoaderPlugin = {
     },
 };
 
+/**
+ * The telemetry package advertises an ESM module but has no exports map, so esbuild's Node
+ * resolution otherwise selects its CommonJS main entry.
+ */
+const telemetryEsmLoaderPlugin = {
+    name: 'telemetryEsmLoaderPlugin',
+
+    setup(build) {
+        build.onResolve({ filter: /^@vscode\/extension-telemetry$/ }, async () => {
+            const packageDirectory = path.resolve('node_modules/@vscode/extension-telemetry');
+            const packageMetadata = JSON.parse(
+                await fs.readFile(path.join(packageDirectory, 'package.json'), 'utf8')
+            );
+            if (typeof packageMetadata.module !== 'string') {
+                throw new Error('@vscode/extension-telemetry no longer declares an ESM module entry.');
+            }
+
+            return { path: path.resolve(packageDirectory, packageMetadata.module) };
+        });
+    },
+};
+
+const bundleAuditPlugin = {
+    name: 'bundleAuditPlugin',
+
+    setup(build) {
+        build.onEnd(async (result) => {
+            if (result.errors.length > 0) {
+                return;
+            }
+
+            try {
+                await auditBundle(result.metafile, production);
+            } catch (error) {
+                return {
+                    errors: [{ text: error instanceof Error ? error.message : String(error) }],
+                };
+            }
+        });
+    },
+};
+
 async function main() {
     const ctx = await esbuild.context({
         entryPoints: ['src/main.ts'],
         bundle: true,
         format: 'esm',
+        // Bundled CommonJS dependencies still require Node built-ins at runtime. The exact owners
+        // are enforced by bundleAuditPlugin so this compatibility bridge cannot grow unnoticed.
         banner: {
             js: [
                 `import { createRequire } from 'node:module';`,
                 `const require = createRequire(import.meta.url);`,
             ].join('\n'),
         },
+        metafile: true,
         minify: production,
         sourcemap: !production,
         sourcesContent: false,
@@ -62,8 +109,10 @@ async function main() {
         logLevel: 'info',
         plugins: [
             umdEsmLoaderPlugin,
+            telemetryEsmLoaderPlugin,
             /* add to the end of plugins array */
             esbuildProblemMatcherPlugin,
+            bundleAuditPlugin,
         ],
     });
     if (watch) {

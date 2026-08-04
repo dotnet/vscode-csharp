@@ -14,8 +14,7 @@ export interface ITelemetryReporter {
     sendTelemetryErrorEvent(
         eventName: string,
         properties?: { [key: string]: string },
-        measures?: { [key: string]: number },
-        errorProps?: string[]
+        measures?: { [key: string]: number }
     ): void;
 }
 

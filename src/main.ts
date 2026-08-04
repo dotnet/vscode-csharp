@@ -12,7 +12,7 @@ import { CsharpChannelObserver } from './shared/observers/csharpChannelObserver.
 import { CsharpLoggerObserver } from './shared/observers/csharpLoggerObserver.ts';
 import { EventStream } from './eventStream.ts';
 import { PlatformInformation } from './shared/platform.ts';
-import telemetryReporterModule from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { vscodeNetworkSettingsProvider } from './networkSettings.ts';
 import createOptionStream from './shared/observables/createOptionStream.ts';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage.ts';
@@ -31,9 +31,6 @@ import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensio
 import { checkIsSupportedPlatform } from './checkSupportedPlatform.ts';
 import { activateRoslyn } from './activateRoslyn.ts';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus.ts';
-
-// The package's CommonJS entry point exposes its constructor through the imported default object's default export.
-const TelemetryReporter = telemetryReporterModule.default;
 
 export async function activate(
     context: vscode.ExtensionContext
