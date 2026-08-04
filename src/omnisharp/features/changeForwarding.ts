@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Uri, workspace } from 'vscode';
-import { OmniSharpServer } from '../server.js';
-import * as serverUtils from '../utils.js';
-import { FileChangeType } from '../protocol.js';
-import { IDisposable } from '../../disposable.js';
-import CompositeDisposable from '../../compositeDisposable.js';
+import { OmniSharpServer } from '../server.ts';
+import * as serverUtils from '../utils.ts';
+import { FileChangeType } from '../protocol.ts';
+import { IDisposable } from '../../disposable.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
 
 function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
     return workspace.onDidChangeTextDocument((event) => {

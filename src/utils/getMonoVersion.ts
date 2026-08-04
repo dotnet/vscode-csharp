@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { spawn } from 'child_process';
-import { IGetMonoVersion } from '../constants/IGetMonoVersion.js';
+import { IGetMonoVersion } from '../constants/IGetMonoVersion.ts';
 
 export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.ProcessEnv) => {
     const versionRegexp = /(\d+\.\d+\.\d+)/;

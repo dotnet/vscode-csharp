@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { convertRangeToSerializable } from '../rpc/serializableRange.js';
-import { SerializableColorInformation } from './serializableColorInformation.js';
+import { convertRangeToSerializable } from '../rpc/serializableRange.ts';
+import { SerializableColorInformation } from './serializableColorInformation.ts';
 
 export class DocumentColorHandler {
     constructor() {}

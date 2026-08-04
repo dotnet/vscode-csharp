@@ -9,12 +9,12 @@ import { FormattingOptions, ModificationOptions } from 'jsonc-parser';
 import * as os from 'os';
 import * as path from 'path';
 import * as tasks from 'vscode-tasks';
-import * as util from '../common.js';
+import * as util from '../common.ts';
 import * as vscode from 'vscode';
 
-import { tolerantParse } from '../json.js';
-import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider.js';
-import { showErrorMessage } from './observers/utils/showMessage.js';
+import { tolerantParse } from '../json.ts';
+import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider.ts';
+import { showErrorMessage } from './observers/utils/showMessage.ts';
 
 type DebugConsoleOptions = { console: string };
 

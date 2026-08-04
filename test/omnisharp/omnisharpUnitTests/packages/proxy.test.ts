@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { getProxyAgent } from '../../../../src/packageManager/proxy.js';
+import { getProxyAgent } from '../../../../src/packageManager/proxy.ts';
 import url from 'url';
 
 describe(`${getProxyAgent.name}`, () => {

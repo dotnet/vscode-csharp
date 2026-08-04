@@ -5,23 +5,23 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as common from '../common.js';
-import { CoreClrDebugUtil, getTargetArchitecture, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util.js';
-import { PlatformInformation } from '../shared/platform.js';
+import * as common from '../common.ts';
+import { CoreClrDebugUtil, getTargetArchitecture, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util.ts';
+import { PlatformInformation } from '../shared/platform.ts';
 import {
     DebuggerPrerequisiteWarning,
     DebuggerPrerequisiteFailure,
     DebuggerNotInstalledFailure,
-} from '../shared/loggingEvents.js';
-import { EventStream } from '../eventStream.js';
-import { getRuntimeDependencyPackageWithId } from '../tools/runtimeDependencyPackageUtils.js';
-import { getDotnetInfo } from '../shared/utils/getDotnetInfo.js';
-import { RemoteAttachPicker } from '../shared/processPicker.js';
-import CompositeDisposable from '../compositeDisposable.js';
-import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider.js';
-import { omnisharpOptions } from '../shared/options.js';
-import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage.js';
-import { getCSharpDevKit } from '../utils/getCSharpDevKit.js';
+} from '../shared/loggingEvents.ts';
+import { EventStream } from '../eventStream.ts';
+import { getRuntimeDependencyPackageWithId } from '../tools/runtimeDependencyPackageUtils.ts';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo.ts';
+import { RemoteAttachPicker } from '../shared/processPicker.ts';
+import CompositeDisposable from '../compositeDisposable.ts';
+import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider.ts';
+import { omnisharpOptions } from '../shared/options.ts';
+import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage.ts';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit.ts';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,

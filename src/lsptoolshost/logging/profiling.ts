@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { EOL } from 'os';
-import { ObservableLogOutputChannel } from './observableLogOutputChannel.js';
+import { ObservableLogOutputChannel } from './observableLogOutputChannel.ts';
 
 const TraceTerminalName = 'dotnet-trace';
 

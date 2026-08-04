@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { readVersionJson, getNextReleaseVersion, writeVersionJson, addChangelogSection } from './snapTasks.js';
-import { runTask } from '../runTask.js';
+import { readVersionJson, getNextReleaseVersion, writeVersionJson, addChangelogSection } from './snapTasks.ts';
+import { runTask } from '../runTask.ts';
 
 runTask(updateVersionForStableRelease);
 

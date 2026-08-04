@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from './vscodeAdapter.js';
+import * as vscode from './vscodeAdapter.ts';
 
 export class RazorLanguage {
     public static id = 'aspnetcorerazor';

@@ -6,9 +6,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { types } from 'util';
-import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter.js';
-import { CSharpExtensionId } from '../constants/csharpExtensionId.js';
-import { commonOptions } from './options.js';
+import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter.ts';
+import { CSharpExtensionId } from '../constants/csharpExtensionId.ts';
+import { commonOptions } from './options.ts';
 
 export interface IDotnetAcquisitionExistingPaths {
     extensionId: string;

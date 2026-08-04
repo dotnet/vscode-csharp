@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { OmniSharpServer } from '../server.js';
-import AbstractProvider from './abstractProvider.js';
-import * as protocol from '../protocol.js';
-import * as serverUtils from '../utils.js';
-import CompositeDisposable from '../../compositeDisposable.js';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
-import { buildEditForResponse } from '../fileOperationsResponseEditBuilder.js';
-import { omnisharpOptions } from '../../shared/options.js';
+import { OmniSharpServer } from '../server.ts';
+import AbstractProvider from './abstractProvider.ts';
+import * as protocol from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import { buildEditForResponse } from '../fileOperationsResponseEditBuilder.ts';
+import { omnisharpOptions } from '../../shared/options.ts';
 
 export default class OmniSharpCodeActionProvider
     extends AbstractProvider

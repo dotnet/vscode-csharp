@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IHostExecutableResolver } from '../../../../src/shared/constants/IHostExecutableResolver.js';
-import { HostExecutableInformation } from '../../../../src/shared/constants/hostExecutableInformation.js';
+import { IHostExecutableResolver } from '../../../../src/shared/constants/IHostExecutableResolver.ts';
+import { HostExecutableInformation } from '../../../../src/shared/constants/hostExecutableInformation.ts';
 
 export const fakeMonoInfo: HostExecutableInformation = {
     version: 'someDotNetVersion',

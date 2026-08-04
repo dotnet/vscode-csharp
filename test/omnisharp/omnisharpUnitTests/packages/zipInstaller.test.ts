@@ -6,16 +6,16 @@
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import fs from 'fs-extra';
 import * as path from 'path';
-import * as util from '../../../../src/common.js';
-import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset.js';
-import { InstallZip } from '../../../../src/packageManager/zipInstaller.js';
-import { EventStream } from '../../../../src/eventStream.js';
-import { PlatformInformation } from '../../../../src/shared/platform.js';
-import { BaseEvent, InstallationStart, ZipError } from '../../../../src/shared/loggingEvents.js';
-import { createTestFile } from '../testAssets/testFile.js';
-import TestZip from '../testAssets/testZip.js';
-import TestEventBus from '../testAssets/testEventBus.js';
-import { AbsolutePath } from '../../../../src/packageManager/absolutePath.js';
+import * as util from '../../../../src/common.ts';
+import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset.ts';
+import { InstallZip } from '../../../../src/packageManager/zipInstaller.ts';
+import { EventStream } from '../../../../src/eventStream.ts';
+import { PlatformInformation } from '../../../../src/shared/platform.ts';
+import { BaseEvent, InstallationStart, ZipError } from '../../../../src/shared/loggingEvents.ts';
+import { createTestFile } from '../testAssets/testFile.ts';
+import TestZip from '../testAssets/testZip.ts';
+import TestEventBus from '../testAssets/testEventBus.ts';
+import { AbsolutePath } from '../../../../src/packageManager/absolutePath.ts';
 
 describe('ZipInstaller', () => {
     const binaries = [createTestFile('binary1', 'binary1.txt'), createTestFile('binary2', 'binary2.txt')];

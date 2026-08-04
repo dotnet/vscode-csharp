@@ -7,10 +7,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import archiver from 'archiver';
-import { execChildProcess } from '../../common.js';
-import { ObservableLogOutputChannel } from './observableLogOutputChannel.js';
-import { ActivityLogCapture, ActivityLogResult } from '../../csharpExtensionExports.js';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
+import { execChildProcess } from '../../common.ts';
+import { ObservableLogOutputChannel } from './observableLogOutputChannel.ts';
+import { ActivityLogCapture, ActivityLogResult } from '../../csharpExtensionExports.ts';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
 
 /**
  * Configuration for a dump tool.

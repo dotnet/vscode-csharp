@@ -5,14 +5,14 @@
 
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs';
-import { CommonOptionsThatTriggerReload, LanguageServerOptionsThatTriggerReload } from '../../shared/options.js';
+import { CommonOptionsThatTriggerReload, LanguageServerOptionsThatTriggerReload } from '../../shared/options.ts';
 import {
     HandleOptionChanges,
     OptionChangeObserver,
     OptionChanges,
-} from '../../shared/observers/optionChangeObserver.js';
-import Disposable from '../../disposable.js';
-import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage.js';
+} from '../../shared/observers/optionChangeObserver.ts';
+import Disposable from '../../disposable.ts';
+import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage.ts';
 
 export function registerLanguageServerOptionChanges(optionObservable: Observable<void>): Disposable {
     const optionChangeObserver: OptionChangeObserver = {

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { MessageOptions, vscode } from '../../../vscodeAdapter.js';
+import { MessageOptions, vscode } from '../../../vscodeAdapter.ts';
 
 /**
  * Show an error message toast.

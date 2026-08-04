@@ -8,9 +8,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
-import { PlatformInformation } from '../shared/platform.js';
-import { getDotnetInfo } from '../shared/utils/getDotnetInfo.js';
-import { DotnetInfo } from '../shared/utils/dotnetInfo.js';
+import { PlatformInformation } from '../shared/platform.ts';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo.ts';
+import { DotnetInfo } from '../shared/utils/dotnetInfo.ts';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI = '1.0.0';
 

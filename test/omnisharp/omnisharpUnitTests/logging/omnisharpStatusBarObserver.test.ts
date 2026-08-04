@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { StatusBarItem } from '../../../../src/vscodeAdapter.js';
+import { StatusBarItem } from '../../../../src/vscodeAdapter.ts';
 import {
     DownloadStart,
     InstallationStart,
     DownloadProgress,
     BaseEvent,
     InstallationSuccess,
-} from '../../../../src/shared/loggingEvents.js';
+} from '../../../../src/shared/loggingEvents.ts';
 import {
     OmnisharpOnBeforeServerInstall,
     OmnisharpOnBeforeServerStart,
@@ -19,11 +19,11 @@ import {
     OmnisharpServerOnStart,
     OmnisharpServerOnStop,
     OmnisharpServerOnStdErr,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents.js';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents.ts';
 import {
     OmnisharpStatusBarObserver,
     StatusBarColors,
-} from '../../../../src/omnisharp/observers/omnisharpStatusBarObserver.js';
+} from '../../../../src/omnisharp/observers/omnisharpStatusBarObserver.ts';
 
 describe('OmnisharpStatusBarObserver', () => {
     let showCalled: boolean;

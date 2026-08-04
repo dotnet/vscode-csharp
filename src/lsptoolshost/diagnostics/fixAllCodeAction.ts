@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as RoslynProtocol from '../server/roslynProtocol.js';
+import * as RoslynProtocol from '../server/roslynProtocol.ts';
 import { LSPAny } from 'vscode-languageclient';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
 
 export function registerCodeActionFixAllCommands(
     context: vscode.ExtensionContext,

@@ -4,20 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
 import {
     ProjectContextRefreshRequest,
     VSGetProjectContextsRequest,
     VSProjectContext,
     VSProjectContextList,
-} from '../server/roslynProtocol.js';
+} from '../server/roslynProtocol.ts';
 import { TextDocumentIdentifier } from 'vscode-languageclient';
-import { UriConverter } from '../utils/uriConverter.js';
-import { LanguageServerEvents, ServerState } from '../server/languageServerEvents.js';
-import { RoslynLanguageClient } from '../server/roslynLanguageClient.js';
-import { languageServerOptions } from '../../shared/options.js';
-import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors.js';
-import { RazorLanguage } from '../../razor/src/razorLanguage.js';
+import { UriConverter } from '../utils/uriConverter.ts';
+import { LanguageServerEvents, ServerState } from '../server/languageServerEvents.ts';
+import { RoslynLanguageClient } from '../server/roslynLanguageClient.ts';
+import { languageServerOptions } from '../../shared/options.ts';
+import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors.ts';
+import { RazorLanguage } from '../../razor/src/razorLanguage.ts';
 
 export interface ProjectContextChangeEvent {
     document: vscode.TextDocument;

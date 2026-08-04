@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { jest } from '@jest/globals';
-import * as mockVsCode from '../__mocks__/vscode.js';
+import * as mockVsCode from '../__mocks__/vscode.ts';
 
 jest.mock('vscode', () => mockVsCode, { virtual: true });
 jest.unstable_mockModule('vscode', () => mockVsCode, { virtual: true });

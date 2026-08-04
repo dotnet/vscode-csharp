@@ -9,11 +9,11 @@ import {
     activateCSharpExtension,
     describeIfNotRazorOrGenerator,
     restartOmniSharpServer,
-} from './integrationHelpers.js';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+} from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
 import * as path from 'path';
-import { InlayHint, LinePositionSpanTextChange } from '../../../src/omnisharp/protocol.js';
-import { isNotNull } from '../testUtil.js';
+import { InlayHint, LinePositionSpanTextChange } from '../../../src/omnisharp/protocol.ts';
+import { isNotNull } from '../testUtil.ts';
 
 describeIfNotRazorOrGenerator(`Inlay Hints ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;

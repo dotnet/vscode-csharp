@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { isValidDownload } from '../../../../src/packageManager/isValidDownload.js';
-import { EventStream } from '../../../../src/eventStream.js';
+import { isValidDownload } from '../../../../src/packageManager/isValidDownload.ts';
+import { EventStream } from '../../../../src/eventStream.ts';
 
 describe(`${isValidDownload.name}`, () => {
     const sampleBuffer = Buffer.from('sampleBuffer');

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent } from '../../shared/loggingEvents.js';
+import { BaseEvent } from '../../shared/loggingEvents.ts';
 import {
     DotNetTestRunStart,
     DotNetTestMessage,
@@ -15,10 +15,10 @@ import {
     DotNetTestsInClassRunStart,
     DotNetTestRunInContextStart,
     DotNetTestDebugInContextStart,
-} from '../omnisharpLoggingEvents.js';
-import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.js';
-import * as protocol from '../protocol.js';
-import { EventType } from '../../shared/eventType.js';
+} from '../omnisharpLoggingEvents.ts';
+import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.ts';
+import * as protocol from '../protocol.ts';
+import { EventType } from '../../shared/eventType.ts';
 
 export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {

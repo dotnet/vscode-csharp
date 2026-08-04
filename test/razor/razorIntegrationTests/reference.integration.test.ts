@@ -6,8 +6,8 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { beforeAll, afterAll, test, expect, beforeEach, describe } from '@jest/globals';
-import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
-import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers.js';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
+import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers.ts';
 
 describe(`Razor References ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {

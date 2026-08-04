@@ -50,12 +50,7 @@ async function main() {
         banner: {
             js: [
                 `import { createRequire } from 'node:module';`,
-                `import { dirname as commonJsDirname } from 'node:path';`,
-                `import { fileURLToPath as commonJsFileURLToPath } from 'node:url';`,
                 `const require = createRequire(import.meta.url);`,
-                `// Temporary CommonJS globals until bundled source usages are converted to ESM.`,
-                `const __filename = commonJsFileURLToPath(import.meta.url);`,
-                `const __dirname = commonJsDirname(__filename);`,
             ].join('\n'),
         },
         minify: production,

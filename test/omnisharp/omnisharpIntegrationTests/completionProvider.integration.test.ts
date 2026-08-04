@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
-import OmniSharpCompletionProvider from '../../../src/omnisharp/features/completionProvider.js';
+import OmniSharpCompletionProvider from '../../../src/omnisharp/features/completionProvider.ts';
 import * as vscode from 'vscode';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
 import * as path from 'path';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.js';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.ts';
 
 describeIfNotRazorOrGenerator(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;

@@ -8,7 +8,7 @@ import {
     convertPositionFromSerializable,
     convertPositionToSerializable,
     SerializablePosition,
-} from './serializablePosition.js';
+} from './serializablePosition.ts';
 
 // We'd typically just use vscode.Range here; however, that type doesn't serialize properly over the wire.
 export interface SerializableRange {

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { beforeEach, test, describe, expect } from '@jest/globals';
-import { TelemetryObserver } from '../../../../src/omnisharp/observers/telemetryObserver.js';
-import { PlatformInformation } from '../../../../src/shared/platform.js';
-import { PackageInstallation, InstallationFailure, InstallationSuccess } from '../../../../src/shared/loggingEvents.js';
+import { TelemetryObserver } from '../../../../src/omnisharp/observers/telemetryObserver.ts';
+import { PlatformInformation } from '../../../../src/shared/platform.ts';
+import { PackageInstallation, InstallationFailure, InstallationSuccess } from '../../../../src/shared/loggingEvents.ts';
 import {
     TestExecutionCountReport,
     TelemetryEventWithMeasures,
@@ -15,11 +15,11 @@ import {
     TelemetryEvent,
     ProjectConfiguration,
     TelemetryErrorEvent,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents.js';
-import { getNullTelemetryReporter } from '../../../fakes.js';
-import { Package } from '../../../../src/packageManager/package.js';
-import { PackageError } from '../../../../src/packageManager/packageError.js';
-import { isNotNull } from '../../testUtil.js';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents.ts';
+import { getNullTelemetryReporter } from '../../../fakes.ts';
+import { Package } from '../../../../src/packageManager/package.ts';
+import { PackageError } from '../../../../src/packageManager/packageError.ts';
+import { isNotNull } from '../../testUtil.ts';
 
 describe('TelemetryReporterObserver', () => {
     const platformInfo = new PlatformInformation('linux', 'architecture');

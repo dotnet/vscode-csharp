@@ -20,18 +20,18 @@ import {
     workspace,
     CompletionItemLabel,
 } from 'vscode';
-import AbstractProvider from './abstractProvider.js';
-import * as protocol from '../protocol.js';
-import * as serverUtils from '../utils.js';
+import AbstractProvider from './abstractProvider.ts';
+import * as protocol from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
 import {
     CompletionTriggerKind as LspCompletionTriggerKind,
     InsertTextFormat,
     CancellationToken,
 } from 'vscode-languageclient';
-import { createRequest } from '../typeConversion.js';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
-import { OmniSharpServer } from '../server.js';
-import { isVirtualCSharpDocument } from './virtualDocumentTracker.js';
+import { createRequest } from '../typeConversion.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import { OmniSharpServer } from '../server.ts';
+import { isVirtualCSharpDocument } from './virtualDocumentTracker.ts';
 
 export const CompletionAfterInsertCommand = 'csharp.completion.afterInsert';
 

@@ -5,12 +5,12 @@
 
 import { expect, test, beforeAll, afterAll, describe } from '@jest/globals';
 import * as vscode from 'vscode';
-import { activateCSharpExtension } from './integrationHelpers.js';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+import { activateCSharpExtension } from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
 import {
     OmniSharpCommands,
     UnexpectedOmniSharpCommands,
-} from '../../lsptoolshost/integrationTests/expectedCommands.js';
+} from '../../lsptoolshost/integrationTests/expectedCommands.ts';
 
 describe(`Command Enablement: ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {

@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, IntegrityCheckFailure, ZipError } from '../../shared/loggingEvents.js';
-import { DotNetTestRunFailure, DotNetTestDebugStartFailure } from '../omnisharpLoggingEvents.js';
-import { vscode } from '../../vscodeAdapter.js';
-import { EventType } from '../../shared/eventType.js';
+import { BaseEvent, IntegrityCheckFailure, ZipError } from '../../shared/loggingEvents.ts';
+import { DotNetTestRunFailure, DotNetTestDebugStartFailure } from '../omnisharpLoggingEvents.ts';
+import { vscode } from '../../vscodeAdapter.ts';
+import { EventType } from '../../shared/eventType.ts';
 import { l10n } from 'vscode';
-import { showErrorMessage } from '../../shared/observers/utils/showMessage.js';
+import { showErrorMessage } from '../../shared/observers/utils/showMessage.ts';
 
 export class ErrorMessageObserver {
     constructor(private vscode: vscode) {}

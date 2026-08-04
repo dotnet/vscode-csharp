@@ -7,10 +7,10 @@ import * as fs from 'fs';
 import fsExtra from 'fs-extra';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
-import { EventStream } from '../eventStream.js';
-import { InstallationStart, ZipError } from '../shared/loggingEvents.js';
-import { NestedError } from '../nestedError.js';
-import { AbsolutePath } from './absolutePath.js';
+import { EventStream } from '../eventStream.ts';
+import { InstallationStart, ZipError } from '../shared/loggingEvents.ts';
+import { NestedError } from '../nestedError.ts';
+import { AbsolutePath } from './absolutePath.ts';
 
 export async function InstallZip(
     buffer: Buffer,

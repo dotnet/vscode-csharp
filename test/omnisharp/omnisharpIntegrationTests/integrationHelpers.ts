@@ -5,10 +5,10 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { Advisor } from '../../../src/omnisharp/features/diagnosticsProvider.js';
-import { EventStream } from '../../../src/eventStream.js';
-import { EventType } from '../../../src/shared/eventType.js';
-import { OmnisharpExtensionExports } from '../../../src/csharpExtensionExports.js';
+import { Advisor } from '../../../src/omnisharp/features/diagnosticsProvider.ts';
+import { EventStream } from '../../../src/eventStream.ts';
+import { EventType } from '../../../src/shared/eventType.ts';
+import { OmnisharpExtensionExports } from '../../../src/csharpExtensionExports.ts';
 import { describe } from '@jest/globals';
 
 export interface ActivationResult {

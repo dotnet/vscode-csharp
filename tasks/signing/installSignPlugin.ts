@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { rootPath } from '../projectPaths.js';
-import { execDotnet } from './signingTasks.js';
-import { runTask } from '../runTask.js';
+import { rootPath } from '../projectPaths.ts';
+import { execDotnet } from './signingTasks.ts';
+import { runTask } from '../runTask.ts';
 
 runTask(installSignPlugin);
 

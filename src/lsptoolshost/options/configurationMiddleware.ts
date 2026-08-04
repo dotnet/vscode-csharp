@@ -5,8 +5,8 @@
 
 import * as vscode from 'vscode';
 import { ConfigurationParams } from 'vscode-languageclient';
-import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './optionNameConverter.js';
-import { readEquivalentVsCodeConfiguration } from './universalEditorConfigProvider.js';
+import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './optionNameConverter.ts';
+import { readEquivalentVsCodeConfiguration } from './universalEditorConfigProvider.ts';
 
 export function readConfigurations(params: ConfigurationParams): (string | null)[] {
     // Note: null means there is no such configuration in client.

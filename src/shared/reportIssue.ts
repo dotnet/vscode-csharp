@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver.js';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver.ts';
 import { basename, dirname } from 'path';
-import { DotnetInfo } from './utils/dotnetInfo.js';
-import { CSharpExtensionId } from '../constants/csharpExtensionId.js';
-import { commonOptions, LanguageServerOptions, languageServerOptions } from './options.js';
+import { DotnetInfo } from './utils/dotnetInfo.ts';
+import { CSharpExtensionId } from '../constants/csharpExtensionId.ts';
+import { commonOptions, LanguageServerOptions, languageServerOptions } from './options.ts';
 
 export default async function reportIssue(
     context: vscode.ExtensionContext,

@@ -9,8 +9,8 @@ import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { PlatformInformation } from './platform.js';
-import { findPowerShell, getExtensionPath } from '../common.js';
+import { PlatformInformation } from './platform.ts';
+import { findPowerShell, getExtensionPath } from '../common.ts';
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;

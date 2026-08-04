@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from '../shared/platform.js';
-import * as util from '../common.js';
-import { AbsolutePathPackage } from './absolutePathPackage.js';
+import { PlatformInformation } from '../shared/platform.ts';
+import * as util from '../common.ts';
+import { AbsolutePathPackage } from './absolutePathPackage.ts';
 
 const NEUTRAL = 'neutral';
 

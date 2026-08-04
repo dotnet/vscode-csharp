@@ -5,12 +5,12 @@
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import * as path from 'path';
-import * as util from '../../../../src/common.js';
-import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset.js';
-import TestZip from '../testAssets/testZip.js';
-import { downloadAndInstallPackages } from '../../../../src/packageManager/downloadAndInstallPackages.js';
-import NetworkSettings from '../../../../src/networkSettings.js';
-import { EventStream } from '../../../../src/eventStream.js';
+import * as util from '../../../../src/common.ts';
+import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset.ts';
+import TestZip from '../testAssets/testZip.ts';
+import { downloadAndInstallPackages } from '../../../../src/packageManager/downloadAndInstallPackages.ts';
+import NetworkSettings from '../../../../src/networkSettings.ts';
+import { EventStream } from '../../../../src/eventStream.ts';
 import {
     DownloadStart,
     DownloadSizeObtained,
@@ -21,13 +21,13 @@ import {
     IntegrityCheckFailure,
     DownloadFailure,
     InstallationFailure,
-} from '../../../../src/shared/loggingEvents.js';
-import MockHttpsServer from '../testAssets/mockHttpsServer.js';
-import { createTestFile } from '../testAssets/testFile.js';
-import TestEventBus from '../testAssets/testEventBus.js';
-import { AbsolutePathPackage } from '../../../../src/packageManager/absolutePathPackage.js';
-import { AbsolutePath } from '../../../../src/packageManager/absolutePath.js';
-import { DownloadValidator } from '../../../../src/packageManager/isValidDownload.js';
+} from '../../../../src/shared/loggingEvents.ts';
+import MockHttpsServer from '../testAssets/mockHttpsServer.ts';
+import { createTestFile } from '../testAssets/testFile.ts';
+import TestEventBus from '../testAssets/testEventBus.ts';
+import { AbsolutePathPackage } from '../../../../src/packageManager/absolutePathPackage.ts';
+import { AbsolutePath } from '../../../../src/packageManager/absolutePath.ts';
+import { DownloadValidator } from '../../../../src/packageManager/isValidDownload.ts';
 
 describe(`${downloadAndInstallPackages.name}`, () => {
     let tmpInstallDir: TmpAsset;

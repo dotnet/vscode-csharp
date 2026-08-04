@@ -6,8 +6,8 @@
 import * as vscode from 'vscode';
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 import * as path from 'path';
-import { commonOptions, omnisharpOptions } from '../../../src/shared/options.js';
-import { getWorkspaceConfiguration } from '../../fakes.js';
+import { commonOptions, omnisharpOptions } from '../../../src/shared/options.ts';
+import { getWorkspaceConfiguration } from '../../fakes.ts';
 
 describe('Options tests', () => {
     beforeEach(() => {

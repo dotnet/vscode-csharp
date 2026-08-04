@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { testArtifacts } from './testTasks.js';
-import { runTask } from '../runTask.js';
+import { testArtifacts } from './testTasks.ts';
+import { runTask } from '../runTask.ts';
 
 runTask(testArtifacts);

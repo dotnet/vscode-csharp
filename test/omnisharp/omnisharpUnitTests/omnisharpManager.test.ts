@@ -4,19 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { OmnisharpManager } from '../../../src/omnisharp/omnisharpManager.js';
-import MockHttpsServer from './testAssets/mockHttpsServer.js';
-import TestZip from './testAssets/testZip.js';
-import { createTestFile } from './testAssets/testFile.js';
-import { PlatformInformation } from '../../../src/shared/platform.js';
-import { OmnisharpDownloader } from '../../../src/omnisharp/omnisharpDownloader.js';
-import NetworkSettings from '../../../src/networkSettings.js';
-import { EventStream } from '../../../src/eventStream.js';
-import { testPackageJSON } from './testAssets/testAssets.js';
-import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../createTmpAsset.js';
+import { OmnisharpManager } from '../../../src/omnisharp/omnisharpManager.ts';
+import MockHttpsServer from './testAssets/mockHttpsServer.ts';
+import TestZip from './testAssets/testZip.ts';
+import { createTestFile } from './testAssets/testFile.ts';
+import { PlatformInformation } from '../../../src/shared/platform.ts';
+import { OmnisharpDownloader } from '../../../src/omnisharp/omnisharpDownloader.ts';
+import NetworkSettings from '../../../src/networkSettings.ts';
+import { EventStream } from '../../../src/eventStream.ts';
+import { testPackageJSON } from './testAssets/testAssets.ts';
+import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../createTmpAsset.ts';
 import * as path from 'path';
-import * as util from '../../../src/common.js';
-import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator.js';
+import * as util from '../../../src/common.ts';
+import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator.ts';
 
 describe(OmnisharpManager.name, () => {
     let server: MockHttpsServer;

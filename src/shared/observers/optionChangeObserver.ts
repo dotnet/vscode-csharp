@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Observable } from 'rxjs';
-import Disposable from '../../disposable.js';
+import Disposable from '../../disposable.ts';
 import { isDeepStrictEqual } from 'util';
 import {
     CommonOptions,
@@ -13,7 +13,7 @@ import {
     commonOptions,
     languageServerOptions,
     omnisharpOptions,
-} from '../options.js';
+} from '../options.ts';
 
 type RelevantOptionValues = {
     commonOptions: Map<keyof CommonOptions, any>;

@@ -3,35 +3,36 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as coreclrdebug from './coreclrDebug/activate.js';
-import * as util from './common.js';
+import * as coreclrdebug from './coreclrDebug/activate.ts';
+import * as util from './common.ts';
 import * as vscode from 'vscode';
 
-import { ActivationFailure } from './shared/loggingEvents.js';
-import { CsharpChannelObserver } from './shared/observers/csharpChannelObserver.js';
-import { CsharpLoggerObserver } from './shared/observers/csharpLoggerObserver.js';
-import { EventStream } from './eventStream.js';
-import { PlatformInformation } from './shared/platform.js';
+import { ActivationFailure } from './shared/loggingEvents.ts';
+import { CsharpChannelObserver } from './shared/observers/csharpChannelObserver.ts';
+import { CsharpLoggerObserver } from './shared/observers/csharpLoggerObserver.ts';
+import { EventStream } from './eventStream.ts';
+import { PlatformInformation } from './shared/platform.ts';
 import telemetryReporterModule from '@vscode/extension-telemetry';
-import { vscodeNetworkSettingsProvider } from './networkSettings.js';
-import createOptionStream from './shared/observables/createOptionStream.js';
-import { AbsolutePathPackage } from './packageManager/absolutePathPackage.js';
-import { IInstallDependencies } from './packageManager/IInstallDependencies.js';
-import { installRuntimeDependencies } from './installRuntimeDependencies.js';
-import { MigrateOptions } from './shared/migrateOptions.js';
+import { vscodeNetworkSettingsProvider } from './networkSettings.ts';
+import createOptionStream from './shared/observables/createOptionStream.ts';
+import { AbsolutePathPackage } from './packageManager/absolutePathPackage.ts';
+import { IInstallDependencies } from './packageManager/IInstallDependencies.ts';
+import { installRuntimeDependencies } from './installRuntimeDependencies.ts';
+import { MigrateOptions } from './shared/migrateOptions.ts';
 import {
     CSharpExtensionExports,
     LimitedExtensionExports,
     OmnisharpExtensionExports,
-} from './csharpExtensionExports.js';
-import { getCSharpDevKit } from './utils/getCSharpDevKit.js';
-import { commonOptions, omnisharpOptions } from './shared/options.js';
-import { TelemetryEventNames } from './shared/telemetryEventNames.js';
-import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion.js';
-import { checkIsSupportedPlatform } from './checkSupportedPlatform.js';
-import { activateRoslyn } from './activateRoslyn.js';
-import { LimitedActivationStatus } from './shared/limitedActivationStatus.js';
+} from './csharpExtensionExports.ts';
+import { getCSharpDevKit } from './utils/getCSharpDevKit.ts';
+import { commonOptions, omnisharpOptions } from './shared/options.ts';
+import { TelemetryEventNames } from './shared/telemetryEventNames.ts';
+import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion.ts';
+import { checkIsSupportedPlatform } from './checkSupportedPlatform.ts';
+import { activateRoslyn } from './activateRoslyn.ts';
+import { LimitedActivationStatus } from './shared/limitedActivationStatus.ts';
 
+// The package's CommonJS entry point exposes its constructor through the imported default object's default export.
 const TelemetryReporter = telemetryReporterModule.default;
 
 export async function activate(
@@ -91,8 +92,8 @@ export async function activate(
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => {
         // Defer loading the download/zip stack (yauzl, proxy agents, fs-extra, etc.) until a
         // component actually needs to be downloaded, which normally never happens after install.
-        const { downloadAndInstallPackages } = await import('./packageManager/downloadAndInstallPackages.js');
-        const { isValidDownload } = await import('./packageManager/isValidDownload.js');
+        const { downloadAndInstallPackages } = await import('./packageManager/downloadAndInstallPackages.ts');
+        const { isValidDownload } = await import('./packageManager/isValidDownload.ts');
         return downloadAndInstallPackages(
             dependencies,
             networkSettingsProvider,
@@ -158,7 +159,7 @@ export async function activate(
         } else {
             // Defer loading the OmniSharp implementation and its module graph until we actually
             // activate it, so the default Roslyn activations don't pay to compile/execute it.
-            const { activateOmniSharp } = await import('./activateOmniSharp.js');
+            const { activateOmniSharp } = await import('./activateOmniSharp.ts');
             exports = activateOmniSharp(
                 context,
                 platformInfo,

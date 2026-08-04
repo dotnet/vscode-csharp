@@ -7,10 +7,10 @@ import { exec } from 'child_process';
 import * as path from 'path';
 import * as semver from 'semver';
 import { promisify } from 'util';
-import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation.js';
-import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver.js';
-import { PlatformInformation } from '../shared/platform.js';
-import { omnisharpOptions } from '../shared/options.js';
+import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation.ts';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver.ts';
+import { PlatformInformation } from '../shared/platform.ts';
+import { omnisharpOptions } from '../shared/options.ts';
 
 export class DotnetResolver implements IHostExecutableResolver {
     private readonly minimumDotnetVersion = '6.0.100';

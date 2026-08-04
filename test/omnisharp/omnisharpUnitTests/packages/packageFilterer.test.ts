@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { Package } from '../../../../src/packageManager/package.js';
-import type { AbsolutePathPackage as AbsolutePathPackageType } from '../../../../src/packageManager/absolutePathPackage.js';
+import { Package } from '../../../../src/packageManager/package.ts';
+import type { AbsolutePathPackage as AbsolutePathPackageType } from '../../../../src/packageManager/absolutePathPackage.ts';
 import { MockedFunction } from 'jest-mock';
 import type * as fs from 'fs';
 import { join } from 'path';
@@ -16,9 +16,9 @@ jest.unstable_mockModule('fs', async () => ({
     ...(await import('node:fs')),
     stat: mockStat,
 }));
-const { PlatformInformation } = await import('../../../../src/shared/platform.js');
-const { getNotInstalledPackagesForPlatform } = await import('../../../../src/packageManager/packageFilterer.js');
-const { AbsolutePathPackage } = await import('../../../../src/packageManager/absolutePathPackage.js');
+const { PlatformInformation } = await import('../../../../src/shared/platform.ts');
+const { getNotInstalledPackagesForPlatform } = await import('../../../../src/packageManager/packageFilterer.ts');
+const { AbsolutePathPackage } = await import('../../../../src/packageManager/absolutePathPackage.ts');
 
 describe(`${getNotInstalledPackagesForPlatform.name}`, () => {
     let absolutePathPackages: AbsolutePathPackageType[];

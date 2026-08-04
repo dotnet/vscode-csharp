@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.js';
-import { EventType } from '../../shared/eventType.js';
-import { BaseEvent } from '../../shared/loggingEvents.js';
-import { DocumentSynchronizationFailure } from '../omnisharpLoggingEvents.js';
+import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.ts';
+import { EventType } from '../../shared/eventType.ts';
+import { BaseEvent } from '../../shared/loggingEvents.ts';
+import { DocumentSynchronizationFailure } from '../omnisharpLoggingEvents.ts';
 
 export class CSharpLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {

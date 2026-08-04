@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ITestAssetWorkspace } from './testAssets.js';
+import { ITestAssetWorkspace } from './testAssets.ts';
 
 const workspace: ITestAssetWorkspace = {
     description: 'single csproj at root of workspace',

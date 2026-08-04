@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider.js';
-import { FindImplementationsRequest } from '../protocol.js';
-import * as serverUtils from '../utils.js';
-import { createRequest, toLocation } from '../typeConversion.js';
+import AbstractSupport from './abstractProvider.ts';
+import { FindImplementationsRequest } from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
+import { createRequest, toLocation } from '../typeConversion.ts';
 import { TextDocument, Position, CancellationToken, ImplementationProvider, Definition } from 'vscode';
 
 export default class OmniSharpImplementationProvider extends AbstractSupport implements ImplementationProvider {

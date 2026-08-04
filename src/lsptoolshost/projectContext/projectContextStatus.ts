@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { languageServerOptions } from '../../shared/options.js';
-import { RazorLanguage } from '../../razor/src/razorLanguage.js';
-import { ServerState } from '../server/languageServerEvents.js';
-import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { languageServerOptions } from '../../shared/options.ts';
+import { RazorLanguage } from '../../razor/src/razorLanguage.ts';
+import { ServerState } from '../server/languageServerEvents.ts';
+import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors.ts';
 
 export class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {

@@ -5,10 +5,10 @@
 
 import * as vscode from 'vscode';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { OmniSharpMonoResolver } from '../../../../src/omnisharp/omniSharpMonoResolver.js';
+import { OmniSharpMonoResolver } from '../../../../src/omnisharp/omniSharpMonoResolver.ts';
 
 import { join } from 'path';
-import { getWorkspaceConfiguration } from '../../../fakes.js';
+import { getWorkspaceConfiguration } from '../../../fakes.ts';
 
 describe(`${OmniSharpMonoResolver.name}`, () => {
     let getMonoCalled: boolean;

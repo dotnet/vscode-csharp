@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
@@ -14,7 +14,7 @@ import {
     openFileInWorkspaceAsync,
     testIfCSharp,
     testIfDevKit,
-} from './integrationHelpers.js';
+} from './integrationHelpers.ts';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
 /**

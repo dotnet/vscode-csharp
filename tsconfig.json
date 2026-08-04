@@ -31,6 +31,7 @@
         "moduleResolution": "NodeNext",
         "moduleDetection": "force",
         "allowJs": true,
+        "rewriteRelativeImportExtensions": true,
         "isolatedModules": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,

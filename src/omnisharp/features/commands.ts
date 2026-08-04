@@ -3,30 +3,30 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmniSharpServer } from '../server.js';
-import * as serverUtils from '../utils.js';
-import { findLaunchTargets } from '../launcher.js';
-import { LaunchTarget } from '../../shared/launchTarget.js';
+import { OmniSharpServer } from '../server.ts';
+import * as serverUtils from '../utils.ts';
+import { findLaunchTargets } from '../launcher.ts';
+import { LaunchTarget } from '../../shared/launchTarget.ts';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as protocol from '../protocol.js';
+import * as protocol from '../protocol.ts';
 import * as vscode from 'vscode';
-import { generateAssets } from '../../shared/assets.js';
+import { generateAssets } from '../../shared/assets.ts';
 import {
     ShowOmniSharpChannel,
     CommandDotNetRestoreStart,
     CommandDotNetRestoreProgress,
     CommandDotNetRestoreSucceeded,
     CommandDotNetRestoreFailed,
-} from '../omnisharpLoggingEvents.js';
-import { EventStream } from '../../eventStream.js';
-import { PlatformInformation } from '../../shared/platform.js';
-import CompositeDisposable from '../../compositeDisposable.js';
-import reportIssue from '../../shared/reportIssue.js';
-import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.js';
-import { getDotnetInfo } from '../../shared/utils/getDotnetInfo.js';
-import { IWorkspaceDebugInformationProvider } from '../../shared/IWorkspaceDebugInformationProvider.js';
+} from '../omnisharpLoggingEvents.ts';
+import { EventStream } from '../../eventStream.ts';
+import { PlatformInformation } from '../../shared/platform.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import reportIssue from '../../shared/reportIssue.ts';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.ts';
+import { getDotnetInfo } from '../../shared/utils/getDotnetInfo.ts';
+import { IWorkspaceDebugInformationProvider } from '../../shared/IWorkspaceDebugInformationProvider.ts';
 
 export default function registerCommands(
     context: vscode.ExtensionContext,

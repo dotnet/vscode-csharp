@@ -6,9 +6,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage.js';
-import { ObservableLogOutputChannel } from './observableLogOutputChannel.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage.ts';
+import { ObservableLogOutputChannel } from './observableLogOutputChannel.ts';
 import {
     DumpRequest,
     collectDumps,
@@ -21,8 +21,8 @@ import {
     createActivityLogCapture,
     generateReadmeContent,
     LogsToCollect,
-} from './loggingUtils.js';
-import { runDotnetTraceInTerminal } from './profiling.js';
+} from './loggingUtils.ts';
+import { runDotnetTraceInTerminal } from './profiling.ts';
 
 /** Represents the types of data the user can choose to collect */
 type CollectOption = 'activityLogs' | 'performanceTrace' | 'memoryDump' | 'gcDump';

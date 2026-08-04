@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
@@ -15,9 +15,9 @@ import {
     waitForAllAsyncOperationsAsync,
     waitForExpectedResult,
     describeIfFileBasedPrograms,
-} from './integrationHelpers.js';
+} from './integrationHelpers.ts';
 import { beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
-import { CSharpExtensionExports } from '../../../src/csharpExtensionExports.js';
+import { CSharpExtensionExports } from '../../../src/csharpExtensionExports.ts';
 
 describeIfFileBasedPrograms(`File-based Programs Tests`, () => {
     let exports: CSharpExtensionExports;

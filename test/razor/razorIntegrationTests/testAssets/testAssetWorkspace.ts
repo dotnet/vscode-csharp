@@ -6,7 +6,7 @@
 import {
     ITestAssetWorkspace,
     TestAssetWorkspace,
-} from '../../../lsptoolshost/integrationTests/testAssets/testAssets.js';
+} from '../../../lsptoolshost/integrationTests/testAssets/testAssets.ts';
 
 const workspace: ITestAssetWorkspace = {
     description: 'Basic Razor app',

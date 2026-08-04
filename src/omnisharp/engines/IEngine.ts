@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CancellationToken } from '../../vscodeAdapter.js';
-import { LaunchTarget } from '../../shared/launchTarget.js';
-import Disposable from '../../disposable.js';
-import { OmniSharpServer } from '../server.js';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
-import { Advisor } from '../features/diagnosticsProvider.js';
-import TestManager from '../features/dotnetTest.js';
-import { EventStream } from '../../eventStream.js';
+import { CancellationToken } from '../../vscodeAdapter.ts';
+import { LaunchTarget } from '../../shared/launchTarget.ts';
+import Disposable from '../../disposable.ts';
+import { OmniSharpServer } from '../server.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import { Advisor } from '../features/diagnosticsProvider.ts';
+import TestManager from '../features/dotnetTest.ts';
+import { EventStream } from '../../eventStream.ts';
 
 export interface IEngine {
     start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string): Promise<void>;

@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from '../shared/platform.js';
-import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from '../shared/loggingEvents.js';
-import { EventStream } from '../eventStream.js';
-import { NetworkSettingsProvider } from '../networkSettings.js';
-import { downloadAndInstallPackages } from '../packageManager/downloadAndInstallPackages.js';
-import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackageUtils.js';
-import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall.js';
-import { isValidDownload } from '../packageManager/isValidDownload.js';
-import { ITelemetryReporter } from '../shared/telemetryReporter.js';
+import { PlatformInformation } from '../shared/platform.ts';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from '../shared/loggingEvents.ts';
+import { EventStream } from '../eventStream.ts';
+import { NetworkSettingsProvider } from '../networkSettings.ts';
+import { downloadAndInstallPackages } from '../packageManager/downloadAndInstallPackages.ts';
+import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackageUtils.ts';
+import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall.ts';
+import { isValidDownload } from '../packageManager/isValidDownload.ts';
+import { ITelemetryReporter } from '../shared/telemetryReporter.ts';
 
 export class RazorOmnisharpDownloader {
     public constructor(

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmniSharpServer } from './server.js';
-import * as protocol from './protocol.js';
+import { OmniSharpServer } from './server.ts';
+import * as protocol from './protocol.ts';
 import * as vscode from 'vscode';
 import { CancellationToken } from 'vscode-languageclient';
 import {
@@ -13,7 +13,7 @@ import {
     isBlazorWebAssemblyHosted,
     isBlazorWebAssemblyHostedServer,
     findNetCoreTargetFramework,
-} from '../shared/utils.js';
+} from '../shared/utils.ts';
 
 export async function codeCheck(server: OmniSharpServer, request: protocol.Request, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, request, token);

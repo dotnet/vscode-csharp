@@ -5,11 +5,11 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { IDotnetAcquisitionExistingPaths } from '../../../src/shared/migrateOptions.js';
+import { IDotnetAcquisitionExistingPaths } from '../../../src/shared/migrateOptions.ts';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { getVSCodeWithConfig } from '../../fakes.js';
-import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId.js';
-import { ConfigurationTarget } from '../../../src/vscodeAdapter.js';
+import { getVSCodeWithConfig } from '../../fakes.ts';
+import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId.ts';
+import { ConfigurationTarget } from '../../../src/vscodeAdapter.ts';
 
 const mockExistsSync = jest.fn<typeof import('fs').existsSync>();
 jest.unstable_mockModule('fs', async () => ({
@@ -18,7 +18,7 @@ jest.unstable_mockModule('fs', async () => ({
 }));
 const fs = await import('fs');
 const { dotnetAcquisitionExtensionOption, dotnetPathOption, MigrateOptions, migrateOptions } =
-    await import('../../../src/shared/migrateOptions.js');
+    await import('../../../src/shared/migrateOptions.ts');
 
 describe('Migrate configurations', () => {
     const packageJson = JSON.parse(fs.readFileSync('package.json').toString());

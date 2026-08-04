@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import minimist from 'minimist';
-import { vsixReleasePackageTask } from './offlinePackagingTasks.js';
-import { runTask } from '../runTask.js';
+import { vsixReleasePackageTask } from './offlinePackagingTasks.ts';
+import { runTask } from '../runTask.ts';
 
 const argv = minimist(process.argv.slice(2));
 runTask(async () => await vsixReleasePackageTask(!!argv.prerelease));

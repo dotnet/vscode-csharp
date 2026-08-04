@@ -5,13 +5,13 @@
 
 import * as fs from 'fs';
 import * as os from 'os';
-import { Package } from '../packageManager/package.js';
-import { DownloadFile } from '../packageManager/fileDownloader.js';
-import { EventStream } from '../eventStream.js';
-import * as Event from '../shared/loggingEvents.js';
-import NetworkSettings, { NetworkSettingsProvider } from '../networkSettings.js';
-import { getBufferIntegrityHash } from '../packageManager/isValidDownload.js';
-import { EventType } from '../shared/eventType.js';
+import { Package } from '../packageManager/package.ts';
+import { DownloadFile } from '../packageManager/fileDownloader.ts';
+import { EventStream } from '../eventStream.ts';
+import * as Event from '../shared/loggingEvents.ts';
+import NetworkSettings, { NetworkSettingsProvider } from '../networkSettings.ts';
+import { getBufferIntegrityHash } from '../packageManager/isValidDownload.ts';
+import { EventType } from '../shared/eventType.ts';
 
 interface PackageJSONFile {
     runtimeDependencies: Package[];

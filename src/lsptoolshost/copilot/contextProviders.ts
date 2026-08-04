@@ -10,9 +10,9 @@ import {
 } from '@github/copilot-language-server';
 import * as vscode from 'vscode';
 import * as lsp from 'vscode-languageclient';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { CSharpExtensionId } from '../../constants/csharpExtensionId.js';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { CSharpExtensionId } from '../../constants/csharpExtensionId.ts';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit.ts';
 
 type ActiveExperiments = { [name: string]: string | number | boolean | string[] };
 

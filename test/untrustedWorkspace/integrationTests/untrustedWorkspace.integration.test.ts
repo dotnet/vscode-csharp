@@ -5,7 +5,7 @@
 
 import { describe, expect, jest, test } from '@jest/globals';
 import * as vscode from 'vscode';
-import { CSharpExtensionExports, LimitedExtensionExports } from '../../../src/csharpExtensionExports.js';
+import { CSharpExtensionExports, LimitedExtensionExports } from '../../../src/csharpExtensionExports.ts';
 
 describe(`Untrusted Workspace`, () => {
     test(`Limited activation in untrusted workspace`, async () => {

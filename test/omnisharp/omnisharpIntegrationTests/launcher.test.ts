@@ -10,8 +10,8 @@ import {
     resourcesToLaunchTargets,
     vsls,
     vslsTarget,
-} from '../../../src/omnisharp/launcher.js';
-import { LaunchTargetKind } from '../../../src/shared/launchTarget.js';
+} from '../../../src/omnisharp/launcher.ts';
+import { LaunchTargetKind } from '../../../src/shared/launchTarget.ts';
 
 describe(`launcher:`, () => {
     const workspaceFolders: vscode.WorkspaceFolder[] = [{ uri: vscode.Uri.parse('/'), name: 'root', index: 0 }];

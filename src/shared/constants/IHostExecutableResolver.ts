@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { HostExecutableInformation } from './hostExecutableInformation.js';
+import { HostExecutableInformation } from './hostExecutableInformation.ts';
 
 export interface IHostExecutableResolver {
     getHostExecutableInfo(): Promise<HostExecutableInformation>;

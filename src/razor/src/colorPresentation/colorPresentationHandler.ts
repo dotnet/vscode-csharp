@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { convertTextEditToSerializable, SerializableTextEdit } from '../rpc/serializableTextEdit.js';
-import { ColorPresentationContext } from './colorPresentationContext.js';
-import { SerializableColorPresentation } from './serializableColorPresentation.js';
-import { SerializableColorPresentationParams } from './serializableColorPresentationParams.js';
+import { convertTextEditToSerializable, SerializableTextEdit } from '../rpc/serializableTextEdit.ts';
+import { ColorPresentationContext } from './colorPresentationContext.ts';
+import { SerializableColorPresentation } from './serializableColorPresentation.ts';
+import { SerializableColorPresentationParams } from './serializableColorPresentationParams.ts';
 
 export class ColorPresentationHandler {
     constructor() {}

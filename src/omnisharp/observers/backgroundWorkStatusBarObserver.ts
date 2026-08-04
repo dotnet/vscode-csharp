@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver.js';
-import { BaseEvent } from '../../shared/loggingEvents.js';
-import { OmnisharpBackgroundDiagnosticStatus } from '../omnisharpLoggingEvents.js';
-import { EventType } from '../../shared/eventType.js';
-import { BackgroundDiagnosticStatus } from '../protocol.js';
+import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver.ts';
+import { BaseEvent } from '../../shared/loggingEvents.ts';
+import { OmnisharpBackgroundDiagnosticStatus } from '../omnisharpLoggingEvents.ts';
+import { EventType } from '../../shared/eventType.ts';
+import { BackgroundDiagnosticStatus } from '../protocol.ts';
 
 export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {

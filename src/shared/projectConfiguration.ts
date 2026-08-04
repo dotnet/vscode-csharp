@@ -5,9 +5,9 @@
 
 import * as crypto from 'crypto';
 import nodeMachineId from 'node-machine-id';
-import { PlatformInformation } from './platform.js';
-import { ITelemetryReporter, getTelemetryProps } from './telemetryReporter.js';
-import { DotnetInfo } from './utils/dotnetInfo.js';
+import { PlatformInformation } from './platform.ts';
+import { ITelemetryReporter, getTelemetryProps } from './telemetryReporter.ts';
+import { DotnetInfo } from './utils/dotnetInfo.ts';
 
 export interface ProjectConfigurationMessage {
     ProjectId: string;

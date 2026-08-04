@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { CancellationToken } from 'vscode-languageclient';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
 import * as vscode from 'vscode';
 
 interface IBuildResultDiagnostics {

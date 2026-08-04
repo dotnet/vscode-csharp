@@ -30,6 +30,7 @@ export const baseProjectConfig = {
     ...(useESM
         ? {
               moduleNameMapper: {
+                  // TypeScript rewrites source .ts specifiers to .js before Jest resolves the source module.
                   '^(\\.{1,2}/.*)\\.js$': '$1',
               },
           }
@@ -41,6 +42,7 @@ export const baseIntegrationProjectConfig = {
     ...createDefaultPreset({ tsconfig: jestTsconfigPath }),
     ...commonProjectConfig,
     moduleNameMapper: {
+        // TypeScript rewrites source .ts specifiers to .js before Jest resolves the source module.
         '^(\\.{1,2}/.*)\\.js$': '$1',
     },
 };

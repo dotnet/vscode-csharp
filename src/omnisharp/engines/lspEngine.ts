@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as protocol from '../protocol.js';
-import { CancellationToken } from '../../vscodeAdapter.js';
-import { configure } from '../launcher.js';
-import { LaunchTarget } from '../../shared/launchTarget.js';
+import * as protocol from '../protocol.ts';
+import { CancellationToken } from '../../vscodeAdapter.ts';
+import { configure } from '../launcher.ts';
+import { LaunchTarget } from '../../shared/launchTarget.ts';
 import { EventEmitter } from 'events';
 import { setTimeout } from 'timers';
-import * as ObservableEvents from '../omnisharpLoggingEvents.js';
-import { EventStream } from '../../eventStream.js';
-import CompositeDisposable from '../../compositeDisposable.js';
-import Disposable from '../../disposable.js';
+import * as ObservableEvents from '../omnisharpLoggingEvents.ts';
+import { EventStream } from '../../eventStream.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import Disposable from '../../disposable.ts';
 import { ExtensionContext, CancellationTokenSource, LogOutputChannel, Location, CodeLens, Uri } from 'vscode';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
-import { Events, OmniSharpServer } from '../server.js';
-import { IEngine } from './IEngine.js';
-import { PlatformInformation } from '../../shared/platform.js';
-import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.js';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import { Events, OmniSharpServer } from '../server.ts';
+import { IEngine } from './IEngine.ts';
+import { PlatformInformation } from '../../shared/platform.ts';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.ts';
 import {
     CallHierarchyPrepareRequest,
     Command,
@@ -38,8 +38,8 @@ import {
     TypeHierarchyPrepareRequest,
 } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
-import { Advisor } from '../features/diagnosticsProvider.js';
-import dotnetTest from '../features/dotnetTest.js';
+import { Advisor } from '../features/diagnosticsProvider.ts';
+import dotnetTest from '../features/dotnetTest.ts';
 
 export class LspEngine implements IEngine {
     client: LanguageClient | undefined;

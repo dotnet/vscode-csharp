@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { addAssetsIfNecessary, generateAssets } from '../../shared/assets.js';
-import { DotnetWorkspaceConfigurationProvider } from '../../shared/workspaceConfigurationProvider.js';
-import { IWorkspaceDebugInformationProvider } from '../../shared/IWorkspaceDebugInformationProvider.js';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { RoslynWorkspaceDebugInformationProvider } from '../debugger/roslynWorkspaceDebugConfigurationProvider.js';
-import { PlatformInformation } from '../../shared/platform.js';
-import { DotnetConfigurationResolver } from '../../shared/dotnetConfigurationProvider.js';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit.js';
-import { RoslynLanguageServerEvents, ServerState } from '../server/languageServerEvents.js';
+import { addAssetsIfNecessary, generateAssets } from '../../shared/assets.ts';
+import { DotnetWorkspaceConfigurationProvider } from '../../shared/workspaceConfigurationProvider.ts';
+import { IWorkspaceDebugInformationProvider } from '../../shared/IWorkspaceDebugInformationProvider.ts';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { RoslynWorkspaceDebugInformationProvider } from '../debugger/roslynWorkspaceDebugConfigurationProvider.ts';
+import { PlatformInformation } from '../../shared/platform.ts';
+import { DotnetConfigurationResolver } from '../../shared/dotnetConfigurationProvider.ts';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit.ts';
+import { RoslynLanguageServerEvents, ServerState } from '../server/languageServerEvents.ts';
 
 export function registerDebugger(
     context: vscode.ExtensionContext,

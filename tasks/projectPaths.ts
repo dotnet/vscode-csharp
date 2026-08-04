@@ -5,8 +5,8 @@
 
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { commandLineOptions } from './commandLineArguments.js';
-import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents.js';
+import { commandLineOptions } from './commandLineArguments.ts';
+import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents.ts';
 
 export const rootPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 

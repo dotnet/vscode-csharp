@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { LanguageServerOptions } from '../../shared/options.js';
+import { LanguageServerOptions } from '../../shared/options.ts';
 
 interface ComponentInfo {
     defaultFolderName: string;

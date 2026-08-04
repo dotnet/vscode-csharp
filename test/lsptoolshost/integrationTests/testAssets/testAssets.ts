@@ -6,8 +6,8 @@
 import fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import spawnGit from './spawnGit.js';
-import { execChildProcess } from '../../../../src/common.js';
+import spawnGit from './spawnGit.ts';
+import { execChildProcess } from '../../../../src/common.ts';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {

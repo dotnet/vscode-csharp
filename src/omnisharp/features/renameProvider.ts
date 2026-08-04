@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider.js';
-import * as protocol from '../protocol.js';
-import * as serverUtils from '../utils.js';
-import { createRequest } from '../typeConversion.js';
+import AbstractSupport from './abstractProvider.ts';
+import * as protocol from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
+import { createRequest } from '../typeConversion.ts';
 import { RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range } from 'vscode';
 
 export default class OmniSharpRenameProvider extends AbstractSupport implements RenameProvider {

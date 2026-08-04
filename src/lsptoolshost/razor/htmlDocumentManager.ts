@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { PlatformInformation } from '../../shared/platform.js';
-import { getUriPath } from '../../razor/src/uriPaths.js';
-import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider.js';
-import { HtmlDocument } from './htmlDocument.js';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel.js';
+import { PlatformInformation } from '../../shared/platform.ts';
+import { getUriPath } from '../../razor/src/uriPaths.ts';
+import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider.ts';
+import { HtmlDocument } from './htmlDocument.ts';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel.ts';
 import { RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
-import { UriConverter } from '../utils/uriConverter.js';
+import { UriConverter } from '../utils/uriConverter.ts';
 
 const virtualHtmlSuffix = '__virtual.html';
 

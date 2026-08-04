@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider.js';
-import * as protocol from '../protocol.js';
-import * as serverUtils from '../utils.js';
-import { createRequest, toLocation, toLocationFromUri } from '../typeConversion.js';
+import AbstractSupport from './abstractProvider.ts';
+import * as protocol from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
+import { createRequest, toLocation, toLocationFromUri } from '../typeConversion.ts';
 import { ReferenceProvider, Location, TextDocument, CancellationToken, Position } from 'vscode';
-import { OmniSharpServer } from '../server.js';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
-import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider.js';
+import { OmniSharpServer } from '../server.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider.ts';
 
 export default class OmniSharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
     public constructor(

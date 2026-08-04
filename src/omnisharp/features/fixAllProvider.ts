@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as serverUtils from '../utils.js';
-import * as protocol from '../protocol.js';
-import { OmniSharpServer } from '../server.js';
-import { FixAllScope, FixAllItem } from '../protocol.js';
-import CompositeDisposable from '../../compositeDisposable.js';
-import AbstractProvider from './abstractProvider.js';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
-import { buildEditForResponse } from '../fileOperationsResponseEditBuilder.js';
-import { showWarningMessage } from '../../shared/observers/utils/showMessage.js';
+import * as serverUtils from '../utils.ts';
+import * as protocol from '../protocol.ts';
+import { OmniSharpServer } from '../server.ts';
+import { FixAllScope, FixAllItem } from '../protocol.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import AbstractProvider from './abstractProvider.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import { buildEditForResponse } from '../fileOperationsResponseEditBuilder.ts';
+import { showWarningMessage } from '../../shared/observers/utils/showMessage.ts';
 import { CancellationToken } from 'vscode-languageclient';
 
 export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {

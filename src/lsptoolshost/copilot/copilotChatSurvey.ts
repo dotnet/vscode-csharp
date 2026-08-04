@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import type { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { LanguageServerEvents, ServerState } from '../server/languageServerEvents.js';
-import { ITelemetryReporter } from '../../shared/telemetryReporter.js';
-import { TelemetryEventNames } from '../../shared/telemetryEventNames.js';
+import type { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { LanguageServerEvents, ServerState } from '../server/languageServerEvents.ts';
+import { ITelemetryReporter } from '../../shared/telemetryReporter.ts';
+import { TelemetryEventNames } from '../../shared/telemetryEventNames.ts';
 
 // Stored under separate keys so a snooze write can never overwrite a terminal "shown"
 // value set in another window (globalState.update replaces the whole value for a key).

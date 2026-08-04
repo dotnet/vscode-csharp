@@ -3,6 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractProvider from './abstractProvider.js';
+import AbstractProvider from './abstractProvider.ts';
 
 export class FixAll extends AbstractProvider {}
