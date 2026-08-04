@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import oniguruma from 'vscode-oniguruma';
 import vscodeTextmate from 'vscode-textmate';
 import type { IGrammar, IRawGrammar, ITokenizeLineResult } from 'vscode-textmate';
-import { ITokenizedContent } from './ITokenizedContent';
+import { ITokenizedContent } from './ITokenizedContent.ts';
 
 const { INITIAL, parseRawGrammar, Registry } = vscodeTextmate;
 let razorGrammarCache: IGrammar | undefined;

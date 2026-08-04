@@ -21,8 +21,8 @@ jest.unstable_mockModule('vscode-languageclient', () => ({
     State: { Running: 2 },
 }));
 
-const { RoslynLanguageClient } = await import('../../../src/lsptoolshost/server/roslynLanguageClient');
-const { TelemetryEventNames } = await import('../../../src/shared/telemetryEventNames');
+const { RoslynLanguageClient } = await import('../../../src/lsptoolshost/server/roslynLanguageClient.ts');
+const { TelemetryEventNames } = await import('../../../src/shared/telemetryEventNames.ts');
 
 describe('RoslynLanguageClient', () => {
     test('shows one crash notification and emits one telemetry event per crash', () => {

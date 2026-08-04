@@ -6,7 +6,7 @@
 import { describe, test, expect } from '@jest/globals';
 import * as path from 'path';
 
-import { isSubfolderOf, safeLength, sum } from '../../../src/common';
+import { isSubfolderOf, safeLength, sum } from '../../../src/common.ts';
 
 describe('Common', () => {
     describe('safeLength', () => {

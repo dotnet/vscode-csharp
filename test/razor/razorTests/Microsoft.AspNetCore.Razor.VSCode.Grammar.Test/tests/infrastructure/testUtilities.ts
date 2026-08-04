@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { expect } from '@jest/globals';
-import { createSnapshot } from './snapshotFactory';
-import { tokenize } from './tokenizedContentProvider';
+import { createSnapshot } from './snapshotFactory.ts';
+import { tokenize } from './tokenizedContentProvider.ts';
 
 export async function assertMatchesSnapshot(content: string) {
     const tokenizedContent = await tokenize(content);

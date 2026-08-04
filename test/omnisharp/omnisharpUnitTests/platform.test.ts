@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { LinuxDistribution } from '../../../src/shared/platform';
+import { LinuxDistribution } from '../../../src/shared/platform.ts';
 
 describe('Platform', () => {
     test('Retrieve correct information for Ubuntu 14.04', () => {

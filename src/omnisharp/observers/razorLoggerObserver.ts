@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
-import { RazorPluginPathSpecified, RazorPluginPathDoesNotExist } from '../omnisharpLoggingEvents';
-import { EventType } from '../../shared/eventType';
-import { BaseEvent } from '../../shared/loggingEvents';
+import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.ts';
+import { RazorPluginPathSpecified, RazorPluginPathDoesNotExist } from '../omnisharpLoggingEvents.ts';
+import { EventType } from '../../shared/eventType.ts';
+import { BaseEvent } from '../../shared/loggingEvents.ts';
 
 export class RazorLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {

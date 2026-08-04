@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
@@ -13,7 +13,7 @@ import {
     openFileInWorkspaceAsync,
     sleep,
     sortLocations,
-} from './integrationHelpers';
+} from './integrationHelpers.ts';
 import { beforeAll, beforeEach, afterAll, test, expect, afterEach, describe } from '@jest/globals';
 
 describe(`Source Generator Tests`, () => {

@@ -6,8 +6,8 @@
 import { expect, test, beforeAll, afterAll, describe, afterEach, beforeEach } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers.ts';
 
 describe(`Document Symbol Tests`, () => {
     let fileUri: vscode.Uri;

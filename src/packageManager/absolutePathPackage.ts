@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from './package';
-import { IPackage } from './IPackage';
-import { AbsolutePath } from './absolutePath';
+import { Package } from './package.ts';
+import { IPackage } from './IPackage.ts';
+import { AbsolutePath } from './absolutePath.ts';
 
 export class AbsolutePathPackage implements IPackage {
     constructor(

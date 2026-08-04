@@ -5,10 +5,10 @@
 
 import * as vscode from 'vscode';
 import { basename } from 'path';
-import { BaseEvent } from '../../shared/loggingEvents';
-import { WorkspaceInformationUpdated } from '../omnisharpLoggingEvents';
-import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver';
-import { EventType } from '../../shared/eventType';
+import { BaseEvent } from '../../shared/loggingEvents.ts';
+import { WorkspaceInformationUpdated } from '../omnisharpLoggingEvents.ts';
+import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver.ts';
+import { EventType } from '../../shared/eventType.ts';
 
 export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {

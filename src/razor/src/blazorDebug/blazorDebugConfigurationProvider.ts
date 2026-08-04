@@ -9,19 +9,19 @@ import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
 import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browsers';
-import { ONLY_JS_DEBUG_NAME, MANAGED_DEBUG_NAME, JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
-import { isValidEvent, onDidTerminateDebugSession } from './terminateDebugHandler';
+import { ONLY_JS_DEBUG_NAME, MANAGED_DEBUG_NAME, JS_DEBUG_NAME, SERVER_APP_NAME } from './constants.ts';
+import { isValidEvent, onDidTerminateDebugSession } from './terminateDebugHandler.ts';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { getExtensionPath } from '../../../common';
-import { getCSharpDevKit } from '../../../utils/getCSharpDevKit';
-import { CSharpExtensionId } from '../../../constants/csharpExtensionId';
-import { DotNetRuntimeVersion } from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionResolver';
+import { getExtensionPath } from '../../../common.ts';
+import { getCSharpDevKit } from '../../../utils/getCSharpDevKit.ts';
+import { CSharpExtensionId } from '../../../constants/csharpExtensionId.ts';
+import { DotNetRuntimeVersion } from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionResolver.ts';
 import {
     IDotnetAcquireContext,
     IDotnetAcquireResult,
     IDotnetFindPathContext,
-} from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionApi';
+} from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionApi.ts';
 import { EventEmitter } from 'events';
 import {
     Formatters,
@@ -59,7 +59,7 @@ const targetFrameworkServiceDescriptor: ServiceRpcDescriptor = Object.freeze(
     )
 );
 
-import { showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage';
+import { showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage.ts';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     private static readonly autoDetectUserNotice: string = vscode.l10n.t(

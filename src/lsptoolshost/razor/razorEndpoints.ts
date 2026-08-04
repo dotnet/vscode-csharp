@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel.ts';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
 import {
     ColorPresentationRequest,
     CompletionRequest,
@@ -29,21 +29,21 @@ import {
     SignatureHelp,
     SignatureHelpRequest,
 } from 'vscode-languageclient';
-import { HtmlUpdateParameters } from './htmlUpdateParameters';
-import { UriConverter } from '../utils/uriConverter';
-import { PlatformInformation } from '../../shared/platform';
-import { HtmlDocumentManager } from './htmlDocumentManager';
-import { DocumentColorHandler } from '../../razor/src/documentColor/documentColorHandler';
-import { ColorPresentationHandler } from '../../razor/src/colorPresentation/colorPresentationHandler';
-import { convertRangeToSerializable } from '../../razor/src/rpc/serializableRange';
-import { FoldingRangeHandler } from '../../razor/src/folding/foldingRangeHandler';
-import { CompletionHandler } from '../../razor/src/completion/completionHandler';
-import { FormattingHandler } from '../../razor/src/formatting/formattingHandler';
-import { HtmlDocument } from './htmlDocument';
-import { HtmlForwardedRequest } from './htmlForwardedRequest';
-import { BlazorDebugConfigurationProvider } from '../../razor/src/blazorDebug/blazorDebugConfigurationProvider';
-import { ShowGeneratedDocumentCommand } from './showGeneratedDocumentCommand';
-import { RazorLanguageConfiguration } from '../../razor/src/razorLanguageConfiguration';
+import { HtmlUpdateParameters } from './htmlUpdateParameters.ts';
+import { UriConverter } from '../utils/uriConverter.ts';
+import { PlatformInformation } from '../../shared/platform.ts';
+import { HtmlDocumentManager } from './htmlDocumentManager.ts';
+import { DocumentColorHandler } from '../../razor/src/documentColor/documentColorHandler.ts';
+import { ColorPresentationHandler } from '../../razor/src/colorPresentation/colorPresentationHandler.ts';
+import { convertRangeToSerializable } from '../../razor/src/rpc/serializableRange.ts';
+import { FoldingRangeHandler } from '../../razor/src/folding/foldingRangeHandler.ts';
+import { CompletionHandler } from '../../razor/src/completion/completionHandler.ts';
+import { FormattingHandler } from '../../razor/src/formatting/formattingHandler.ts';
+import { HtmlDocument } from './htmlDocument.ts';
+import { HtmlForwardedRequest } from './htmlForwardedRequest.ts';
+import { BlazorDebugConfigurationProvider } from '../../razor/src/blazorDebug/blazorDebugConfigurationProvider.ts';
+import { ShowGeneratedDocumentCommand } from './showGeneratedDocumentCommand.ts';
+import { RazorLanguageConfiguration } from '../../razor/src/razorLanguageConfiguration.ts';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,

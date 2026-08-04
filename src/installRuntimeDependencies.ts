@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from './shared/platform';
-import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './shared/loggingEvents';
-import { EventStream } from './eventStream';
-import { getRuntimeDependenciesPackages } from './tools/runtimeDependencyPackageUtils';
-import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';
-import { DependencyInstallationStatus, IInstallDependencies } from './packageManager/IInstallDependencies';
-import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
+import { PlatformInformation } from './shared/platform.ts';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './shared/loggingEvents.ts';
+import { EventStream } from './eventStream.ts';
+import { getRuntimeDependenciesPackages } from './tools/runtimeDependencyPackageUtils.ts';
+import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall.ts';
+import { DependencyInstallationStatus, IInstallDependencies } from './packageManager/IInstallDependencies.ts';
+import { AbsolutePathPackage } from './packageManager/absolutePathPackage.ts';
 
 export async function installRuntimeDependencies(
     packageJSON: any,

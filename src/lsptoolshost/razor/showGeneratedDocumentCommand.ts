@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RazorLanguage } from '../../razor/src/razorLanguage';
-import { getUriPath } from '../../razor/src/uriPaths';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { DocumentContentsRequest } from './documentContentsRequest';
+import { RazorLanguage } from '../../razor/src/razorLanguage.ts';
+import { getUriPath } from '../../razor/src/uriPaths.ts';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { DocumentContentsRequest } from './documentContentsRequest.ts';
 import { CancellationToken, RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
-import { UriConverter } from '../utils/uriConverter';
-import { GeneratedDocumentKind } from './generatedDocumentKind';
+import { UriConverter } from '../utils/uriConverter.ts';
+import { GeneratedDocumentKind } from './generatedDocumentKind.ts';
 
 export class ShowGeneratedDocumentCommand {
     private static requestType = new RequestType<DocumentContentsRequest, string, void>(

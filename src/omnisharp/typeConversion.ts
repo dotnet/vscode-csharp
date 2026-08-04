@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as protocol from './protocol';
+import * as protocol from './protocol.ts';
 import * as vscode from 'vscode';
 
 export function toLocation(location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {

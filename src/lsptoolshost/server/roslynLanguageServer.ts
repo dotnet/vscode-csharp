@@ -23,37 +23,37 @@ import {
     Trace,
 } from 'vscode-languageclient';
 import { Executable, TransportKind } from 'vscode-languageclient/node';
-import { PlatformInformation } from '../../shared/platform';
-import { readConfigurations } from '../options/configurationMiddleware';
-import * as RoslynProtocol from './roslynProtocol';
-import { CSharpDevKitExports } from '../../csharpDevKitExports';
-import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
-import { ITelemetryReporterWithLevel } from '../../shared/telemetryReporter';
-import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { PlatformInformation } from '../../shared/platform.ts';
+import { readConfigurations } from '../options/configurationMiddleware.ts';
+import * as RoslynProtocol from './roslynProtocol.ts';
+import { CSharpDevKitExports } from '../../csharpDevKitExports.ts';
+import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider.ts';
+import { ITelemetryReporterWithLevel } from '../../shared/telemetryReporter.ts';
+import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit.ts';
 
 import { randomUUID } from 'crypto';
-import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import { RoslynLanguageClient } from './roslynLanguageClient';
-import { provideDiagnostics, provideWorkspaceDiagnostics } from '../diagnostics/diagnosticMiddleware';
-import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration';
-import { getDotnetInfo } from '../../shared/utils/getDotnetInfo';
-import { DotnetInfo } from '../../shared/utils/dotnetInfo';
-import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents';
-import { registerShowToastNotification } from '../handlers/showToastNotification';
-import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
-import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
-import { VSTextDocumentIdentifier } from './roslynProtocol';
-import { IDisposable } from '../../disposable';
-import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
-import { getComponentPaths } from '../extensions/builtInComponents';
-import { OnAutoInsertFeature } from '../autoInsert/onAutoInsertFeature';
-import { ProjectContextService } from '../projectContext/projectContextService';
-import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage';
-import { TelemetryEventNames } from '../../shared/telemetryEventNames';
-import { getProfilingEnvVars } from '../logging/profiling';
-import { getServerPath } from '../activate';
-import { UriConverter } from '../utils/uriConverter';
-import { ProjectContextFeature } from '../projectContext/projectContextFeature';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver.ts';
+import { RoslynLanguageClient } from './roslynLanguageClient.ts';
+import { provideDiagnostics, provideWorkspaceDiagnostics } from '../diagnostics/diagnosticMiddleware.ts';
+import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration.ts';
+import { getDotnetInfo } from '../../shared/utils/getDotnetInfo.ts';
+import { DotnetInfo } from '../../shared/utils/dotnetInfo.ts';
+import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents.ts';
+import { registerShowToastNotification } from '../handlers/showToastNotification.ts';
+import { registerOnAutoInsert } from '../autoInsert/onAutoInsert.ts';
+import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options.ts';
+import { VSTextDocumentIdentifier } from './roslynProtocol.ts';
+import { IDisposable } from '../../disposable.ts';
+import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService.ts';
+import { getComponentPaths } from '../extensions/builtInComponents.ts';
+import { OnAutoInsertFeature } from '../autoInsert/onAutoInsertFeature.ts';
+import { ProjectContextService } from '../projectContext/projectContextService.ts';
+import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage.ts';
+import { TelemetryEventNames } from '../../shared/telemetryEventNames.ts';
+import { getProfilingEnvVars } from '../logging/profiling.ts';
+import { getServerPath } from '../activate.ts';
+import { UriConverter } from '../utils/uriConverter.ts';
+import { ProjectContextFeature } from '../projectContext/projectContextFeature.ts';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.

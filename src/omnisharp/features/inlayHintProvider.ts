@@ -2,20 +2,20 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as serverUtils from '../utils';
+import * as serverUtils from '../utils.ts';
 import * as vscode from 'vscode';
-import AbstractProvider from './abstractProvider';
-import { OmniSharpServer } from '../server';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import CompositeDisposable from '../../compositeDisposable';
+import AbstractProvider from './abstractProvider.ts';
+import { OmniSharpServer } from '../server.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
 import {
     InlayHint,
     InlayHintRequest,
     InlayHintResolve as InlayHintResolveRequest,
     LinePositionSpanTextChange,
-} from '../protocol';
-import { fromVSCodeRange, toVSCodePosition, toVSCodeTextEdit } from '../typeConversion';
-import { isVirtualCSharpDocument } from './virtualDocumentTracker';
+} from '../protocol.ts';
+import { fromVSCodeRange, toVSCodePosition, toVSCodeTextEdit } from '../typeConversion.ts';
+import { isVirtualCSharpDocument } from './virtualDocumentTracker.ts';
 
 export default class OmniSharpInlayHintProvider extends AbstractProvider implements vscode.InlayHintsProvider {
     private readonly _onDidChangeInlayHints = new vscode.EventEmitter<void>();

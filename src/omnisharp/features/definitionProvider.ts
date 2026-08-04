@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as serverUtils from '../utils';
+import * as serverUtils from '../utils.ts';
 import {
     CancellationToken,
     TypeDefinitionProvider,
@@ -19,13 +19,13 @@ import {
     MetadataRequest,
     MetadataSource,
     V2,
-} from '../protocol';
-import { createRequest, toRange3, toVscodeLocation } from '../typeConversion';
-import AbstractSupport from './abstractProvider';
-import DefinitionMetadataOrSourceGeneratedDocumentProvider from './definitionMetadataDocumentProvider';
-import { OmniSharpServer } from '../server';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
+} from '../protocol.ts';
+import { createRequest, toRange3, toVscodeLocation } from '../typeConversion.ts';
+import AbstractSupport from './abstractProvider.ts';
+import DefinitionMetadataOrSourceGeneratedDocumentProvider from './definitionMetadataDocumentProvider.ts';
+import { OmniSharpServer } from '../server.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider.ts';
 
 export default class OmniSharpDefinitionProvider
     extends AbstractSupport

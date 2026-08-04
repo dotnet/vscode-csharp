@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { IDisposable } from '../disposable';
+import { IDisposable } from '../disposable.ts';
 
 export interface LanguageMiddleware extends RemapApi {
     language: string;

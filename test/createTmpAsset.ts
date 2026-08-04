@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as tmp from 'tmp';
 import fsExtra from 'fs-extra';
-import { NestedError } from '../src/nestedError';
+import { NestedError } from '../src/nestedError.ts';
 
 export async function CreateTmpFile(): Promise<TmpAsset> {
     const tmpFile = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {

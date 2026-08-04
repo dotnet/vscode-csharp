@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { OmnisharpExtensionExports } from './csharpExtensionExports';
-import { PlatformInformation } from './shared/platform';
+import { OmnisharpExtensionExports } from './csharpExtensionExports.ts';
+import { PlatformInformation } from './shared/platform.ts';
 import { Observable } from 'rxjs';
-import { NetworkSettingsProvider } from './networkSettings';
-import { ITelemetryReporter } from './shared/telemetryReporter';
-import { activateOmniSharpLanguageServer } from './omnisharp/omnisharpLanguageServer';
-import { EventStream } from './eventStream';
-import { razorOptions } from './shared/options';
-import { activateRazorOmniSharpExtension } from './razor/razorOmnisharp';
+import { NetworkSettingsProvider } from './networkSettings.ts';
+import { ITelemetryReporter } from './shared/telemetryReporter.ts';
+import { activateOmniSharpLanguageServer } from './omnisharp/omnisharpLanguageServer.ts';
+import { EventStream } from './eventStream.ts';
+import { razorOptions } from './shared/options.ts';
+import { activateRazorOmniSharpExtension } from './razor/razorOmnisharp.ts';
 
 export function activateOmniSharp(
     context: vscode.ExtensionContext,

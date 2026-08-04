@@ -7,7 +7,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import { fileURLToPath } from 'url';
-import * as util from '../common';
+import * as util from '../common.ts';
 
 const unknown = 'unknown';
 const currentDirectory = fileURLToPath(new URL('.', import.meta.url));

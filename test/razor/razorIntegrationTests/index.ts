@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { runIntegrationTests } from '../../runIntegrationTests.js';
+import { runIntegrationTests } from '../../runIntegrationTests.ts';
 import { jestProjectNames } from '../../jestProjectNames.mjs';
 
 export async function run() {

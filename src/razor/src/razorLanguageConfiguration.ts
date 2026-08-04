@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RazorLanguage } from './razorLanguage';
+import { RazorLanguage } from './razorLanguage.ts';
 
 const VOID_ELEMENTS: string[] = [
     'area',

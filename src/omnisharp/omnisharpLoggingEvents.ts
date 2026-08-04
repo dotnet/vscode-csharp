@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Request } from './requestQueue';
-import * as protocol from './protocol';
-import { LaunchTarget } from '../shared/launchTarget';
-import { EventType } from '../shared/eventType';
-import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
-import { BaseEvent, EventWithMessage } from '../shared/loggingEvents';
+import { Request } from './requestQueue.ts';
+import * as protocol from './protocol.ts';
+import { LaunchTarget } from '../shared/launchTarget.ts';
+import { EventType } from '../shared/eventType.ts';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration.ts';
+import { BaseEvent, EventWithMessage } from '../shared/loggingEvents.ts';
 
 export class TelemetryEvent implements BaseEvent {
     type = EventType.TelemetryEvent;

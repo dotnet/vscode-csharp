@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { workspace, TextDocument, Uri } from 'vscode';
-import { OmniSharpServer } from '../server';
-import * as serverUtils from '../utils';
-import { FileChangeType } from '../protocol';
-import { IDisposable } from '../../disposable';
-import CompositeDisposable from '../../compositeDisposable';
-import { EventStream } from '../../eventStream';
-import { DocumentSynchronizationFailure } from '../omnisharpLoggingEvents';
+import { OmniSharpServer } from '../server.ts';
+import * as serverUtils from '../utils.ts';
+import { FileChangeType } from '../protocol.ts';
+import { IDisposable } from '../../disposable.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import { EventStream } from '../../eventStream.ts';
+import { DocumentSynchronizationFailure } from '../omnisharpLoggingEvents.ts';
 
 async function trackCurrentVirtualDocuments(server: OmniSharpServer, eventStream: EventStream) {
     for (let i = 0; i < workspace.textDocuments.length; i++) {

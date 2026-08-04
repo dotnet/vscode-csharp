@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { getNullChannel } from '../../../fakes';
-import { BaseEvent } from '../../../../src/shared/loggingEvents';
-import DotnetTestChannelObserver from '../../../../src/omnisharp/observers/dotnetTestChannelObserver';
+import { getNullChannel } from '../../../fakes.ts';
+import { BaseEvent } from '../../../../src/shared/loggingEvents.ts';
+import DotnetTestChannelObserver from '../../../../src/omnisharp/observers/dotnetTestChannelObserver.ts';
 import {
     DotNetTestDebugStart,
     DotNetTestRunFailure,
     DotNetTestRunStart,
     DotNetTestsInClassDebugStart,
     DotNetTestsInClassRunStart,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents.ts';
 
 describe('DotnetTestChannelObserver', () => {
     let hasShown: boolean;

@@ -5,9 +5,9 @@
 
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
-import { activateCSharpExtension, describeIfNotGenerator, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { IDisposable } from '../../../src/disposable';
+import { activateCSharpExtension, describeIfNotGenerator, isSlnWithGenerator } from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
+import { IDisposable } from '../../../src/disposable.ts';
 
 describeIfNotGenerator(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
     const virtualScheme = 'virtual';

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
-import { HtmlDocumentManager } from './htmlDocumentManager';
-import { getUriPath } from '../../razor/src/uriPaths';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel.ts';
+import { HtmlDocumentManager } from './htmlDocumentManager.ts';
+import { getUriPath } from '../../razor/src/uriPaths.ts';
 
 export class HtmlDocumentContentProvider implements vscode.TextDocumentContentProvider {
     public static readonly scheme = 'razor-html';

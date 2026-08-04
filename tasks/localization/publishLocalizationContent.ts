@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
 import { Octokit } from '@octokit/rest';
-import { runTask } from '../runTask';
+import { runTask } from '../runTask.ts';
 
 type Options = {
     userName?: string;

@@ -3,7 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ITestAssetWorkspace, TestAssetWorkspace } from '../../../lsptoolshost/integrationTests/testAssets/testAssets';
+import {
+    ITestAssetWorkspace,
+    TestAssetWorkspace,
+} from '../../../lsptoolshost/integrationTests/testAssets/testAssets.ts';
 
 const workspace: ITestAssetWorkspace = {
     description: 'Basic Razor app',
