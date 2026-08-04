@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NestedError } from '../nestedError.js';
-import { IPackage } from './IPackage.js';
+import { NestedError } from '../nestedError';
+import { IPackage } from './IPackage';
 
 export class PackageError extends NestedError {
     // Do not put PII (personally identifiable information) in the 'message' field as it will be logged to telemetry

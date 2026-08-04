@@ -4,27 +4,27 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CSharpExtensionExports } from './csharpExtensionExports.js';
-import { PlatformInformation } from './shared/platform.js';
+import { CSharpExtensionExports } from './csharpExtensionExports';
+import { PlatformInformation } from './shared/platform';
 import { Observable } from 'rxjs';
-import { EventStream } from './eventStream.js';
-import { ITelemetryReporterWithLevel } from './shared/telemetryReporter.js';
-import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer.js';
-import { CSharpDevKitExports } from './csharpDevKitExports.js';
-import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents.js';
-import { activateRoslynLanguageServer, createCaptureActivityLogs } from './lsptoolshost/activate.js';
-import Descriptors from './lsptoolshost/solutionSnapshot/descriptors.js';
-import { getBrokeredServiceContainer } from './lsptoolshost/serviceBroker/brokeredServicesHosting.js';
-import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker.js';
-import { RoslynLanguageServerExport } from './lsptoolshost/extensions/roslynLanguageServerExportChannel.js';
-import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider.js';
-import { languageServerOptions } from './shared/options.js';
-import { csharpDevkitExtensionId } from './utils/getCSharpDevKit.js';
+import { EventStream } from './eventStream';
+import { ITelemetryReporterWithLevel } from './shared/telemetryReporter';
+import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer';
+import { CSharpDevKitExports } from './csharpDevKitExports';
+import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents';
+import { activateRoslynLanguageServer, createCaptureActivityLogs } from './lsptoolshost/activate';
+import Descriptors from './lsptoolshost/solutionSnapshot/descriptors';
+import { getBrokeredServiceContainer } from './lsptoolshost/serviceBroker/brokeredServicesHosting';
+import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
+import { RoslynLanguageServerExport } from './lsptoolshost/extensions/roslynLanguageServerExportChannel';
+import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
+import { languageServerOptions } from './shared/options';
+import { csharpDevkitExtensionId } from './utils/getCSharpDevKit';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
-import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/solutionSnapshotProvider.js';
-import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService.js';
-import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents.js';
-import { ObservableLogOutputChannel } from './lsptoolshost/logging/observableLogOutputChannel.js';
+import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/solutionSnapshotProvider';
+import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService';
+import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
+import { ObservableLogOutputChannel } from './lsptoolshost/logging/observableLogOutputChannel';
 
 export function activateRoslyn(
     context: vscode.ExtensionContext,

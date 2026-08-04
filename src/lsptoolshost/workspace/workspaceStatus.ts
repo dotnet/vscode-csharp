@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServerEvents, ServerState } from '../server/languageServerEvents.js';
-import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors.js';
-import { languageServerOptions } from '../../shared/options.js';
+import { RoslynLanguageServerEvents, ServerState } from '../server/languageServerEvents';
+import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
+import { languageServerOptions } from '../../shared/options';
 
 export class WorkspaceStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServerEvents: RoslynLanguageServerEvents) {

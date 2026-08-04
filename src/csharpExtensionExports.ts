@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Advisor } from './omnisharp/features/diagnosticsProvider.js';
-import { EventStream } from './eventStream.js';
-import TestManager from './omnisharp/features/dotnetTest.js';
+import { Advisor } from './omnisharp/features/diagnosticsProvider';
+import { EventStream } from './eventStream';
+import TestManager from './omnisharp/features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
-import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents.js';
+import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents';
 import { PartialResultParams, ProtocolRequestType, RequestParam, RequestType } from 'vscode-languageclient';
 
 export interface LimitedExtensionExports {

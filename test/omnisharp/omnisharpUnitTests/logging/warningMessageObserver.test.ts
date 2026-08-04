@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { WarningMessageObserver } from '../../../../src/omnisharp/observers/warningMessageObserver.js';
+import { WarningMessageObserver } from '../../../../src/omnisharp/observers/warningMessageObserver';
 import {
     getFakeVsCode,
     getMSBuildDiagnosticsMessage,
     getOmnisharpMSBuildProjectDiagnosticsEvent,
     getOmnisharpServerOnErrorEvent,
-} from '../../../fakes.js';
-import { vscode } from '../../../../src/vscodeAdapter.js';
+} from '../../../fakes';
+import { vscode } from '../../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing';
 import { from as observableFrom, Subject } from 'rxjs';
 import { timeout, map } from 'rxjs/operators';

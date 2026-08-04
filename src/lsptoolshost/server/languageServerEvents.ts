@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { IDisposable } from '../../disposable.js';
+import { IDisposable } from '../../disposable';
 
 export enum ServerState {
     Stopped = 0,

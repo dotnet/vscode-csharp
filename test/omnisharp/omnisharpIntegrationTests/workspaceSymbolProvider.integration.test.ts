@@ -5,8 +5,8 @@
 
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.js';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 describeIfNotRazorOrGenerator(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {

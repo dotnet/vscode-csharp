@@ -5,7 +5,7 @@
 
 import { copyFile, mkdir } from 'fs/promises';
 import path from 'path';
-import { outPath, rootPath } from '../projectPaths.js';
+import { outPath, rootPath } from '../projectPaths';
 
 const outputTestPath = path.join(outPath, 'test');
 await mkdir(outputTestPath, { recursive: true });

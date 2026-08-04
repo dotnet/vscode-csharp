@@ -4,23 +4,23 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from './server/roslynLanguageServer.js';
-import reportIssue from '../shared/reportIssue.js';
-import { getDotnetInfo } from '../shared/utils/getDotnetInfo.js';
-import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver.js';
-import { registerWorkspaceCommands } from './workspace/workspaceCommands.js';
-import { registerServerCommands } from './server/serverCommands.js';
+import { RoslynLanguageServer } from './server/roslynLanguageServer';
+import reportIssue from '../shared/reportIssue';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { registerWorkspaceCommands } from './workspace/workspaceCommands';
+import { registerServerCommands } from './server/serverCommands';
 import {
     changeProjectContext,
     changeProjectContextCommandName,
     changeProjectContextEditor,
     changeProjectContextFileExplorer,
     openAndChangeProjectContext,
-} from './projectContext/projectContextCommands.js';
-import { ITelemetryReporter } from '../shared/telemetryReporter.js';
-import { TelemetryEventNames } from '../shared/telemetryEventNames.js';
-import { registerCollectLogsCommand } from './logging/collectLogs.js';
-import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel.js';
+} from './projectContext/projectContextCommands';
+import { ITelemetryReporter } from '../shared/telemetryReporter';
+import { TelemetryEventNames } from '../shared/telemetryEventNames';
+import { registerCollectLogsCommand } from './logging/collectLogs';
+import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 
 export function registerCommands(
     context: vscode.ExtensionContext,

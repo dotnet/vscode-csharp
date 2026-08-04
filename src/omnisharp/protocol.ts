@@ -9,7 +9,7 @@ import {
     findNetCoreTargetFramework,
     findNetFrameworkTargetFramework,
     findNetStandardTargetFramework,
-} from '../shared/utils.js';
+} from '../shared/utils';
 
 export namespace Requests {
     export const AddToProject = '/addtoproject';

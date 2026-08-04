@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { testIntegrationCSharp } from './testTasks.js';
-import { runTask } from '../runTask.js';
+import { testIntegrationCSharp } from './testTasks';
+import { runTask } from '../runTask';
 
 runTask(testIntegrationCSharp);

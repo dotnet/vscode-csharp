@@ -6,10 +6,10 @@
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.js';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
-import { Advisor } from '../../../src/omnisharp/features/diagnosticsProvider.js';
+import { Advisor } from '../../../src/omnisharp/features/diagnosticsProvider';
 
 function setLimit(to: number | null) {
     const csharpConfig = vscode.workspace.getConfiguration('csharp');

@@ -6,10 +6,10 @@
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import OmniSharpDefinitionProvider from '../../../src/omnisharp/features/definitionProvider.js';
-import { activateCSharpExtension, describeIfGenerator, restartOmniSharpServer } from './integrationHelpers.js';
-import { assertWithPoll, sleep } from './poll.js';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+import OmniSharpDefinitionProvider from '../../../src/omnisharp/features/definitionProvider';
+import { activateCSharpExtension, describeIfGenerator, restartOmniSharpServer } from './integrationHelpers';
+import { assertWithPoll, sleep } from './poll';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 describeIfGenerator(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;

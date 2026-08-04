@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { createLaunchTargetForSolution } from '../../shared/launchTarget.js';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { createLaunchTargetForSolution } from '../../shared/launchTarget';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 /**
  * Register commands that drive the workspace.

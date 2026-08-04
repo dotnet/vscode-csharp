@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from './vscodeAdapter.js';
+import { vscode } from './vscodeAdapter';
 
 export default class NetworkSettings {
     constructor(

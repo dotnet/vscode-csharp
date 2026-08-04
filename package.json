@@ -65,9 +65,10 @@
     }
   ],
   "scripts": {
-    "compile": "tsc -p tsconfig.json && npm run compile:copyEsmSupportFiles && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
-    "compileDev": "tsc -p tsconfig.json && npm run compile:copyEsmSupportFiles && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
+    "compile": "tsc -p tsconfig.json && npm run compile:integrationTests && npm run compile:copyEsmSupportFiles && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
+    "compileDev": "tsc -p tsconfig.json && npm run compile:integrationTests && npm run compile:copyEsmSupportFiles && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compile:copyEsmSupportFiles": "node --import tsx tasks/compilation/copyEsmSupportFiles.ts",
+    "compile:integrationTests": "tsc -p tsconfig.integration.json",
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
     "createTags": "npx tsx tasks/tags/createTags.ts",
     "fixLocUrls": "npx tsx tasks/debugger/fixLocUrls.ts",

@@ -25,7 +25,7 @@ import {
     URI,
     WorkDoneProgressParams,
 } from 'vscode-languageclient';
-import { ProjectConfigurationMessage } from '../../shared/projectConfiguration.js';
+import { ProjectConfigurationMessage } from '../../shared/projectConfiguration';
 
 export interface VSProjectContextList {
     _vs_projectContexts: VSProjectContext[];

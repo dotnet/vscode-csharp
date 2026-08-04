@@ -3,21 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageError } from './packageError.js';
-import { NestedError } from '../nestedError.js';
-import { DownloadFile } from './fileDownloader.js';
-import { InstallZip } from './zipInstaller.js';
-import { EventStream } from '../eventStream.js';
-import { NetworkSettingsProvider } from '../networkSettings.js';
-import { AbsolutePathPackage } from './absolutePathPackage.js';
-import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from '../common.js';
-import { InstallationFailure, IntegrityCheckFailure } from '../shared/loggingEvents.js';
+import { PackageError } from './packageError';
+import { NestedError } from '../nestedError';
+import { DownloadFile } from './fileDownloader';
+import { InstallZip } from './zipInstaller';
+import { EventStream } from '../eventStream';
+import { NetworkSettingsProvider } from '../networkSettings';
+import { AbsolutePathPackage } from './absolutePathPackage';
+import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from '../common';
+import { InstallationFailure, IntegrityCheckFailure } from '../shared/loggingEvents';
 import fsExtra from 'fs-extra';
-import { PackageInstallStart } from '../shared/loggingEvents.js';
-import { DownloadValidator } from './isValidDownload.js';
+import { PackageInstallStart } from '../shared/loggingEvents';
+import { DownloadValidator } from './isValidDownload';
 import { CancellationToken } from 'vscode';
-import { ITelemetryReporter } from '../shared/telemetryReporter.js';
-import { DependencyInstallationStatus } from './IInstallDependencies.js';
+import { ITelemetryReporter } from '../shared/telemetryReporter';
+import { DependencyInstallationStatus } from './IInstallDependencies';
 
 export async function downloadAndInstallPackages(
     packages: AbsolutePathPackage[],

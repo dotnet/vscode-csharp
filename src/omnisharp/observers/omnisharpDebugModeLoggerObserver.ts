@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.js';
+import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
 import * as os from 'os';
-import { BaseEvent } from '../../shared/loggingEvents.js';
+import { BaseEvent } from '../../shared/loggingEvents';
 import {
     OmnisharpRequestMessage,
     OmnisharpServerEnqueueRequest,
@@ -14,8 +14,8 @@ import {
     OmnisharpServerVerboseMessage,
     OmnisharpServerProcessRequestStart,
     OmnisharpEventPacketReceived,
-} from '../omnisharpLoggingEvents.js';
-import { EventType } from '../../shared/eventType.js';
+} from '../omnisharpLoggingEvents';
+import { EventType } from '../../shared/eventType';
 
 export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import minimist from 'minimist';
-import { addChangelogSection, getNextReleaseVersion, readVersionJson, writeVersionJson } from './snapTasks.js';
-import { runTask } from '../runTask.js';
+import { addChangelogSection, getNextReleaseVersion, readVersionJson, writeVersionJson } from './snapTasks';
+import { runTask } from '../runTask';
 
 runTask(incrementVersion);
 

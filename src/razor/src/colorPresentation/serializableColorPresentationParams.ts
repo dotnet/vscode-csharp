@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { SerializableRange } from '../rpc/serializableRange.js';
-import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocumentIdentifier.js';
+import { SerializableRange } from '../rpc/serializableRange';
+import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocumentIdentifier';
 
 export interface SerializableColorPresentationParams {
     textDocument: SerializableTextDocumentIdentifier;

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { LogObserver } from '../../../src/lsptoolshost/logging/observableLogOutputChannel.js';
+import { LogObserver } from '../../../src/lsptoolshost/logging/observableLogOutputChannel';
 
 describe('captureActivityLogs', () => {
     describe('LogObserver', () => {

@@ -5,9 +5,9 @@
 
 import * as semver from 'semver';
 import { join } from 'path';
-import { execChildProcess } from '../../common.js';
-import { CoreClrDebugUtil } from '../../coreclrDebug/util.js';
-import { DotnetInfo, RuntimeInfo } from './dotnetInfo.js';
+import { execChildProcess } from '../../common';
+import { CoreClrDebugUtil } from '../../coreclrDebug/util';
+import { DotnetInfo, RuntimeInfo } from './dotnetInfo';
 import { EOL } from 'os';
 
 // This function calls `dotnet --info` and returns the result as a DotnetInfo object.

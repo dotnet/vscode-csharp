@@ -5,10 +5,10 @@
 
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { ActionOption, showWarningMessage } from '../../shared/observers/utils/showMessage.js';
-import { languageServerOptions } from '../../shared/options.js';
-import { ServerState } from '../server/languageServerEvents.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { ActionOption, showWarningMessage } from '../../shared/observers/utils/showMessage';
+import { languageServerOptions } from '../../shared/options';
+import { ServerState } from '../server/languageServerEvents';
 
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();

@@ -4,14 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageClient } from '../server/roslynLanguageClient.js';
+import { RoslynLanguageClient } from '../server/roslynLanguageClient';
 import { MessageType } from 'vscode-languageclient';
-import { ShowToastNotification } from '../server/roslynProtocol.js';
-import {
-    showErrorMessage,
-    showInformationMessage,
-    showWarningMessage,
-} from '../../shared/observers/utils/showMessage.js';
+import { ShowToastNotification } from '../server/roslynProtocol';
+import { showErrorMessage, showInformationMessage, showWarningMessage } from '../../shared/observers/utils/showMessage';
 
 export function registerShowToastNotification(client: RoslynLanguageClient) {
     client.onNotification(ShowToastNotification.type, async (notification) => {

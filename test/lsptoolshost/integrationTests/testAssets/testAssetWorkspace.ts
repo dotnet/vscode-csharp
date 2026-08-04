@@ -6,13 +6,13 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { ITestAssetWorkspace, TestAssetWorkspace } from './testAssets.js';
+import { ITestAssetWorkspace, TestAssetWorkspace } from './testAssets';
 
-import singleCsproj from './singleCsproj.js';
-import slnWithCsproj from './slnWithCsproj.js';
-import slnFilterWithCsproj from './slnFilterWithCsproj.js';
-import RazorApp from './razorApp.js';
-import slnWithGenerator from './slnWithGenerator.js';
+import singleCsproj from './singleCsproj';
+import slnWithCsproj from './slnWithCsproj';
+import slnFilterWithCsproj from './slnFilterWithCsproj';
+import RazorApp from './razorApp';
+import slnWithGenerator from './slnWithGenerator';
 
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     singleCsproj,

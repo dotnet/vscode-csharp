@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { convertTextEditToSerializable, SerializableTextEdit } from '../rpc/serializableTextEdit.js';
-import { SerializableFormattingResponse } from './serializableFormattingResponse.js';
-import { SerializablePosition } from '../rpc/serializablePosition.js';
+import { convertTextEditToSerializable, SerializableTextEdit } from '../rpc/serializableTextEdit';
+import { SerializableFormattingResponse } from './serializableFormattingResponse';
+import { SerializablePosition } from '../rpc/serializablePosition';
 
 export class FormattingHandler {
     private static emptyFormattingResponse = new SerializableFormattingResponse();

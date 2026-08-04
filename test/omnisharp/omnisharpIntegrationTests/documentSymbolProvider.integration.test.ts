@@ -6,8 +6,8 @@
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.js';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 
 describeIfNotRazorOrGenerator(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;

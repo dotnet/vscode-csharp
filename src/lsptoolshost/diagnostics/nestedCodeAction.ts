@@ -5,8 +5,8 @@
 
 import * as vscode from 'vscode';
 import { CodeAction, CodeActionResolveRequest, LSPAny } from 'vscode-languageclient';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { getFixAllResponse } from './fixAllCodeAction.js';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { getFixAllResponse } from './fixAllCodeAction';
 
 export function registerNestedCodeActionCommands(
     context: vscode.ExtensionContext,

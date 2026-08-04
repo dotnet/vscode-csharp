@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { tolerantParse } from '../../../src/json.js';
+import { tolerantParse } from '../../../src/json';
 import { describe, test, expect } from '@jest/globals';
 
 describe('JSON', () => {

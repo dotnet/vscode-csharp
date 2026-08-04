@@ -5,10 +5,10 @@
 
 import * as vscode from 'vscode';
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
-import { AnalysisSetting } from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService.js';
-import { getCode, setDiagnosticSettings, waitForExpectedDiagnostics } from './diagnosticsHelpers.js';
-import { activateCSharpExtension, describeIfCSharp } from './integrationHelpers.js';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { AnalysisSetting } from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService';
+import { getCode, setDiagnosticSettings, waitForExpectedDiagnostics } from './diagnosticsHelpers';
+import { activateCSharpExtension, describeIfCSharp } from './integrationHelpers';
 
 // Restarting the server is required for these tests, but not supported with C# Dev Kit.
 describeIfCSharp(`Workspace Diagnostic Tests`, () => {

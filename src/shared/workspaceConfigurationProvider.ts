@@ -13,12 +13,12 @@ import {
     createAttachConfiguration,
     createFallbackLaunchConfiguration,
     getBuildOperations,
-} from './assets.js';
+} from './assets';
 import { parse } from 'jsonc-parser';
-import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider.js';
-import { PlatformInformation } from './platform.js';
-import { BaseVsDbgConfigurationProvider } from './configurationProvider.js';
-import { showErrorMessage } from './observers/utils/showMessage.js';
+import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider';
+import { PlatformInformation } from './platform';
+import { BaseVsDbgConfigurationProvider } from './configurationProvider';
+import { showErrorMessage } from './observers/utils/showMessage';
 
 /**
  * This class will be used for providing debug configurations given workspace information.

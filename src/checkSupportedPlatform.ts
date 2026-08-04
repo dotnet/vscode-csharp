@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { PlatformInformation } from './shared/platform.js';
-import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage.js';
+import { PlatformInformation } from './shared/platform';
+import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage';
 
 export function checkIsSupportedPlatform(context: vscode.ExtensionContext, platformInfo: PlatformInformation): boolean {
     if (!isSupportedPlatform(platformInfo)) {

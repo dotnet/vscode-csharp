@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as serverUtils from '../utils.js';
+import * as serverUtils from '../utils';
 import {
     CancellationToken,
     Event,
@@ -15,9 +15,9 @@ import {
     window,
     workspace,
 } from 'vscode';
-import { IDisposable } from '../../disposable.js';
-import { SourceGeneratedFileInfo, SourceGeneratedFileResponse, UpdateType } from '../protocol.js';
-import { OmniSharpServer } from '../server.js';
+import { IDisposable } from '../../disposable';
+import { SourceGeneratedFileInfo, SourceGeneratedFileResponse, UpdateType } from '../protocol';
+import { OmniSharpServer } from '../server';
 
 export default class SourceGeneratedDocumentProvider implements TextDocumentContentProvider, IDisposable {
     readonly scheme = 'omnisharp-source-generated';

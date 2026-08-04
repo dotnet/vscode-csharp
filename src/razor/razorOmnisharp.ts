@@ -7,8 +7,8 @@ import * as fs from 'fs';
 import * as RazorOmniSharp from 'microsoft.aspnetcore.razor.vscode';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { EventStream } from '../eventStream.js';
-import { showWarningMessage } from '../shared/observers/utils/showMessage.js';
+import { EventStream } from '../eventStream';
+import { showWarningMessage } from '../shared/observers/utils/showMessage';
 
 export async function activateRazorOmniSharpExtension(
     context: vscode.ExtensionContext,

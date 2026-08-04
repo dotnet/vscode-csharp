@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as protocol from '../protocol.js';
+import * as protocol from '../protocol';
 
 const summaryStartTag = /<summary>/i;
 const summaryEndTag = /<\/summary>/i;

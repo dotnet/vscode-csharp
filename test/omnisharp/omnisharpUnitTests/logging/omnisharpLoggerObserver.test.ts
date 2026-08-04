@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getNullChannel } from '../../../fakes.js';
+import { getNullChannel } from '../../../fakes';
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { OmnisharpLoggerObserver } from '../../../../src/omnisharp/observers/omnisharpLoggerObserver.js';
+import { OmnisharpLoggerObserver } from '../../../../src/omnisharp/observers/omnisharpLoggerObserver';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerOnStdErr,
@@ -15,10 +15,10 @@ import {
     OmnisharpServerOnError,
     OmnisharpFailure,
     OmnisharpEventPacketReceived,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents.js';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 import { OutputChannel } from 'vscode';
-import { PlatformInformation } from '../../../../src/shared/platform.js';
-import { EventWithMessage } from '../../../../src/shared/loggingEvents.js';
+import { PlatformInformation } from '../../../../src/shared/platform';
+import { EventWithMessage } from '../../../../src/shared/loggingEvents';
 
 describe('OmnisharpLoggerObserver', () => {
     let logOutput = '';

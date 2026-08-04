@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from '../shared/platform.js';
-import { AbsolutePathPackage } from '../packageManager/absolutePathPackage.js';
-import { filterPlatformPackages } from '../packageManager/packageFilterer.js';
-import { Package } from '../packageManager/package.js';
+import { PlatformInformation } from '../shared/platform';
+import { AbsolutePathPackage } from '../packageManager/absolutePathPackage';
+import { filterPlatformPackages } from '../packageManager/packageFilterer';
+import { Package } from '../packageManager/package';
 
 export function getRuntimeDependencyPackageWithId(
     packageId: string,

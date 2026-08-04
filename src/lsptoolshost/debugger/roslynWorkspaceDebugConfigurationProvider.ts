@@ -4,24 +4,24 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { mapAsync } from '../../common.js';
+import { mapAsync } from '../../common';
 import {
     IWorkspaceDebugInformationProvider,
     ProjectDebugInformation,
-} from '../../shared/IWorkspaceDebugInformationProvider.js';
+} from '../../shared/IWorkspaceDebugInformationProvider';
 import {
     isBlazorWebAssemblyHosted,
     isBlazorWebAssemblyHostedServer,
     isBlazorWebAssemblyProject,
     isWebProject,
-} from '../../shared/utils.js';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
+} from '../../shared/utils';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import {
     ProjectDebugConfiguration,
     WorkspaceDebugConfigurationParams,
     WorkspaceDebugConfigurationRequest,
-} from '../server/roslynProtocol.js';
-import { UriConverter } from '../utils/uriConverter.js';
+} from '../server/roslynProtocol';
+import { UriConverter } from '../utils/uriConverter';
 
 export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
     constructor(

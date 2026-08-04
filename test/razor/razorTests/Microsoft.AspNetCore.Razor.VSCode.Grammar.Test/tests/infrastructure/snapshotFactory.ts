@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ITokenizedContent } from './ITokenizedContent.js';
+import { ITokenizedContent } from './ITokenizedContent';
 
 export function createSnapshot(tokenizedContent: ITokenizedContent): string {
     const snapshotLines: string[] = [];

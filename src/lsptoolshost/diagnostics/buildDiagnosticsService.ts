@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
-import { languageServerOptions } from '../../shared/options.js';
+import { languageServerOptions } from '../../shared/options';
 
 export enum AnalysisSetting {
     FullSolution = 'fullSolution',

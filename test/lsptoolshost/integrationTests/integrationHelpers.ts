@@ -6,13 +6,13 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as semver from 'semver';
-import { CSharpExtensionExports } from '../../../src/csharpExtensionExports.js';
+import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
-import { ServerState } from '../../../src/lsptoolshost/server/languageServerEvents.js';
-import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
+import { ServerState } from '../../../src/lsptoolshost/server/languageServerEvents';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';
-import { WaitForAsyncOperationsRequest } from './testHooks.js';
+import { WaitForAsyncOperationsRequest } from './testHooks';
 
 export async function activateCSharpExtension(): Promise<CSharpExtensionExports> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');

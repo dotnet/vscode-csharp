@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from '../../vscodeAdapter.js';
-import { EventType } from '../../shared/eventType.js';
-import { omnisharpOptions } from '../../shared/options.js';
+import { vscode } from '../../vscodeAdapter';
+import { EventType } from '../../shared/eventType';
+import { omnisharpOptions } from '../../shared/options';
 import { l10n } from 'vscode';
-import { BaseEvent } from '../../shared/loggingEvents.js';
-import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage.js';
+import { BaseEvent } from '../../shared/loggingEvents';
+import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage';
 
 export class InformationMessageObserver {
     constructor(private vscode: vscode) {}

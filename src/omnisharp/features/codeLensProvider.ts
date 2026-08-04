@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as protocol from '../protocol.js';
-import * as serverUtils from '../utils.js';
+import * as protocol from '../protocol';
+import * as serverUtils from '../utils';
 import * as vscode from 'vscode';
-import { toLocation } from '../typeConversion.js';
-import AbstractProvider from './abstractProvider.js';
-import { OmniSharpServer } from '../server.js';
-import { omnisharpOptions } from '../../shared/options.js';
-import TestManager from './dotnetTest.js';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
+import { toLocation } from '../typeConversion';
+import AbstractProvider from './abstractProvider';
+import { OmniSharpServer } from '../server';
+import { omnisharpOptions } from '../../shared/options';
+import TestManager from './dotnetTest';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
 
 import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;

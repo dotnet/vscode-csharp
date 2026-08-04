@@ -6,7 +6,7 @@
 import * as cp from 'child_process';
 import * as path from 'path';
 import { downloadAndUnzipVSCode, resolveCliArgsFromVSCodeExecutablePath, runTests } from '@vscode/test-electron';
-import { execChildProcess } from '../src/common.js';
+import { execChildProcess } from '../src/common';
 
 export async function prepareVSCodeAndExecuteTests(
     extensionDevelopmentPath: string,

@@ -7,11 +7,11 @@ import * as fs from 'fs';
 import { spawnSync } from 'child_process';
 import minimist from 'minimist';
 import { Octokit } from '@octokit/rest';
-import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from '../packaging/offlinePackagingTasks.js';
-import { PlatformInformation } from '../../src/shared/platform.js';
+import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from '../packaging/offlinePackagingTasks';
+import { PlatformInformation } from '../../src/shared/platform';
 import path from 'path';
-import { runTask } from '../runTask.js';
-import { rootPath } from '../projectPaths.js';
+import { runTask } from '../runTask';
+import { rootPath } from '../projectPaths';
 
 runTask(createTags);
 

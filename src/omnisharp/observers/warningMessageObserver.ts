@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { debounceTime } from 'rxjs/operators';
-import { vscode } from '../../vscodeAdapter.js';
-import { BaseEvent } from '../../shared/loggingEvents.js';
-import { OmnisharpServerMsBuildProjectDiagnostics } from '../omnisharpLoggingEvents.js';
+import { vscode } from '../../vscodeAdapter';
+import { BaseEvent } from '../../shared/loggingEvents';
+import { OmnisharpServerMsBuildProjectDiagnostics } from '../omnisharpLoggingEvents';
 import { Scheduler, Subject } from 'rxjs';
 
-import { EventType } from '../../shared/eventType.js';
+import { EventType } from '../../shared/eventType';
 import { l10n } from 'vscode';
-import { CommandOption, showWarningMessage } from '../../shared/observers/utils/showMessage.js';
+import { CommandOption, showWarningMessage } from '../../shared/observers/utils/showMessage';
 
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;

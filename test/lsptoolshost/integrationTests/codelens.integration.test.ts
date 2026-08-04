@@ -7,13 +7,13 @@ import * as lsp from 'vscode-languageclient';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
-import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
     getCodeLensesAsync,
     openFileInWorkspaceAsync,
-} from './integrationHelpers.js';
+} from './integrationHelpers';
 
 describe(`CodeLens Tests`, () => {
     beforeAll(async () => {

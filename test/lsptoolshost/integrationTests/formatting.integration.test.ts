@@ -5,15 +5,15 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
     expectText,
     openFileInWorkspaceAsync,
-} from './integrationHelpers.js';
+} from './integrationHelpers';
 import { describe, beforeEach, afterAll, test, afterEach } from '@jest/globals';
-import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers.js';
+import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
 
 describe(`Formatting Tests`, () => {
     beforeEach(async () => {

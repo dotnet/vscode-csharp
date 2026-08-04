@@ -6,14 +6,14 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { ITestAssetWorkspace } from '../../../lsptoolshost/integrationTests/testAssets/testAssets.js';
+import { ITestAssetWorkspace } from '../../../lsptoolshost/integrationTests/testAssets/testAssets';
 
-import singleCsproj from '../../../lsptoolshost/integrationTests/testAssets/singleCsproj.js';
-import slnWithCsproj from '../../../lsptoolshost/integrationTests/testAssets/slnWithCsproj.js';
-import slnFilterWithCsproj from '../../../lsptoolshost/integrationTests/testAssets/slnFilterWithCsproj.js';
-import BasicRazorApp2_1 from '../../../lsptoolshost/integrationTests/testAssets/razorApp.js';
-import slnWithGenerator from '../../../lsptoolshost/integrationTests/testAssets/slnWithGenerator.js';
-import { OmnisharpTestAssetWorkspace } from './omnisharpTestAssetWorkspace.js';
+import singleCsproj from '../../../lsptoolshost/integrationTests/testAssets/singleCsproj';
+import slnWithCsproj from '../../../lsptoolshost/integrationTests/testAssets/slnWithCsproj';
+import slnFilterWithCsproj from '../../../lsptoolshost/integrationTests/testAssets/slnFilterWithCsproj';
+import BasicRazorApp2_1 from '../../../lsptoolshost/integrationTests/testAssets/razorApp';
+import slnWithGenerator from '../../../lsptoolshost/integrationTests/testAssets/slnWithGenerator';
+import { OmnisharpTestAssetWorkspace } from './omnisharpTestAssetWorkspace';
 
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     singleCsproj,

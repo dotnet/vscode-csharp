@@ -5,9 +5,9 @@
 
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
-import { LanguageMiddlewareFeature } from './languageMiddlewareFeature.js';
-import { FileModificationType, FileOperationResponse, ModifiedFileResponse, RenamedFileResponse } from './protocol.js';
-import { toRange2 } from './typeConversion.js';
+import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
+import { FileModificationType, FileOperationResponse, ModifiedFileResponse, RenamedFileResponse } from './protocol';
+import { toRange2 } from './typeConversion';
 
 export async function buildEditForResponse(
     changes: FileOperationResponse[],

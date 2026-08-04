@@ -6,13 +6,13 @@
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
-import * as protocol from '../protocol.js';
-import * as serverUtils from '../utils.js';
-import * as utils from '../../common.js';
+import * as protocol from '../protocol';
+import * as serverUtils from '../utils';
+import * as utils from '../../common';
 import * as vscode from 'vscode';
-import AbstractProvider from './abstractProvider.js';
-import * as DebuggerEventsProtocol from '../../coreclrDebug/debuggerEventsProtocol.js';
-import { OmniSharpServer } from '../server.js';
+import AbstractProvider from './abstractProvider';
+import * as DebuggerEventsProtocol from '../../coreclrDebug/debuggerEventsProtocol';
+import { OmniSharpServer } from '../server';
 import {
     TestExecutionCountReport,
     ReportDotNetTestResults,
@@ -28,13 +28,13 @@ import {
     DotNetTestDebugStartFailure,
     DotNetTestRunInContextStart,
     DotNetTestDebugInContextStart,
-} from '../omnisharpLoggingEvents.js';
-import { EventStream } from '../../eventStream.js';
-import LaunchConfiguration from './launchConfiguration.js';
-import Disposable from '../../disposable.js';
-import CompositeDisposable from '../../compositeDisposable.js';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.js';
-import { commonOptions } from '../../shared/options.js';
+} from '../omnisharpLoggingEvents';
+import { EventStream } from '../../eventStream';
+import LaunchConfiguration from './launchConfiguration';
+import Disposable from '../../disposable';
+import CompositeDisposable from '../../compositeDisposable';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
+import { commonOptions } from '../../shared/options';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 

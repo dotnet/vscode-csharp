@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { FoldingRange, FoldingRangeKind } from 'vscode-languageclient';
-import { ObservableLogOutputChannel } from '../../../lsptoolshost/logging/observableLogOutputChannel.js';
+import { ObservableLogOutputChannel } from '../../../lsptoolshost/logging/observableLogOutputChannel';
 
 export class FoldingRangeHandler {
     constructor() {}

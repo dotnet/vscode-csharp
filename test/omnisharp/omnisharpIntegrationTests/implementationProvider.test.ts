@@ -5,10 +5,10 @@
 
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
-import OmniSharpImplementationProvider from '../../../src/omnisharp/features/implementationProvider.js';
+import OmniSharpImplementationProvider from '../../../src/omnisharp/features/implementationProvider';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.js';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 
 describeIfNotRazorOrGenerator(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;

@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as prioritization from './prioritization.js';
+import * as prioritization from './prioritization';
 import {
     OmnisharpServerProcessRequestComplete,
     OmnisharpServerProcessRequestStart,
     OmnisharpServerDequeueRequest,
     OmnisharpServerEnqueueRequest,
-} from './omnisharpLoggingEvents.js';
-import { EventStream } from '../eventStream.js';
+} from './omnisharpLoggingEvents';
+import { EventStream } from '../eventStream';
 
 export interface Request {
     command: string;

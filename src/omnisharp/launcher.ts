@@ -6,12 +6,12 @@
 import { spawn } from 'child_process';
 import { ChildProcessWithoutNullStreams } from 'child_process';
 
-import { PlatformInformation } from '../shared/platform.js';
+import { PlatformInformation } from '../shared/platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { commonOptions, omnisharpOptions } from '../shared/options.js';
-import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver.js';
-import { LaunchTarget, LaunchTargetKind, createLaunchTargetForSolution } from '../shared/launchTarget.js';
+import { commonOptions, omnisharpOptions } from '../shared/options';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { LaunchTarget, LaunchTargetKind, createLaunchTargetForSolution } from '../shared/launchTarget';
 
 export const vslsTarget: LaunchTarget = {
     label: 'VSLS',

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { rootPath } from '../projectPaths.js';
-import { execDotnet, getLogPath } from './signingTasks.js';
-import { runTask } from '../runTask.js';
+import { rootPath } from '../projectPaths';
+import { execDotnet, getLogPath } from './signingTasks';
+import { runTask } from '../runTask';
 
 runTask(signVsix);
 

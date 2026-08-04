@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscodeAdapter from './vscodeAdapter.js';
+import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 
 export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {

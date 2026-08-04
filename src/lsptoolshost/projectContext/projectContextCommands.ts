@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
-import { isRelevantDocument } from './projectContextService.js';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
-import { VSProjectContext } from '../server/roslynProtocol.js';
+import { isRelevantDocument } from './projectContextService';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { VSProjectContext } from '../server/roslynProtocol';
 import { CancellationToken } from 'vscode-languageclient';
 
 export const changeProjectContextCommandName = 'csharp.changeProjectContext';

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as optionsSchemaGenerator from '../../src/tools/generateOptionsSchema.js';
-import { runTask } from '../runTask.js';
+import * as optionsSchemaGenerator from '../../src/tools/generateOptionsSchema';
+import { runTask } from '../runTask';
 
 runTask(optionsSchemaGenerator.GenerateOptionsSchema);

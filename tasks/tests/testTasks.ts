@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers.js';
+import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers';
 import { jestProjectNames } from '../../test/jestProjectNames.mjs';
 
 const razorIntegrationTestProjects = ['RazorApp'];

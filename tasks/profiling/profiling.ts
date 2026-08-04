@@ -5,10 +5,10 @@
 
 import fs from 'fs';
 import * as path from 'path';
-import { basicSlnTestProject, runIntegrationTest } from '../tests/testHelpers.js';
-import { outPath } from '../projectPaths.js';
+import { basicSlnTestProject, runIntegrationTest } from '../tests/testHelpers';
+import { outPath } from '../projectPaths';
 import { execSync } from 'child_process';
-import { runTask } from '../runTask.js';
+import { runTask } from '../runTask';
 
 const profilingOutputFolder = path.join(outPath, 'profiling');
 

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { EventType } from './eventType.js';
-import { PlatformInformation } from './platform.js';
+import { EventType } from './eventType';
+import { PlatformInformation } from './platform';
 
 export interface BaseEvent {
     type: EventType;
