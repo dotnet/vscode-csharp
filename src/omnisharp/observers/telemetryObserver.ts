@@ -66,11 +66,11 @@ export class TelemetryObserver {
             }
             case EventType.TelemetryErrorEvent: {
                 const telemetryErrorEvent = <TelemetryErrorEvent>event;
+                // errorProps has been ignored by @vscode/extension-telemetry since v0.6.
                 this.reporter.sendTelemetryErrorEvent(
                     telemetryErrorEvent.eventName,
                     telemetryErrorEvent.properties,
-                    telemetryErrorEvent.measures,
-                    telemetryErrorEvent.errorProps
+                    telemetryErrorEvent.measures
                 );
                 break;
             }
