@@ -5,8 +5,8 @@
 
 import * as fs from 'fs';
 import path from 'path';
-import { verifySignature } from '../packaging/vsceTasks';
-import { runTask } from '../runTask';
+import { verifySignature } from '../packaging/vsceTasks.js';
+import { runTask } from '../runTask.js';
 
 runTask(verifyVsix);
 

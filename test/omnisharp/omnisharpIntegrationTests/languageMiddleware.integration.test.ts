@@ -6,9 +6,9 @@
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
-import { LanguageMiddleware, LanguageMiddlewareFeature } from '../../../src/omnisharp/languageMiddlewareFeature';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.js';
+import { LanguageMiddleware, LanguageMiddlewareFeature } from '../../../src/omnisharp/languageMiddlewareFeature.js';
 
 describeIfNotRazorOrGenerator(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;

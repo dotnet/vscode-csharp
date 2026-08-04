@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { HandleOptionChanges, OptionChangeObserver } from '../shared/observers/optionChangeObserver';
-import { CommonOptionsThatTriggerReload, OmnisharpOptionsThatTriggerReload } from '../shared/options';
+import { HandleOptionChanges, OptionChangeObserver } from '../shared/observers/optionChangeObserver.js';
+import { CommonOptionsThatTriggerReload, OmnisharpOptionsThatTriggerReload } from '../shared/options.js';
 import { Observable } from 'rxjs';
-import Disposable from '../disposable';
-import { CommandOption, showInformationMessage } from '../shared/observers/utils/showMessage';
+import Disposable from '../disposable.js';
+import { CommandOption, showInformationMessage } from '../shared/observers/utils/showMessage.js';
 
 export function registerOmnisharpOptionChanges(optionObservable: Observable<void>): Disposable {
     const optionChangeObserver: OptionChangeObserver = {

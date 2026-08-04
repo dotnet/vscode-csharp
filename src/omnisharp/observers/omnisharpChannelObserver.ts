@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseChannelObserver } from '../../shared/observers/baseChannelObserver';
-import { OutputChannel } from '../../vscodeAdapter';
-import { EventType } from '../../shared/eventType';
-import { omnisharpOptions } from '../../shared/options';
-import { BaseEvent } from '../../shared/loggingEvents';
+import { BaseChannelObserver } from '../../shared/observers/baseChannelObserver.js';
+import { OutputChannel } from '../../vscodeAdapter.js';
+import { EventType } from '../../shared/eventType.js';
+import { omnisharpOptions } from '../../shared/options.js';
+import { BaseEvent } from '../../shared/loggingEvents.js';
 
 export class OmnisharpChannelObserver extends BaseChannelObserver {
     constructor(channel: OutputChannel) {

@@ -6,8 +6,8 @@
 import * as vscode from 'vscode';
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 import { Observable } from 'rxjs';
-import createOptionStream from '../../../src/shared/observables/createOptionStream';
-import Disposable from '../../../src/disposable';
+import createOptionStream from '../../../src/shared/observables/createOptionStream.js';
+import Disposable from '../../../src/disposable.js';
 
 describe('OptionStream', () => {
     let listenerFunction: Array<(e: vscode.ConfigurationChangeEvent) => any>;

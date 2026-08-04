@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseChannelObserver } from '../../shared/observers/baseChannelObserver';
-import { EventType } from '../../shared/eventType';
-import { BaseEvent } from '../../shared/loggingEvents';
+import { BaseChannelObserver } from '../../shared/observers/baseChannelObserver.js';
+import { EventType } from '../../shared/eventType.js';
+import { BaseEvent } from '../../shared/loggingEvents.js';
 
 export default class DotnetTestChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {

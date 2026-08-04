@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as jest from 'jest';
+import jest from 'jest';
 import { Config } from '@jest/types';
 import * as path from 'path';
 

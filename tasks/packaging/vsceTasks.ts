@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as util from '../../src/common';
+import * as util from '../../src/common.js';
 import * as fs from 'fs';
-import spawnNode from '../spawnNode';
-import { vscePath } from '../projectPaths';
+import spawnNode from '../spawnNode.js';
+import { vscePath } from '../projectPaths.js';
 
 /// Packaging (VSIX) Tasks
 export async function createPackageAsync(

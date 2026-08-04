@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { baseProjectConfig } from '../../../baseJestConfig.mjs';
+import { baseIntegrationProjectConfig } from '../../../baseJestConfig.mjs';
 import { jestProjectNames } from '../../jestProjectNames.mjs';
 
 /**
@@ -10,7 +10,7 @@ import { jestProjectNames } from '../../jestProjectNames.mjs';
  */
 /** @type {import('jest').Config} */
 const integrationTestConfig = {
-    ...baseProjectConfig,
+    ...baseIntegrationProjectConfig,
     displayName: jestProjectNames.untrustedIntegration,
     roots: ['<rootDir>'],
     testEnvironment: '<rootDir>/../../vsCodeEnvironment.ts',

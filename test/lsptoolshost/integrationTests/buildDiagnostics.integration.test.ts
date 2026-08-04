@@ -5,12 +5,12 @@
 
 import * as vscode from 'vscode';
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
 import {
     AnalysisSetting,
     BuildDiagnosticsService,
-} from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService';
-import * as integrationHelpers from './integrationHelpers';
+} from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService.js';
+import * as integrationHelpers from './integrationHelpers.js';
 import path from 'path';
 describe(`Build and live diagnostics dedupe`, () => {
     beforeAll(async () => {

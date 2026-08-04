@@ -22,7 +22,7 @@ import {
     TextDocumentRegistrationOptions,
 } from 'vscode-languageclient';
 
-import * as RoslynProtocol from '../server/roslynProtocol';
+import * as RoslynProtocol from '../server/roslynProtocol.js';
 import { randomUUID } from 'crypto';
 import { LanguageClient } from 'vscode-languageclient/node';
 

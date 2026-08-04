@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IDisposable } from '../../disposable';
-import { OmniSharpServer } from '../server';
+import { IDisposable } from '../../disposable.js';
+import { OmniSharpServer } from '../server.js';
 import * as vscode from 'vscode';
-import CompositeDisposable from '../../compositeDisposable';
-import * as serverUtils from '../utils';
-import { isVirtualCSharpDocument } from './virtualDocumentTracker';
+import CompositeDisposable from '../../compositeDisposable.js';
+import * as serverUtils from '../utils.js';
+import { isVirtualCSharpDocument } from './virtualDocumentTracker.js';
 
 export default function fileOpenClose(server: OmniSharpServer): IDisposable {
     return new FileOpenCloseProvider(server);

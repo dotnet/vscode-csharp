@@ -5,14 +5,20 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as oniguruma from 'vscode-oniguruma';
-import { IGrammar, INITIAL, IRawGrammar, ITokenizeLineResult, parseRawGrammar, Registry } from 'vscode-textmate';
-import { ITokenizedContent } from './ITokenizedContent';
+import { fileURLToPath } from 'url';
+import oniguruma from 'vscode-oniguruma';
+import vscodeTextmate from 'vscode-textmate';
+import type { IGrammar, IRawGrammar, ITokenizeLineResult } from 'vscode-textmate';
+import { ITokenizedContent } from './ITokenizedContent.js';
 
+const { INITIAL, parseRawGrammar, Registry } = vscodeTextmate;
 let razorGrammarCache: IGrammar | undefined;
 
 const wasmBin = fs.readFileSync(
-    path.join(__dirname, '../../../../../../node_modules/vscode-oniguruma/release/onig.wasm')
+    path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        '../../../../../../node_modules/vscode-oniguruma/release/onig.wasm'
+    )
 ).buffer;
 const vscodeOnigurumaLib = oniguruma.loadWASM(wasmBin).then(() => {
     return {

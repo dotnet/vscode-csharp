@@ -3,15 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ITestAssetWorkspace } from './testAssets.js';
+import { jest } from '@jest/globals';
+import * as mockVsCode from '../__mocks__/vscode.js';
 
-const workspace: ITestAssetWorkspace = {
-    description: 'Razor App',
-    projects: [
-        {
-            relativeFilePath: 'RazorApp.csproj',
-        },
-    ],
-};
-
-export default workspace;
+jest.mock('vscode', () => mockVsCode, { virtual: true });
+jest.unstable_mockModule('vscode', () => mockVsCode, { virtual: true });

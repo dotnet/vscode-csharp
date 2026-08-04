@@ -5,10 +5,10 @@
 
 import fs from 'fs';
 import * as path from 'path';
-import * as jest from 'jest';
+import jest from 'jest';
 import { Config } from '@jest/types';
-import { rootPath, outPath } from '../projectPaths';
-import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher';
+import { rootPath, outPath } from '../projectPaths.js';
+import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher.js';
 
 export const basicSlnTestProject = 'slnWithCsproj';
 export const integrationTestProjects = [basicSlnTestProject];
@@ -107,7 +107,7 @@ export async function runJestIntegrationTest(
         throw new Error(`Could not find vscode workspace to open at ${workspacePath}`);
     }
 
-    // The runner (that loads in the vscode process to run tests) is in the test folder in the *output* directory.
+    // The ESM loader requires the explicit runner file rather than its containing directory.
     const vscodeRunnerPath = path.join(outPath, testFolderName, 'index.js');
     if (!fs.existsSync(vscodeRunnerPath)) {
         throw new Error(`Could not find vscode runner in out/ at ${vscodeRunnerPath}`);

@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from '../shared/platform';
-import { AbsolutePathPackage } from './absolutePathPackage';
-import { getNotInstalledPackagesForPlatform } from './packageFilterer';
-import { Package } from './package';
+import { PlatformInformation } from '../shared/platform.js';
+import { AbsolutePathPackage } from './absolutePathPackage.js';
+import { getNotInstalledPackagesForPlatform } from './packageFilterer.js';
+import { Package } from './package.js';
 
 export async function getAbsolutePathPackagesToInstall(
     packages: Package[],

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { RemoteAttachPicker, Process, CimProcessParser } from '../../../src/shared/processPicker';
+import { RemoteAttachPicker, Process, CimProcessParser } from '../../../src/shared/processPicker.js';
 
 describe('Remote Process Picker: Validate quoting arguments.', () => {
     test('Argument with no spaces', () => {

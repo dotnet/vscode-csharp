@@ -8,9 +8,9 @@ import * as path from 'path';
 import * as os from 'os';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { rootPath } from '../projectPaths';
-import { findTagsByVersion } from '../gitTasks';
-import { runTask } from '../runTask';
+import { rootPath } from '../projectPaths.js';
+import { findTagsByVersion } from '../gitTasks.js';
+import { runTask } from '../runTask.js';
 
 const execAsync = promisify(exec);
 const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/;

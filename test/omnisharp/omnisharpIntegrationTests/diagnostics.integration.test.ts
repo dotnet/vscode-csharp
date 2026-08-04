@@ -14,10 +14,10 @@ import {
     isRazorWorkspace,
     isSlnWithGenerator,
     restartOmniSharpServer,
-} from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
-import { isNotNull } from '../testUtil';
+} from './integrationHelpers.js';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
+import { poll, assertWithPoll, pollDoesNotHappen } from './poll.js';
+import { isNotNull } from '../testUtil.js';
 
 async function setDiagnosticWorkspaceLimit(to: number | null) {
     const csharpConfig = vscode.workspace.getConfiguration('csharp');

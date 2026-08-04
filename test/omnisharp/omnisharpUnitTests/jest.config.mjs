@@ -12,6 +12,7 @@ import { jestProjectNames } from '../../jestProjectNames.mjs';
 const omnisharpConfig = {
     ...baseProjectConfig,
     displayName: jestProjectNames.omnisharpUnit,
+    setupFilesAfterEnv: ['<rootDir>/../../vsCodeUnitFramework.ts'],
     // We need to explicity ignore the out directory for modules - otherwise we'll get duplicate vscode module,
     // the TS version from the __mocks__ directory and the compiled js version from the out directory.
     modulePathIgnorePatterns: ['out'],

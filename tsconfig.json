@@ -2,7 +2,7 @@
     "compilerOptions": {
         "esModuleInterop": true,
         "target": "ES2022",
-        "module": "CommonJS",
+        "module": "NodeNext",
         "outDir": "out",
         "lib": [
             "ES2021",
@@ -28,9 +28,10 @@
           "vscode-jsonrpc/node": ["./node_modules/vscode-jsonrpc/lib/node/main"],
         },
         "sourceMap": true,
-        "moduleResolution": "node",
+        "moduleResolution": "NodeNext",
         "moduleDetection": "force",
         "allowJs": true,
+        "isolatedModules": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,

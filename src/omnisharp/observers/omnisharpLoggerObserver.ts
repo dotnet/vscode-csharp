@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
-import { BaseEvent } from '../../shared/loggingEvents';
+import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.js';
+import { BaseEvent } from '../../shared/loggingEvents.js';
 import {
     OmnisharpInitialisation,
     OmnisharpLaunch,
@@ -15,12 +15,12 @@ import {
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerOnStdErr,
     OmnisharpEventPacketReceived,
-} from '../omnisharpLoggingEvents';
+} from '../omnisharpLoggingEvents.js';
 import * as os from 'os';
-import { EventType } from '../../shared/eventType';
+import { EventType } from '../../shared/eventType.js';
 import * as vscode from 'vscode';
-import { PlatformInformation } from '../../shared/platform';
-import { Logger } from '../../logger';
+import { PlatformInformation } from '../../shared/platform.js';
+import { Logger } from '../../logger.js';
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
     constructor(

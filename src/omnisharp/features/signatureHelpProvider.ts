@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider';
-import * as serverUtils from '../utils';
-import { createRequest } from '../typeConversion';
+import AbstractSupport from './abstractProvider.js';
+import * as serverUtils from '../utils.js';
+import { createRequest } from '../typeConversion.js';
 import {
     SignatureHelpProvider,
     SignatureHelp,
@@ -16,7 +16,7 @@ import {
     Position,
 } from 'vscode';
 import { MarkdownString } from 'vscode';
-import { SignatureHelpParameter } from '../protocol';
+import { SignatureHelpParameter } from '../protocol.js';
 
 export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements SignatureHelpProvider {
     public async provideSignatureHelp(

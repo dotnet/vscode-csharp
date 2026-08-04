@@ -27,4 +27,4 @@ class VsCodeEnvironment extends TestEnvironment {
     }
 }
 
-module.exports = VsCodeEnvironment;
+export default VsCodeEnvironment;

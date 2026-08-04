@@ -24,7 +24,7 @@
             "csharp-test-profile",
             "${workspaceRoot}/test/untrustedWorkspace/integrationTests/testAssets/empty/.vscode/empty.code-workspace",
             "--extensionDevelopmentPath=${workspaceRoot}",
-            "--extensionTestsPath=${workspaceRoot}/out/test/untrustedWorkspace/integrationTests",
+            "--extensionTestsPath=${workspaceRoot}/out/test/untrustedWorkspace/integrationTests/index.js",
             "--log",
             "ms-dotnettools.csharp:trace"
           ],
@@ -56,7 +56,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests/index.js",
                 "--log",
                 "ms-dotnettools.csharp:trace"
             ],
@@ -84,7 +84,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/devkit_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests/index.js",
                 "--log",
                 "ms-dotnettools.csharp:trace"
             ],
@@ -112,7 +112,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/RazorApp/.vscode/RazorApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests/index.js",
                 "--log",
                 "ms-dotnettools.csharp:trace"
             ],
@@ -139,7 +139,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests/index.js"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -164,7 +164,7 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests/index.js"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",

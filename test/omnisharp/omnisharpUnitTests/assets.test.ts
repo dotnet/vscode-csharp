@@ -14,11 +14,11 @@ import {
     ProgramLaunchType,
     replaceCommentPropertiesWithComments,
     updateJsonWithComments,
-} from '../../../src/shared/assets';
+} from '../../../src/shared/assets.js';
 import { parse } from 'jsonc-parser';
-import { ProjectDebugInformation } from '../../../src/shared/IWorkspaceDebugInformationProvider';
-import { findNetCoreTargetFramework } from '../../../src/shared/utils';
-import { isNotNull } from '../testUtil';
+import { ProjectDebugInformation } from '../../../src/shared/IWorkspaceDebugInformationProvider.js';
+import { findNetCoreTargetFramework } from '../../../src/shared/utils.js';
+import { isNotNull } from '../testUtil.js';
 
 describe('Asset generation: csproj', () => {
     test('Create tasks.json for project opened in workspace', () => {

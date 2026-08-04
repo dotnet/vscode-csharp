@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ConfigurationChangeEvent } from '../../../../src/vscodeAdapter';
+import { ConfigurationChangeEvent } from '../../../../src/vscodeAdapter.js';
 
 export function GetConfigChangeEvent(changingConfig: string): ConfigurationChangeEvent {
     return {

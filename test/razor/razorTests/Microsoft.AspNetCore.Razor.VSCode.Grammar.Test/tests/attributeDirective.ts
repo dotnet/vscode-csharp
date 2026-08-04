@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, it } from '@jest/globals';
-import { assertMatchesSnapshot } from './infrastructure/testUtilities';
+import { assertMatchesSnapshot } from './infrastructure/testUtilities.js';
 
 // See GrammarTests.test.ts for details on exporting this test suite instead of running in place.
 

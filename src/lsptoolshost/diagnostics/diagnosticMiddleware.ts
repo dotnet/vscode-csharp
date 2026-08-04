@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { ProvideDiagnosticSignature, ProvideWorkspaceDiagnosticSignature, vsdiag } from 'vscode-languageclient';
-import { languageServerOptions } from '../../shared/options';
+import { languageServerOptions } from '../../shared/options.js';
 
 export async function provideDiagnostics(
     document: vscode.TextDocument | vscode.Uri,

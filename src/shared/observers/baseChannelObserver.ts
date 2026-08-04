@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../../vscodeAdapter';
-import { BaseEvent } from '../../shared/loggingEvents';
+import * as vscode from '../../vscodeAdapter.js';
+import { BaseEvent } from '../../shared/loggingEvents.js';
 
 export abstract class BaseChannelObserver {
     constructor(private channel: vscode.OutputChannel) {}

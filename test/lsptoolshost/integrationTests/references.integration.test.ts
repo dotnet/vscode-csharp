@@ -5,13 +5,13 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.js';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
     openFileInWorkspaceAsync,
     sortLocations,
-} from './integrationHelpers';
+} from './integrationHelpers.js';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
 describe(`Find References Tests`, () => {

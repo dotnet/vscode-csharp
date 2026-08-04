@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from '../packageManager/package';
+import { Package } from '../packageManager/package.js';
 
 export const modernNetVersion = '6.0';
 

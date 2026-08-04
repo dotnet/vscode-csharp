@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { AbsolutePath } from '../../../src/packageManager/absolutePath';
-import { TmpAsset, CreateTmpFile } from '../../createTmpAsset';
+import { AbsolutePath } from '../../../src/packageManager/absolutePath.js';
+import { TmpAsset, CreateTmpFile } from '../../createTmpAsset.js';
 import { join } from 'path';
 
 describe(AbsolutePath.name, () => {

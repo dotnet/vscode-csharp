@@ -9,25 +9,25 @@ import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
 import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browsers';
-import { ONLY_JS_DEBUG_NAME, MANAGED_DEBUG_NAME, JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
-import { isValidEvent, onDidTerminateDebugSession } from './terminateDebugHandler';
-import path = require('path');
+import { ONLY_JS_DEBUG_NAME, MANAGED_DEBUG_NAME, JS_DEBUG_NAME, SERVER_APP_NAME } from './constants.js';
+import { isValidEvent, onDidTerminateDebugSession } from './terminateDebugHandler.js';
+import * as path from 'path';
 import * as cp from 'child_process';
-import { getExtensionPath } from '../../../common';
-import { getCSharpDevKit } from '../../../utils/getCSharpDevKit';
-import { CSharpExtensionId } from '../../../constants/csharpExtensionId';
-import { DotNetRuntimeVersion } from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionResolver';
+import { getExtensionPath } from '../../../common.js';
+import { getCSharpDevKit } from '../../../utils/getCSharpDevKit.js';
+import { CSharpExtensionId } from '../../../constants/csharpExtensionId.js';
+import { DotNetRuntimeVersion } from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionResolver.js';
 import {
     IDotnetAcquireContext,
     IDotnetAcquireResult,
     IDotnetFindPathContext,
-} from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionApi';
-import { IDisposable } from '@microsoft/servicehub-framework';
-import { Observer } from '@microsoft/servicehub-framework/js/src/jsonRpc/Observer';
+} from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionApi.js';
 import { EventEmitter } from 'events';
 import {
     Formatters,
+    IDisposable,
     MessageDelimiters,
+    Observer,
     ServiceJsonRpcDescriptor,
     ServiceMoniker,
     ServiceRpcDescriptor,
@@ -59,7 +59,7 @@ const targetFrameworkServiceDescriptor: ServiceRpcDescriptor = Object.freeze(
     )
 );
 
-import { showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage';
+import { showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage.js';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     private static readonly autoDetectUserNotice: string = vscode.l10n.t(

@@ -5,11 +5,11 @@
 
 import * as vscode from 'vscode';
 import * as semver from 'semver';
-import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { getMonoVersion } from '../utils/getMonoVersion';
-import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
-import { getMSBuildVersion } from '../utils/getMsBuildInfo';
-import { omnisharpOptions } from '../shared/options';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo.js';
+import { getMonoVersion } from '../utils/getMonoVersion.js';
+import { OmniSharpMonoResolver } from './omniSharpMonoResolver.js';
+import { getMSBuildVersion } from '../utils/getMsBuildInfo.js';
+import { omnisharpOptions } from '../shared/options.js';
 
 export interface RequirementResult {
     needsDotNetSdk: boolean;

@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { RestorableProjects, RestoreParams, RestoreRequest } from '../server/roslynProtocol';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.js';
+import { RestorableProjects, RestoreParams, RestoreRequest } from '../server/roslynProtocol.js';
 import path from 'path';
-import { showErrorMessage } from '../../shared/observers/utils/showMessage';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { showErrorMessage } from '../../shared/observers/utils/showMessage.js';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit.js';
 import { CancellationToken } from 'vscode-languageclient';
 
 let _restoreInProgress = false;

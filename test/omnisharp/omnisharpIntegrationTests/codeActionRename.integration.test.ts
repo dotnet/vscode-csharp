@@ -5,11 +5,11 @@
 
 import { expect, test, beforeAll, afterAll, describe } from '@jest/globals';
 import * as vscode from 'vscode';
-import { activateCSharpExtension } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
+import { activateCSharpExtension } from './integrationHelpers.js';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.js';
 import * as path from 'path';
-import { assertWithPoll } from './poll';
-import { isNotNull } from '../testUtil';
+import { assertWithPoll } from './poll.js';
+import { isNotNull } from '../testUtil.js';
 
 describe.skip(`Code Action Rename ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;

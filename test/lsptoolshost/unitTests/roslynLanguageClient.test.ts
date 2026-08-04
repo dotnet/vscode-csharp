@@ -5,11 +5,11 @@
 
 import { describe, expect, jest, test } from '@jest/globals';
 
-jest.mock('vscode-languageclient/node', () => ({
+jest.unstable_mockModule('vscode-languageclient/node', () => ({
     LanguageClient: class {},
     State: { Running: 2 },
 }));
-jest.mock('vscode-languageclient', () => ({
+jest.unstable_mockModule('vscode-languageclient', () => ({
     MessageDirection: {
         clientToServer: 1,
         serverToClient: 2,
@@ -18,10 +18,11 @@ jest.mock('vscode-languageclient', () => ({
     ProtocolRequestType: class {},
     RequestType: class {},
     RequestType0: class {},
+    State: { Running: 2 },
 }));
 
-import { RoslynLanguageClient } from '../../../src/lsptoolshost/server/roslynLanguageClient';
-import { TelemetryEventNames } from '../../../src/shared/telemetryEventNames';
+const { RoslynLanguageClient } = await import('../../../src/lsptoolshost/server/roslynLanguageClient.js');
+const { TelemetryEventNames } = await import('../../../src/shared/telemetryEventNames.js');
 
 describe('RoslynLanguageClient', () => {
     test('shows one crash notification and emits one telemetry event per crash', () => {

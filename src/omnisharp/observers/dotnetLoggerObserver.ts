@@ -2,14 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
-import { BaseEvent } from '../../shared/loggingEvents';
+import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver.js';
+import { BaseEvent } from '../../shared/loggingEvents.js';
 import {
     CommandDotNetRestoreProgress,
     CommandDotNetRestoreSucceeded,
     CommandDotNetRestoreFailed,
-} from '../omnisharpLoggingEvents';
-import { EventType } from '../../shared/eventType';
+} from '../omnisharpLoggingEvents.js';
+import { EventType } from '../../shared/eventType.js';
 
 export class DotnetLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {
