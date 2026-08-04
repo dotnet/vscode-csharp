@@ -3,14 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { createDefaultEsmPreset, createDefaultPreset } from 'ts-jest';
 
 const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
+const tsconfig = fileURLToPath(new URL('./tsconfig.json', import.meta.url));
 // The override lets tooling validate the ESM transform before the repository package type changes.
 const useESM = packageJson.type === 'module' || process.env.JEST_USE_ESM === 'true';
 const tsJestPreset = useESM
-    ? createDefaultEsmPreset({ tsconfig: './tsconfig.json' })
-    : createDefaultPreset({ tsconfig: './tsconfig.json' });
+    ? createDefaultEsmPreset({ tsconfig })
+    : createDefaultPreset({ tsconfig });
 
 /**
  * Defines a base project config that we can re-use across the project specific jest configs.

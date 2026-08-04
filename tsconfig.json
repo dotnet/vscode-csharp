@@ -30,17 +30,22 @@
         "sourceMap": true,
         "moduleResolution": "node",
         "moduleDetection": "force",
+        "allowJs": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
         "noUnusedLocals": true,
         "noFallthroughCasesInSwitch": true
     },
+    "files": [
+        "test/jestProjectNames.mjs",
+        "test/jestProjectNames.d.mts",
+    ],
     "include": [
-        "src",
-        "tasks",
-        "test",
-        "typings",
-        "__mocks__",
+        "src/**/*.ts",
+        "tasks/**/*.ts",
+        "test/**/*.ts",
+        "typings/**/*.ts",
+        "__mocks__/**/*.ts",
     ],
 }
