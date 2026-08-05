@@ -16,9 +16,8 @@ export function registerCodeActionFixAllCommands(
     outputChannel: vscode.LogOutputChannel
 ) {
     context.subscriptions.push(
-        vscode.commands.registerCommand(
-            'roslyn.client.fixAllCodeAction',
-            async (request): Promise<void> => registerFixAllResolveCodeAction(languageServer, request, outputChannel)
+        vscode.commands.registerCommand('roslyn.client.fixAllCodeAction', async (request): Promise<void> =>
+            registerFixAllResolveCodeAction(languageServer, request, outputChannel)
         )
     );
 }

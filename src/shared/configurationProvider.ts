@@ -201,7 +201,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
             config.env = parsedFile.Env;
         } catch (e) {
-            throw new Error(vscode.l10n.t("Can't parse envFile {0} because of {1}", envFile, `${e}`));
+            throw new Error(vscode.l10n.t("Can't parse envFile {0} because of {1}", envFile, `${e}`), { cause: e });
         }
 
         // remove envFile from config after parsing

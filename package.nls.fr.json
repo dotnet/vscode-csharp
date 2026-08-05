@@ -132,6 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Spécifie si OmniSharp doit utiliser VS Code paramètres de l’éditeur pour la mise en forme du code C# (utilisation d’onglets, taille de retrait).",
   "configuration.omnisharp.useModernNet.description": "Utilisez la version OmniSharp pour .NET 6. Cette version _ne prend pas_ en charge les projets .NET Framework non de style SDK, y compris Unity. Les projets framework de style SDK, .NET Core et .NET 5+ doivent voir des améliorations significatives des performances.",
   "configuration.omnisharp.useModernNet.title": "Utiliser la version .NET 6 d'OmniSharp",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Afficher toutes les actions de code C# dans les fichiers Razor. Ces actions ne sont pas testées dans Razor et peuvent introduire des erreurs de syntaxe lorsqu’elles sont appliquées. Si cela se produit, veuillez signaler un bogue.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Spécifie s’il faut valider les éléments tag helper et component avec un espace.",
   "configuration.razor.razor.format.attributeIndentStyle": "Spécifie le style d'indentation pour les attributs des balises HTML et des composants dans les fichiers Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Force l'accolade ouverte après une directive @code ou @functions à se trouver sur la ligne suivante.",

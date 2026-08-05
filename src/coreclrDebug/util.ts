@@ -82,7 +82,8 @@ export class CoreClrDebugUtil {
                 vscode.l10n.t(
                     `The .NET SDK cannot be located: {0}. .NET debugging will not be enabled. Make sure the .NET SDK is installed and is on the path.`,
                     message
-                )
+                ),
+                { cause: error }
             );
         }
     }
@@ -100,7 +101,7 @@ export class CoreClrDebugUtil {
             if (error.code === 'ENOENT' || error.code === 'ENOTDIR') {
                 return false;
             } else {
-                throw Error(error.code);
+                throw error;
             }
         }
     }

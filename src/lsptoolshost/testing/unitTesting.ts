@@ -21,17 +21,15 @@ export function registerUnitTestingCommands(context: vscode.ExtensionContext, la
     }
     const dotnetTestChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET Test Log'));
     context.subscriptions.push(
-        vscode.commands.registerCommand(
-            'dotnet.test.run',
-            async (request): Promise<TestProgress | undefined> => runTests(request, languageServer, dotnetTestChannel)
+        vscode.commands.registerCommand('dotnet.test.run', async (request): Promise<TestProgress | undefined> =>
+            runTests(request, languageServer, dotnetTestChannel)
         )
     );
     context.subscriptions.push(
         // We don't use registerTextEditorCommand because it is required to run synchronously and is not awaitable.
         // See https://github.com/microsoft/vscode/issues/16814 for more info.
-        vscode.commands.registerCommand(
-            'dotnet.test.runTestsInContext',
-            async (): Promise<TestProgress | undefined> => runTestsInContext(false, languageServer, dotnetTestChannel)
+        vscode.commands.registerCommand('dotnet.test.runTestsInContext', async (): Promise<TestProgress | undefined> =>
+            runTestsInContext(false, languageServer, dotnetTestChannel)
         )
     );
 

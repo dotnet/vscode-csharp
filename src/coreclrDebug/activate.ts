@@ -73,11 +73,13 @@ export async function activate(
             if (languageServerStartedPromise) {
                 try {
                     await languageServerStartedPromise;
-                } catch (e: any) {
-                    if (e as Error) {
-                        throw new Error(vscode.l10n.t('Unable to launch Attach to Process dialog: ') + e.message);
+                } catch (error) {
+                    if (error instanceof Error) {
+                        throw new Error(vscode.l10n.t('Unable to launch Attach to Process dialog: ') + error.message, {
+                            cause: error,
+                        });
                     } else {
-                        throw e;
+                        throw error;
                     }
                 }
             }

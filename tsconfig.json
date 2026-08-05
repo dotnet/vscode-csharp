@@ -5,7 +5,8 @@
         "module": "CommonJS",
         "outDir": "out",
         "lib": [
-            "ES2021"
+            "ES2021",
+            "ES2022.Error"
         ],
         "paths": {
           "vscode-languageclient": ["./node_modules/vscode-languageclient/lib/common/api"],

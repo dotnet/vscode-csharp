@@ -24,7 +24,10 @@ import {
 import { UriConverter } from '../utils/uriConverter';
 
 export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
-    constructor(private server: RoslynLanguageServer, private outputChannel: vscode.LogOutputChannel) {}
+    constructor(
+        private server: RoslynLanguageServer,
+        private outputChannel: vscode.LogOutputChannel
+    ) {}
 
     public async getWorkspaceDebugInformation(
         workspaceFolder: vscode.Uri

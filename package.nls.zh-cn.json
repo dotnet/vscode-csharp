@@ -132,6 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "指定 OmniSharp 是否应使用 VS Code 编辑器设置进行 C# 代码格式化(使用制表符、缩进大小)。",
   "configuration.omnisharp.useModernNet.description": "使用 .NET 6 版本的 OmniSharp。此版本不支持非 SDK 风格的 .NET Framework 项目，包括 Unity。SDK 样式的框架、.NET Core 和 .NET 5+ 项目应该会获得显著的性能提升。",
   "configuration.omnisharp.useModernNet.title": "使用 .NET 6 版本的 OmniSharp",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "在 Razor 文件中显示所有 C# 代码操作。这些操作在 Razor 中未测试，应用时可能会引入语法错误。如果发生这种情况，请报告 Bug。",
   "configuration.razor.razor.completion.commitElementsWithSpace": "指定是否提交带有空格的标记帮助程序和组件元素。",
   "configuration.razor.razor.format.attributeIndentStyle": "指定 Razor 文件中 HTML 和组件标签属性的缩进样式。",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "强制将 @code 或 @functions 指令后的开括号放在下一行。",

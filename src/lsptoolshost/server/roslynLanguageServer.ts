@@ -583,9 +583,8 @@ export class RoslynLanguageServer {
                                     .getConfiguration()
                                     .update('dotnet.defaultSolution', 'disable', false);
                             } else {
-                                const chosenSolution: vscode.Uri | undefined = await vscode.commands.executeCommand(
-                                    'dotnet.openSolution'
-                                );
+                                const chosenSolution: vscode.Uri | undefined =
+                                    await vscode.commands.executeCommand('dotnet.openSolution');
                                 if (chosen.action === 'openAndSetDefault' && chosenSolution) {
                                     const relativePath = vscode.workspace.asRelativePath(chosenSolution);
                                     await vscode.workspace

@@ -272,12 +272,9 @@ export function getFakeVsCode(): vscode.vscode {
                       },
                 ...args: (string | number | boolean)[] | Record<string, any>[]
             ) => {
-                let message = '';
+                let message: string;
                 let actualArgs:
-                    | (string | number | boolean)[]
-                    | Record<string, any>[]
-                    | Record<string, any>
-                    | undefined = args;
+                    (string | number | boolean)[] | Record<string, any>[] | Record<string, any> | undefined = args;
                 if (typeof options === 'string') {
                     message = options;
                 } else {

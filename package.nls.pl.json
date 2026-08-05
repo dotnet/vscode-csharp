@@ -132,6 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Określa, czy element OmniSharp powinien używać ustawień edytora VS Code dla formatowania kodu języka C# (używać kart, rozmiaru wcięć).",
   "configuration.omnisharp.useModernNet.description": "Użyj kompilacji OmniSharp dla platformy .NET 6. Ta wersja _nie_ obsługuje projektów .NET Framework innych niż SDK, w tym aparat Unity. Projekty platformy w stylu zestawu SDK, platformy .NET Core i platformy .NET 5+ powinny widzieć znaczącą poprawę wydajności.",
   "configuration.omnisharp.useModernNet.title": "Użyj kompilacji .NET 6 elementu OmniSharp",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Pokaż wszystkie akcje kodu C# w plikach Razor. Te akcje nie zostały przetestowane w Razorze i mogą powodować błędy składniowe po zastosowaniu. Jeśli tak się stanie, zgłoś błąd.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Określa, czy zatwierdzać pomocnik tagów i elementy składników ze spacjami.",
   "configuration.razor.razor.format.attributeIndentStyle": "Określa styl wcięcia dla atrybutów tagów HTML i komponentów w plikach Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Wymusza, aby otwierający nawias klamrowy po dyrektywie @code lub @functions był w następującym wierszu.",

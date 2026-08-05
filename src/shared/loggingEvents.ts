@@ -56,7 +56,10 @@ export class InstallationSuccess implements BaseEvent {
 
 export class InstallationFailure implements BaseEvent {
     type = EventType.InstallationFailure;
-    constructor(public stage: string, public error: any) {}
+    constructor(
+        public stage: string,
+        public error: any
+    ) {}
 }
 
 export class DownloadStart implements BaseEvent {
@@ -84,7 +87,10 @@ export class DownloadSizeObtained implements BaseEvent {
 
 export class DownloadProgress implements BaseEvent {
     type = EventType.DownloadProgress;
-    constructor(public downloadPercentage: number, public packageDescription: string) {}
+    constructor(
+        public downloadPercentage: number,
+        public packageDescription: string
+    ) {}
 }
 
 export class DownloadValidation implements BaseEvent {
@@ -98,7 +104,11 @@ export class ZipError implements BaseEvent {
 
 export class IntegrityCheckFailure {
     type = EventType.IntegrityCheckFailure;
-    constructor(public packageDescription: string, public url: string, public retry: boolean) {}
+    constructor(
+        public packageDescription: string,
+        public url: string,
+        public retry: boolean
+    ) {}
 }
 
 export class IntegrityCheckSuccess {

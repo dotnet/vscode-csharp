@@ -17,7 +17,10 @@ const unknown = 'unknown';
  * https://www.freedesktop.org/software/systemd/man/os-release.html
  */
 export class LinuxDistribution {
-    public constructor(public name: string, public version: string) {}
+    public constructor(
+        public name: string,
+        public version: string
+    ) {}
 
     public static async GetCurrent(): Promise<LinuxDistribution> {
         // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
@@ -121,7 +124,11 @@ export class LinuxDistribution {
 }
 
 export class PlatformInformation {
-    public constructor(public platform: string, public architecture: string, public distribution?: LinuxDistribution) {}
+    public constructor(
+        public platform: string,
+        public architecture: string,
+        public distribution?: LinuxDistribution
+    ) {}
 
     public isWindows(): boolean {
         return this.platform === 'win32';

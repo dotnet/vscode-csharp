@@ -132,6 +132,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "OmniSharp'ın C# kod biçimlendirmesi için VS Code düzenleyici ayarlarını kullanıp kullanmayacağını belirtir (sekme kullanımı, girinti boyutu).",
   "configuration.omnisharp.useModernNet.description": ".NET 6 için OmniSharp derlemesini kullanın. Bu sürüm Unity dahil SDK stili olmayan .NET Framework projelerini desteklemiyor. SDK stili Framework, .NET Core ve .NET 5+ projeleri önemli performans iyileştirmeleri görüyor olmalıdır.",
   "configuration.omnisharp.useModernNet.title": "OmniSharp'ın .NET 6 derlemesi kullanın",
+  "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Razor dosyalarındaki tüm C# kod eylemlerini gösterin. Bu eylemler Razor'da test edilmedi ve uygulandıklarında söz dizimi hatalarına neden olabilir. Bu durum oluşursa lütfen bir hata bildirin.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Etiket yardımcısı ve bileşen öğelerinin bir boşlukla işlenip işlenmeyeceğini belirtir.",
   "configuration.razor.razor.format.attributeIndentStyle": "Razor dosyalarındaki Html ve bileşen etiketi özniteliklerinin girinti stilini belirtir.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Açık küme ayracını bir @code veya @functions yönergesinden sonra aşağıdaki satırda olmaya zorlar.",

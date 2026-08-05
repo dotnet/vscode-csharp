@@ -83,9 +83,8 @@ async function publishRoslynCopilot() {
     // Set environment variables for updatePackageDependencies
     process.env['NEW_DEPS_ID'] = 'RoslynCopilot';
     process.env['NEW_DEPS_VERSION'] = version;
-    process.env[
-        'NEW_DEPS_URLS'
-    ] = `https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-${version}.zip`;
+    process.env['NEW_DEPS_URLS'] =
+        `https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-${version}.zip`;
 
     // Update package dependencies using the extracted utility
     await updatePackageDependencies();
