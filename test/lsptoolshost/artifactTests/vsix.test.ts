@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import * as fs from 'fs-extra';
-import * as glob from 'glob';
+import { globSync } from 'fs';
+import { stat } from 'fs/promises';
 import * as path from 'path';
 
-const vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
+const vsixFiles = globSync('**/*.vsix', { cwd: process.cwd() }).map((file) => path.join(process.cwd(), file));
 
 describe('Vscode VSIX', () => {
     test('At least one vsix file should be produced', () => {
@@ -23,12 +23,12 @@ describe('Vscode VSIX', () => {
 
         describe(`Given ${element}`, () => {
             test(`Then its size is less than ${sizeInMB}MB`, async () => {
-                const stats = await fs.stat(element);
+                const stats = await stat(element);
                 expect(stats.size).toBeLessThan(maximumVsixSizeInBytes);
             });
 
             test(`Then it should not be empty`, async () => {
-                const stats = await fs.stat(element);
+                const stats = await stat(element);
                 expect(stats.size).toBeGreaterThan(0);
             });
         });
