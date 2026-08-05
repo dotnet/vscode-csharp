@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import psList from 'ps-list';
+import psList, { type ProcessDescriptor } from 'ps-list';
 import { DebugSession } from 'vscode';
 import { LogOutputChannel } from 'vscode';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants.ts';
@@ -59,7 +59,7 @@ async function terminateByProcessName(event: DebugSession, logger: LogOutputChan
         return;
     }
 
-    let processes: psList.ProcessDescriptor[] = [];
+    let processes: ProcessDescriptor[] = [];
     try {
         processes = await psList();
     } catch (error) {
@@ -67,8 +67,7 @@ async function terminateByProcessName(event: DebugSession, logger: LogOutputChan
     }
 
     const devserver = processes.find(
-        (process: psList.ProcessDescriptor) =>
-            !!(process && process.cmd && process.cmd.toLowerCase().match(targetProcess))
+        (process: ProcessDescriptor) => !!(process && process.cmd && process.cmd.toLowerCase().match(targetProcess))
     );
 
     if (devserver) {

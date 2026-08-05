@@ -5,28 +5,35 @@
 
 import fs from 'node:fs/promises';
 
+/**
+ * The extension is emitted as native ESM, but esbuild must preserve runtime `require()` calls
+ * from bundled CommonJS dependencies. esbuild.mjs supplies a createRequire bridge for those
+ * calls. This audit inspects esbuild's metafile to keep that compatibility boundary explicit:
+ *
+ * - first-party runtime requires are rejected;
+ * - each dependency owner and required target must exactly match this allowlist, so new requires
+ *   fail the build and obsolete entries must be removed;
+ * - the output must remain an ESM bundle that only exports `activate` and imports `vscode` as ESM.
+ *
+ * The summary identifies direct and transitive owners to make future package upgrades easier to
+ * evaluate. This list describes the generated bundle, not every CommonJS package in node_modules.
+ */
 const expectedRuntimeRequires = {
     '@microsoft/servicehub-framework': ['assert', 'crypto', 'events', 'net', 'os', 'path', 'stream', 'util'],
     '@vscode/js-debug-browsers': ['child_process', 'fs', 'os', 'path'],
     '@vscode/l10n': ['fs', 'fs/promises'],
-    'agent-base': ['http', 'https', 'net'],
     archiver: ['buffer', 'events', 'fs', 'path', 'stream', 'util', 'zlib'],
-    'archiver-utils': ['path', 'stream', 'util'],
-    bl: ['buffer', 'events', 'stream', 'util'],
+    'archiver-utils': ['buffer', 'events', 'node:url', 'path', 'stream'],
     'buffer-crc32': ['buffer'],
     'compress-commons': ['buffer', 'events', 'stream', 'util'],
-    'crc32-stream': ['buffer', 'events', 'stream', 'util', 'zlib'],
+    'crc32-stream': ['buffer', 'events', 'stream', 'zlib'],
     'cross-spawn': ['child_process', 'fs', 'path'],
     debug: ['tty', 'util'],
+    'events-universal': ['events'],
     execa: ['child_process', 'os', 'path'],
-    'fs-constants': ['constants', 'fs'],
     'fs-extra': ['path'],
-    'fs.realpath': ['fs', 'path'],
     'get-stream': ['buffer', 'stream'],
-    glob: ['assert', 'events', 'fs', 'path', 'util'],
     'graceful-fs': ['assert', 'constants', 'fs', 'stream', 'util'],
-    'http-proxy-agent': ['events', 'net', 'tls'],
-    'https-proxy-agent': ['assert', 'net', 'tls'],
     inherits: ['util'],
     isexe: ['fs'],
     jsonfile: ['fs'],
@@ -46,18 +53,18 @@ const expectedRuntimeRequires = {
         'vscode',
     ],
     minimatch: ['path'],
+    minipass: ['node:events', 'node:stream', 'node:string_decoder'],
     'msgpack-lite': ['stream', 'util'],
     'nerdbank-streams': ['crypto', 'events', 'stream'],
     'node-machine-id': ['child_process', 'crypto'],
     'npm-run-path': ['path'],
-    'ps-list': ['child_process', 'path', 'util'],
+    'path-scurry': ['fs', 'node:fs', 'node:fs/promises', 'node:path', 'node:url'],
     pump: ['fs'],
     'readable-stream': ['events', 'stream', 'util'],
     'readdir-glob': ['events', 'fs', 'path'],
     'safe-buffer': ['buffer'],
     'signal-exit': ['assert', 'events'],
     'supports-color': ['os', 'tty'],
-    'tar-stream': ['buffer', 'events', 'stream', 'string_decoder', 'util'],
     'util-deprecate': ['util'],
     'vscode-jsonrpc': ['crypto', 'fs', 'net', 'os', 'path', 'util'],
     'vscode-languageclient': ['child_process', 'fs', 'path', 'readline', 'vscode'],

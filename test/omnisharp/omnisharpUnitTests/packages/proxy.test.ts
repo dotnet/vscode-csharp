@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import { getProxyAgent } from '../../../../src/packageManager/proxy.ts';
 import url from 'url';
 
@@ -48,5 +50,17 @@ describe(`${getProxyAgent.name}`, () => {
 
         const result = getProxyAgent(requestUrl, /* proxy */ '', /* strictSSL */ false);
         expect(result).toBe(undefined);
+    });
+
+    test('Returns an HTTP proxy agent for HTTP requests', () => {
+        const result = getProxyAgent(url.parse('http://github.com'), 'http://localhost:8080', true);
+
+        expect(result).toBeInstanceOf(HttpProxyAgent);
+    });
+
+    test('Returns an HTTPS proxy agent for HTTPS requests', () => {
+        const result = getProxyAgent(requestUrl, 'http://localhost:8080', true);
+
+        expect(result).toBeInstanceOf(HttpsProxyAgent);
     });
 });
