@@ -4,13 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.148.x
-* Run PR CI for dev branches (PR: [#9620](https://github.com/dotnet/vscode-csharp/pull/9620))
-* Add Linux test stage for .NET 11 preview SDK (PR: [#9613](https://github.com/dotnet/vscode-csharp/pull/9613))
-* Re-enable recommended ESLint rules (PR: [#9611](https://github.com/dotnet/vscode-csharp/pull/9611))
-* Upgrade to prettier 3 (PR: [#9610](https://github.com/dotnet/vscode-csharp/pull/9610))
-* Upgrade eslint to 10 (PR: [#9609](https://github.com/dotnet/vscode-csharp/pull/9609))
 * Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
-* Fix release publish invocation to use hashtable splat (PR: [#9599](https://github.com/dotnet/vscode-csharp/pull/9599))
 
 * Update Roslyn to 5.11.0-1.26380.4 (PR: [#9601](https://github.com/dotnet/vscode-csharp/pull/9601))
   * Fix on-type and code action formatting on Razor explicit statements (PR: [#84699](https://github.com/dotnet/roslyn/pull/84699))
