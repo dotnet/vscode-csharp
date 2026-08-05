@@ -8,7 +8,7 @@ import { CSharpExtensionExports } from './csharpExtensionExports.ts';
 import { PlatformInformation } from './shared/platform.ts';
 import { Observable } from 'rxjs';
 import { EventStream } from './eventStream.ts';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { ITelemetryReporterWithLevel } from './shared/telemetryReporter.ts';
 import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer.ts';
 import { CSharpDevKitExports } from './csharpDevKitExports.ts';
 import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents.ts';
@@ -32,7 +32,7 @@ export function activateRoslyn(
     optionStream: Observable<void>,
     eventStream: EventStream,
     csharpChannel: vscode.LogOutputChannel,
-    reporter: TelemetryReporter,
+    reporter: ITelemetryReporterWithLevel,
     csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
     getCoreClrDebugPromise: (languageServerStarted: Promise<any>) => Promise<void>
 ): CSharpExtensionExports {

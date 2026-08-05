@@ -3,11 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { runIntegrationTests } from '../../runIntegrationTests.ts';
-import { jestProjectNames } from '../../jestProjectNames.mjs';
+import { jest } from '@jest/globals';
+import * as mockVsCode from '../__mocks__/vscode.ts';
 
-export async function run() {
-    process.env.RUNNING_INTEGRATION_TESTS = 'true';
-
-    await runIntegrationTests(jestProjectNames.untrustedIntegration);
-}
+jest.mock('vscode', () => mockVsCode, { virtual: true });
+jest.unstable_mockModule('vscode', () => mockVsCode, { virtual: true });

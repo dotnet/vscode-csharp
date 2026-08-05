@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import * as util from '../../../../src/common.ts';
 import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset.ts';

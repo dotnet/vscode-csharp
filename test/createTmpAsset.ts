@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as tmp from 'tmp';
-import { remove } from 'fs-extra';
+import fsExtra from 'fs-extra';
 import { NestedError } from '../src/nestedError.ts';
 
 export async function CreateTmpFile(): Promise<TmpAsset> {
@@ -43,7 +43,7 @@ export async function CreateTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
         name: tmpDir.name,
         dispose: () => {
             if (unsafeCleanup) {
-                remove(tmpDir.name).catch((rejectReason) => {
+                fsExtra.remove(tmpDir.name).catch((rejectReason) => {
                     throw new Error(`Failed to cleanup ${tmpDir.name} at ${tmpDir.fd}: ${rejectReason}`);
                 }); //to delete directories that have folders inside them
             } else {

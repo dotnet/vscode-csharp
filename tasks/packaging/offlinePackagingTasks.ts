@@ -5,7 +5,7 @@
 
 import * as cp from 'child_process';
 import * as fs from 'fs';
-import * as fsextra from 'fs-extra';
+import fsextra from 'fs-extra';
 import * as nbgv from 'nerdbank-gitversioning';
 import { Logger } from '../../src/logger.ts';
 import { PlatformInformation } from '../../src/shared/platform.ts';

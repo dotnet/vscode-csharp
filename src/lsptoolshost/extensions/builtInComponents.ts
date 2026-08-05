@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { LanguageServerOptions } from '../../shared/options.ts';
 
 interface ComponentInfo {
@@ -80,5 +81,5 @@ function getComponentFolderPath(component: ComponentInfo, options: LanguageServe
         }
     }
 
-    return path.join(__dirname, '..', component.defaultFolderName);
+    return path.join(path.dirname(fileURLToPath(import.meta.url)), '..', component.defaultFolderName);
 }

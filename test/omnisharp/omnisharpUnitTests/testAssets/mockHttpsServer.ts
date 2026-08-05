@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import getPort from 'get-port';
+import { createRequire } from 'node:module';
 
-// There are no typings for this library.
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// mock-http-server is CommonJS-only and has no type declarations.
+const require = createRequire(import.meta.url);
 const ServerMock = require('mock-http-server');
 
 export default class MockHttpsServer {

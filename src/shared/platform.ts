@@ -6,9 +6,11 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
+import { fileURLToPath } from 'url';
 import * as util from '../common.ts';
 
 const unknown = 'unknown';
+const currentDirectory = fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * There is no standard way on Linux to find the distribution name and version.
@@ -180,7 +182,7 @@ export class PlatformInformation {
     }
 
     private static async GetUnixArchitecture(): Promise<string> {
-        const architecture = (await util.execChildProcess('uname -m', __dirname, process.env)).trim();
+        const architecture = (await util.execChildProcess('uname -m', currentDirectory, process.env)).trim();
         if (architecture === 'aarch64') {
             return 'arm64';
         }
@@ -190,7 +192,7 @@ export class PlatformInformation {
     // Emulates https://github.com/dotnet/install-scripts/blob/3c6cc06/src/dotnet-install.sh#L187-L189.
     private static async GetIsMusl(): Promise<boolean> {
         try {
-            const output = await util.execChildProcess('ldd --version', __dirname, process.env);
+            const output = await util.execChildProcess('ldd --version', currentDirectory, process.env);
             return output.includes('musl');
         } catch (err) {
             return err instanceof Error ? err.message.includes('musl') : false;

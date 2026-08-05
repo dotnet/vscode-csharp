@@ -2,7 +2,7 @@
     "compilerOptions": {
         "esModuleInterop": true,
         "target": "ES2022",
-        "module": "CommonJS",
+        "module": "NodeNext",
         "outDir": "out",
         "lib": [
             "ES2021",
@@ -28,25 +28,26 @@
           "vscode-jsonrpc/node": ["./node_modules/vscode-jsonrpc/lib/node/main"],
         },
         "sourceMap": true,
-        "moduleResolution": "node",
+        "moduleResolution": "NodeNext",
         "moduleDetection": "force",
+        "allowJs": true,
         "rewriteRelativeImportExtensions": true,
+        "isolatedModules": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
         "noUnusedLocals": true,
         "noFallthroughCasesInSwitch": true
     },
-    "ts-node": {
-        "experimentalResolver": true
-    },
+    "files": [
+        "test/jestProjectNames.mjs",
+        "test/jestProjectNames.d.mts",
+    ],
     "include": [
-        "src",
-        "tasks",
-        "test",
-        "typings",
-        "__mocks__",
-        "jest.config.ts",
-        "baseJestConfig.ts",
+        "src/**/*.ts",
+        "tasks/**/*.ts",
+        "test/**/*.ts",
+        "typings/**/*.ts",
+        "__mocks__/**/*.ts",
     ],
 }

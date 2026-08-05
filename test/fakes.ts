@@ -50,8 +50,7 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
         sendTelemetryErrorEvent: (
             _eventName: string,
             _properties?: { [key: string]: string },
-            _measures?: { [key: string]: number },
-            _errorProps?: string[]
+            _measures?: { [key: string]: number }
         ) => {
             /** empty */
         },

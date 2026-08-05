@@ -3,23 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import {
-    dotnetAcquisitionExtensionOption,
-    dotnetPathOption,
-    IDotnetAcquisitionExistingPaths,
-    MigrateOptions,
-    migrateOptions,
-} from '../../../src/shared/migrateOptions.ts';
+import { IDotnetAcquisitionExistingPaths } from '../../../src/shared/migrateOptions.ts';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 import { getVSCodeWithConfig } from '../../fakes.ts';
 import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId.ts';
 import { ConfigurationTarget } from '../../../src/vscodeAdapter.ts';
 
-// Necessary when spying on module members.
-jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
+const mockExistsSync = jest.fn<typeof import('fs').existsSync>();
+jest.unstable_mockModule('fs', async () => ({
+    ...(await import('node:fs')),
+    existsSync: mockExistsSync,
+}));
+const fs = await import('fs');
+const { dotnetAcquisitionExtensionOption, dotnetPathOption, MigrateOptions, migrateOptions } =
+    await import('../../../src/shared/migrateOptions.ts');
 
 describe('Migrate configurations', () => {
     const packageJson = JSON.parse(fs.readFileSync('package.json').toString());
@@ -36,7 +35,7 @@ describe('Migrate configurations', () => {
     const validDotnetPath = path.join(validDotnetFolder, `dotnet${process.platform === 'win32' ? '.exe' : ''}`);
 
     beforeEach(() => {
-        jest.spyOn(fs, 'existsSync').mockImplementation((path) => {
+        mockExistsSync.mockImplementation((path) => {
             if (path.toString().endsWith(validDotnetPath)) {
                 return true;
             }

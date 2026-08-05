@@ -5,7 +5,7 @@
 
 import fs from 'fs';
 import * as path from 'path';
-import * as jest from 'jest';
+import jest from 'jest';
 import { Config } from '@jest/types';
 import { rootPath, outPath } from '../projectPaths.ts';
 import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher.ts';
@@ -107,7 +107,7 @@ export async function runJestIntegrationTest(
         throw new Error(`Could not find vscode workspace to open at ${workspacePath}`);
     }
 
-    // The runner (that loads in the vscode process to run tests) is in the test folder in the *output* directory.
+    // The ESM loader requires the explicit runner file rather than its containing directory.
     const vscodeRunnerPath = path.join(outPath, testFolderName, 'index.js');
     if (!fs.existsSync(vscodeRunnerPath)) {
         throw new Error(`Could not find vscode runner in out/ at ${vscodeRunnerPath}`);
@@ -147,7 +147,7 @@ export function getJUnitFileName(logName: string) {
 export async function runJestTest(project: string) {
     process.env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(project);
     process.env.JEST_SUITE_NAME = project;
-    const configPath = path.join(rootPath, 'jest.config.ts');
+    const configPath = path.join(rootPath, 'jest.config.mjs');
 
     const { results } = await jest.runCLI(
         {

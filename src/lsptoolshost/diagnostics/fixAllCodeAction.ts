@@ -7,8 +7,6 @@ import * as vscode from 'vscode';
 import * as RoslynProtocol from '../server/roslynProtocol.ts';
 import { LSPAny } from 'vscode-languageclient';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
-import { URIConverter, createConverter } from 'vscode-languageclient/protocolConverter';
-import { UriConverter } from '../utils/uriConverter.ts';
 
 export function registerCodeActionFixAllCommands(
     context: vscode.ExtensionContext,
@@ -56,9 +54,7 @@ export async function getFixAllResponse(
                 );
 
                 if (response.edit) {
-                    const uriConverter: URIConverter = (value: string): vscode.Uri => UriConverter.deserialize(value);
-                    const protocolConverter = createConverter(uriConverter, true, true, true);
-                    const fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
+                    const fixAllEdit = await languageServer.protocol2CodeConverter.asWorkspaceEdit(response.edit);
                     if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
                         const componentName = '[roslyn.client.fixAllCodeAction]';
                         const errorMessage = 'Failed to make a fix all edit for completion.';

@@ -7,3 +7,4 @@ import { jest } from '@jest/globals';
 
 // Defines a virtual mock for the vscode library since it doesn't exist until it gets loaded in by the vscode extension process.
 jest.mock('vscode', () => (global as any).vscode, { virtual: true });
+jest.unstable_mockModule('vscode', () => (global as any).vscode, { virtual: true });

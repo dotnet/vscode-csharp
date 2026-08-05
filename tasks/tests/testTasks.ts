@@ -5,15 +5,12 @@
 
 import path from 'path';
 import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers.ts';
-import { jestArtifactTestsProjectName } from '../../test/lsptoolshost/artifactTests/jest.config.ts';
-import { jestUnitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config.ts';
-import { razorTestProjectName } from '../../test/razor/razorTests/jest.config.ts';
-import { jestTasksTestProjectName } from '../../test/tasks/jest.config.ts';
+import { jestProjectNames } from '../../test/jestProjectNames.mjs';
 
 const razorIntegrationTestProjects = ['RazorApp'];
 
 export async function testArtifacts(): Promise<void> {
-    await runJestTest(jestArtifactTestsProjectName);
+    await runJestTest(jestProjectNames.artifact);
 }
 
 export async function testIntegrationCSharp(): Promise<void> {
@@ -43,7 +40,7 @@ export async function testIntegrationUntrusted(): Promise<void> {
 }
 
 export async function testUnit(): Promise<void> {
-    await runJestTest(jestUnitTestProjectName);
-    await runJestTest(razorTestProjectName);
-    await runJestTest(jestTasksTestProjectName);
+    await runJestTest(jestProjectNames.unit);
+    await runJestTest(jestProjectNames.razorUnit);
+    await runJestTest(jestProjectNames.tasksUnit);
 }

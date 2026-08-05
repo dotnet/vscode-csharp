@@ -17,7 +17,7 @@ import {
     changeProjectContextFileExplorer,
     openAndChangeProjectContext,
 } from './projectContext/projectContextCommands.ts';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { ITelemetryReporter } from '../shared/telemetryReporter.ts';
 import { TelemetryEventNames } from '../shared/telemetryEventNames.ts';
 import { registerCollectLogsCommand } from './logging/collectLogs.ts';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel.ts';
@@ -28,7 +28,7 @@ export function registerCommands(
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     csharpTraceChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter
+    reporter: ITelemetryReporter
 ) {
     registerExtensionCommands(
         context,
@@ -51,7 +51,7 @@ function registerExtensionCommands(
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: ObservableLogOutputChannel,
     csharpTraceChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter
+    reporter: ITelemetryReporter
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
