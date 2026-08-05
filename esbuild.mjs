@@ -91,12 +91,16 @@ async function main() {
         entryPoints: ['src/main.ts'],
         bundle: true,
         format: 'esm',
-        // Bundled CommonJS dependencies still require Node built-ins at runtime. The exact owners
-        // are enforced by bundleAuditPlugin so this compatibility bridge cannot grow unnoticed.
+        // Bundled CommonJS dependencies still use require and CommonJS path globals at runtime.
+        // The exact require owners are enforced by bundleAuditPlugin so this bridge cannot grow unnoticed.
         banner: {
             js: [
                 `import { createRequire } from 'node:module';`,
+                `import { dirname as __pathDirname } from 'node:path';`,
+                `import { fileURLToPath as __fileURLToPath } from 'node:url';`,
                 `const require = createRequire(import.meta.url);`,
+                `const __filename = __fileURLToPath(import.meta.url);`,
+                `const __dirname = __pathDirname(__filename);`,
             ].join('\n'),
         },
         metafile: true,
