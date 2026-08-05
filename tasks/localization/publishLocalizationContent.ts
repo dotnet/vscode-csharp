@@ -35,7 +35,7 @@ async function publishLocalizationContent() {
     const localizationChanges = getAllPossibleLocalizationFiles();
     await git(['add'].concat(localizationChanges));
 
-    const diff = await git_diff(['--name-only', 'HEAD']);
+    const diff = await git_diff(['--cached', '--name-only']);
     if (diff.length == 0) {
         console.log('No localization file changed');
         return;
@@ -144,16 +144,23 @@ async function git(args: string[], printCommand = true): Promise<string> {
         console.log(`git ${args.join(' ')}`);
     }
 
-    const git = spawnSync('git', args);
-    if (git.status != 0) {
-        const err = git.stderr.toString();
+    const result = spawnSync('git', args, { encoding: 'utf8' });
+    const command = printCommand ? `git ${args.join(' ')}` : 'git command';
+    if (result.error) {
+        throw new Error(`Failed to start ${command}: ${result.error.message}`);
+    }
+    if (result.status != 0) {
+        const output = [result.stderr, result.stdout]
+            .map((value) => value.trim())
+            .filter((value) => value.length > 0)
+            .join(EOL);
         if (printCommand) {
-            console.log(`Failed to execute git ${args.join(' ')}.`);
+            console.error(`Failed to execute ${command}.`);
         }
-        throw err;
+        throw new Error(output || `${command} failed with code ${result.status}.`);
     }
 
-    const stdout = git.stdout.toString();
+    const stdout = result.stdout;
     if (printCommand) {
         console.log(stdout);
     }
