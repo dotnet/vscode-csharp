@@ -5,12 +5,14 @@
 
 import { omnisharpTestIntegration, omnisharpTestUnit } from './omnisharptestTasks';
 import { runTask } from '../runTask';
+import { parseCodeExtensionPath } from './omnisharptestArguments';
 
-runTask(omnisharpTest);
+const codeExtensionPath = parseCodeExtensionPath();
+runTask(async () => await omnisharpTest(codeExtensionPath));
 
 // OmniSharp tests are run separately in CI, so we have separate tasks for these.
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
-async function omnisharpTest(): Promise<void> {
+async function omnisharpTest(codeExtensionPath: string): Promise<void> {
     await omnisharpTestUnit();
-    await omnisharpTestIntegration(/* skipLsp */ true);
+    await omnisharpTestIntegration(codeExtensionPath, /* skipLsp */ true);
 }

@@ -10,14 +10,12 @@ import { runTask } from '../runTask';
 runTask(incrementVersion);
 
 async function incrementVersion(): Promise<void> {
-    const args = process.argv.slice(2).map((arg) => (arg === '--releaseCandidate' ? '--releaseCandidate=true' : arg));
     const { values } = parseArgs({
-        args,
         options: {
-            releaseCandidate: { type: 'string' },
+            releaseCandidate: { type: 'boolean' },
         },
     });
-    const isReleaseCandidate = values.releaseCandidate === 'true';
+    const isReleaseCandidate = values.releaseCandidate ?? false;
 
     // Get the current version from version.json
     const versionJson = readVersionJson();

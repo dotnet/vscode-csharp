@@ -15,8 +15,6 @@ import { downloadAndInstallPackages } from '../../src/packageManager/downloadAnd
 import { getRuntimeDependenciesPackages } from '../../src/tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../../src/packageManager/getAbsolutePathPackagesToInstall';
 import {
-    codeExtensionPath,
-    packedVsixOutputRoot,
     languageServerDirectory,
     nugetTempPath,
     rootPath,
@@ -34,6 +32,12 @@ interface VSIXPlatformInfo {
     vsceTarget: string;
     rid: string;
     platformInfo: PlatformInformation;
+}
+
+export interface VsixReleasePackageOptions {
+    prerelease: boolean;
+    outputFolder: string;
+    codeExtensionPath: string;
 }
 
 const versionFileName = 'version.nfo';
@@ -120,25 +124,25 @@ for (const p of platformSpecificPackages) {
     platformEntries.push({ platformName, vsixPlatform: p });
 }
 
-export async function vsixReleasePackageWindowsTask(prerelease: boolean): Promise<void> {
+export async function vsixReleasePackageWindowsTask(options: VsixReleasePackageOptions): Promise<void> {
     for (const entry of platformEntries.filter((e) => e.platformName === 'windows')) {
-        await doPackageOffline(entry.vsixPlatform, prerelease);
+        await doPackageOffline(entry.vsixPlatform, options);
     }
 }
-export async function vsixReleasePackageLinuxTask(prerelease: boolean): Promise<void> {
+export async function vsixReleasePackageLinuxTask(options: VsixReleasePackageOptions): Promise<void> {
     for (const entry of platformEntries.filter((e) => e.platformName === 'linux')) {
-        await doPackageOffline(entry.vsixPlatform, prerelease);
+        await doPackageOffline(entry.vsixPlatform, options);
     }
 }
-export async function vsixReleasePackageDarwinTask(prerelease: boolean): Promise<void> {
+export async function vsixReleasePackageDarwinTask(options: VsixReleasePackageOptions): Promise<void> {
     for (const entry of platformEntries.filter((e) => e.platformName === 'darwin')) {
-        await doPackageOffline(entry.vsixPlatform, prerelease);
+        await doPackageOffline(entry.vsixPlatform, options);
     }
 }
 
-export async function vsixReleasePackageTask(prerelease: boolean): Promise<void> {
+export async function vsixReleasePackageTask(options: VsixReleasePackageOptions): Promise<void> {
     for (const entry of platformEntries) {
-        await doPackageOffline(entry.vsixPlatform, prerelease);
+        await doPackageOffline(entry.vsixPlatform, options);
     }
 }
 
@@ -254,18 +258,19 @@ async function installNuGetPackage(
     fs.writeFileSync(versionFilePath, packageVersion);
 }
 
-async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
-    return await installPackageJsonDependency('Razor', packageJSON, platformInfo);
+async function installRazor(packageJSON: any, platformInfo: PlatformInformation, codeExtensionPath: string) {
+    return await installPackageJsonDependency('Razor', packageJSON, platformInfo, codeExtensionPath);
 }
 
-async function installDebugger(packageJSON: any, platformInfo: PlatformInformation) {
-    return await installPackageJsonDependency('Debugger', packageJSON, platformInfo);
+async function installDebugger(packageJSON: any, platformInfo: PlatformInformation, codeExtensionPath: string) {
+    return await installPackageJsonDependency('Debugger', packageJSON, platformInfo, codeExtensionPath);
 }
 
 async function installPackageJsonDependency(
     dependencyName: string,
     packageJSON: any,
     platformInfo: PlatformInformation,
+    codeExtensionPath: string,
     token?: CancellationToken
 ) {
     const eventStream = new EventStream();
@@ -335,14 +340,14 @@ async function restoreNugetPackage(packageName: string, packageVersion: string, 
     return packageOutputPath;
 }
 
-async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined, prerelease: boolean) {
+async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined, options: VsixReleasePackageOptions) {
     await cleanAsync();
     // Set the package.json version based on the value in version.json.
     const versionInfo = await nbgv.getVersion();
     console.log(versionInfo.npmPackageVersion);
     await nbgv.setPackageVersion();
 
-    if (prerelease) {
+    if (options.prerelease) {
         console.log('Packaging prerelease version.');
     } else {
         console.log('Packaging release version.');
@@ -360,9 +365,9 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined, prer
         }
 
         if (vsixPlatform === undefined) {
-            await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
+            await buildVsix(packageJSON, options);
         } else {
-            await buildVsix(packageJSON, packedVsixOutputRoot, prerelease, vsixPlatform);
+            await buildVsix(packageJSON, options, vsixPlatform);
         }
     } catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -397,16 +402,21 @@ async function cleanAsync() {
     }
 }
 
-async function buildVsix(packageJSON: any, outputFolder: string, prerelease: boolean, platformInfo?: VSIXPlatformInfo) {
+async function buildVsix(packageJSON: any, options: VsixReleasePackageOptions, platformInfo?: VSIXPlatformInfo) {
     await acquireAndInstallAllNugetPackages(platformInfo, packageJSON, false);
 
     if (platformInfo != null) {
-        await installRazor(packageJSON, platformInfo.platformInfo);
-        await installDebugger(packageJSON, platformInfo.platformInfo);
+        await installRazor(packageJSON, platformInfo.platformInfo, options.codeExtensionPath);
+        await installDebugger(packageJSON, platformInfo.platformInfo, options.codeExtensionPath);
     }
 
     const packageFileName = getPackageName(packageJSON, platformInfo?.vsceTarget);
-    const packagePath = await createPackageAsync(outputFolder, prerelease, packageFileName, platformInfo?.vsceTarget);
+    const packagePath = await createPackageAsync(
+        options.outputFolder,
+        options.prerelease,
+        packageFileName,
+        platformInfo?.vsceTarget
+    );
     await generateVsixManifest(packagePath);
 }
 
