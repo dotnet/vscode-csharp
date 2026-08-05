@@ -55,9 +55,9 @@ async function publishLocalizationContent() {
     await git(['checkout', '-b', newBranchName]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
 
-    const pat = process.env['GitHubPAT'];
-    if (!pat) {
-        throw 'No GitHub Pat found.';
+    const token = process.env['GitHubToken'];
+    if (!token) {
+        throw 'No GitHub token found.';
     }
 
     const remoteRepoAlias = 'targetRepo';
@@ -66,9 +66,9 @@ async function publishLocalizationContent() {
             'remote',
             'add',
             remoteRepoAlias,
-            `https://${parsedArgs.userName}:${pat}@github.com/dotnet/${parsedArgs.targetRemoteRepo}.git`,
+            `https://x-access-token:${token}@github.com/dotnet/${parsedArgs.targetRemoteRepo}.git`,
         ],
-        // Note: don't print PAT to console
+        // Do not print the token to the console.
         false
     );
     await git(['fetch', remoteRepoAlias]);
@@ -83,7 +83,7 @@ async function publishLocalizationContent() {
         await git(['push', '-u', remoteRepoAlias]);
     }
 
-    const octokit = new Octokit({ auth: pat });
+    const octokit = new Octokit({ auth: token });
     const listPullRequest = await octokit.rest.pulls.list({
         owner: 'dotnet',
         repo: parsedArgs.targetRemoteRepo,
