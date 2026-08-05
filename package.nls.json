@@ -124,7 +124,7 @@
   "configuration.omnisharp.projectFilesExcludePattern": "The exclude pattern used by OmniSharp to find all project files.",
   "configuration.omnisharp.projectLoadTimeout": "The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds.",
   "configuration.omnisharp.maxProjectResults": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250).",
-  "configuration.omnisharp.useEditorFormattingSettings": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
+  "configuration.omnisharp.useEditorFormattingSettings": "Specifies whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
   "configuration.omnisharp.minFindSymbolsFilterLength": "The minimum number of characters to enter before 'Go to Symbol in Workspace' operation shows any results.",
   "configuration.omnisharp.maxFindSymbolsItems": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The limit is applied only when a positive number is specified here.",
   "configuration.omnisharp.disableMSBuildDiagnosticWarning": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log",
