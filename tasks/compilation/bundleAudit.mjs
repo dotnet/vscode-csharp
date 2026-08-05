@@ -6,9 +6,9 @@
 import fs from 'node:fs/promises';
 
 /**
- * The extension is emitted as native ESM, but esbuild must preserve runtime `require()` calls
- * from bundled CommonJS dependencies. esbuild.mjs supplies a createRequire bridge for those
- * calls. This audit inspects esbuild's metafile to keep that compatibility boundary explicit:
+ * The extension is emitted as native ESM, but bundled CommonJS dependencies still use runtime
+ * `require()` calls and path globals such as `__dirname`. esbuild.mjs supplies compatibility
+ * bridges for them. This audit inspects esbuild's metafile to keep the require boundary explicit:
  *
  * - first-party runtime requires are rejected;
  * - each dependency owner and required target must exactly match this allowlist, so new requires

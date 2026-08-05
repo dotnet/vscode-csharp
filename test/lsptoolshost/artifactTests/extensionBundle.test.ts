@@ -36,6 +36,15 @@ describe('Extension bundle', () => {
         });
     });
 
+    test('entry provides CommonJS path globals for bundled dependencies', async () => {
+        const contents = await fs.readFile(extensionEntry, 'utf8');
+
+        expect(contents).toContain(`import { dirname as __pathDirname } from 'node:path';`);
+        expect(contents).toContain(`import { fileURLToPath as __fileURLToPath } from 'node:url';`);
+        expect(contents).toContain('const __filename = __fileURLToPath(import.meta.url);');
+        expect(contents).toContain('const __dirname = __pathDirname(__filename);');
+    });
+
     test('JavaScript signing includes .mjs output', async () => {
         const signingProject = await fs.readFile(path.resolve('msbuild/signing/signJs/signJs.proj'), 'utf8');
         expect(signingProject).toContain('<FilesToSign Include="$(OutDir)*.mjs">');
