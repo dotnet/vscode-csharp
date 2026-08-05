@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { PlatformInformation } from '../../../../src/shared/platform';
-import { getNotInstalledPackagesForPlatform } from '../../../../src/packageManager/packageFilterer';
-import { Package } from '../../../../src/packageManager/package';
-import { AbsolutePathPackage } from '../../../../src/packageManager/absolutePathPackage';
+import { PlatformInformation } from '../../../../src/shared/platform.ts';
+import { getNotInstalledPackagesForPlatform } from '../../../../src/packageManager/packageFilterer.ts';
+import { Package } from '../../../../src/packageManager/package.ts';
+import { AbsolutePathPackage } from '../../../../src/packageManager/absolutePathPackage.ts';
 import { MockedFunction } from 'jest-mock';
 import * as fs from 'fs';
 import { join } from 'path';

@@ -5,10 +5,10 @@
 
 import * as semver from 'semver';
 import * as path from 'path';
-import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
-import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
-import { IGetMonoVersion } from '../constants/IGetMonoVersion';
-import { omnisharpOptions } from '../shared/options';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver.ts';
+import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation.ts';
+import { IGetMonoVersion } from '../constants/IGetMonoVersion.ts';
+import { omnisharpOptions } from '../shared/options.ts';
 
 export class OmniSharpMonoResolver implements IHostExecutableResolver {
     private readonly minimumMonoVersion = '6.4.0';

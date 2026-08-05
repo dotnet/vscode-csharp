@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { spawnSync, SpawnSyncOptions } from 'child_process';
-import { nodePath, rootPath } from './projectPaths';
+import { nodePath, rootPath } from './projectPaths.ts';
 
 export default async function spawnNode(args?: string[], options?: SpawnSyncOptions) {
     if (!options) {

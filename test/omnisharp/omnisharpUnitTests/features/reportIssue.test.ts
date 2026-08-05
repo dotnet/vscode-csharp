@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import reportIssue from '../../../../src/shared/reportIssue';
-import { FakeMonoResolver, fakeMonoInfo } from '../fakes/fakeMonoResolver';
-import { FakeDotnetResolver } from '../fakes/fakeDotnetResolver';
-import { DotnetInfo } from '../../../../src/shared/utils/dotnetInfo';
+import reportIssue from '../../../../src/shared/reportIssue.ts';
+import { FakeMonoResolver, fakeMonoInfo } from '../fakes/fakeMonoResolver.ts';
+import { FakeDotnetResolver } from '../fakes/fakeDotnetResolver.ts';
+import { DotnetInfo } from '../../../../src/shared/utils/dotnetInfo.ts';
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
 describe(`${reportIssue.name}`, () => {

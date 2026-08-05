@@ -6,9 +6,9 @@
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { activateCSharpExtension, describeIfSlnWithCsProj, describeIfNotGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { isNotNull } from '../testUtil';
+import { activateCSharpExtension, describeIfSlnWithCsProj, describeIfNotGenerator } from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
+import { isNotNull } from '../testUtil.ts';
 
 describeIfNotGenerator(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;

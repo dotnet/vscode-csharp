@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers';
-import { jestArtifactTestsProjectName } from '../../test/lsptoolshost/artifactTests/jest.config';
-import { jestUnitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config';
-import { razorTestProjectName } from '../../test/razor/razorTests/jest.config';
-import { jestTasksTestProjectName } from '../../test/tasks/jest.config';
+import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers.ts';
+import { jestArtifactTestsProjectName } from '../../test/lsptoolshost/artifactTests/jest.config.ts';
+import { jestUnitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config.ts';
+import { razorTestProjectName } from '../../test/razor/razorTests/jest.config.ts';
+import { jestTasksTestProjectName } from '../../test/tasks/jest.config.ts';
 
 const razorIntegrationTestProjects = ['RazorApp'];
 

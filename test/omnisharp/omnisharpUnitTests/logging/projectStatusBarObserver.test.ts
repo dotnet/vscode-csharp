@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from '../../../fakes';
-import { StatusBarItem } from '../../../../src/vscodeAdapter';
-import { ProjectStatusBarObserver } from '../../../../src/omnisharp/observers/projectStatusBarObserver';
+import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from '../../../fakes.ts';
+import { StatusBarItem } from '../../../../src/vscodeAdapter.ts';
+import { ProjectStatusBarObserver } from '../../../../src/omnisharp/observers/projectStatusBarObserver.ts';
 import {
     OmnisharpOnMultipleLaunchTargets,
     OmnisharpServerOnStop,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents.ts';
 
 describe('ProjectStatusBarObserver', () => {
     let showCalled: boolean;

@@ -6,13 +6,13 @@
 import * as vscode from 'vscode';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { CancellationToken, ErrorHandler, LanguageClientOptions, MessageSignature, State } from 'vscode-languageclient';
-import CompositeDisposable from '../../compositeDisposable';
-import { IDisposable } from '../../disposable';
-import { languageServerOptions } from '../../shared/options';
-import { RoslynLspErrorCodes } from './roslynProtocol';
-import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
-import { ITelemetryReporter } from '../../shared/telemetryReporter';
-import { TelemetryEventNames } from '../../shared/telemetryEventNames';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import { IDisposable } from '../../disposable.ts';
+import { languageServerOptions } from '../../shared/options.ts';
+import { RoslynLspErrorCodes } from './roslynProtocol.ts';
+import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage.ts';
+import { ITelemetryReporter } from '../../shared/telemetryReporter.ts';
+import { TelemetryEventNames } from '../../shared/telemetryEventNames.ts';
 
 /**
  * Implementation of the base LanguageClient type that allows for additional items to be disposed of

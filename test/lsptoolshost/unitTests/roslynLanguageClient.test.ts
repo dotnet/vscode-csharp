@@ -20,8 +20,8 @@ jest.mock('vscode-languageclient', () => ({
     RequestType0: class {},
 }));
 
-import { RoslynLanguageClient } from '../../../src/lsptoolshost/server/roslynLanguageClient';
-import { TelemetryEventNames } from '../../../src/shared/telemetryEventNames';
+import { RoslynLanguageClient } from '../../../src/lsptoolshost/server/roslynLanguageClient.ts';
+import { TelemetryEventNames } from '../../../src/shared/telemetryEventNames.ts';
 
 describe('RoslynLanguageClient', () => {
     test('shows one crash notification and emits one telemetry event per crash', () => {

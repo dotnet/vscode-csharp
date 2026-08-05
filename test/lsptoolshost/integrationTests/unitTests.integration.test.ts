@@ -6,15 +6,15 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
     describeIfCSharp,
     getCodeLensesAsync,
     openFileInWorkspaceAsync,
-} from './integrationHelpers';
-import { TestProgress } from '../../../src/lsptoolshost/server/roslynProtocol';
+} from './integrationHelpers.ts';
+import { TestProgress } from '../../../src/lsptoolshost/server/roslynProtocol.ts';
 
 describeIfCSharp(`Unit Testing Tests`, () => {
     beforeAll(async () => {

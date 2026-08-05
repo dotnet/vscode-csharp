@@ -4,53 +4,53 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as utils from './utils';
-import { DotNetChannelObserver } from './observers/dotnetChannelObserver';
-import { DotnetLoggerObserver } from './observers/dotnetLoggerObserver';
-import DotNetTestLoggerObserver from './observers/dotnetTestLoggerObserver';
-import DotNetTestChannelObserver from './observers/dotnetTestChannelObserver';
-import { OmnisharpLoggerObserver } from './observers/omnisharpLoggerObserver';
-import { OmnisharpChannelObserver } from './observers/omnisharpChannelObserver';
-import { WarningMessageObserver } from './observers/warningMessageObserver';
-import { InformationMessageObserver } from './observers/informationMessageObserver';
-import { ErrorMessageObserver } from './observers/errorMessageObserver';
-import { StatusBarItemAdapter } from '../statusBarItemAdapter';
-import { OmnisharpStatusBarObserver } from './observers/omnisharpStatusBarObserver';
-import { EventStream } from '../eventStream';
-import { NetworkSettingsProvider } from '../networkSettings';
-import { PlatformInformation } from '../shared/platform';
-import { ProjectStatusBarObserver } from './observers/projectStatusBarObserver';
-import { BackgroundWorkStatusBarObserver } from './observers/backgroundWorkStatusBarObserver';
-import { OmnisharpDebugModeLoggerObserver } from './observers/omnisharpDebugModeLoggerObserver';
-import { RazorLoggerObserver } from './observers/razorLoggerObserver';
-import { RazorOmnisharpDownloader } from '../razor/razorOmnisharpDownloader';
-import { omnisharpOptions, razorOptions } from '../shared/options';
-import CompositeDisposable from '../compositeDisposable';
-import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
-import { DotnetResolver } from './dotnetResolver';
-import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
-import { OmniSharpServer } from './server';
-import { Advisor } from './features/diagnosticsProvider';
-import TestManager from './features/dotnetTest';
-import { OmnisharpWorkspaceDebugInformationProvider } from './omnisharpWorkspaceDebugInformationProvider';
-import Disposable from '../disposable';
-import registerCommands from './features/commands';
-import { addAssetsIfNecessary } from '../shared/assets';
+import * as utils from './utils.ts';
+import { DotNetChannelObserver } from './observers/dotnetChannelObserver.ts';
+import { DotnetLoggerObserver } from './observers/dotnetLoggerObserver.ts';
+import DotNetTestLoggerObserver from './observers/dotnetTestLoggerObserver.ts';
+import DotNetTestChannelObserver from './observers/dotnetTestChannelObserver.ts';
+import { OmnisharpLoggerObserver } from './observers/omnisharpLoggerObserver.ts';
+import { OmnisharpChannelObserver } from './observers/omnisharpChannelObserver.ts';
+import { WarningMessageObserver } from './observers/warningMessageObserver.ts';
+import { InformationMessageObserver } from './observers/informationMessageObserver.ts';
+import { ErrorMessageObserver } from './observers/errorMessageObserver.ts';
+import { StatusBarItemAdapter } from '../statusBarItemAdapter.ts';
+import { OmnisharpStatusBarObserver } from './observers/omnisharpStatusBarObserver.ts';
+import { EventStream } from '../eventStream.ts';
+import { NetworkSettingsProvider } from '../networkSettings.ts';
+import { PlatformInformation } from '../shared/platform.ts';
+import { ProjectStatusBarObserver } from './observers/projectStatusBarObserver.ts';
+import { BackgroundWorkStatusBarObserver } from './observers/backgroundWorkStatusBarObserver.ts';
+import { OmnisharpDebugModeLoggerObserver } from './observers/omnisharpDebugModeLoggerObserver.ts';
+import { RazorLoggerObserver } from './observers/razorLoggerObserver.ts';
+import { RazorOmnisharpDownloader } from '../razor/razorOmnisharpDownloader.ts';
+import { omnisharpOptions, razorOptions } from '../shared/options.ts';
+import CompositeDisposable from '../compositeDisposable.ts';
+import { OmniSharpMonoResolver } from './omniSharpMonoResolver.ts';
+import { DotnetResolver } from './dotnetResolver.ts';
+import { LanguageMiddlewareFeature } from './languageMiddlewareFeature.ts';
+import { OmniSharpServer } from './server.ts';
+import { Advisor } from './features/diagnosticsProvider.ts';
+import TestManager from './features/dotnetTest.ts';
+import { OmnisharpWorkspaceDebugInformationProvider } from './omnisharpWorkspaceDebugInformationProvider.ts';
+import Disposable from '../disposable.ts';
+import registerCommands from './features/commands.ts';
+import { addAssetsIfNecessary } from '../shared/assets.ts';
 import {
     ActiveTextEditorChanged,
     OmnisharpStart,
     ProjectJsonDeprecatedWarning,
     RazorDevModeActive,
-} from './omnisharpLoggingEvents';
-import { DotnetWorkspaceConfigurationProvider } from '../shared/workspaceConfigurationProvider';
-import { getMonoVersion } from '../utils/getMonoVersion';
-import { safeLength, sum } from '../common';
-import { TelemetryObserver } from './observers/telemetryObserver';
-import { ITelemetryReporter } from '../shared/telemetryReporter';
+} from './omnisharpLoggingEvents.ts';
+import { DotnetWorkspaceConfigurationProvider } from '../shared/workspaceConfigurationProvider.ts';
+import { getMonoVersion } from '../utils/getMonoVersion.ts';
+import { safeLength, sum } from '../common.ts';
+import { TelemetryObserver } from './observers/telemetryObserver.ts';
+import { ITelemetryReporter } from '../shared/telemetryReporter.ts';
 import { Observable } from 'rxjs';
-import { registerOmnisharpOptionChanges } from './omnisharpOptionChanges';
-import { CSharpLoggerObserver } from './observers/csharpLoggerObserver';
-import { showWarningMessage } from '../shared/observers/utils/showMessage';
+import { registerOmnisharpOptionChanges } from './omnisharpOptionChanges.ts';
+import { CSharpLoggerObserver } from './observers/csharpLoggerObserver.ts';
+import { showWarningMessage } from '../shared/observers/utils/showMessage.ts';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
-import { RefreshSourceGeneratorsNotification } from '../server/roslynProtocol';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel.ts';
+import { RefreshSourceGeneratorsNotification } from '../server/roslynProtocol.ts';
 
 export function registerSourceGeneratorRefresh(
     context: vscode.ExtensionContext,

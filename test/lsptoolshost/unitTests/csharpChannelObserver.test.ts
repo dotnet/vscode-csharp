@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { getNullChannel } from '../../fakes';
-import { CsharpChannelObserver } from '../../../src/shared/observers/csharpChannelObserver';
+import { getNullChannel } from '../../fakes.ts';
+import { CsharpChannelObserver } from '../../../src/shared/observers/csharpChannelObserver.ts';
 import {
     InstallationFailure,
     BaseEvent,
@@ -13,7 +13,7 @@ import {
     IntegrityCheckFailure,
     DebuggerNotInstalledFailure,
     DebuggerPrerequisiteFailure,
-} from '../../../src/shared/loggingEvents';
+} from '../../../src/shared/loggingEvents.ts';
 
 describe('CsharpChannelObserver', () => {
     [

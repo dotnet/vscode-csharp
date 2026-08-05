@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../utils';
-import { createRequest, toRange } from '../typeConversion';
+import AbstractSupport from './abstractProvider.ts';
+import * as protocol from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
+import { createRequest, toRange } from '../typeConversion.ts';
 import {
     DocumentHighlightProvider,
     DocumentHighlight,

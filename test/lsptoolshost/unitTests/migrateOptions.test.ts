@@ -12,11 +12,11 @@ import {
     IDotnetAcquisitionExistingPaths,
     MigrateOptions,
     migrateOptions,
-} from '../../../src/shared/migrateOptions';
+} from '../../../src/shared/migrateOptions.ts';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { getVSCodeWithConfig } from '../../fakes';
-import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId';
-import { ConfigurationTarget } from '../../../src/vscodeAdapter';
+import { getVSCodeWithConfig } from '../../fakes.ts';
+import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId.ts';
+import { ConfigurationTarget } from '../../../src/vscodeAdapter.ts';
 
 // Necessary when spying on module members.
 jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));

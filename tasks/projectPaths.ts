@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { commandLineOptions } from './commandLineArguments';
-import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents';
+import { commandLineOptions } from './commandLineArguments.ts';
+import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents.ts';
 
 export const rootPath = path.resolve(__dirname, '..');
 

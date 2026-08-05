@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
 import { expect } from '@jest/globals';
-import { restartLanguageServer, waitForExpectedResult } from './integrationHelpers';
+import { restartLanguageServer, waitForExpectedResult } from './integrationHelpers.ts';
 
 function sortDiagnostics(diagnostics: vscode.Diagnostic[]): vscode.Diagnostic[] {
     return diagnostics.sort((a, b) => {

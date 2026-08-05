@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as RoslynProtocol from '../server/roslynProtocol';
+import * as RoslynProtocol from '../server/roslynProtocol.ts';
 import { LSPAny } from 'vscode-languageclient';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
 import { URIConverter, createConverter } from 'vscode-languageclient/protocolConverter';
-import { UriConverter } from '../utils/uriConverter';
+import { UriConverter } from '../utils/uriConverter.ts';
 
 export function registerCodeActionFixAllCommands(
     context: vscode.ExtensionContext,

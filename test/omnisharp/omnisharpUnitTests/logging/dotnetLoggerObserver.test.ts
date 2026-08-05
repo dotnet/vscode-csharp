@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { getNullChannel } from '../../../fakes';
-import { DotnetLoggerObserver } from '../../../../src/omnisharp/observers/dotnetLoggerObserver';
-import { EventWithMessage } from '../../../../src/shared/loggingEvents';
+import { getNullChannel } from '../../../fakes.ts';
+import { DotnetLoggerObserver } from '../../../../src/omnisharp/observers/dotnetLoggerObserver.ts';
+import { EventWithMessage } from '../../../../src/shared/loggingEvents.ts';
 import {
     CommandDotNetRestoreFailed,
     CommandDotNetRestoreProgress,
     CommandDotNetRestoreSucceeded,
-} from '../../../../src/omnisharp/omnisharpLoggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents.ts';
 
 describe('DotnetLoggerObserver', () => {
     [

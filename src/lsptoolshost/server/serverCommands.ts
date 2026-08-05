@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { UriConverter } from '../utils/uriConverter';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { UriConverter } from '../utils/uriConverter.ts';
 import * as languageClient from 'vscode-languageclient';
 
 /**

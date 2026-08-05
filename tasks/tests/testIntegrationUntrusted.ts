@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { testIntegrationUntrusted } from './testTasks';
-import { runTask } from '../runTask';
+import { testIntegrationUntrusted } from './testTasks.ts';
+import { runTask } from '../runTask.ts';
 
 runTask(testIntegrationUntrusted);
