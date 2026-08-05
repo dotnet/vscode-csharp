@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.148.x
-
+* Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
 * Update Roslyn to 5.11.0-1.26380.4 (PR: [#9601](https://github.com/dotnet/vscode-csharp/pull/9601))
   * Fix on-type and code action formatting on Razor explicit statements (PR: [#84699](https://github.com/dotnet/roslyn/pull/84699))
   * Allow showing all C# code actions in Razor in VS Code (PR: [#84673](https://github.com/dotnet/roslyn/pull/84673))
