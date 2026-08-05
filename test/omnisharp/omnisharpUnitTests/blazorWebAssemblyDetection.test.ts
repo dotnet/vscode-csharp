@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 import * as path from 'path';
 import { CreateTmpDir, TmpAsset } from '../../createTmpAsset';
 import { isBlazorWebAssemblyHostedServer, isBlazorWebAssemblyProject, isWebProject } from '../../../src/shared/utils';
@@ -53,7 +53,7 @@ describe('Blazor WebAssembly detection', () => {
 
     function writeLaunchSettings(content: string): void {
         const propertiesDir = path.join(tmpDir.name, 'Properties');
-        fs.mkdirpSync(propertiesDir);
+        fs.mkdirSync(propertiesDir, { recursive: true });
         fs.writeFileSync(path.join(propertiesDir, 'launchSettings.json'), content);
     }
 

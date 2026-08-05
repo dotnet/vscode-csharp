@@ -3,18 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import minimist from 'minimist';
 import * as path from 'path';
+import { parseArgs } from 'util';
 
-const argv = minimist(process.argv.slice(2));
+const { values: argv } = parseArgs({
+    options: {
+        o: { type: 'string', short: 'o' },
+        codeExtensionPath: { type: 'string' },
+    },
+    strict: false,
+});
 
 export const commandLineOptions = {
     outputFolder: makePathAbsolute(argv['o']),
     codeExtensionPath: makePathAbsolute(argv['codeExtensionPath']),
 };
 
-function makePathAbsolute(originalPath: string) {
-    if (!originalPath || originalPath == '') {
+function makePathAbsolute(originalPath: string | boolean | undefined) {
+    if (typeof originalPath !== 'string' || originalPath == '') {
         return undefined;
     }
 

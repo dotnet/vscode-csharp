@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import { promises as fs } from 'fs';
 import * as vscode from 'vscode';
 
 import {
@@ -77,7 +77,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
                 }
 
                 // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist.
-                await fs.ensureDir(generator.vscodeFolder);
+                await fs.mkdir(generator.vscodeFolder, { recursive: true });
 
                 // Add a tasks.json
                 const buildOperations: AssetOperations = await getBuildOperations(generator);

@@ -5,7 +5,7 @@
 
 import * as fs from 'fs';
 import { spawnSync } from 'child_process';
-import minimist from 'minimist';
+import { parseArgs } from 'util';
 import { Octokit } from '@octokit/rest';
 import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from '../packaging/offlinePackagingTasks';
 import { PlatformInformation } from '../../src/shared/platform';
@@ -18,10 +18,9 @@ runTask(createTags);
 interface CreateTagsOptions {
     releaseVersion: string;
     releaseCommit: string;
-    // Even it is specified as boolean, it would still be parsed as string in compiled js.
     dryRun: string;
-    githubPAT: string | null;
-    prerelease: string | null;
+    githubPAT?: string;
+    prerelease: string;
 }
 
 async function createTags(): Promise<void> {
@@ -30,7 +29,7 @@ async function createTags(): Promise<void> {
 }
 
 async function createTagsRoslyn(): Promise<void> {
-    const options = minimist<CreateTagsOptions>(process.argv.slice(2));
+    const options = getOptions();
 
     return createTagsAsync(
         options,
@@ -49,7 +48,7 @@ async function createTagsRoslyn(): Promise<void> {
 }
 
 async function createTagsVSCodeCSharp(): Promise<void> {
-    const options = minimist<CreateTagsOptions>(process.argv.slice(2));
+    const options = getOptions();
 
     return createTagsAsync(
         options,
@@ -61,6 +60,33 @@ async function createTagsVSCodeCSharp(): Promise<void> {
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
         }
     );
+}
+
+function getOptions(): CreateTagsOptions {
+    const { values } = parseArgs({
+        options: {
+            releaseVersion: { type: 'string' },
+            releaseCommit: { type: 'string' },
+            dryRun: { type: 'string' },
+            githubPAT: { type: 'string' },
+            prerelease: { type: 'string' },
+        },
+    });
+
+    return {
+        releaseVersion: requireArgument('releaseVersion', values.releaseVersion),
+        releaseCommit: requireArgument('releaseCommit', values.releaseCommit),
+        dryRun: requireArgument('dryRun', values.dryRun),
+        githubPAT: values.githubPAT,
+        prerelease: requireArgument('prerelease', values.prerelease),
+    };
+}
+
+function requireArgument(name: string, value: string | undefined): string {
+    if (!value) {
+        throw new Error(`Missing required argument: --${name}`);
+    }
+    return value;
 }
 
 async function createTagsAsync(

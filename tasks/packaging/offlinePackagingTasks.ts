@@ -5,7 +5,6 @@
 
 import * as cp from 'child_process';
 import * as fs from 'fs';
-import * as fsextra from 'fs-extra';
 import * as nbgv from 'nerdbank-gitversioning';
 import { Logger } from '../../src/logger';
 import { PlatformInformation } from '../../src/shared/platform';
@@ -241,7 +240,7 @@ async function installNuGetPackage(
     // Copy the files to the specified output directory.
     const outputPath = nugetPackageInfo.vsixOutputPath;
     fs.mkdirSync(outputPath);
-    fsextra.copySync(contentDirectory, outputPath);
+    fs.cpSync(contentDirectory, outputPath, { recursive: true });
     const numCopiedFiles = fs.readdirSync(outputPath).length;
 
     // Not expected to ever happen, just a simple sanity check.
@@ -393,7 +392,7 @@ async function cleanAsync() {
         const directoryPath = path.join(rootPath, `.${directory}`);
         if (fs.existsSync(directoryPath)) {
             console.log(`Removing directory ${directoryPath}`);
-            await fsextra.remove(directoryPath);
+            await fs.promises.rm(directoryPath, { recursive: true, force: true });
         }
     }
 }

@@ -4,28 +4,34 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as process from 'node:process';
-import minimist from 'minimist';
 import { spawnSync } from 'node:child_process';
 import * as path from 'path';
-import * as util from 'node:util';
+import { format, parseArgs } from 'node:util';
 import { EOL } from 'node:os';
 import { Octokit } from '@octokit/rest';
 import { runTask } from '../runTask';
-
-type Options = {
-    userName?: string;
-    email?: string;
-    commitSha: string;
-    targetRemoteRepo: string;
-    baseBranch: string;
-};
 
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
 
 runTask(publishLocalizationContent);
 
 async function publishLocalizationContent() {
-    const parsedArgs = minimist<Options>(process.argv.slice(2));
+    const { values } = parseArgs({
+        options: {
+            userName: { type: 'string' },
+            email: { type: 'string' },
+            commitSha: { type: 'string' },
+            targetRemoteRepo: { type: 'string' },
+            baseBranch: { type: 'string' },
+        },
+    });
+    const parsedArgs = {
+        userName: values.userName,
+        email: values.email,
+        commitSha: requireArgument('commitSha', values.commitSha),
+        targetRemoteRepo: requireArgument('targetRemoteRepo', values.targetRemoteRepo),
+        baseBranch: requireArgument('baseBranch', values.baseBranch),
+    };
     const localizationChanges = getAllPossibleLocalizationFiles();
     await git(['add'].concat(localizationChanges));
 
@@ -34,6 +40,7 @@ async function publishLocalizationContent() {
         console.log('No localization file changed');
         return;
     }
+
     console.log(`Changed files going to be staged: ${diff}`);
 
     const newBranchName = `localization/${parsedArgs.commitSha}`;
@@ -104,11 +111,18 @@ async function publishLocalizationContent() {
     console.log(`Created pull request: ${pullRequest.data.html_url}.`);
 }
 
+function requireArgument(name: string, value: string | undefined): string {
+    if (!value) {
+        throw new Error(`Missing required argument: --${name}`);
+    }
+    return value;
+}
+
 function getAllPossibleLocalizationFiles(): string[] {
     const files = [];
     for (const lang of localizationLanguages) {
-        files.push('l10n' + path.sep + util.format('bundle.l10n.%s.json', lang));
-        files.push(util.format('package.nls.%s.json', lang));
+        files.push('l10n' + path.sep + format('bundle.l10n.%s.json', lang));
+        files.push(format('package.nls.%s.json', lang));
     }
     // English
     files.push(`l10n${path.sep}bundle.l10n.json`);

@@ -83,7 +83,7 @@ export async function activate(
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => {
-        // Defer loading the download/zip stack (yauzl, proxy agents, fs-extra, etc.) until a
+        // Defer loading the download/zip stack (yauzl, proxy agents, etc.) until a
         // component actually needs to be downloaded, which normally never happens after install.
         const { downloadAndInstallPackages } = await import('./packageManager/downloadAndInstallPackages');
         const { isValidDownload } = await import('./packageManager/isValidDownload');

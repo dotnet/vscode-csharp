@@ -3,9 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import minimist from 'minimist';
+import { parseArgs } from 'util';
 import { vsixReleasePackageTask } from './offlinePackagingTasks';
 import { runTask } from '../runTask';
 
-const argv = minimist(process.argv.slice(2));
-runTask(async () => await vsixReleasePackageTask(!!argv.prerelease));
+const { values } = parseArgs({
+    options: {
+        prerelease: { type: 'boolean' },
+    },
+});
+runTask(async () => await vsixReleasePackageTask(values.prerelease ?? false));
