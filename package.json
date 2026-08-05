@@ -78,7 +78,7 @@
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
     "l10nDevImportXlf": "npx @vscode/l10n-dev import-xlf ./loc/vscode-csharp.*.xlf --outDir ./l10n && move l10n\\package.nls.*.json .",
     "lint": "npx eslint ./",
-    "omnisharptest": "npm run packageDev && npx tsx tasks/tests/omnisharptest.ts",
+    "omnisharptest": "npm run packageDev && npx ts-node tasks/tests/omnisharptest.ts",
     "omnisharptest:integration": "npm run packageDev && npx tsx tasks/tests/omnisharptestIntegration.ts",
     "omnisharptest:unit": "npm run compileDev && npx ts-node tasks/tests/omnisharptestUnit.ts",
     "package": "npm run compile && npm run signJs && node esbuild.js --production",
