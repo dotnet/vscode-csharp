@@ -14,9 +14,12 @@ export interface ITelemetryReporter {
     sendTelemetryErrorEvent(
         eventName: string,
         properties?: { [key: string]: string },
-        measures?: { [key: string]: number },
-        errorProps?: string[]
+        measures?: { [key: string]: number }
     ): void;
+}
+
+export interface ITelemetryReporterWithLevel extends ITelemetryReporter {
+    telemetryLevel: 'all' | 'error' | 'crash' | 'off';
 }
 
 export function getTelemetryProps(platformInfo: PlatformInformation) {

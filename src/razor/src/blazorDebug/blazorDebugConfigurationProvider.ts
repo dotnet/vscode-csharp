@@ -11,7 +11,7 @@ import * as vscode from 'vscode';
 import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browsers';
 import { ONLY_JS_DEBUG_NAME, MANAGED_DEBUG_NAME, JS_DEBUG_NAME, SERVER_APP_NAME } from './constants.ts';
 import { isValidEvent, onDidTerminateDebugSession } from './terminateDebugHandler.ts';
-import path = require('path');
+import * as path from 'path';
 import * as cp from 'child_process';
 import { getExtensionPath } from '../../../common.ts';
 import { getCSharpDevKit } from '../../../utils/getCSharpDevKit.ts';
@@ -22,12 +22,12 @@ import {
     IDotnetAcquireResult,
     IDotnetFindPathContext,
 } from '../../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionApi.ts';
-import { IDisposable } from '@microsoft/servicehub-framework';
-import { Observer } from '@microsoft/servicehub-framework/js/src/jsonRpc/Observer';
 import { EventEmitter } from 'events';
 import {
     Formatters,
+    IDisposable,
     MessageDelimiters,
+    Observer,
     ServiceJsonRpcDescriptor,
     ServiceMoniker,
     ServiceRpcDescriptor,

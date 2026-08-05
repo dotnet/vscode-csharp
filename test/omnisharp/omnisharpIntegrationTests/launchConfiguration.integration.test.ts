@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as vscode from 'vscode';
 import { activateCSharpExtension } from './integrationHelpers.ts';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';

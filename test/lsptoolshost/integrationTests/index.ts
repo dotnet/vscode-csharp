@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { runIntegrationTests } from '../../runIntegrationTests.ts';
-import { jestIntegrationTestProjectName } from './jest.config.ts';
+import { jestProjectNames } from '../../jestProjectNames.mjs';
 
 export async function run() {
     process.env.RUNNING_INTEGRATION_TESTS = 'true';
 
-    await runIntegrationTests(jestIntegrationTestProjectName);
+    await runIntegrationTests(jestProjectNames.integration);
 }

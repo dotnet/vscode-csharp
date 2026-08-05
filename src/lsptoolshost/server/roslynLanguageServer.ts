@@ -12,6 +12,7 @@ import {
     NotificationHandler0,
     NotificationType,
     PartialResultParams,
+    Protocol2CodeConverter,
     ProtocolRequestType,
     RequestHandler,
     RequestParam,
@@ -27,7 +28,7 @@ import { readConfigurations } from '../options/configurationMiddleware.ts';
 import * as RoslynProtocol from './roslynProtocol.ts';
 import { CSharpDevKitExports } from '../../csharpDevKitExports.ts';
 import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider.ts';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { ITelemetryReporterWithLevel } from '../../shared/telemetryReporter.ts';
 import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit.ts';
 
 import { randomUUID } from 'crypto';
@@ -91,7 +92,7 @@ export class RoslynLanguageServer {
         private _languageClient: RoslynLanguageClient,
         private _platformInfo: PlatformInformation,
         private _context: vscode.ExtensionContext,
-        private _telemetryReporter: TelemetryReporter,
+        private _telemetryReporter: ITelemetryReporterWithLevel,
         private _languageServerEvents: RoslynLanguageServerEvents,
         private _channel: vscode.LogOutputChannel,
         private _traceChannel: vscode.LogOutputChannel
@@ -123,6 +124,10 @@ export class RoslynLanguageServer {
 
     public get state(): ServerState {
         return this._state;
+    }
+
+    public get protocol2CodeConverter(): Protocol2CodeConverter {
+        return this._languageClient.protocol2CodeConverter;
     }
 
     public static get processId(): number | undefined {
@@ -265,7 +270,7 @@ export class RoslynLanguageServer {
         platformInfo: PlatformInformation,
         hostExecutableResolver: IHostExecutableResolver,
         context: vscode.ExtensionContext,
-        telemetryReporter: TelemetryReporter,
+        telemetryReporter: ITelemetryReporterWithLevel,
         additionalExtensionPaths: string[],
         languageServerEvents: RoslynLanguageServerEvents,
         channel: vscode.LogOutputChannel,
@@ -641,7 +646,7 @@ export class RoslynLanguageServer {
         platformInfo: PlatformInformation,
         hostExecutableResolver: IHostExecutableResolver,
         context: vscode.ExtensionContext,
-        telemetryReporter: TelemetryReporter,
+        telemetryReporter: ITelemetryReporterWithLevel,
         additionalExtensionPaths: string[],
         channel: vscode.LogOutputChannel,
         csharpDevKitExtensionExports?: CSharpDevKitExports

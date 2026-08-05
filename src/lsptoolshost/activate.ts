@@ -6,10 +6,11 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { registerCommands } from './commands.ts';
 import { registerDebugger } from './debugger/debugger.ts';
 import { PlatformInformation } from '../shared/platform.ts';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { ITelemetryReporterWithLevel } from '../shared/telemetryReporter.ts';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit.ts';
 import { DotnetRuntimeExtensionResolver } from './dotnetRuntime/dotnetRuntimeExtensionResolver.ts';
 import { registerUnitTestingCommands } from './testing/unitTesting.ts';
@@ -45,7 +46,7 @@ export async function activateRoslynLanguageServer(
     platformInfo: PlatformInformation,
     optionObservable: Observable<void>,
     outputChannel: ObservableLogOutputChannel,
-    reporter: TelemetryReporter,
+    reporter: ITelemetryReporterWithLevel,
     languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
@@ -158,7 +159,7 @@ export function getServerPath(platformInfo: PlatformInformation) {
 }
 
 function getInstalledServerPath(platformInfo: PlatformInformation): string {
-    const clientRoot = __dirname;
+    const clientRoot = path.dirname(fileURLToPath(import.meta.url));
     const serverFilePath = path.join(clientRoot, '..', '.roslyn', 'Microsoft.CodeAnalysis.LanguageServer');
 
     let extension = '';

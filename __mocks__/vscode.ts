@@ -12,4 +12,4 @@ import { getFakeVsCode } from '../test/fakes.ts';
 // We can consider switching to an actual jest mock (instead of this manual fake) once we entirely
 // remove the old test framework (mocha/chai).
 const vscode: vscodeAdapter.vscode = getFakeVsCode();
-module.exports = vscode;
+export const { commands, languages, window, workspace, extensions, Uri, version, env, l10n } = vscode;

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as crypto from 'crypto';
-import { machineIdSync } from 'node-machine-id';
+import nodeMachineId from 'node-machine-id';
 import { PlatformInformation } from './platform.ts';
 import { ITelemetryReporter, getTelemetryProps } from './telemetryReporter.ts';
 import { DotnetInfo } from './utils/dotnetInfo.ts';
@@ -72,7 +72,7 @@ export function reportProjectConfigurationEvent(
 function createSolutionId(solutionPath: string) {
     const solutionHash = crypto.createHash('sha256').update(solutionPath).digest('hex');
 
-    const machineId = machineIdSync();
+    const machineId = nodeMachineId.machineIdSync();
     const machineHash = crypto.createHash('sha256').update(machineId).digest('hex');
 
     return crypto

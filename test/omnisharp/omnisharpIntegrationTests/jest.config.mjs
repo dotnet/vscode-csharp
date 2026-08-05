@@ -2,17 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { Config } from 'jest';
-import { baseProjectConfig } from '../../../baseJestConfig.ts';
-
-export const jestIntegrationTestProjectName = 'OmniSharp Integration Tests';
+import { baseIntegrationProjectConfig } from '../../../baseJestConfig.mjs';
+import { jestProjectNames } from '../../jestProjectNames.mjs';
 
 /**
  * Defines a project configuration for jest integration tests.
  */
-const integrationTestConfig: Config = {
-    ...baseProjectConfig,
-    displayName: jestIntegrationTestProjectName,
+/** @type {import('jest').Config} */
+const integrationTestConfig = {
+    ...baseIntegrationProjectConfig,
+    displayName: jestProjectNames.omnisharpIntegration,
     roots: ['<rootDir>'],
     testEnvironment: '<rootDir>/../../vsCodeEnvironment.ts',
     setupFilesAfterEnv: ['<rootDir>/../../vsCodeFramework.ts'],

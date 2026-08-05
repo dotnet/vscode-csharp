@@ -12,7 +12,7 @@ import { CsharpChannelObserver } from './shared/observers/csharpChannelObserver.
 import { CsharpLoggerObserver } from './shared/observers/csharpLoggerObserver.ts';
 import { EventStream } from './eventStream.ts';
 import { PlatformInformation } from './shared/platform.ts';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { vscodeNetworkSettingsProvider } from './networkSettings.ts';
 import createOptionStream from './shared/observables/createOptionStream.ts';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage.ts';
