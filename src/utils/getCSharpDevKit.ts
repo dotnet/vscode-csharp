@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CSharpDevKitExports } from '../csharpDevKitExports';
-import { languageServerOptions } from '../shared/options';
+import { CSharpDevKitExports } from '../csharpDevKitExports.ts';
+import { languageServerOptions } from '../shared/options.ts';
 
 export const csharpDevkitExtensionId = 'ms-dotnettools.csdevkit';
 export const csharpDevkitIntelliCodeExtensionId = 'ms-dotnettools.vscodeintellicode-csharp';

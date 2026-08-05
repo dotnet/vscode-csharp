@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../../vscodeAdapter';
-import { Logger } from '../../logger';
-import { BaseEvent } from '../../shared/loggingEvents';
+import * as vscode from '../../vscodeAdapter.ts';
+import { Logger } from '../../logger.ts';
+import { BaseEvent } from '../../shared/loggingEvents.ts';
 
 export abstract class BaseLoggerObserver {
     public logger: Logger;

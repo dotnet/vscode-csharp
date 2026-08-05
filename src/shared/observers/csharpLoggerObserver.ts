@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from './baseLoggerObserver';
-import * as Event from '../../shared/loggingEvents';
-import { PackageError } from '../../packageManager/packageError';
-import { EventType } from '../eventType';
+import { BaseLoggerObserver } from './baseLoggerObserver.ts';
+import * as Event from '../../shared/loggingEvents.ts';
+import { PackageError } from '../../packageManager/packageError.ts';
+import { EventType } from '../eventType.ts';
 
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots = 0;

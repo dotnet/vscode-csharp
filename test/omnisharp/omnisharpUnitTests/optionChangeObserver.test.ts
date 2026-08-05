@@ -5,11 +5,11 @@
 
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
-import { registerOmnisharpOptionChanges } from '../../../src/omnisharp/omnisharpOptionChanges';
+import { registerOmnisharpOptionChanges } from '../../../src/omnisharp/omnisharpOptionChanges.ts';
 
 import { describe, beforeEach, test, expect } from '@jest/globals';
 import * as vscode from 'vscode';
-import { getVSCodeWithConfig, updateConfig } from '../../fakes';
+import { getVSCodeWithConfig, updateConfig } from '../../fakes.ts';
 
 describe('OmniSharpConfigChangeObserver', () => {
     let doClickOk: () => void;

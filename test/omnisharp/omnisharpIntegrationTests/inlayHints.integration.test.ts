@@ -5,11 +5,15 @@
 
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator, restartOmniSharpServer } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
+import {
+    activateCSharpExtension,
+    describeIfNotRazorOrGenerator,
+    restartOmniSharpServer,
+} from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
 import * as path from 'path';
-import { InlayHint, LinePositionSpanTextChange } from '../../../src/omnisharp/protocol';
-import { isNotNull } from '../testUtil';
+import { InlayHint, LinePositionSpanTextChange } from '../../../src/omnisharp/protocol.ts';
+import { isNotNull } from '../testUtil.ts';
 
 describeIfNotRazorOrGenerator(`Inlay Hints ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;

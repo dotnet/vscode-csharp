@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmniSharpServer } from '../server';
-import CompositeDisposable from '../../compositeDisposable';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
+import { OmniSharpServer } from '../server.ts';
+import CompositeDisposable from '../../compositeDisposable.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
 
 export default abstract class AbstractProvider {
     protected _server: OmniSharpServer;

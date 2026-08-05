@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as https from 'https';
-import { EventStream } from '../eventStream';
+import { EventStream } from '../eventStream.ts';
 import {
     DownloadSuccess,
     DownloadStart,
@@ -12,11 +12,11 @@ import {
     DownloadFailure,
     DownloadProgress,
     DownloadSizeObtained,
-} from '../shared/loggingEvents';
-import { NestedError } from '../nestedError';
+} from '../shared/loggingEvents.ts';
+import { NestedError } from '../nestedError.ts';
 import { parse as parseUrl } from 'url';
-import { getProxyAgent } from './proxy';
-import { NetworkSettingsProvider } from '../networkSettings';
+import { getProxyAgent } from './proxy.ts';
+import { NetworkSettingsProvider } from '../networkSettings.ts';
 import { CancellationToken } from 'vscode';
 
 export async function DownloadFile(

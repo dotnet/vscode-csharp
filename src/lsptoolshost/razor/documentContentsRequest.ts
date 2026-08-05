@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { TextDocumentIdentifier } from 'vscode-languageclient';
-import { GeneratedDocumentKind } from './generatedDocumentKind';
+import { GeneratedDocumentKind } from './generatedDocumentKind.ts';
 
 export class DocumentContentsRequest {
     constructor(

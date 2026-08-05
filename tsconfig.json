@@ -30,11 +30,15 @@
         "sourceMap": true,
         "moduleResolution": "node",
         "moduleDetection": "force",
+        "rewriteRelativeImportExtensions": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
         "noUnusedLocals": true,
         "noFallthroughCasesInSwitch": true
+    },
+    "ts-node": {
+        "experimentalResolver": true
     },
     "include": [
         "src",

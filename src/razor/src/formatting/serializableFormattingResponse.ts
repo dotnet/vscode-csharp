@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { SerializableTextEdit } from '../rpc/serializableTextEdit';
+import { SerializableTextEdit } from '../rpc/serializableTextEdit.ts';
 
 export class SerializableFormattingResponse {
     constructor(public readonly edits?: SerializableTextEdit[]) {}

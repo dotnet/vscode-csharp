@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { OmnisharpDownloader } from '../../../src/omnisharp/omnisharpDownloader';
-import NetworkSettings from '../../../src/networkSettings';
-import { EventStream } from '../../../src/eventStream';
-import { PlatformInformation } from '../../../src/shared/platform';
-import { CreateTmpDir, TmpAsset } from '../../createTmpAsset';
-import * as util from '../../../src/common';
+import { OmnisharpDownloader } from '../../../src/omnisharp/omnisharpDownloader.ts';
+import NetworkSettings from '../../../src/networkSettings.ts';
+import { EventStream } from '../../../src/eventStream.ts';
+import { PlatformInformation } from '../../../src/shared/platform.ts';
+import { CreateTmpDir, TmpAsset } from '../../createTmpAsset.ts';
+import * as util from '../../../src/common.ts';
 import * as path from 'path';
-import MockHttpsServer from './testAssets/mockHttpsServer';
-import TestZip from './testAssets/testZip';
-import { createTestFile } from './testAssets/testFile';
+import MockHttpsServer from './testAssets/mockHttpsServer.ts';
+import TestZip from './testAssets/testZip.ts';
+import { createTestFile } from './testAssets/testFile.ts';
 import {
     PackageInstallation,
     LogPlatformInfo,
@@ -24,10 +24,10 @@ import {
     InstallationStart,
     InstallationSuccess,
     PackageInstallStart,
-} from '../../../src/shared/loggingEvents';
-import TestEventBus from './testAssets/testEventBus';
-import { testPackageJSON } from './testAssets/testAssets';
-import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
+} from '../../../src/shared/loggingEvents.ts';
+import TestEventBus from './testAssets/testEventBus.ts';
+import { testPackageJSON } from './testAssets/testAssets.ts';
+import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator.ts';
 
 [true, false].forEach((useFramework) => {
     describe(`OmnisharpDownloader (useFramework: ${useFramework})`, () => {

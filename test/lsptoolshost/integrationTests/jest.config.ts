@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { Config } from 'jest';
-import { baseProjectConfig } from '../../../baseJestConfig';
+import { baseProjectConfig } from '../../../baseJestConfig.ts';
 
 export const jestIntegrationTestProjectName = 'Integration Tests';
 

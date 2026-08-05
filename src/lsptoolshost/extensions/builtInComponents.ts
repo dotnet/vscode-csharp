@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { LanguageServerOptions } from '../../shared/options';
+import { LanguageServerOptions } from '../../shared/options.ts';
 
 interface ComponentInfo {
     defaultFolderName: string;

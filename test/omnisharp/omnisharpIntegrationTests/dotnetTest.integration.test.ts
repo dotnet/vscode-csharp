@@ -6,13 +6,13 @@
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { activateCSharpExtension, describeIfSlnWithCsProj } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { EventStream } from '../../../src/eventStream';
-import { EventType } from '../../../src/shared/eventType';
-import { OmnisharpRequestMessage } from '../../../src/omnisharp/omnisharpLoggingEvents';
-import { V2 } from '../../../src/omnisharp/protocol';
-import { isNotNull } from '../testUtil';
+import { activateCSharpExtension, describeIfSlnWithCsProj } from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
+import { EventStream } from '../../../src/eventStream.ts';
+import { EventType } from '../../../src/shared/eventType.ts';
+import { OmnisharpRequestMessage } from '../../../src/omnisharp/omnisharpLoggingEvents.ts';
+import { V2 } from '../../../src/omnisharp/protocol.ts';
+import { isNotNull } from '../testUtil.ts';
 
 // These tests only run on the slnWithCsproj solution
 describeIfSlnWithCsProj(`DotnetTest: ${testAssetWorkspace.description}`, function () {

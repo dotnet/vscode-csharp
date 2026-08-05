@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as oniguruma from 'vscode-oniguruma';
 import { IGrammar, INITIAL, IRawGrammar, ITokenizeLineResult, parseRawGrammar, Registry } from 'vscode-textmate';
-import { ITokenizedContent } from './ITokenizedContent';
+import { ITokenizedContent } from './ITokenizedContent.ts';
 
 let razorGrammarCache: IGrammar | undefined;
 

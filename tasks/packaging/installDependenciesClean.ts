@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { installDependencies } from './offlinePackagingTasks';
-import { runTask } from '../runTask';
+import { installDependencies } from './offlinePackagingTasks.ts';
+import { runTask } from '../runTask.ts';
 
 runTask(async () => installDependencies(/* clean */ true));

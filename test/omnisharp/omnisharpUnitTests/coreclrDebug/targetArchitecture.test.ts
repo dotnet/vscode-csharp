@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { getTargetArchitecture } from '../../../../src/coreclrDebug/util';
-import { PlatformInformation } from '../../../../src/shared/platform';
-import { DotnetInfo } from '../../../../src/shared/utils/dotnetInfo';
+import { getTargetArchitecture } from '../../../../src/coreclrDebug/util.ts';
+import { PlatformInformation } from '../../../../src/shared/platform.ts';
+import { DotnetInfo } from '../../../../src/shared/utils/dotnetInfo.ts';
 
 describe('getTargetArchitecture Tests', () => {
     describe('Windows', () => {

@@ -7,12 +7,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as languageClient from 'vscode-languageclient';
-import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from '../server/roslynProtocol';
-import { commonOptions } from '../../shared/options';
-import { UriConverter } from '../utils/uriConverter';
-import { showErrorMessage } from '../../shared/observers/utils/showMessage';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer.ts';
+import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from '../server/roslynProtocol.ts';
+import { commonOptions } from '../../shared/options.ts';
+import { UriConverter } from '../utils/uriConverter.ts';
+import { showErrorMessage } from '../../shared/observers/utils/showMessage.ts';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit.ts';
 
 export function registerUnitTestingCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     if (getCSharpDevKit()) {

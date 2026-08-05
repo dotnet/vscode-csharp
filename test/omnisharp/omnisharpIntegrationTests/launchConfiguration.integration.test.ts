@@ -6,10 +6,10 @@
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as fs from 'fs-extra';
 import * as vscode from 'vscode';
-import { activateCSharpExtension } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { poll } from './poll';
-import { isNotNull } from '../testUtil';
+import { activateCSharpExtension } from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
+import { poll } from './poll.ts';
+import { isNotNull } from '../testUtil.ts';
 
 // Consistently failing in CI: https://github.com/OmniSharp/omnisharp-vscode/issues/4646
 describe.skip(`Tasks generation: ${testAssetWorkspace.description}`, function () {

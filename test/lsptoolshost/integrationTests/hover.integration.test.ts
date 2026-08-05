@@ -6,8 +6,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { EOL } from 'os';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import testAssetWorkspace from './testAssets/testAssetWorkspace.ts';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers.ts';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
 describe(`Hover Tests`, () => {

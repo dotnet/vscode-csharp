@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { getNullChannel } from '../../fakes';
-import { CsharpLoggerObserver } from '../../../src/shared/observers/csharpLoggerObserver';
-import { PlatformInformation } from '../../../src/shared/platform';
-import { PackageError } from '../../../src/packageManager/packageError';
-import { Package } from '../../../src/packageManager/package';
-import * as Event from '../../../src/shared/loggingEvents';
+import { getNullChannel } from '../../fakes.ts';
+import { CsharpLoggerObserver } from '../../../src/shared/observers/csharpLoggerObserver.ts';
+import { PlatformInformation } from '../../../src/shared/platform.ts';
+import { PackageError } from '../../../src/packageManager/packageError.ts';
+import { Package } from '../../../src/packageManager/package.ts';
+import * as Event from '../../../src/shared/loggingEvents.ts';
 
 describe('CsharpLoggerObserver', () => {
     let logOutput = '';

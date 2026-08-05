@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { ParsedEnvironmentFile } from '../../../src/coreclrDebug/parsedEnvironmentFile';
+import { ParsedEnvironmentFile } from '../../../src/coreclrDebug/parsedEnvironmentFile.ts';
 
 describe('ParsedEnvironmentFile', () => {
     test('Add single variable', () => {

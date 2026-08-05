@@ -7,8 +7,8 @@ import fs from 'fs';
 import * as path from 'path';
 import * as jest from 'jest';
 import { Config } from '@jest/types';
-import { rootPath, outPath } from '../projectPaths';
-import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher';
+import { rootPath, outPath } from '../projectPaths.ts';
+import { prepareVSCodeAndExecuteTests } from '../../test/vscodeLauncher.ts';
 
 export const basicSlnTestProject = 'slnWithCsproj';
 export const integrationTestProjects = [basicSlnTestProject];

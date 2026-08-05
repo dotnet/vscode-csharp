@@ -5,16 +5,16 @@
 
 import * as fs from 'fs-extra';
 import * as vscode from 'vscode';
-import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider';
-import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, getBuildOperations } from './assets';
-import { getServiceBroker } from '../lsptoolshost/serviceBroker/brokeredServicesHosting';
-import Descriptors from '../lsptoolshost/solutionSnapshot/descriptors';
+import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider.ts';
+import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, getBuildOperations } from './assets.ts';
+import { getServiceBroker } from '../lsptoolshost/serviceBroker/brokeredServicesHosting.ts';
+import Descriptors from '../lsptoolshost/solutionSnapshot/descriptors.ts';
 import {
     DotnetDebugConfigurationServiceErrorKind,
     IDotnetDebugConfigurationService,
     IDotnetDebugConfigurationServiceResult,
-} from '../lsptoolshost/debugger/IDotnetDebugConfigurationService';
-import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
+} from '../lsptoolshost/debugger/IDotnetDebugConfigurationService.ts';
+import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider.ts';
 
 // User errors that can be shown to the user.
 class LaunchServiceError extends Error {}

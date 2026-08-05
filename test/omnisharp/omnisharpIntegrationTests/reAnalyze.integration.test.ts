@@ -6,14 +6,14 @@
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { poll, assertWithPoll } from './poll';
-import { EventStream } from '../../../src/eventStream';
-import { EventType } from '../../../src/shared/eventType';
-import { BaseEvent } from '../../../src/shared/loggingEvents';
-import { OmnisharpBackgroundDiagnosticStatus } from '../../../src/omnisharp/omnisharpLoggingEvents';
-import { BackgroundDiagnosticStatus } from '../../../src/omnisharp/protocol';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers.ts';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace.ts';
+import { poll, assertWithPoll } from './poll.ts';
+import { EventStream } from '../../../src/eventStream.ts';
+import { EventType } from '../../../src/shared/eventType.ts';
+import { BaseEvent } from '../../../src/shared/loggingEvents.ts';
+import { OmnisharpBackgroundDiagnosticStatus } from '../../../src/omnisharp/omnisharpLoggingEvents.ts';
+import { BackgroundDiagnosticStatus } from '../../../src/omnisharp/protocol.ts';
 
 function listenEvents<T extends BaseEvent>(stream: EventStream, type: EventType): T[] {
     const results: T[] = [];

@@ -8,10 +8,10 @@ import {
     SetBinaryAndGetPackage,
     GetPackagesFromVersion,
     modernNetVersion,
-} from '../../../src/omnisharp/omnisharpPackageCreator';
-import { Package } from '../../../src/packageManager/package';
-import { testPackageJSON } from './testAssets/testAssets';
-import { isNotNull } from '../testUtil';
+} from '../../../src/omnisharp/omnisharpPackageCreator.ts';
+import { Package } from '../../../src/packageManager/package.ts';
+import { testPackageJSON } from './testAssets/testAssets.ts';
+import { isNotNull } from '../testUtil.ts';
 
 describe('GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl', () => {
     let serverUrl: string;

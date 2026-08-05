@@ -5,13 +5,13 @@
 
 import * as vscode from 'vscode';
 import { SemanticTokenTypes } from 'vscode-languageclient';
-import * as protocol from '../protocol';
-import * as serverUtils from '../utils';
-import { createRequest, toRange2 } from '../typeConversion';
-import AbstractProvider from './abstractProvider';
-import { OmniSharpServer } from '../server';
-import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import { omnisharpOptions } from '../../shared/options';
+import * as protocol from '../protocol.ts';
+import * as serverUtils from '../utils.ts';
+import { createRequest, toRange2 } from '../typeConversion.ts';
+import AbstractProvider from './abstractProvider.ts';
+import { OmniSharpServer } from '../server.ts';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature.ts';
+import { omnisharpOptions } from '../../shared/options.ts';
 
 // The default TokenTypes defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
 enum DefaultTokenType {

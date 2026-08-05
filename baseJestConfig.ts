@@ -11,5 +11,8 @@ import type { Config } from 'jest';
 export const baseProjectConfig: Config = {
     preset: 'ts-jest',
     testEnvironment: 'node',
+    moduleNameMapper: {
+        '^(\\.{1,2}/.*)\\.js$': '$1',
+    },
     transformIgnorePatterns: ['/dist/.+\\.js'],
 };

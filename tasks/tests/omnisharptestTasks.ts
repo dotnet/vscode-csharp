@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { codeExtensionPath, rootPath } from '../projectPaths';
-import { runJestIntegrationTest, runJestTest } from './testHelpers';
-import { jestOmniSharpUnitTestProjectName } from '../../test/omnisharp/omnisharpUnitTests/jest.config';
+import { codeExtensionPath, rootPath } from '../projectPaths.ts';
+import { runJestIntegrationTest, runJestTest } from './testHelpers.ts';
+import { jestOmniSharpUnitTestProjectName } from '../../test/omnisharp/omnisharpUnitTests/jest.config.ts';
 
 const omnisharpIntegrationTestProjects = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'BasicRazorApp2_1'];
 

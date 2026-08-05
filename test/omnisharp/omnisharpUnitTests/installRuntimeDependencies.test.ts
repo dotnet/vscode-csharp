@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { installRuntimeDependencies } from '../../../src/installRuntimeDependencies';
-import { IInstallDependencies } from '../../../src/packageManager/IInstallDependencies';
-import { EventStream } from '../../../src/eventStream';
-import { PlatformInformation } from '../../../src/shared/platform';
-import TestEventBus from './testAssets/testEventBus';
-import { AbsolutePathPackage } from '../../../src/packageManager/absolutePathPackage';
-import { Package } from '../../../src/packageManager/package';
-import { isNotNull } from '../testUtil';
+import { installRuntimeDependencies } from '../../../src/installRuntimeDependencies.ts';
+import { IInstallDependencies } from '../../../src/packageManager/IInstallDependencies.ts';
+import { EventStream } from '../../../src/eventStream.ts';
+import { PlatformInformation } from '../../../src/shared/platform.ts';
+import TestEventBus from './testAssets/testEventBus.ts';
+import { AbsolutePathPackage } from '../../../src/packageManager/absolutePathPackage.ts';
+import { Package } from '../../../src/packageManager/package.ts';
+import { isNotNull } from '../testUtil.ts';
 
 describe(`${installRuntimeDependencies.name}`, () => {
     let packageJSON = {
