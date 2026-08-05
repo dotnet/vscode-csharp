@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.149.x
+
 # 2.148.x
 * Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
 * Update Roslyn to 5.11.0-1.26380.4 (PR: [#9601](https://github.com/dotnet/vscode-csharp/pull/9601))
