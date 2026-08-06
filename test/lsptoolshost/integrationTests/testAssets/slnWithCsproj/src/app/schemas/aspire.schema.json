@@ -1,0 +1,14 @@
+{
+  // Representative of the partial schemas contributed by Aspire integration packages.
+  "type": "object",
+  "properties": {
+    "Aspire": {
+      "type": "object",
+      "properties": {
+        "Npgsql": {
+          "type": "object"
+        }
+      }
+    }
+  },
+}

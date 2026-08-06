@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
  <ItemGroup>
   <ProjectReference Include="..\lib\lib.csproj" />
+  <JsonSchemaSegment Include="schemas\aspire.schema.json"
+                     FilePathPattern="appsettings\..*json" />
+  <JsonSchemaSegment Include="schemas\yarp.schema.json"
+                     FilePathPattern="appsettings\..*json" />
  </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>

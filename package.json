@@ -1838,7 +1838,7 @@
           "appsettings.json",
           "appsettings.*.json"
         ],
-        "url": "https://json.schemastore.org/appsettings"
+        "url": "csharp-appsettings-schema://schemas/appsettings.schema.json"
       },
       {
         "fileMatch": "omnisharp.json",

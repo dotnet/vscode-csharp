@@ -27,6 +27,7 @@ import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensio
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateRoslyn } from './activateRoslyn';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
+import { registerAppSettingsJsonSchemaProvider } from './shared/jsonSchema/appSettingsJsonSchemaProvider';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -36,6 +37,7 @@ export async function activate(
 
     const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
     csharpChannel.trace('Activating C# Extension');
+    context.subscriptions.push(registerAppSettingsJsonSchemaProvider(csharpChannel));
 
     util.setExtensionPath(context.extension.extensionPath);
 
