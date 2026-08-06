@@ -13,6 +13,11 @@ import { runTask } from '../runTask';
 
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
 
+type GitOptions = {
+    printCommand?: boolean;
+    sensitiveValues?: readonly string[];
+};
+
 runTask(publishLocalizationContent);
 
 async function publishLocalizationContent() {
@@ -58,7 +63,7 @@ async function publishLocalizationContent() {
 
     const token = process.env['GitHubToken'];
     if (!token) {
-        throw 'No GitHub token found.';
+        throw new Error('No GitHub token found.');
     }
 
     const remoteRepoAlias = 'targetRepo';
@@ -69,19 +74,23 @@ async function publishLocalizationContent() {
             remoteRepoAlias,
             `https://x-access-token:${token}@github.com/dotnet/${parsedArgs.targetRemoteRepo}.git`,
         ],
-        // Do not print the token to the console.
-        false
+        {
+            printCommand: false,
+            sensitiveValues: [token],
+        }
     );
-    await git(['fetch', remoteRepoAlias]);
+    await git(['fetch', remoteRepoAlias], { sensitiveValues: [token] });
 
-    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
+    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName], {
+        sensitiveValues: [token],
+    });
     if (lsRemote.trim() !== '') {
         // If the localization branch of this commit already exists, don't try to create another one.
         console.log(
             `##vso[task.logissue type=error]${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}. Skip pushing.`
         );
     } else {
-        await git(['push', '-u', remoteRepoAlias]);
+        await git(['push', '-u', remoteRepoAlias], { sensitiveValues: [token] });
     }
 
     const octokit = new Octokit({ auth: token });
@@ -91,7 +100,7 @@ async function publishLocalizationContent() {
     });
 
     if (listPullRequest.status != 200) {
-        throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
+        throw new Error(`Failed get response from GitHub, http status code: ${listPullRequest.status}`);
     }
 
     const title = `Localization result based on ${parsedArgs.commitSha}`;
@@ -140,7 +149,8 @@ async function git_diff(args: string[]): Promise<string[]> {
         .filter((fileName) => fileName.length !== 0);
 }
 
-async function git(args: string[], printCommand = true): Promise<string> {
+async function git(args: string[], options: GitOptions = {}): Promise<string> {
+    const { printCommand = true, sensitiveValues = [] } = options;
     if (printCommand) {
         console.log(`git ${args.join(' ')}`);
     }
@@ -148,13 +158,16 @@ async function git(args: string[], printCommand = true): Promise<string> {
     const result = spawnSync('git', args, { encoding: 'utf8' });
     const command = printCommand ? `git ${args.join(' ')}` : 'git command';
     if (result.error) {
-        throw new Error(`Failed to start ${command}: ${result.error.message}`);
+        throw new Error(`Failed to start ${command}: ${redact(result.error.message, sensitiveValues)}`);
     }
     if (result.status != 0) {
-        const output = [result.stderr, result.stdout]
-            .map((value) => value.trim())
-            .filter((value) => value.length > 0)
-            .join(EOL);
+        const output = redact(
+            [result.stderr, result.stdout]
+                .map((value) => value.trim())
+                .filter((value) => value.length > 0)
+                .join(EOL),
+            sensitiveValues
+        );
         if (printCommand) {
             console.error(`Failed to execute ${command}.`);
         }
@@ -166,4 +179,10 @@ async function git(args: string[], printCommand = true): Promise<string> {
         console.log(stdout);
     }
     return stdout;
+}
+
+function redact(value: string, sensitiveValues: readonly string[]): string {
+    return sensitiveValues
+        .filter((sensitiveValue) => sensitiveValue.length > 0)
+        .reduce((redactedValue, sensitiveValue) => redactedValue.replaceAll(sensitiveValue, '***'), value);
 }
