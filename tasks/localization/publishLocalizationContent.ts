@@ -35,6 +35,7 @@ async function publishLocalizationContent() {
     const localizationChanges = getAllPossibleLocalizationFiles();
     await git(['add'].concat(localizationChanges));
 
+    // Check only staged localization files; other build steps may leave unrelated tracked files modified.
     const diff = await git_diff(['--cached', '--name-only']);
     if (diff.length == 0) {
         console.log('No localization file changed');
