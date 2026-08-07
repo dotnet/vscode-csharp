@@ -27,7 +27,7 @@ import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensio
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateRoslyn } from './activateRoslyn';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
-import { registerAppSettingsJsonSchemaProvider } from './shared/jsonSchema/appSettingsJsonSchemaProvider';
+import { registerAppSettingsJsonSchemaProvider } from './shared/jsonSchema/registerAppSettingsJsonSchemaProvider';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -37,6 +37,10 @@ export async function activate(
 
     const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
     csharpChannel.trace('Activating C# Extension');
+
+    // Registered before anything else can fail so that the `csharp-appsettings-schema` association
+    // contributed in package.json always resolves. Registration itself does no I/O; the schema is
+    // only computed when the JSON language service requests it for an open appsettings document.
     context.subscriptions.push(registerAppSettingsJsonSchemaProvider(csharpChannel));
 
     util.setExtensionPath(context.extension.extensionPath);

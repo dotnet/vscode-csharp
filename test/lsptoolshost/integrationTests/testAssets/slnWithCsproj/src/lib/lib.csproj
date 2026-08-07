@@ -4,4 +4,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!--
+      This project owns no appsettings file, so its segment must never reach a document owned by
+      another project. It proves schema content is routed per owning project rather than unioned
+      across the whole workspace.
+    -->
+    <JsonSchemaSegment Include="schemas\lib.schema.json"
+                       FilePathPattern="appsettings\..*json" />
+  </ItemGroup>
+
 </Project>

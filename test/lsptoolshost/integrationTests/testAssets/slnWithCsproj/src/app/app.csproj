@@ -3,8 +3,9 @@
   <ProjectReference Include="..\lib\lib.csproj" />
   <JsonSchemaSegment Include="schemas\aspire.schema.json"
                      FilePathPattern="appsettings\..*json" />
+  <!-- Only applies to appsettings.Development.json, which proves per-document pattern routing. -->
   <JsonSchemaSegment Include="schemas\yarp.schema.json"
-                     FilePathPattern="appsettings\..*json" />
+                     FilePathPattern="appsettings\.Development\.json" />
  </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>

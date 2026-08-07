@@ -717,6 +717,7 @@
     "onLanguage:csharp",
     "onCommand:o.showOutput",
     "onCommand:omnisharp.registerLanguageMiddleware",
+    "onFileSystem:csharp-appsettings-schema",
     "workspaceContains:**/*.{csproj,csx,cake}"
   ],
   "contributes": {
@@ -1833,6 +1834,13 @@
       }
     ],
     "jsonValidation": [
+      {
+        "fileMatch": [
+          "appsettings.json",
+          "appsettings.*.json"
+        ],
+        "url": "https://json.schemastore.org/appsettings"
+      },
       {
         "fileMatch": [
           "appsettings.json",

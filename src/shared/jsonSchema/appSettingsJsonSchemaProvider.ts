@@ -3,17 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
-import * as fs from 'fs/promises';
-import * as vscode from 'vscode';
-import { ChildProcess, SpawnOptions, spawn as spawnProcess } from 'child_process';
 import {
+    JsonObject,
     JsonSchemaSegment,
+    JsonSchemaSegmentItem,
     JsonSchemaSegmentItemsResult,
-    isAppSettingsSchemaPattern,
+    jsonSchemaDialect,
+    matchJsonSchemaFilePattern,
+    maximumSegmentCount,
     mergeJsonSchemaSegments,
     parseJsonSchemaSegment,
-    parseMsBuildJsonSchemaSegments,
 } from './jsonSchemaSegments';
 
 export const appSettingsJsonSchemaScheme = 'csharp-appsettings-schema';
@@ -23,15 +22,34 @@ export interface Disposable {
     dispose(): void;
 }
 
+/** An open JSON document that the `appsettings` schema associations in package.json apply to. */
+export interface AppSettingsDocument {
+    /** Stable identity of the document, used to detect when the routed set of documents changes. */
+    id: string;
+    /** File name only, matched against `JsonSchemaSegment` `FilePathPattern` metadata. */
+    fileName: string;
+    /** Directory containing the document; the search for the owning project starts here. */
+    directory: string;
+    /** URI scheme of the document. Only `file` documents can be routed to an MSBuild project. */
+    scheme: string;
+}
+
 export interface AppSettingsJsonSchemaProviderDependencies {
-    isTrusted: boolean;
-    workspaceFolderSchemes: readonly string[];
-    findProjectPaths(): Promise<readonly string[]>;
+    /** MSBuild evaluation runs a build tool, so it is only performed in a trusted workspace. */
+    readonly isTrusted: boolean;
+    /** The `appsettings` documents that the JSON language service may currently be validating. */
+    getAppSettingsDocuments(): readonly AppSettingsDocument[];
+    /** Resolves the project that owns a document, or `undefined` when it is outside any project. */
+    findOwningProject(document: AppSettingsDocument): Promise<string | undefined>;
     evaluateProject(projectPath: string, signal: AbortSignal): Promise<JsonSchemaSegmentItemsResult>;
-    pathExists(schemaPath: string): Promise<boolean>;
-    readFile(schemaPath: string): Promise<string>;
-    watchWorkspaceInputs(listener: () => void): Disposable;
-    watchSegmentFiles(paths: readonly string[], listener: () => void): Disposable;
+    /** Reads a schema fragment, or returns `undefined` when it is missing or unusable. */
+    readSegment(segmentPath: string): Promise<string | undefined>;
+    /** Fires when project files change, invalidating evaluated `JsonSchemaSegment` items. */
+    watchProjectInputs(listener: () => void): Disposable;
+    /** Fires when one of the resolved schema fragments changes on disk. */
+    watchSegmentFiles(segmentPaths: readonly string[], listener: () => void): Disposable;
+    /** Fires when the set of open `appsettings` documents changes. */
+    watchAppSettingsDocuments(listener: () => void): Disposable;
     log(level: 'debug' | 'warn', message: string): void;
 }
 
@@ -39,27 +57,44 @@ export interface AppSettingsJsonSchemaProviderOptions {
     debounceMilliseconds?: number;
 }
 
-export interface DotnetMsBuildOptions {
-    spawn?: (command: string, args: string[], options: SpawnOptions) => ChildProcess;
-    timeoutMilliseconds: number;
-    maxOutputBytes: number;
-    signal?: AbortSignal;
-}
+/**
+ * Bound on how many distinct diagnostics are remembered for de-duplication. Diagnostics are recorded
+ * so that a permanently broken segment does not append to the log on every schema request.
+ */
+const maximumRememberedDiagnostics = 256;
 
-const evaluationTimeoutMilliseconds = 15_000;
-const maximumEvaluationOutputBytes = 4 * 1024 * 1024;
-
+/**
+ * Serves the merged `appsettings.json` schema contributed by `JsonSchemaSegment` MSBuild items.
+ *
+ * NuGet packages such as the Aspire integrations, YARP and the Azure SDK ship partial JSON schemas
+ * and register them with an MSBuild item. Visual Studio consumes those items to offer IntelliSense
+ * while editing `appsettings.json`; this provider does the same for VS Code by evaluating the item
+ * with `dotnet msbuild -getItem:JsonSchemaSegment` and merging the referenced fragments into a
+ * single document served from the `csharp-appsettings-schema` scheme.
+ *
+ * Routing note: VS Code has no API for associating a schema with a specific document
+ * (https://github.com/microsoft/vscode/issues/230136), so the JSON language service asks for the
+ * schema URI without saying which document triggered the request. Instead of unioning every project
+ * in the workspace, the content is derived from the `appsettings` documents that are actually open:
+ * each one is routed to its owning project, and only the segments whose `FilePathPattern` matches
+ * that document's file name participate. With a single open document - the overwhelmingly common
+ * case - that is exactly per-document routing; with several open at once the result is the union
+ * over just those documents, which can offer a completion that belongs to a sibling project but
+ * never drops one that belongs to the document being edited.
+ */
 export class AppSettingsJsonSchemaProvider implements Disposable {
     private readonly debounceMilliseconds: number;
     private readonly listeners = new Set<(uri: string) => unknown>();
-    private readonly workspaceWatcher?: Disposable;
+    private readonly projectEvaluations = new Map<string, SharedEvaluation<readonly JsonSchemaSegmentItem[]>>();
+    private readonly segmentSchemas = new Map<string, JsonObject | undefined>();
+    private readonly reportedDiagnostics = new Set<string>();
+    private readonly documentWatcher: Disposable;
+    private readonly projectWatcher: Disposable;
     private segmentWatcher?: Disposable;
     private watchedSegmentPaths = '';
-    private cachedContent?: string;
-    private inFlight?: Promise<string>;
-    private evaluationCancellation?: AbortController;
+    private cached?: { routingKey: string; content: string };
+    private composition?: { routingKey: string; evaluation: SharedEvaluation<string> };
     private invalidationTimer?: NodeJS.Timeout;
-    private generation = 0;
     private disposed = false;
 
     public constructor(
@@ -67,9 +102,11 @@ export class AppSettingsJsonSchemaProvider implements Disposable {
         options: AppSettingsJsonSchemaProviderOptions = {}
     ) {
         this.debounceMilliseconds = options.debounceMilliseconds ?? 250;
-        if (this.canEvaluate()) {
-            this.workspaceWatcher = dependencies.watchWorkspaceInputs(() => this.scheduleInvalidation());
-        }
+        // Registering watchers is the only work done up front. Nothing is evaluated until the JSON
+        // language service actually asks for the schema, which only happens once an appsettings
+        // document is opened.
+        this.projectWatcher = dependencies.watchProjectInputs(() => this.invalidate('projects'));
+        this.documentWatcher = dependencies.watchAppSettingsDocuments(() => this.invalidate('documents'));
     }
 
     public readonly onDidChange = (listener: (uri: string) => unknown): Disposable => {
@@ -79,53 +116,52 @@ export class AppSettingsJsonSchemaProvider implements Disposable {
         };
     };
 
+    /**
+     * Returns the schema document for the currently open `appsettings` documents. This never
+     * rejects: a failure or a cancellation yields the neutral schema so that the JSON language
+     * service keeps validating with the SchemaStore association contributed alongside this one.
+     */
     public async getSchemaContent(signal?: AbortSignal): Promise<string> {
-        if (this.disposed || !this.canEvaluate() || signal?.aborted) {
-            return createSchemaContent([]);
+        if (this.disposed || !this.dependencies.isTrusted || signal?.aborted) {
+            return neutralSchemaContent;
         }
 
-        if (this.cachedContent !== undefined) {
-            return this.cachedContent;
+        const documents = this.dependencies.getAppSettingsDocuments();
+        const routingKey = createRoutingKey(documents);
+        if (this.cached?.routingKey === routingKey) {
+            return this.cached.content;
         }
 
-        if (this.inFlight !== undefined) {
-            return await this.waitForInFlightEvaluation(this.inFlight, signal);
+        // A composition that was abandoned resolves with the neutral schema, so it must not be reused
+        // for the next request even though its routing key still matches.
+        if (this.composition?.routingKey !== routingKey || this.composition.evaluation.aborted) {
+            this.composition?.evaluation.abort();
+            this.composition = {
+                routingKey,
+                evaluation: new SharedEvaluation(async (compositionSignal) =>
+                    this.composeSchemaContent(documents, compositionSignal)
+                        .catch((error) => {
+                            if (!compositionSignal.aborted) {
+                                this.report(
+                                    'warn',
+                                    `Unable to load appsettings JSON schema segments: ${getErrorMessage(error)}`
+                                );
+                            }
+
+                            return neutralSchemaContent;
+                        })
+                        .then((content) => {
+                            if (!this.disposed && !compositionSignal.aborted) {
+                                this.cached = { routingKey, content };
+                            }
+
+                            return content;
+                        })
+                ),
+            };
         }
 
-        const generation = this.generation;
-        const cancellation = new AbortController();
-        this.evaluationCancellation = cancellation;
-        const cancel = () => cancellation.abort();
-        signal?.addEventListener('abort', cancel, { once: true });
-
-        const evaluation = this.loadSchemaContent(cancellation.signal)
-            .catch((error) => {
-                if (!cancellation.signal.aborted) {
-                    this.dependencies.log(
-                        'warn',
-                        `Unable to load appsettings JSON schema segments: ${getErrorMessage(error)}`
-                    );
-                }
-                return createSchemaContent([]);
-            })
-            .then((content) => {
-                if (!this.disposed && !cancellation.signal.aborted && generation === this.generation) {
-                    this.cachedContent = content;
-                }
-                return content;
-            })
-            .finally(() => {
-                signal?.removeEventListener('abort', cancel);
-                if (this.evaluationCancellation === cancellation) {
-                    this.evaluationCancellation = undefined;
-                }
-                if (this.inFlight === evaluation) {
-                    this.inFlight = undefined;
-                }
-            });
-
-        this.inFlight = evaluation;
-        return evaluation;
+        return await this.composition.evaluation.wait(signal);
     }
 
     public dispose(): void {
@@ -134,111 +170,194 @@ export class AppSettingsJsonSchemaProvider implements Disposable {
         }
 
         this.disposed = true;
-        this.generation++;
         if (this.invalidationTimer !== undefined) {
             clearTimeout(this.invalidationTimer);
             this.invalidationTimer = undefined;
         }
-        this.evaluationCancellation?.abort();
-        this.workspaceWatcher?.dispose();
+
+        this.composition?.evaluation.abort();
+        this.composition = undefined;
+        for (const evaluation of this.projectEvaluations.values()) {
+            evaluation.abort();
+        }
+
+        this.projectEvaluations.clear();
+        this.projectWatcher.dispose();
+        this.documentWatcher.dispose();
         this.segmentWatcher?.dispose();
         this.listeners.clear();
     }
 
-    private canEvaluate(): boolean {
-        return (
-            this.dependencies.isTrusted &&
-            this.dependencies.workspaceFolderSchemes.length > 0 &&
-            this.dependencies.workspaceFolderSchemes.every((scheme) => scheme === 'file')
-        );
-    }
+    private async composeSchemaContent(
+        documents: readonly AppSettingsDocument[],
+        signal: AbortSignal
+    ): Promise<string> {
+        const documentsByProject = new Map<string, AppSettingsDocument[]>();
+        for (const document of documents) {
+            if (document.scheme !== 'file') {
+                // MSBuild cannot evaluate a project that is not backed by the local file system.
+                // This is unreachable for the shipping configuration because the extension declares
+                // `virtualWorkspaces: false`, but a single document can still come from another
+                // provider inside an otherwise local workspace.
+                this.report('debug', `Skipping '${document.id}' because its scheme is not supported.`);
+                continue;
+            }
 
-    private async waitForInFlightEvaluation(evaluation: Promise<string>, signal?: AbortSignal): Promise<string> {
-        if (signal === undefined) {
-            return await evaluation;
-        }
-
-        const cancel = () => this.evaluationCancellation?.abort();
-        signal.addEventListener('abort', cancel, { once: true });
-        try {
-            return await evaluation;
-        } finally {
-            signal.removeEventListener('abort', cancel);
-        }
-    }
-
-    private async loadSchemaContent(signal: AbortSignal): Promise<string> {
-        // VS Code requests the schema URI without identifying the appsettings document that triggered validation.
-        // Until that association includes the target document, merge segments from every project in the workspace.
-        const projects = [...new Set(await this.dependencies.findProjectPaths())].sort(compareOrdinal);
-        const items = [];
-        for (const project of projects) {
+            const project = await this.dependencies.findOwningProject(document);
             if (signal.aborted) {
-                break;
+                return neutralSchemaContent;
             }
 
-            try {
-                const result = await this.dependencies.evaluateProject(project, signal);
-                for (const diagnostic of result.diagnostics) {
-                    this.dependencies.log('warn', diagnostic);
+            if (project === undefined) {
+                this.report('debug', `No project owns '${document.id}', so no schema segments apply.`);
+                continue;
+            }
+
+            const documentsForProject = documentsByProject.get(project);
+            if (documentsForProject === undefined) {
+                documentsByProject.set(project, [document]);
+            } else {
+                documentsForProject.push(document);
+            }
+        }
+
+        const selected = new Map<string, JsonSchemaSegmentItem>();
+        for (const project of [...documentsByProject.keys()].sort(compareOrdinal)) {
+            if (signal.aborted) {
+                return neutralSchemaContent;
+            }
+
+            const items = await this.getProjectSegments(project, signal);
+            for (const item of items) {
+                if (selected.has(item.path)) {
+                    continue;
                 }
-                items.push(...result.segments.filter((segment) => isAppSettingsSchemaPattern(segment.filePathPattern)));
-            } catch (error) {
-                if (!signal.aborted) {
-                    this.dependencies.log(
-                        'warn',
-                        `Unable to evaluate JsonSchemaSegment items for '${project}': ${getErrorMessage(error)}`
-                    );
+
+                if (this.appliesToAnyDocument(item, documentsByProject.get(project)!)) {
+                    selected.set(item.path, item);
                 }
             }
         }
 
-        const segmentPaths = [...new Set(items.map((item) => path.normalize(item.path)))].sort(compareOrdinal);
+        const segmentPaths = [...selected.keys()].sort(compareOrdinal);
+        if (segmentPaths.length > maximumSegmentCount) {
+            this.report(
+                'warn',
+                `Only the first ${maximumSegmentCount} of ${segmentPaths.length} JSON schema segments are used.`
+            );
+            segmentPaths.length = maximumSegmentCount;
+        }
+
         const segments: JsonSchemaSegment[] = [];
-        for (const schemaPath of segmentPaths) {
+        for (const segmentPath of segmentPaths) {
             if (signal.aborted) {
-                break;
+                return neutralSchemaContent;
             }
 
-            try {
-                if (!(await this.dependencies.pathExists(schemaPath))) {
-                    this.dependencies.log('warn', `JSON schema segment '${schemaPath}' does not exist.`);
-                    continue;
-                }
-
-                const parsed = parseJsonSchemaSegment(schemaPath, await this.dependencies.readFile(schemaPath));
-                if (parsed.schema === undefined) {
-                    this.dependencies.log('warn', parsed.diagnostic ?? `Unable to parse '${schemaPath}'.`);
-                    continue;
-                }
-
-                segments.push({ path: schemaPath, schema: parsed.schema });
-            } catch (error) {
-                this.dependencies.log(
-                    'warn',
-                    `Unable to read JSON schema segment '${schemaPath}': ${getErrorMessage(error)}`
-                );
+            const schema = await this.getSegmentSchema(segmentPath);
+            if (schema !== undefined) {
+                segments.push({ path: segmentPath, schema });
             }
         }
 
         if (signal.aborted) {
-            return createSchemaContent([]);
+            return neutralSchemaContent;
         }
 
         this.updateSegmentWatcher(segmentPaths);
         const merged = mergeJsonSchemaSegments(segments);
         for (const conflict of merged.conflicts) {
-            this.dependencies.log(
+            this.report(
                 'warn',
-                `Conflicting JSON schema value at '${conflict.path}' from '${conflict.ignoredSource}'. Keeping the value from '${conflict.keptSource}' because segment paths are merged in ordinal order.`
+                `Conflicting JSON schema value at '${conflict.pointer}' contributed by '${conflict.ignoredSource}' was ignored in favor of the value from '${conflict.keptSource}'.`
             );
         }
 
-        return `${JSON.stringify(merged.schema, null, 2)}\n`;
+        for (const reference of merged.unresolvedReferences) {
+            this.report('debug', `JSON schema reference '${reference}' is not defined by any segment and was dropped.`);
+        }
+
+        return formatSchemaContent(merged.schema);
+    }
+
+    private appliesToAnyDocument(item: JsonSchemaSegmentItem, documents: readonly AppSettingsDocument[]): boolean {
+        let applies = false;
+        for (const document of documents) {
+            const result = matchJsonSchemaFilePattern(item.filePathPattern, document.fileName);
+            if (result.diagnostic !== undefined) {
+                this.report('warn', `${result.diagnostic} The segment '${item.path}' was ignored.`);
+                return false;
+            }
+
+            applies ||= result.matches;
+        }
+
+        return applies;
+    }
+
+    private async getProjectSegments(
+        projectPath: string,
+        signal: AbortSignal
+    ): Promise<readonly JsonSchemaSegmentItem[]> {
+        let evaluation = this.projectEvaluations.get(projectPath);
+        if (evaluation === undefined) {
+            evaluation = new SharedEvaluation(async (evaluationSignal) => {
+                try {
+                    const result = await this.dependencies.evaluateProject(projectPath, evaluationSignal);
+                    for (const diagnostic of result.diagnostics) {
+                        this.report('warn', diagnostic);
+                    }
+
+                    return result.segments;
+                } catch (error) {
+                    if (!evaluationSignal.aborted) {
+                        this.report(
+                            'warn',
+                            `Unable to evaluate JsonSchemaSegment items for '${projectPath}': ${getErrorMessage(error)}`
+                        );
+                    }
+
+                    // A cancelled or failed evaluation must not be remembered as an empty result,
+                    // otherwise the segments would stay missing until the project file changes.
+                    this.projectEvaluations.delete(projectPath);
+                    return [];
+                }
+            });
+            this.projectEvaluations.set(projectPath, evaluation);
+        }
+
+        return await evaluation.wait(signal);
+    }
+
+    private async getSegmentSchema(segmentPath: string): Promise<JsonObject | undefined> {
+        const cachedSchema = this.segmentSchemas.get(segmentPath);
+        if (cachedSchema !== undefined || this.segmentSchemas.has(segmentPath)) {
+            return cachedSchema;
+        }
+
+        let schema: JsonObject | undefined;
+        try {
+            const content = await this.dependencies.readSegment(segmentPath);
+            if (content === undefined) {
+                this.report('warn', `JSON schema segment '${segmentPath}' could not be read.`);
+            } else {
+                const parsed = parseJsonSchemaSegment(segmentPath, content);
+                for (const diagnostic of parsed.diagnostics) {
+                    this.report('warn', diagnostic);
+                }
+
+                schema = parsed.schema;
+            }
+        } catch (error) {
+            this.report('warn', `Unable to read JSON schema segment '${segmentPath}': ${getErrorMessage(error)}`);
+        }
+
+        this.segmentSchemas.set(segmentPath, schema);
+        return schema;
     }
 
     private updateSegmentWatcher(segmentPaths: readonly string[]): void {
-        const watchedSegmentPaths = JSON.stringify(segmentPaths);
+        const watchedSegmentPaths = segmentPaths.join('\n');
         if (watchedSegmentPaths === this.watchedSegmentPaths) {
             return;
         }
@@ -246,15 +365,42 @@ export class AppSettingsJsonSchemaProvider implements Disposable {
         this.segmentWatcher?.dispose();
         this.segmentWatcher =
             segmentPaths.length > 0
-                ? this.dependencies.watchSegmentFiles(segmentPaths, () => this.scheduleInvalidation())
+                ? this.dependencies.watchSegmentFiles(segmentPaths, () => this.invalidate('segments'))
                 : undefined;
         this.watchedSegmentPaths = watchedSegmentPaths;
     }
 
-    private scheduleInvalidation(): void {
+    /**
+     * Drops the caches affected by a change and notifies listeners once the change settles. Edits
+     * to a project file arrive as a burst of watcher events, and each notification makes the JSON
+     * language service re-request the schema, so the notification is debounced.
+     */
+    private invalidate(reason: 'projects' | 'segments' | 'documents'): void {
         if (this.disposed) {
             return;
         }
+
+        if (reason === 'projects') {
+            for (const evaluation of this.projectEvaluations.values()) {
+                evaluation.abort();
+            }
+
+            this.projectEvaluations.clear();
+        }
+
+        if (reason === 'projects' || reason === 'segments') {
+            this.segmentSchemas.clear();
+        }
+
+        if (reason === 'documents' && this.cached?.routingKey === this.currentRoutingKey()) {
+            // Opening or closing an unrelated JSON document does not change what the schema should
+            // contain, so avoid making every editor with an appsettings file revalidate.
+            return;
+        }
+
+        this.cached = undefined;
+        this.composition?.evaluation.abort();
+        this.composition = undefined;
 
         if (this.invalidationTimer !== undefined) {
             clearTimeout(this.invalidationTimer);
@@ -262,218 +408,109 @@ export class AppSettingsJsonSchemaProvider implements Disposable {
 
         this.invalidationTimer = setTimeout(() => {
             this.invalidationTimer = undefined;
-            this.generation++;
-            this.cachedContent = undefined;
-            this.inFlight = undefined;
-            this.evaluationCancellation?.abort();
             for (const listener of this.listeners) {
                 listener(appSettingsJsonSchemaUri);
             }
         }, this.debounceMilliseconds);
     }
-}
 
-export function registerAppSettingsJsonSchemaProvider(outputChannel: vscode.LogOutputChannel): vscode.Disposable {
-    const schemaUri = vscode.Uri.parse(appSettingsJsonSchemaUri);
-    const provider = new AppSettingsJsonSchemaProvider({
-        get isTrusted() {
-            return vscode.workspace.isTrusted;
-        },
-        get workspaceFolderSchemes() {
-            return vscode.workspace.workspaceFolders?.map((folder) => folder.uri.scheme) ?? [];
-        },
-        findProjectPaths: async () => {
-            const projects = await vscode.workspace.findFiles('**/*.csproj', '**/{bin,obj,node_modules}/**');
-            return projects.map((project) => project.fsPath);
-        },
-        evaluateProject: async (projectPath, signal) => {
-            const output = await runDotnetMsBuild(projectPath, {
-                timeoutMilliseconds: evaluationTimeoutMilliseconds,
-                maxOutputBytes: maximumEvaluationOutputBytes,
-                signal,
-            });
-            return parseMsBuildJsonSchemaSegments(output, projectPath);
-        },
-        pathExists: async (schemaPath) => {
-            try {
-                return (await fs.stat(schemaPath)).isFile();
-            } catch {
-                return false;
-            }
-        },
-        readFile: async (schemaPath) => await fs.readFile(schemaPath, 'utf8'),
-        watchWorkspaceInputs: (listener) =>
-            vscode.Disposable.from(
-                createFileWatchers(['**/*.csproj', '**/Directory.*', '**/project.assets.json'], listener),
-                vscode.workspace.onDidChangeWorkspaceFolders(listener)
-            ),
-        watchSegmentFiles: (paths, listener) =>
-            createFileWatchers(
-                paths.map(
-                    (schemaPath) =>
-                        new vscode.RelativePattern(vscode.Uri.file(path.dirname(schemaPath)), path.basename(schemaPath))
-                ),
-                listener
-            ),
-        log: (level, message) => outputChannel[level](message),
-    });
-    const changeEmitter = new vscode.EventEmitter<vscode.Uri>();
-    const changeSubscription = provider.onDidChange(() => changeEmitter.fire(schemaUri));
-    const registration = vscode.workspace.registerTextDocumentContentProvider(appSettingsJsonSchemaScheme, {
-        onDidChange: changeEmitter.event,
-        provideTextDocumentContent: async (_uri, token) => {
-            const cancellation = new AbortController();
-            const cancellationSubscription = token.onCancellationRequested(() => cancellation.abort());
-            try {
-                return await provider.getSchemaContent(cancellation.signal);
-            } finally {
-                cancellationSubscription.dispose();
-            }
-        },
-    });
+    private currentRoutingKey(): string {
+        return createRoutingKey(this.dependencies.getAppSettingsDocuments());
+    }
 
-    return vscode.Disposable.from(provider, changeEmitter, changeSubscription, registration);
-}
-
-export async function runDotnetMsBuild(projectPath: string, options: DotnetMsBuildOptions): Promise<string> {
-    return new Promise((resolve, reject) => {
-        if (options.signal?.aborted) {
-            reject(new Error(`dotnet msbuild evaluation for '${projectPath}' was cancelled.`));
+    private report(level: 'debug' | 'warn', message: string): void {
+        if (this.reportedDiagnostics.has(message)) {
             return;
         }
 
-        const spawn = options.spawn ?? spawnProcess;
-        const args = ['msbuild', projectPath, '-getItem:JsonSchemaSegment', '-nologo'];
-        const child = spawn('dotnet', args, {
-            cwd: path.dirname(projectPath),
-            env: {
-                ...process.env,
-                MSBUILDDISABLENODEREUSE: '1',
-            },
-            shell: false,
-            stdio: ['ignore', 'pipe', 'pipe'],
-            windowsHide: true,
-        });
-
-        let stdout = '';
-        let stderr = '';
-        let outputBytes = 0;
-        let settled = false;
-        let exited = false;
-        let terminationRequested = false;
-        let forceKillTimer: NodeJS.Timeout | undefined;
-
-        const timeout = setTimeout(() => {
-            terminateAndReject(
-                new Error(
-                    `dotnet msbuild evaluation for '${projectPath}' timed out after ${options.timeoutMilliseconds}ms.`
-                )
-            );
-        }, options.timeoutMilliseconds);
-
-        const onCancellation = () => {
-            terminateAndReject(new Error(`dotnet msbuild evaluation for '${projectPath}' was cancelled.`));
-        };
-        options.signal?.addEventListener('abort', onCancellation, { once: true });
-
-        const appendOutput = (chunk: Buffer | string, isStandardError: boolean) => {
-            const text = chunk.toString();
-            outputBytes += Buffer.byteLength(text);
-            if (outputBytes > options.maxOutputBytes) {
-                terminateAndReject(
-                    new Error(
-                        `dotnet msbuild evaluation for '${projectPath}' exceeded the ${options.maxOutputBytes}-byte output limit.`
-                    )
-                );
-                return;
-            }
-
-            if (isStandardError) {
-                stderr += text;
-            } else {
-                stdout += text;
-            }
-        };
-
-        child.stdout?.on('data', (chunk: Buffer | string) => appendOutput(chunk, false));
-        child.stderr?.on('data', (chunk: Buffer | string) => appendOutput(chunk, true));
-        child.on('error', (error) => finish(() => reject(error)));
-        child.on('close', (code) => {
-            exited = true;
-            if (forceKillTimer !== undefined) {
-                clearTimeout(forceKillTimer);
-                forceKillTimer = undefined;
-            }
-            if (code === 0) {
-                finish(() => resolve(stdout));
-            } else {
-                const detail = stderr.trim();
-                finish(() =>
-                    reject(
-                        new Error(
-                            `dotnet msbuild evaluation for '${projectPath}' exited with code ${code ?? 'unknown'}${
-                                detail.length > 0 ? `: ${detail}` : '.'
-                            }`
-                        )
-                    )
-                );
-            }
-        });
-
-        function terminateAndReject(error: Error): void {
-            if (terminationRequested) {
-                return;
-            }
-
-            terminationRequested = true;
-            try {
-                child.kill();
-            } catch {
-                // The process may have already exited between the triggering event and cleanup.
-            }
-            forceKillTimer = setTimeout(() => {
-                if (!exited) {
-                    try {
-                        child.kill('SIGKILL');
-                    } catch {
-                        // The process exited after the check but before the forced termination.
-                    }
-                }
-            }, 1_000);
-            forceKillTimer.unref();
-            finish(() => reject(error));
+        if (this.reportedDiagnostics.size >= maximumRememberedDiagnostics) {
+            this.reportedDiagnostics.clear();
         }
 
-        function finish(action: () => void): void {
-            if (settled) {
-                return;
-            }
-
-            settled = true;
-            clearTimeout(timeout);
-            options.signal?.removeEventListener('abort', onCancellation);
-            action();
-        }
-    });
+        this.reportedDiagnostics.add(message);
+        this.dependencies.log(level, message);
+    }
 }
 
-function createFileWatchers(patterns: readonly vscode.GlobPattern[], listener: () => void): vscode.Disposable {
-    const disposables: vscode.Disposable[] = [];
-    for (const pattern of patterns) {
-        const watcher = vscode.workspace.createFileSystemWatcher(pattern);
-        disposables.push(
-            watcher,
-            watcher.onDidCreate(listener),
-            watcher.onDidChange(listener),
-            watcher.onDidDelete(listener)
-        );
+/**
+ * Shared, reference counted work.
+ *
+ * Several JSON language service requests can arrive for the same schema at once, and each carries
+ * its own cancellation token. The underlying MSBuild evaluation is only cancelled once every
+ * requester has gone away, so one editor closing cannot cancel the work another editor is waiting
+ * on, while an abandoned evaluation still gets torn down promptly.
+ */
+class SharedEvaluation<T> {
+    private readonly controller = new AbortController();
+    private readonly promise: Promise<T>;
+    private waiters = 0;
+
+    public constructor(work: (signal: AbortSignal) => Promise<T>) {
+        this.promise = work(this.controller.signal);
     }
 
-    return vscode.Disposable.from(...disposables);
+    /**
+     * True once the shared work has been abandoned. An aborted evaluation resolves with a fallback
+     * value rather than the real result, so callers must not treat it as a usable cache entry.
+     */
+    public get aborted(): boolean {
+        return this.controller.signal.aborted;
+    }
+
+    public async wait(signal?: AbortSignal): Promise<T> {
+        this.waiters++;
+        let released = false;
+        const release = () => {
+            if (!released) {
+                released = true;
+                this.waiters--;
+            }
+        };
+        const onAbort = () => {
+            release();
+            if (this.waiters === 0) {
+                this.controller.abort();
+            }
+        };
+
+        signal?.addEventListener('abort', onAbort, { once: true });
+        try {
+            return await this.promise;
+        } finally {
+            signal?.removeEventListener('abort', onAbort);
+            release();
+        }
+    }
+
+    public abort(): void {
+        this.controller.abort();
+    }
 }
 
-function createSchemaContent(segments: readonly JsonSchemaSegment[]): string {
-    return `${JSON.stringify(mergeJsonSchemaSegments(segments).schema, null, 2)}\n`;
+/**
+ * The schema served when there is nothing to contribute. `{}` is the schema that accepts any
+ * document, so composing it with the SchemaStore `appsettings` association contributed alongside it
+ * leaves validation exactly as it was before this feature existed.
+ */
+const neutralSchemaContent = formatSchemaContent({ $schema: jsonSchemaDialect });
+
+function formatSchemaContent(schema: JsonObject): string {
+    return `${JSON.stringify(schema, null, 2)}\n`;
+}
+
+/**
+ * Identity of the set of documents the schema is built for. Documents in the same directory with
+ * the same name route identically, so collapsing them avoids rebuilding the schema when a file is
+ * opened in a second editor group.
+ */
+function createRoutingKey(documents: readonly AppSettingsDocument[]): string {
+    return [
+        ...new Set(
+            documents.map((document) => `${document.scheme}\u0000${document.directory}\u0000${document.fileName}`)
+        ),
+    ]
+        .sort(compareOrdinal)
+        .join('\n');
 }
 
 function compareOrdinal(left: string, right: string): number {

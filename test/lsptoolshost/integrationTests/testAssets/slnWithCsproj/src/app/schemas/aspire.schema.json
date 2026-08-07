@@ -1,12 +1,27 @@
 {
-  // Representative of the partial schemas contributed by Aspire integration packages.
+  // Representative of the partial schemas contributed by Aspire integration packages: JSONC
+  // syntax, a section of its own, and a reference to a definition that only the SchemaStore
+  // appsettings document provides.
   "type": "object",
+  "definitions": {
+    "logLevel": {
+      "properties": {
+        "Npgsql": { "$ref": "#/definitions/logLevelThreshold" }
+      }
+    }
+  },
   "properties": {
     "Aspire": {
       "type": "object",
       "properties": {
         "Npgsql": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "ConnectionString": {
+              "type": "string",
+              "description": "The connection string of the PostgreSQL database to connect to."
+            }
+          }
         }
       }
     }

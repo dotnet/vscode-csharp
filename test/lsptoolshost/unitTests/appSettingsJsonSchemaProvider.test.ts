@@ -4,316 +4,372 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { EventEmitter } from 'events';
-import { PassThrough } from 'stream';
-import { ChildProcess, SpawnOptions } from 'child_process';
 import { afterEach, describe, expect, jest, test } from '@jest/globals';
 import {
+    AppSettingsDocument,
     AppSettingsJsonSchemaProvider,
     AppSettingsJsonSchemaProviderDependencies,
     appSettingsJsonSchemaUri,
-    runDotnetMsBuild,
 } from '../../../src/shared/jsonSchema/appSettingsJsonSchemaProvider';
+import { JsonSchemaSegmentItem } from '../../../src/shared/jsonSchema/jsonSchemaSegments';
 
-describe('dotnet msbuild JSON schema evaluation', () => {
-    afterEach(() => {
-        jest.useRealTimers();
-    });
+const appProjectPath = path.resolve('src', 'app', 'app.csproj');
+const libProjectPath = path.resolve('src', 'lib', 'lib.csproj');
+const aspireSegmentPath = path.resolve('packages', 'aspire.npgsql', 'ConfigurationSchema.json');
+const yarpSegmentPath = path.resolve('packages', 'yarp', 'ConfigurationSchema.json');
 
-    test('spawns dotnet with an argument array and no shell', async () => {
-        const child = createChildProcess();
-        const spawn = jest.fn((_command: string, _args: readonly string[], _options: SpawnOptions) => child);
-        const projectPath = path.resolve('workspace with spaces', 'project;echo-not-a-command.csproj');
-        const promise = runDotnetMsBuild(projectPath, {
-            spawn,
-            timeoutMilliseconds: 1_000,
-            maxOutputBytes: 1_024,
-        });
-
-        child.stdout!.emit('data', Buffer.from('{"Items":{"JsonSchemaSegment":[]}}'));
-        child.emit('close', 0, null);
-
-        await expect(promise).resolves.toBe('{"Items":{"JsonSchemaSegment":[]}}');
-        expect(spawn).toHaveBeenCalledWith(
-            'dotnet',
-            ['msbuild', projectPath, '-getItem:JsonSchemaSegment', '-nologo'],
-            expect.objectContaining({
-                cwd: path.dirname(projectPath),
-                shell: false,
-                windowsHide: true,
-                env: expect.objectContaining({
-                    MSBUILDDISABLENODEREUSE: '1',
-                }),
-            })
-        );
-    });
-
-    test('kills evaluation when output exceeds the configured bound', async () => {
-        const child = createChildProcess();
-        const promise = runDotnetMsBuild(path.resolve('app.csproj'), {
-            spawn: () => child,
-            timeoutMilliseconds: 1_000,
-            maxOutputBytes: 4,
-        });
-
-        child.stdout!.emit('data', Buffer.from('12345'));
-
-        await expect(promise).rejects.toThrow('output limit');
-        expect(child.kill).toHaveBeenCalledTimes(1);
-    });
-
-    test('kills evaluation when it times out or is cancelled', async () => {
-        jest.useFakeTimers();
-        const timedOutChild = createChildProcess();
-        const timedOut = runDotnetMsBuild(path.resolve('timeout.csproj'), {
-            spawn: () => timedOutChild,
-            timeoutMilliseconds: 50,
-            maxOutputBytes: 1_024,
-        });
-        const timedOutExpectation = expect(timedOut).rejects.toThrow('timed out');
-
-        await jest.advanceTimersByTimeAsync(50);
-
-        await timedOutExpectation;
-        expect(timedOutChild.kill).toHaveBeenCalledTimes(1);
-        await jest.advanceTimersByTimeAsync(1_000);
-        expect(timedOutChild.kill).toHaveBeenLastCalledWith('SIGKILL');
-
-        const cancelledChild = createChildProcess();
-        const cancellation = new AbortController();
-        const cancelled = runDotnetMsBuild(path.resolve('cancelled.csproj'), {
-            spawn: () => cancelledChild,
-            timeoutMilliseconds: 1_000,
-            maxOutputBytes: 1_024,
-            signal: cancellation.signal,
-        });
-        const cancelledExpectation = expect(cancelled).rejects.toThrow('cancelled');
-
-        cancellation.abort();
-
-        await cancelledExpectation;
-        expect(cancelledChild.kill).toHaveBeenCalledTimes(1);
-    });
-});
+const appSettings = createDocument('src/app', 'appsettings.json');
+const appDevelopmentSettings = createDocument('src/app', 'appsettings.Development.json');
+const libSettings = createDocument('src/lib', 'appsettings.json');
 
 describe('AppSettingsJsonSchemaProvider', () => {
     afterEach(() => {
         jest.useRealTimers();
     });
 
-    test.each([
-        ['untrusted', false, ['file']],
-        ['virtual', true, ['vscode-vfs']],
-        ['mixed local and virtual', true, ['file', 'vscode-vfs']],
-    ])('returns the SchemaStore fallback without evaluating an %s workspace', async (_name, isTrusted, schemes) => {
-        const environment = createProviderDependencies({
-            isTrusted,
-            workspaceFolderSchemes: schemes,
-        });
+    test('returns the neutral schema and evaluates nothing in an untrusted workspace', async () => {
+        const environment = createEnvironment({ isTrusted: false, documents: [appSettings] });
         const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
 
-        const content = await provider.getSchemaContent();
-
-        expect(JSON.parse(content)).toEqual({
+        expect(JSON.parse(await provider.getSchemaContent())).toEqual({
             $schema: 'http://json-schema.org/draft-07/schema#',
-            allOf: [{ $ref: 'https://json.schemastore.org/appsettings' }],
         });
-        expect(environment.dependencies.findProjectPaths).not.toHaveBeenCalled();
-        expect(environment.dependencies.watchWorkspaceInputs).not.toHaveBeenCalled();
-        provider.dispose();
-    });
-
-    test('rechecks workspace locality before starting evaluation', async () => {
-        const workspaceFolderSchemes = ['file'];
-        const environment = createProviderDependencies({ workspaceFolderSchemes });
-        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
-        workspaceFolderSchemes.push('vscode-vfs');
-
-        await provider.getSchemaContent();
-
-        expect(environment.dependencies.findProjectPaths).not.toHaveBeenCalled();
+        expect(environment.dependencies.findOwningProject).not.toHaveBeenCalled();
         expect(environment.dependencies.evaluateProject).not.toHaveBeenCalled();
         provider.dispose();
     });
 
-    test('caches content and debounces invalidation from workspace and segment changes', async () => {
+    test('evaluates once the workspace becomes trusted', async () => {
         jest.useFakeTimers();
-        const schemaPath = path.resolve('schemas', 'aspire.schema.json');
-        const environment = createProviderDependencies({
-            evaluateProject: jest.fn(async () => ({
-                segments: [{ path: schemaPath, filePathPattern: 'appsettings\\..*json' }],
-                diagnostics: [],
-            })),
-            pathExists: jest.fn(async () => true),
-            readFile: jest.fn(async () => '{ "type": "object", "properties": { "Aspire": { "type": "object" } } }'),
-        });
-        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies, {
-            debounceMilliseconds: 25,
-        });
+        const environment = createEnvironment({ isTrusted: false });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
         const changed = jest.fn();
         provider.onDidChange(changed);
 
-        const first = await provider.getSchemaContent();
-        const second = await provider.getSchemaContent();
-        environment.fireWorkspaceChange();
-        environment.fireWorkspaceChange();
-        environment.fireSegmentChange();
+        expect(JSON.parse(await provider.getSchemaContent())).toEqual({
+            $schema: 'http://json-schema.org/draft-07/schema#',
+        });
 
-        expect(second).toBe(first);
-        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(1);
-        expect(changed).not.toHaveBeenCalled();
+        // Granting trust surfaces as a project input change, which must invalidate the refusal
+        // rather than leave the neutral schema in place for the rest of the session.
+        environment.setTrusted(true);
+        environment.fireProjectChange();
+        await jest.advanceTimersByTimeAsync(250);
+        expect(changed).toHaveBeenCalledWith('csharp-appsettings-schema://schemas/appsettings.schema.json');
 
-        await jest.advanceTimersByTimeAsync(25);
-        const refreshed = await provider.getSchemaContent();
-
-        expect(refreshed).toBe(first);
-        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(2);
-        expect(environment.dependencies.watchSegmentFiles).toHaveBeenLastCalledWith([schemaPath], expect.any(Function));
-        expect(changed).toHaveBeenCalledWith(appSettingsJsonSchemaUri);
+        const schema = JSON.parse(await provider.getSchemaContent());
+        expect(schema.properties).toEqual({ Aspire: { type: 'object' } });
         provider.dispose();
-        expect(environment.workspaceWatcher.dispose).toHaveBeenCalledTimes(1);
-        expect(environment.segmentWatcher.dispose).toHaveBeenCalledTimes(1);
     });
 
-    test('logs project and segment failures while retaining valid schema content', async () => {
-        const validPath = path.resolve('schemas', 'valid.schema.json');
-        const malformedPath = path.resolve('schemas', 'malformed.schema.json');
-        const unreadablePath = path.resolve('schemas', 'unreadable.schema.json');
-        const missingPath = path.resolve('schemas', 'missing.schema.json');
-        const environment = createProviderDependencies({
-            findProjectPaths: jest.fn(async () => [path.resolve('broken.csproj'), path.resolve('valid.csproj')]),
-            evaluateProject: jest.fn(async (projectPath: string) => {
-                if (projectPath.endsWith('broken.csproj')) {
-                    throw new Error('MSBuild failed');
-                }
+    test('evaluates nothing until an appsettings document is open', async () => {
+        const environment = createEnvironment({ documents: [] });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
 
-                return {
-                    segments: [
-                        { path: validPath, filePathPattern: 'appsettings\\..*json' },
-                        { path: malformedPath, filePathPattern: 'appsettings\\..*json' },
-                        { path: unreadablePath, filePathPattern: 'appsettings\\..*json' },
-                        { path: missingPath, filePathPattern: 'appsettings\\..*json' },
-                        { path: path.resolve('launch.schema.json'), filePathPattern: 'launchSettings\\.json' },
-                    ],
-                    diagnostics: ['ignored malformed MSBuild item'],
-                };
-            }),
-            pathExists: jest.fn(async (schemaPath: string) => schemaPath !== missingPath),
-            readFile: jest.fn(async (schemaPath: string) => {
-                if (schemaPath === malformedPath) {
-                    return '{ "type": }';
-                }
-                if (schemaPath === unreadablePath) {
-                    throw new Error('permission denied');
-                }
+        expect(JSON.parse(await provider.getSchemaContent())).toEqual({
+            $schema: 'http://json-schema.org/draft-07/schema#',
+        });
+        expect(environment.dependencies.evaluateProject).not.toHaveBeenCalled();
+        provider.dispose();
+    });
 
-                return '{ "type": "object", "properties": { "ReverseProxy": { "type": "object" } } }';
-            }),
+    test('routes an open document to the project that owns it', async () => {
+        const environment = createEnvironment({ documents: [appSettings] });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+
+        const schema = JSON.parse(await provider.getSchemaContent());
+
+        expect(schema.properties).toEqual({ Aspire: { type: 'object' } });
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(1);
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledWith(appProjectPath, expect.anything());
+        provider.dispose();
+    });
+
+    test('only applies segments whose FilePathPattern matches the open document name', async () => {
+        const environment = createEnvironment({
+            documents: [appDevelopmentSettings],
+            segmentsByProject: {
+                [appProjectPath]: [
+                    { path: aspireSegmentPath, filePathPattern: 'appsettings\\.json' },
+                    { path: yarpSegmentPath, filePathPattern: 'appsettings\\..*json' },
+                ],
+            },
         });
         const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
 
-        const content = JSON.parse(await provider.getSchemaContent());
+        const schema = JSON.parse(await provider.getSchemaContent());
 
-        expect(content.properties.ReverseProxy).toEqual({ type: 'object' });
-        expect(environment.dependencies.log).toHaveBeenCalledWith('warn', expect.stringContaining('MSBuild failed'));
+        expect(schema.properties).toEqual({ ReverseProxy: { type: 'object' } });
+        expect(environment.dependencies.readSegment).toHaveBeenCalledTimes(1);
+        expect(environment.dependencies.readSegment).toHaveBeenCalledWith(yarpSegmentPath);
+        provider.dispose();
+    });
+
+    test('unions the owning projects when documents from several projects are open', async () => {
+        const environment = createEnvironment({ documents: [appSettings, libSettings] });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+
+        const schema = JSON.parse(await provider.getSchemaContent());
+
+        expect(schema.properties).toEqual({ Aspire: { type: 'object' }, ReverseProxy: { type: 'object' } });
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(2);
+        provider.dispose();
+    });
+
+    test('skips documents that are not backed by the local file system', async () => {
+        const environment = createEnvironment({
+            documents: [{ ...appSettings, scheme: 'vscode-vfs' }],
+        });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+
+        expect(JSON.parse(await provider.getSchemaContent())).toEqual({
+            $schema: 'http://json-schema.org/draft-07/schema#',
+        });
+        expect(environment.dependencies.findOwningProject).not.toHaveBeenCalled();
+        expect(environment.dependencies.log).toHaveBeenCalledWith(
+            'debug',
+            expect.stringContaining('scheme is not supported')
+        );
+        provider.dispose();
+    });
+
+    test('skips a document that no project owns', async () => {
+        const environment = createEnvironment({
+            documents: [createDocument('docs', 'appsettings.json')],
+        });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+
+        expect(JSON.parse(await provider.getSchemaContent())).toEqual({
+            $schema: 'http://json-schema.org/draft-07/schema#',
+        });
+        expect(environment.dependencies.evaluateProject).not.toHaveBeenCalled();
+        provider.dispose();
+    });
+
+    test('caches the composed schema and reuses evaluated project items', async () => {
+        const environment = createEnvironment({ documents: [appSettings] });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+
+        const first = await provider.getSchemaContent();
+        const second = await provider.getSchemaContent();
+
+        expect(second).toBe(first);
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(1);
+        expect(environment.dependencies.readSegment).toHaveBeenCalledTimes(1);
+        provider.dispose();
+    });
+
+    test('recomposes without re-evaluating when the open documents change', async () => {
+        jest.useFakeTimers();
+        const environment = createEnvironment({ documents: [appSettings] });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies, { debounceMilliseconds: 25 });
+        const changed = jest.fn();
+        provider.onDidChange(changed);
+
+        await provider.getSchemaContent();
+        environment.setDocuments([appSettings, libSettings]);
+        environment.fireDocumentChange();
+        await jest.advanceTimersByTimeAsync(25);
+
+        expect(changed).toHaveBeenCalledWith(appSettingsJsonSchemaUri);
+        const schema = JSON.parse(await provider.getSchemaContent());
+        expect(schema.properties).toEqual({ Aspire: { type: 'object' }, ReverseProxy: { type: 'object' } });
+        // The already evaluated project is reused; only the newly routed project is evaluated.
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(2);
+        provider.dispose();
+    });
+
+    test('ignores a document change that does not affect routing', async () => {
+        jest.useFakeTimers();
+        const environment = createEnvironment({ documents: [appSettings] });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies, { debounceMilliseconds: 25 });
+        const changed = jest.fn();
+        provider.onDidChange(changed);
+
+        await provider.getSchemaContent();
+        // The same file opened in a second editor group produces another document with the same
+        // name in the same directory, which routes identically.
+        environment.setDocuments([appSettings, { ...appSettings, id: `${appSettings.id}#2` }]);
+        environment.fireDocumentChange();
+        await jest.advanceTimersByTimeAsync(25);
+
+        expect(changed).not.toHaveBeenCalled();
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(1);
+        provider.dispose();
+    });
+
+    test('debounces project changes and re-evaluates the affected project once', async () => {
+        jest.useFakeTimers();
+        const environment = createEnvironment({ documents: [appSettings] });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies, { debounceMilliseconds: 25 });
+        const changed = jest.fn();
+        provider.onDidChange(changed);
+
+        await provider.getSchemaContent();
+        environment.fireProjectChange();
+        environment.fireProjectChange();
+        environment.fireSegmentChange();
+
+        expect(changed).not.toHaveBeenCalled();
+
+        await jest.advanceTimersByTimeAsync(25);
+        await provider.getSchemaContent();
+
+        expect(changed).toHaveBeenCalledTimes(1);
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(2);
+        expect(environment.dependencies.watchSegmentFiles).toHaveBeenLastCalledWith(
+            [aspireSegmentPath],
+            expect.any(Function)
+        );
+        provider.dispose();
+    });
+
+    test('logs each distinct diagnostic once', async () => {
+        const environment = createEnvironment({
+            documents: [appSettings],
+            segmentsByProject: {
+                [appProjectPath]: [
+                    { path: aspireSegmentPath, filePathPattern: 'appsettings\\..*json' },
+                    { path: yarpSegmentPath, filePathPattern: 'appsettings(.+)+\\.json' },
+                ],
+            },
+            diagnostics: ['ignored malformed MSBuild item'],
+            readSegment: jest.fn(async (segmentPath: string) =>
+                segmentPath === aspireSegmentPath ? '{ "type": }' : undefined
+            ),
+        });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies, { debounceMilliseconds: 0 });
+
+        await provider.getSchemaContent();
+        environment.fireSegmentChange();
+        await provider.getSchemaContent();
+
         expect(environment.dependencies.log).toHaveBeenCalledWith(
             'warn',
             expect.stringContaining('ignored malformed MSBuild item')
         );
         expect(environment.dependencies.log).toHaveBeenCalledWith(
             'warn',
-            expect.stringContaining('malformed.schema.json')
+            expect.stringContaining('unsupported regular expression syntax')
         );
         expect(environment.dependencies.log).toHaveBeenCalledWith(
             'warn',
-            expect.stringContaining('unreadable.schema.json')
+            expect.stringContaining('Unable to parse JSON schema segment')
         );
-        expect(environment.dependencies.log).toHaveBeenCalledWith(
-            'warn',
-            expect.stringContaining('missing.schema.json')
+        expect(new Set(environment.dependencies.log.mock.calls.map(([, message]) => message)).size).toBe(
+            environment.dependencies.log.mock.calls.length
         );
         provider.dispose();
     });
 
-    test('starts a fresh evaluation when invalidation reloads an in-flight schema', async () => {
-        jest.useFakeTimers();
-        const schemaPath = path.resolve('schemas', 'aspire.schema.json');
-        const evaluationStarted = createDeferred<void>();
-        const environment = createProviderDependencies({
-            evaluateProject: jest
-                .fn<AppSettingsJsonSchemaProviderDependencies['evaluateProject']>()
-                .mockImplementationOnce(
-                    async (_projectPath, signal) =>
-                        await new Promise<never>((_, reject) => {
-                            evaluationStarted.resolve(undefined);
-                            signal.addEventListener('abort', () => reject(new Error('cancelled')), { once: true });
-                        })
-                )
-                .mockResolvedValue({
-                    segments: [{ path: schemaPath, filePathPattern: 'appsettings\\..*json' }],
+    test('keeps usable segments when a project evaluation fails', async () => {
+        const environment = createEnvironment({
+            documents: [appSettings, libSettings],
+            evaluateProject: jest.fn(async (projectPath: string) => {
+                if (projectPath === appProjectPath) {
+                    throw new Error('MSBuild failed');
+                }
+
+                return {
+                    segments: [{ path: yarpSegmentPath, filePathPattern: 'appsettings\\..*json' }],
                     diagnostics: [],
-                }),
-            pathExists: jest.fn(async () => true),
-            readFile: jest.fn(async () => '{ "properties": { "Aspire": { "type": "object" } } }'),
-        });
-        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies, {
-            debounceMilliseconds: 25,
-        });
-        const firstContent = provider.getSchemaContent();
-        await evaluationStarted.promise;
-        let refreshedContent: Promise<string> | undefined;
-        provider.onDidChange(() => {
-            refreshedContent = provider.getSchemaContent();
-        });
-
-        environment.fireWorkspaceChange();
-        await jest.advanceTimersByTimeAsync(25);
-
-        await expect(firstContent).resolves.toContain('json.schemastore.org/appsettings');
-        expect(JSON.parse(await refreshedContent!).properties.Aspire).toEqual({ type: 'object' });
-        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(2);
-        provider.dispose();
-    });
-
-    test('does not cache the fallback returned for a cancelled request', async () => {
-        const schemaPath = path.resolve('schemas', 'aspire.schema.json');
-        const evaluationStarted = createDeferred<void>();
-        const environment = createProviderDependencies({
-            evaluateProject: jest
-                .fn<AppSettingsJsonSchemaProviderDependencies['evaluateProject']>()
-                .mockImplementationOnce(
-                    async (_projectPath, signal) =>
-                        await new Promise<never>((_, reject) => {
-                            evaluationStarted.resolve(undefined);
-                            signal.addEventListener('abort', () => reject(new Error('cancelled')), { once: true });
-                        })
-                )
-                .mockResolvedValue({
-                    segments: [{ path: schemaPath, filePathPattern: 'appsettings\\..*json' }],
-                    diagnostics: [],
-                }),
-            pathExists: jest.fn(async () => true),
-            readFile: jest.fn(async () => '{ "properties": { "Aspire": { "type": "object" } } }'),
+                };
+            }),
         });
         const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
-        const cancellation = new AbortController();
-        const cancelledContent = provider.getSchemaContent(cancellation.signal);
-        await evaluationStarted.promise;
 
-        cancellation.abort();
-        await expect(cancelledContent).resolves.toContain('json.schemastore.org/appsettings');
+        const schema = JSON.parse(await provider.getSchemaContent());
 
-        const refreshedContent = JSON.parse(await provider.getSchemaContent());
-
-        expect(refreshedContent.properties.Aspire).toEqual({ type: 'object' });
-        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(2);
+        expect(schema.properties).toEqual({ ReverseProxy: { type: 'object' } });
+        expect(environment.dependencies.log).toHaveBeenCalledWith('warn', expect.stringContaining('MSBuild failed'));
         provider.dispose();
     });
 
-    test('cancels shared evaluation when a concurrent request is cancelled', async () => {
+    test('does not remember a failed evaluation as an empty result', async () => {
+        const evaluateProject = jest
+            .fn<AppSettingsJsonSchemaProviderDependencies['evaluateProject']>()
+            .mockRejectedValueOnce(new Error('MSBuild failed'))
+            .mockResolvedValue({
+                segments: [{ path: aspireSegmentPath, filePathPattern: 'appsettings\\..*json' }],
+                diagnostics: [],
+            });
+        const environment = createEnvironment({ documents: [appSettings], evaluateProject });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+
+        await provider.getSchemaContent();
+        environment.setDocuments([appSettings, libSettings]);
+        const schema = JSON.parse(await provider.getSchemaContent());
+
+        expect(schema.properties).toEqual({ Aspire: { type: 'object' } });
+        provider.dispose();
+    });
+
+    test('does not cache the neutral schema returned for a cancelled request', async () => {
+        const evaluationStarted = createDeferred<void>();
+        const evaluateProject = jest
+            .fn<AppSettingsJsonSchemaProviderDependencies['evaluateProject']>()
+            .mockImplementationOnce(
+                async (_projectPath, signal) =>
+                    await new Promise<never>((_, reject) => {
+                        evaluationStarted.resolve(undefined);
+                        signal.addEventListener('abort', () => reject(new Error('cancelled')), { once: true });
+                    })
+            )
+            .mockResolvedValue({
+                segments: [{ path: aspireSegmentPath, filePathPattern: 'appsettings\\..*json' }],
+                diagnostics: [],
+            });
+        const environment = createEnvironment({ documents: [appSettings], evaluateProject });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+        const cancellation = new AbortController();
+
+        const cancelled = provider.getSchemaContent(cancellation.signal);
+        await evaluationStarted.promise;
+        cancellation.abort();
+
+        expect(JSON.parse(await cancelled)).toEqual({ $schema: 'http://json-schema.org/draft-07/schema#' });
+        const schema = JSON.parse(await provider.getSchemaContent());
+        expect(schema.properties).toEqual({ Aspire: { type: 'object' } });
+        provider.dispose();
+    });
+
+    test('keeps shared work alive while another requester is still waiting', async () => {
+        const evaluationStarted = createDeferred<void>();
+        const finishEvaluation = createDeferred<void>();
+        let evaluationWasCancelled = false;
+        const environment = createEnvironment({
+            documents: [appSettings],
+            evaluateProject: jest.fn(async (_projectPath: string, signal: AbortSignal) => {
+                evaluationStarted.resolve(undefined);
+                signal.addEventListener('abort', () => (evaluationWasCancelled = true), { once: true });
+                await finishEvaluation.promise;
+                return {
+                    segments: [{ path: aspireSegmentPath, filePathPattern: 'appsettings\\..*json' }],
+                    diagnostics: [],
+                };
+            }),
+        });
+        const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
+
+        const cancellation = new AbortController();
+        const cancelledRequest = provider.getSchemaContent(cancellation.signal);
+        const survivingRequest = provider.getSchemaContent();
+        await evaluationStarted.promise;
+        cancellation.abort();
+        finishEvaluation.resolve(undefined);
+
+        expect(evaluationWasCancelled).toBe(false);
+        expect(JSON.parse(await survivingRequest).properties).toEqual({ Aspire: { type: 'object' } });
+        expect(JSON.parse(await cancelledRequest).properties).toEqual({ Aspire: { type: 'object' } });
+        expect(environment.dependencies.evaluateProject).toHaveBeenCalledTimes(1);
+        provider.dispose();
+    });
+
+    test('cancels shared work once every requester has gone away', async () => {
         const evaluationStarted = createDeferred<void>();
         let evaluationWasCancelled = false;
-        const environment = createProviderDependencies({
+        const environment = createEnvironment({
+            documents: [appSettings],
             evaluateProject: jest.fn(
                 async (_projectPath: string, signal: AbortSignal) =>
                     await new Promise<never>((_, reject) => {
@@ -330,22 +386,27 @@ describe('AppSettingsJsonSchemaProvider', () => {
             ),
         });
         const provider = new AppSettingsJsonSchemaProvider(environment.dependencies);
-        const firstContent = provider.getSchemaContent();
+
+        const first = new AbortController();
+        const second = new AbortController();
+        const firstRequest = provider.getSchemaContent(first.signal);
+        const secondRequest = provider.getSchemaContent(second.signal);
         await evaluationStarted.promise;
-        const cancellation = new AbortController();
-        const secondContent = provider.getSchemaContent(cancellation.signal);
 
-        cancellation.abort();
+        first.abort();
+        expect(evaluationWasCancelled).toBe(false);
 
+        second.abort();
         expect(evaluationWasCancelled).toBe(true);
-        await expect(firstContent).resolves.toContain('json.schemastore.org/appsettings');
-        await expect(secondContent).resolves.toContain('json.schemastore.org/appsettings');
+        expect(JSON.parse(await firstRequest)).toEqual({ $schema: 'http://json-schema.org/draft-07/schema#' });
+        expect(JSON.parse(await secondRequest)).toEqual({ $schema: 'http://json-schema.org/draft-07/schema#' });
         provider.dispose();
     });
 
-    test('disposal aborts in-flight project evaluation', async () => {
+    test('disposal aborts in-flight work and releases every watcher', async () => {
         const evaluationStarted = createDeferred<void>();
-        const environment = createProviderDependencies({
+        const environment = createEnvironment({
+            documents: [appSettings],
             evaluateProject: jest.fn(
                 async (_projectPath: string, signal: AbortSignal) =>
                     await new Promise<never>((_, reject) => {
@@ -360,62 +421,113 @@ describe('AppSettingsJsonSchemaProvider', () => {
 
         provider.dispose();
 
-        await expect(content).resolves.toContain('json.schemastore.org/appsettings');
-        expect(environment.workspaceWatcher.dispose).toHaveBeenCalledTimes(1);
+        expect(JSON.parse(await content)).toEqual({ $schema: 'http://json-schema.org/draft-07/schema#' });
+        expect(environment.projectWatcher.dispose).toHaveBeenCalledTimes(1);
+        expect(environment.documentWatcher.dispose).toHaveBeenCalledTimes(1);
+        expect(JSON.parse(await provider.getSchemaContent())).toEqual({
+            $schema: 'http://json-schema.org/draft-07/schema#',
+        });
     });
 });
 
-function createChildProcess(): ChildProcess & {
-    kill: jest.MockedFunction<(signal?: NodeJS.Signals | number) => boolean>;
-} {
-    const child = new EventEmitter() as ChildProcess & {
-        kill: jest.MockedFunction<(signal?: NodeJS.Signals | number) => boolean>;
-    };
-    child.stdout = new PassThrough();
-    child.stderr = new PassThrough();
-    child.kill = jest.fn(() => true);
-    return child;
+interface EnvironmentOverrides {
+    isTrusted?: boolean;
+    documents?: readonly AppSettingsDocument[];
+    segmentsByProject?: Record<string, JsonSchemaSegmentItem[]>;
+    diagnostics?: string[];
+    evaluateProject?: AppSettingsJsonSchemaProviderDependencies['evaluateProject'];
+    readSegment?: AppSettingsJsonSchemaProviderDependencies['readSegment'];
 }
 
-function createProviderDependencies(overrides: Partial<AppSettingsJsonSchemaProviderDependencies> = {}): {
-    dependencies: AppSettingsJsonSchemaProviderDependencies;
-    workspaceWatcher: { dispose: jest.MockedFunction<() => void> };
-    segmentWatcher: { dispose: jest.MockedFunction<() => void> };
-    fireWorkspaceChange: () => void;
-    fireSegmentChange: () => void;
-} {
-    let workspaceChange = () => {};
+interface Environment {
+    dependencies: AppSettingsJsonSchemaProviderDependencies & {
+        findOwningProject: jest.MockedFunction<AppSettingsJsonSchemaProviderDependencies['findOwningProject']>;
+        evaluateProject: jest.MockedFunction<AppSettingsJsonSchemaProviderDependencies['evaluateProject']>;
+        readSegment: jest.MockedFunction<AppSettingsJsonSchemaProviderDependencies['readSegment']>;
+        watchSegmentFiles: jest.MockedFunction<AppSettingsJsonSchemaProviderDependencies['watchSegmentFiles']>;
+        log: jest.MockedFunction<AppSettingsJsonSchemaProviderDependencies['log']>;
+    };
+    projectWatcher: { dispose: jest.MockedFunction<() => void> };
+    documentWatcher: { dispose: jest.MockedFunction<() => void> };
+    setDocuments(documents: readonly AppSettingsDocument[]): void;
+    setTrusted(isTrusted: boolean): void;
+    fireProjectChange(): void;
+    fireSegmentChange(): void;
+    fireDocumentChange(): void;
+}
+
+const defaultSegmentContent: Record<string, string> = {
+    [aspireSegmentPath]: '{ "type": "object", "properties": { "Aspire": { "type": "object" } } }',
+    [yarpSegmentPath]: '{ "type": "object", "properties": { "ReverseProxy": { "type": "object" } } }',
+};
+
+function createEnvironment(overrides: EnvironmentOverrides = {}): Environment {
+    let documents = overrides.documents ?? [appSettings];
+    let isTrusted = overrides.isTrusted ?? true;
+    let projectChange = () => {};
     let segmentChange = () => {};
-    const workspaceWatcher = { dispose: jest.fn() };
+    let documentChange = () => {};
+    const projectWatcher = { dispose: jest.fn() };
+    const documentWatcher = { dispose: jest.fn() };
     const segmentWatcher = { dispose: jest.fn() };
-    const dependencies: AppSettingsJsonSchemaProviderDependencies = {
-        isTrusted: true,
-        workspaceFolderSchemes: ['file'],
-        findProjectPaths: jest.fn(async () => [path.resolve('app.csproj')]),
-        evaluateProject: jest.fn(async () => ({
-            segments: [],
-            diagnostics: [],
-        })),
-        pathExists: jest.fn(async () => false),
-        readFile: jest.fn(async () => ''),
-        watchWorkspaceInputs: jest.fn((listener: () => void) => {
-            workspaceChange = listener;
-            return workspaceWatcher;
+    const segmentsByProject = overrides.segmentsByProject ?? {
+        [appProjectPath]: [{ path: aspireSegmentPath, filePathPattern: 'appsettings\\..*json' }],
+        [libProjectPath]: [{ path: yarpSegmentPath, filePathPattern: 'appsettings\\..*json' }],
+    };
+
+    const dependencies = {
+        get isTrusted() {
+            return isTrusted;
+        },
+        getAppSettingsDocuments: () => documents,
+        findOwningProject: jest.fn(async (document: AppSettingsDocument) => {
+            if (document.directory.endsWith('src/app')) {
+                return appProjectPath;
+            }
+
+            return document.directory.endsWith('src/lib') ? libProjectPath : undefined;
         }),
-        watchSegmentFiles: jest.fn((_paths: readonly string[], listener: () => void) => {
+        evaluateProject:
+            overrides.evaluateProject ??
+            jest.fn(async (projectPath: string) => ({
+                segments: segmentsByProject[projectPath] ?? [],
+                diagnostics: overrides.diagnostics ?? [],
+            })),
+        readSegment:
+            overrides.readSegment ?? jest.fn(async (segmentPath: string) => defaultSegmentContent[segmentPath]),
+        watchProjectInputs: jest.fn((listener: () => void) => {
+            projectChange = listener;
+            return projectWatcher;
+        }),
+        watchSegmentFiles: jest.fn((_segmentPaths: readonly string[], listener: () => void) => {
             segmentChange = listener;
             return segmentWatcher;
         }),
+        watchAppSettingsDocuments: jest.fn((listener: () => void) => {
+            documentChange = listener;
+            return documentWatcher;
+        }),
         log: jest.fn(),
-        ...overrides,
-    };
+    } as unknown as Environment['dependencies'];
 
     return {
         dependencies,
-        workspaceWatcher,
-        segmentWatcher,
-        fireWorkspaceChange: () => workspaceChange(),
+        projectWatcher,
+        documentWatcher,
+        setDocuments: (value) => (documents = value),
+        setTrusted: (value) => (isTrusted = value),
+        fireProjectChange: () => projectChange(),
         fireSegmentChange: () => segmentChange(),
+        fireDocumentChange: () => documentChange(),
+    };
+}
+
+function createDocument(directory: string, fileName: string): AppSettingsDocument {
+    return {
+        id: `file:///workspace/${directory}/${fileName}`,
+        fileName,
+        directory: `file:///workspace/${directory}`,
+        scheme: 'file',
     };
 }
 
