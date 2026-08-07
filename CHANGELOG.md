@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.149.x
+* Provide `appsettings.json` IntelliSense from `JsonSchemaSegment` MSBuild items contributed by NuGet packages such as the Aspire integrations and YARP (PR: [#9652](https://github.com/dotnet/vscode-csharp/pull/9652))
 
 # 2.148.x
 * Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
