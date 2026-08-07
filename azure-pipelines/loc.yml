@@ -28,7 +28,7 @@ resources:
     ref: refs/tags/release
 
 variables:
-# Variable group contains the PAT to LOC
+# Variable group contains the credential for the localization package source.
 - group: OneLocBuildVariables
 
 extends:
@@ -86,7 +86,20 @@ extends:
             LclPackageId: 'LCL-JUNO-PROD-VSCODECS'
         - pwsh: npm run l10nDevImportXlf
           displayName: 'Import xlf to json.'
+        - task: AzureCLI@2
+          displayName: 'Get GitHub App installation token'
+          inputs:
+            azureSubscription: 'dnceng-oneloc-githubapp'
+            scriptType: pscore
+            scriptLocation: inlineScript
+            inlineScript: |
+              & "$(Build.SourcesDirectory)/azure-pipelines/Get-GitHubAppToken.ps1" `
+                -KeyVaultName 'EngKeyVault' `
+                -KeyName 'oneloc-localization-app-key' `
+                -AppClientId 'Iv23lijBU8x3gc9lDOc9' `
+                -InstallationOwner 'dotnet' `
+                -OutputVariableName 'GitHubAppInstallationToken'
         - pwsh: npm run publishLocalizationContent -- --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
           displayName: 'Create PR in GitHub.'
           env:
-            GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)
+            GitHubToken: $(GitHubAppInstallationToken)
