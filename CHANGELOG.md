@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.149.x
-* Update Roslyn to 5.11.0-1.26407.4 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.11.0-1.26407.4 (PR: [#19](https://github.com/dibarbet/vscode-csharp/pull/19))
   * Add warnings for various unbound attributes in Razor (PR: [#84760](https://github.com/dotnet/roslyn/pull/84760))
   * Always pass C# formatting options to Razor functions (PR: [#84795](https://github.com/dotnet/roslyn/pull/84795))
   * Report CS8802 on every file with top-level statements (PR: [#83916](https://github.com/dotnet/roslyn/pull/83916))
