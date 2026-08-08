@@ -203,6 +203,7 @@ git push -u origin update/roslyn-<version>
 ### Step 10: Create Pull Request
 
 Create a pull request on GitHub:
+- Target repository: `dotnet/vscode-csharp`. Do not create the pull request against a personal fork, even if the update branch is pushed there.
 - Title: `Update roslyn to <new-version>`
 - Base: `main`
 - Description/body: the raw, unfiltered output from `roslyn-tools pr-finder` in Step 6, including the compare link and full PR list exactly as produced by the tool. Do not apply the Step 8 changelog filtering to the PR description.

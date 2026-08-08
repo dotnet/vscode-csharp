@@ -4,6 +4,18 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.149.x
+* Update Roslyn to 5.11.0-1.26407.4 (PR: [#9654](https://github.com/dotnet/vscode-csharp/pull/9654))
+  * Add warnings for various unbound attributes in Razor (PR: [#84760](https://github.com/dotnet/roslyn/pull/84760))
+  * Always pass C# formatting options to Razor functions (PR: [#84795](https://github.com/dotnet/roslyn/pull/84795))
+  * Report CS8802 on every file with top-level statements (PR: [#83916](https://github.com/dotnet/roslyn/pull/83916))
+  * Warn for empty outer tags when context switching from C# to markup (PR: [#84764](https://github.com/dotnet/roslyn/pull/84764))
+  * File-based apps: Add support for `#:ref` directive (PR: [#83985](https://github.com/dotnet/roslyn/pull/83985))
+  * Ignore formatting changes from Html that change non-whitespace characters (PR: [#84747](https://github.com/dotnet/roslyn/pull/84747))
+  * Warn when `@model` is ignored by `@inherits` (PR: [#84749](https://github.com/dotnet/roslyn/pull/84749))
+  * Improve LSP project load progress messages (PR: [#84744](https://github.com/dotnet/roslyn/pull/84744))
+  * Better handling for Razor on type formatting edits around the cursor (PR: [#84717](https://github.com/dotnet/roslyn/pull/84717))
+  * More fixes for Razor multiline attribute formatting (PR: [#84656](https://github.com/dotnet/roslyn/pull/84656))
+  * Fix Razor code block close brace indentation (PR: [#84716](https://github.com/dotnet/roslyn/pull/84716))
 
 # 2.148.x
 * Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
