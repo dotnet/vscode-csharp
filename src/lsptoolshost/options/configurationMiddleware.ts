@@ -12,15 +12,19 @@ export function readConfigurations(params: ConfigurationParams): (string | null)
     // Note: null means there is no such configuration in client.
     // If the configuration is null, should push 'null' to result.
     const result: (string | null)[] = [];
-    const settings = vscode.workspace.getConfiguration();
 
     for (const configurationItem of params.items) {
         const section = configurationItem.section;
-        // Currently only support global option.
-        if (section === undefined || configurationItem.scopeUri !== undefined) {
+        if (section === undefined) {
             result.push(null);
             continue;
         }
+
+        const scope =
+            configurationItem.scopeUri === undefined
+                ? { languageId: 'csharp' }
+                : { languageId: 'csharp', uri: vscode.Uri.parse(configurationItem.scopeUri) };
+        const settings = vscode.workspace.getConfiguration(undefined, scope);
 
         // Server use a different name compare to the name defined in client, so do the remapping.
         const clientSideName = convertServerOptionNameToClientConfigurationName(section);
@@ -35,7 +39,7 @@ export function readConfigurations(params: ConfigurationParams): (string | null)
             continue;
         }
 
-        value = readEquivalentVsCodeConfiguration(clientSideName);
+        value = readEquivalentVsCodeConfiguration(clientSideName, scope);
         if (value !== undefined) {
             result.push(value);
             continue;
