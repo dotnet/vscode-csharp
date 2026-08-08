@@ -73,6 +73,10 @@ extends:
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                 displayName: Set BuildNumber
               - template: /azure-pipelines/install-node.yml@self
+              - task: UseDotNet@2
+                displayName: 'Install .NET SDK'
+                inputs:
+                  version: 10.0.x
               - task: AzureCLI@2
                 displayName: '🚀 Publish to Marketplace'
                 name: PublishToMarketplaceStep
