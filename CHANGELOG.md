@@ -4,11 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.149.x
-* Update Roslyn to 5.11.0-1.26406.7 (PR: [#9656](https://github.com/dotnet/vscode-csharp/pull/9656))
-  * Report CS8802 on every file with top-level statements (PR: [#83916](https://github.com/dotnet/roslyn/pull/83916))
-  * Warn for empty outer tags when context switching from C# to markup (PR: [#84764](https://github.com/dotnet/roslyn/pull/84764))
-  * Allow for better parallelization with brokered services (PR: [#82733](https://github.com/dotnet/roslyn/pull/82733))
-  * Fix formatting error when Roslyn adds an extra blank line (PR: [#84751](https://github.com/dotnet/roslyn/pull/84751))
+* Update Roslyn to 5.11.0-1.26405.8 (PR: [#9656](https://github.com/dotnet/vscode-csharp/pull/9656))
   * Resolve consecutive WithoutEndTag tag helpers as siblings (PR: [#84771](https://github.com/dotnet/roslyn/pull/84771))
   * File-based apps: Add support for `#:ref` directive (PR: [#83985](https://github.com/dotnet/roslyn/pull/83985))
   * Harden BuildHost interactions (PR: [#84745](https://github.com/dotnet/roslyn/pull/84745))
@@ -30,19 +26,6 @@
   * Unsafe evolution: fixup conflicting merges (PR: [#84723](https://github.com/dotnet/roslyn/pull/84723))
   * Unsafe evolution: add ISymbol public API (PR: [#84674](https://github.com/dotnet/roslyn/pull/84674))
   * Unsafe evolution: relax `safe` modifier placement restrictions (PR: [#84602](https://github.com/dotnet/roslyn/pull/84602))
-  * [Sonic] Completion support for multiple C# documents (PR: [#84222](https://github.com/dotnet/roslyn/pull/84222))
-  * [Sonic] Debugging and breakpoint bits (PR: [#84166](https://github.com/dotnet/roslyn/pull/84166))
-  * [Sonic] Support multiple C# documents in code actions (PR: [#84203](https://github.com/dotnet/roslyn/pull/84203))
-  * [Sonic] Support multiple C# documents in auto insert (PR: [#84148](https://github.com/dotnet/roslyn/pull/84148))
-  * [Sonic] Call hierarchy support for multiple C# documents (PR: [#84149](https://github.com/dotnet/roslyn/pull/84149))
-  * [Sonic] Support multiple C# documents in Rename (PR: [#84134](https://github.com/dotnet/roslyn/pull/84134))
-  * [Sonic] Support multiple C# documents in signature help (PR: [#84135](https://github.com/dotnet/roslyn/pull/84135))
-  * [Sonic] Support multiple C# documents in formatting (PR: [#84097](https://github.com/dotnet/roslyn/pull/84097))
-  * [Sonic] Inlay hints, folding ranges, and go to definition (PR: [#84102](https://github.com/dotnet/roslyn/pull/84102))
-  * [Sonic] Support multiple C# documents in document highlight (PR: [#84025](https://github.com/dotnet/roslyn/pull/84025))
-  * [Sonic] Support multiple C# documents in hover (PR: [#84031](https://github.com/dotnet/roslyn/pull/84031))
-  * [Sonic] Support multiple C# generated documents in diagnostics (PR: [#83989](https://github.com/dotnet/roslyn/pull/83989))
-  * [Sonic] Fix Semantic tokens (PR: [#83944](https://github.com/dotnet/roslyn/pull/83944))
 
 # 2.148.x
 * Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
