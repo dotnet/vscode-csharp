@@ -5,27 +5,16 @@
 
 # 2.149.x
 * Update Roslyn to 5.11.0-1.26405.8 (PR: [#9656](https://github.com/dotnet/vscode-csharp/pull/9656))
-  * Resolve consecutive WithoutEndTag tag helpers as siblings (PR: [#84771](https://github.com/dotnet/roslyn/pull/84771))
   * File-based apps: Add support for `#:ref` directive (PR: [#83985](https://github.com/dotnet/roslyn/pull/83985))
-  * Harden BuildHost interactions (PR: [#84745](https://github.com/dotnet/roslyn/pull/84745))
   * Share metadata between lsp server instances in daemon mode (PR: [#84713](https://github.com/dotnet/roslyn/pull/84713))
-  * Disallow applying updates to FBA MSBuildWorkspace (PR: [#84722](https://github.com/dotnet/roslyn/pull/84722))
-  * Avoid assert on erroneous target-typed conditionals (PR: [#84752](https://github.com/dotnet/roslyn/pull/84752))
   * Fix type completion in static contexts for primary constructors (PR: [#84753](https://github.com/dotnet/roslyn/pull/84753))
   * Ignore formatting changes from Html that change non-whitespace characters (PR: [#84747](https://github.com/dotnet/roslyn/pull/84747))
-  * Warn when `@model` is ignored by `@inherits` (PR: [#84749](https://github.com/dotnet/roslyn/pull/84749))
   * Improve LSP project load progress messages (PR: [#84744](https://github.com/dotnet/roslyn/pull/84744))
   * Handle textDocument/didChange notifications that don't pass across the range (PR: [#84714](https://github.com/dotnet/roslyn/pull/84714))
   * Better handling for Razor on type formatting edits around the cursor (PR: [#84717](https://github.com/dotnet/roslyn/pull/84717))
   * Improves tracking of pending solution updates (PR: [#84726](https://github.com/dotnet/roslyn/pull/84726))
   * More fixes for Razor multiline attribute formatting (PR: [#84656](https://github.com/dotnet/roslyn/pull/84656))
   * Fix Razor code block close brace indentation (PR: [#84716](https://github.com/dotnet/roslyn/pull/84716))
-  * Generate Documentation - incorrect buffer bug (PR: [#84709](https://github.com/dotnet/roslyn/pull/84709))
-  * Unions: enforce the same order of processing for base interfaces of a member provider interface source vs. metadata. (PR: [#84664](https://github.com/dotnet/roslyn/pull/84664))
-  * Add ITypeSymbol.UnionCaseTypes property (PR: [#84707](https://github.com/dotnet/roslyn/pull/84707))
-  * Unsafe evolution: fixup conflicting merges (PR: [#84723](https://github.com/dotnet/roslyn/pull/84723))
-  * Unsafe evolution: add ISymbol public API (PR: [#84674](https://github.com/dotnet/roslyn/pull/84674))
-  * Unsafe evolution: relax `safe` modifier placement restrictions (PR: [#84602](https://github.com/dotnet/roslyn/pull/84602))
 
 # 2.148.x
 * Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
