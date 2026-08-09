@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.149.x
-* Update Roslyn to 5.11.0-1.26406.7 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.11.0-1.26406.7 (PR: [#9656](https://github.com/dotnet/vscode-csharp/pull/9656))
   * Report CS8802 on every file with top-level statements (PR: [#83916](https://github.com/dotnet/roslyn/pull/83916))
   * Warn for empty outer tags when context switching from C# to markup (PR: [#84764](https://github.com/dotnet/roslyn/pull/84764))
   * Allow for better parallelization with brokered services (PR: [#82733](https://github.com/dotnet/roslyn/pull/82733))
