@@ -13,11 +13,9 @@ parameters:
     default: false
   - name: testVSCodeVersion
     type: string
-
-jobs:
-- job:
-  strategy:
-    matrix:
+  - name: matrix
+    type: object
+    default:
       UnitTests:
         npmCommand: test:unit
         isIntegration: false
@@ -33,6 +31,11 @@ jobs:
       UntrustedWorkspaceTest:
         npmCommand: test:integration:untrusted
         isIntegration: true
+
+jobs:
+- job:
+  strategy:
+    matrix: ${{ parameters.matrix }}
   pool: ${{ parameters.pool }}
   ${{ if parameters.containerName }}:
     container: ${{ parameters.containerName }}

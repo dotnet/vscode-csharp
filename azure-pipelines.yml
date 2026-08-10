@@ -163,14 +163,31 @@ stages:
   variables:
     ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
-  - template: azure-pipelines/test-matrix.yml
-    parameters:
-      os: macos
-      installDotNet: true
-      testVSCodeVersion: $(testVSCodeVersion)
-      pool:
-        name: Azure Pipelines
-        vmImage: macOS-15
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - template: azure-pipelines/test-matrix.yml
+      parameters:
+        os: macos
+        installDotNet: true
+        testVSCodeVersion: $(testVSCodeVersion)
+        pool:
+          name: Azure Pipelines
+          vmImage: macOS-15
+        matrix:
+          CSharpAndDevKitSanityTests:
+            npmCommand: test:integration:macos-pr
+            isIntegration: true
+          RazorCohostTests:
+            npmCommand: test:integration:razor:cohost
+            isIntegration: true
+  - ${{ else }}:
+    - template: azure-pipelines/test-matrix.yml
+      parameters:
+        os: macos
+        installDotNet: true
+        testVSCodeVersion: $(testVSCodeVersion)
+        pool:
+          name: Azure Pipelines
+          vmImage: macOS-15
 
 - stage: Test_OmniSharp
   displayName: Test OmniSharp
