@@ -4,6 +4,17 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.149.x
+* Update Roslyn to 5.11.0-1.26405.8 (PR: [#9656](https://github.com/dotnet/vscode-csharp/pull/9656))
+  * File-based apps: Add support for `#:ref` directive (PR: [#83985](https://github.com/dotnet/roslyn/pull/83985))
+  * Share metadata between lsp server instances in daemon mode (PR: [#84713](https://github.com/dotnet/roslyn/pull/84713))
+  * Fix type completion in static contexts for primary constructors (PR: [#84753](https://github.com/dotnet/roslyn/pull/84753))
+  * Ignore formatting changes from Html that change non-whitespace characters (PR: [#84747](https://github.com/dotnet/roslyn/pull/84747))
+  * Improve LSP project load progress messages (PR: [#84744](https://github.com/dotnet/roslyn/pull/84744))
+  * Handle textDocument/didChange notifications that don't pass across the range (PR: [#84714](https://github.com/dotnet/roslyn/pull/84714))
+  * Better handling for Razor on type formatting edits around the cursor (PR: [#84717](https://github.com/dotnet/roslyn/pull/84717))
+  * Improves tracking of pending solution updates (PR: [#84726](https://github.com/dotnet/roslyn/pull/84726))
+  * More fixes for Razor multiline attribute formatting (PR: [#84656](https://github.com/dotnet/roslyn/pull/84656))
+  * Fix Razor code block close brace indentation (PR: [#84716](https://github.com/dotnet/roslyn/pull/84716))
 
 # 2.148.x
 * Add setting to show all C# code actions in Razor (PR: [#9591](https://github.com/dotnet/vscode-csharp/pull/9591))
