@@ -169,8 +169,8 @@ stages:
       installDotNet: true
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
-        name: NetCore-Public
-        demands: ImageOverride -equals osx.15.arm64.open
+        name: Azure Pipelines
+        vmImage: macOS-15-arm64
 
 - stage: Test_OmniSharp
   displayName: Test OmniSharp
