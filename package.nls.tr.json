@@ -129,7 +129,7 @@
   "configuration.omnisharp.sdkIncludePrereleases": "Proje yükleme için hangi sürümün kullanılacağını belirlerken .NET SDK'nın önizleme sürümlerinin dahil edilip edilmeyeceğini belirtir. \"useModernNet\" true olarak ayarlandığında uygulanır.",
   "configuration.omnisharp.sdkPath": "Yüklü olan en yüksek sürüm yerine proje yükleme için kullanılacak .NET SDK yüklemesinin yolunu belirtir. \"useModernNet\" true olarak ayarlandığında uygulanır. Örnek: /home/username/dotnet/sdks/6.0.300.",
   "configuration.omnisharp.sdkVersion": "Yüklü olan en yüksek sürüm yerine proje yükleme için kullanılacak .NET SDK sürümünü belirtir. \"useModernNet\" true olarak ayarlandığında uygulanır. Örnek: 6.0.300.",
-  "configuration.omnisharp.useEditorFormattingSettings": "Specifies whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
+  "configuration.omnisharp.useEditorFormattingSettings": "OmniSharp'ın C# Kod biçimlendirmesi için VS Code düzenleyici ayarlarını kullanıp kullanmayacağını belirtir (sekme kullanımı, girinti boyutu).",
   "configuration.omnisharp.useModernNet.description": ".NET 6 için OmniSharp derlemesini kullanın. Bu sürüm Unity dahil SDK stili olmayan .NET Framework projelerini desteklemiyor. SDK stili Framework, .NET Core ve .NET 5+ projeleri önemli performans iyileştirmeleri görüyor olmalıdır.",
   "configuration.omnisharp.useModernNet.title": "OmniSharp'ın .NET 6 derlemesi kullanın",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Razor dosyalarındaki tüm C# kod eylemlerini gösterin. Bu eylemler Razor'da test edilmedi ve uygulandıklarında söz dizimi hatalarına neden olabilir. Bu durum oluşursa lütfen bir hata bildirin.",

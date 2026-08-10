@@ -129,7 +129,7 @@
   "configuration.omnisharp.sdkIncludePrereleases": "指定在決定要用於專案載入的版本時，是否要包含 .NET SDK 的預覽版本。當 \"useModernNet\" 設定為 true 時適用。",
   "configuration.omnisharp.sdkPath": "指定要用於專案載入的 .NET SDK 安裝路徑，而不是安裝的最高版本。當 \"useModernNet\" 設定為 true 時適用。範例: /home/username/dotnet/sdks/6.0.300。",
   "configuration.omnisharp.sdkVersion": "指定要用於專案載入的 .NET SDK 版本，而不是安裝的最高版本。當 \"useModernNet\" 設定為 true 時適用。範例: 6.0.300。",
-  "configuration.omnisharp.useEditorFormattingSettings": "Specifies whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
+  "configuration.omnisharp.useEditorFormattingSettings": "指定 OmniSharp 是否應該針對 C# 程式碼格式設定 (使用 Tab、縮排大小) 使用 VS Code 編輯器設定。",
   "configuration.omnisharp.useModernNet.description": "使用適用於 .NET 6 的 OmniSharp 組建。此版本不支援非 SDK 樣式的 .NET Framework 專案，包括 Unity。SDK 樣式的 Framework、.NET Core 和 .NET 5+ 專案應該會大幅提升效能。",
   "configuration.omnisharp.useModernNet.title": "使用 OmniSharp 的 .NET 6 版本",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "顯示 Razor 檔案中的所有 C# 程式碼動作。這些動作尚未在 Razor 中測試，套用後可能會造成語法錯誤。如果發生這種情況，請回報錯誤。",
