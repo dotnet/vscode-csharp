@@ -129,7 +129,7 @@
   "configuration.omnisharp.sdkIncludePrereleases": "指定在确定使用哪个版本进行项目加载时是否包含 .NET SDK 的预览版本。当“useModernNet”设置为 true 时适用。",
   "configuration.omnisharp.sdkPath": "指定用于项目加载的 .NET SDK 安装路径，而不是安装的最高版本。当“useModernNet”设置为 true 时适用。示例: /home/username/dotnet/sdks/6.0.300。",
   "configuration.omnisharp.sdkVersion": "指定用于项目加载的 .NET SDK 版本，而不是安装的最高版本。当“useModernNet”设置为 true 时适用。示例: 6.0.300。",
-  "configuration.omnisharp.useEditorFormattingSettings": "指定 OmniSharp 是否应使用 VS Code 编辑器设置进行 C# 代码格式化(使用制表符、缩进大小)。",
+  "configuration.omnisharp.useEditorFormattingSettings": "Specifies whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
   "configuration.omnisharp.useModernNet.description": "使用 .NET 6 版本的 OmniSharp。此版本不支持非 SDK 风格的 .NET Framework 项目，包括 Unity。SDK 样式的框架、.NET Core 和 .NET 5+ 项目应该会获得显著的性能提升。",
   "configuration.omnisharp.useModernNet.title": "使用 .NET 6 版本的 OmniSharp",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "在 Razor 文件中显示所有 C# 代码操作。这些操作在 Razor 中未测试，应用时可能会引入语法错误。如果发生这种情况，请报告 Bug。",
