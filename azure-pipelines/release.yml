@@ -129,6 +129,8 @@ extends:
                     $publishArgsDisplay = ($publishArgs.GetEnumerator() | ForEach-Object { "-$($_.Key) $($_.Value)" }) -join ' '
                     Write-Host "##[command]& $publishScript $publishArgsDisplay"
                     & $publishScript @publishArgs
+                env:
+                  NPM_CONFIG_REGISTRY: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-npm/npm/registry/
 
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'
