@@ -65,7 +65,7 @@ export class RemoteAttachPicker {
         return PlatformInformation.GetCurrent().then((platformInfo) => {
             // Check if we are on a 64 bit Windows
             if (platformInfo.isWindows() && platformInfo.architecture === 'x86_64') {
-                // If this doesn't exist, a lot more than OmniSharp is going to break.
+                // If this doesn't exist, process picking and other extension features will break.
                 const sysRoot = process.env.SystemRoot!;
                 const oldPath = path.join(sysRoot, 'System32');
                 const newPath = path.join(sysRoot, 'sysnative');

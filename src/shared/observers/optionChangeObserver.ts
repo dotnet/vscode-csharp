@@ -6,18 +6,10 @@
 import { Observable } from 'rxjs';
 import Disposable from '../../disposable';
 import { isDeepStrictEqual } from 'util';
-import {
-    CommonOptions,
-    LanguageServerOptions,
-    OmnisharpServerOptions,
-    commonOptions,
-    languageServerOptions,
-    omnisharpOptions,
-} from '../options';
+import { CommonOptions, LanguageServerOptions, commonOptions, languageServerOptions } from '../options';
 
 type RelevantOptionValues = {
     commonOptions: Map<keyof CommonOptions, any>;
-    omnisharpOptions: Map<keyof OmnisharpServerOptions, any>;
     languageServerOptions: Map<keyof LanguageServerOptions, any>;
 };
 
@@ -40,21 +32,12 @@ export function HandleOptionChanges(
             (key) =>
                 !isDeepStrictEqual(oldOptions.languageServerOptions.get(key), newOptions.languageServerOptions.get(key))
         );
-        const changedRelevantOmnisharpOptions = changedKeys.changedOmnisharpOptions.filter(
-            (key) => !isDeepStrictEqual(oldOptions.omnisharpOptions.get(key), newOptions.omnisharpOptions.get(key))
-        );
-
         oldOptions = newOptions;
 
-        if (
-            changedRelevantCommonOptions.length > 0 ||
-            changedRelevantLanguageServerOptions.length > 0 ||
-            changedRelevantOmnisharpOptions.length > 0
-        ) {
+        if (changedRelevantCommonOptions.length > 0 || changedRelevantLanguageServerOptions.length > 0) {
             optionChangeObserver.handleOptionChanges({
                 changedCommonOptions: changedRelevantCommonOptions,
                 changedLanguageServerOptions: changedRelevantLanguageServerOptions,
-                changedOmnisharpOptions: changedRelevantOmnisharpOptions,
             });
         }
     });
@@ -70,13 +53,11 @@ export interface OptionChangeObserver {
 export interface OptionChanges {
     changedCommonOptions: ReadonlyArray<keyof CommonOptions>;
     changedLanguageServerOptions: ReadonlyArray<keyof LanguageServerOptions>;
-    changedOmnisharpOptions: ReadonlyArray<keyof OmnisharpServerOptions>;
 }
 
 function getLatestRelevantOptions(changedKeys: OptionChanges): RelevantOptionValues {
     return {
         commonOptions: new Map(changedKeys.changedCommonOptions.map((key) => [key, commonOptions[key]])),
-        omnisharpOptions: new Map(changedKeys.changedOmnisharpOptions.map((key) => [key, omnisharpOptions[key]])),
         languageServerOptions: new Map(
             changedKeys.changedLanguageServerOptions.map((key) => [key, languageServerOptions[key]])
         ),

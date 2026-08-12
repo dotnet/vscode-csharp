@@ -3,10 +3,8 @@
 .nyc_output/**
 !.roslyn/**
 !.roslynDevKit/**
-!.omnisharp/**
 !.razor/**
 !.razorDevKit/**
-!.razoromnisharp/**
 !.razorExtension/**
 .azuredevops/**
 .config/**

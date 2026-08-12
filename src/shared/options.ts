@@ -10,7 +10,6 @@ import * as path from 'path';
 export interface CommonOptions {
     readonly waitForDebugger: boolean;
     readonly serverPath: string;
-    readonly useOmnisharpServer: boolean;
     readonly excludePaths: string[];
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
@@ -19,54 +18,6 @@ export interface CommonOptions {
     readonly runSettingsPath: string;
     readonly organizeImportsOnFormat: boolean;
     readonly disableAIFeatures: boolean;
-}
-
-export interface OmnisharpServerOptions {
-    readonly useModernNet: boolean;
-    readonly monoPath: string;
-    readonly loggingLevel: string;
-    readonly autoStart: boolean;
-    readonly projectFilesExcludePattern: string;
-    readonly projectLoadTimeout: number;
-    readonly maxProjectResults: number;
-    readonly useEditorFormattingSettings: boolean;
-    readonly enableRoslynAnalyzers: boolean;
-    readonly enableEditorConfigSupport: boolean;
-    readonly enableDecompilationSupport: boolean;
-    readonly enableImportCompletion: boolean;
-    readonly enableAsyncCompletion: boolean;
-    readonly analyzeOpenDocumentsOnly: boolean;
-    readonly disableMSBuildDiagnosticWarning: boolean;
-    readonly showOmnisharpLogOnError: boolean;
-    readonly minFindSymbolsFilterLength: number;
-    readonly maxFindSymbolsItems: number;
-    readonly enableMsBuildLoadProjectsOnDemand: boolean;
-    readonly sdkPath: string;
-    readonly sdkVersion: string;
-    readonly sdkIncludePrereleases: boolean;
-    readonly dotNetCliPaths: string[];
-    readonly useFormatting: boolean;
-    readonly showReferencesCodeLens: boolean;
-    readonly showTestsCodeLens: boolean;
-    readonly filteredSymbolsCodeLens: string[];
-    readonly disableCodeActions: boolean;
-    readonly useSemanticHighlighting: boolean;
-    readonly inlayHintsEnableForParameters: boolean;
-    readonly inlayHintsForLiteralParameters: boolean;
-    readonly inlayHintsForObjectCreationParameters: boolean;
-    readonly inlayHintsForIndexerParameters: boolean;
-    readonly inlayHintsForOtherParameters: boolean;
-    readonly inlayHintsSuppressForParametersThatDifferOnlyBySuffix: boolean;
-    readonly inlayHintsSuppressForParametersThatMatchMethodIntent: boolean;
-    readonly inlayHintsSuppressForParametersThatMatchArgumentName: boolean;
-    readonly inlayHintsEnableForTypes: boolean;
-    readonly inlayHintsForImplicitVariableTypes: boolean;
-    readonly inlayHintsForLambdaParameterTypes: boolean;
-    readonly inlayHintsForImplicitObjectCreation: boolean;
-    readonly maxProjectFileCountForDiagnosticAnalysis: number;
-    readonly suppressDotnetRestoreNotification: boolean;
-    readonly enableLspDriver?: boolean | null;
-    readonly dotnetPath: string;
 }
 
 export interface LanguageServerOptions {
@@ -88,20 +39,12 @@ export interface LanguageServerOptions {
     readonly toolingRuntimePath: string;
 }
 
-export interface RazorOptions {
-    readonly razorDevMode: boolean;
-    readonly razorPluginPath: string;
-}
-
 class CommonOptionsImpl implements CommonOptions {
     public get waitForDebugger() {
         return readOption<boolean>('dotnet.server.waitForDebugger', false);
     }
     public get serverPath() {
         return readOption<string>('dotnet.server.path', '');
-    }
-    public get useOmnisharpServer() {
-        return readOption<boolean>('dotnet.server.useOmnisharp', false);
     }
     public get excludePaths() {
         return getExcludedPaths();
@@ -164,221 +107,6 @@ class CommonOptionsImpl implements CommonOptions {
     }
 }
 
-class OmnisharpOptionsImpl implements OmnisharpServerOptions {
-    public get useModernNet() {
-        return readOption<boolean>('omnisharp.useModernNet', true);
-    }
-    public get monoPath() {
-        return readOption<string>('omnisharp.monoPath', '');
-    }
-    public get loggingLevel() {
-        let loggingLevel = readOption<string>('omnisharp.loggingLevel', 'information');
-        if (loggingLevel && loggingLevel.toLowerCase() === 'verbose') {
-            loggingLevel = 'debug';
-        }
-        return loggingLevel;
-    }
-    public get autoStart() {
-        return readOption<boolean>('omnisharp.autoStart', true);
-    }
-    public get projectFilesExcludePattern() {
-        return readOption<string>(
-            'omnisharp.projectFilesExcludePattern',
-            '**/node_modules/**,**/.git/**,**/bower_components/**'
-        );
-    }
-    public get projectLoadTimeout() {
-        return readOption<number>('omnisharp.projectLoadTimeout', 60);
-    }
-    public get maxProjectResults() {
-        return readOption<number>('omnisharp.maxProjectResults', 250);
-    }
-    public get useEditorFormattingSettings() {
-        return readOption<boolean>('omnisharp.useEditorFormattingSettings', true);
-    }
-    public get enableRoslynAnalyzers() {
-        const enableRoslynAnalyzersLegacyOption = readOption<boolean>('omnisharp.enableRoslynAnalyzers', false);
-
-        const diagnosticAnalysisScope = readOption<string>(
-            'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
-            commonOptions.useOmnisharpServer ? 'none' : 'openFiles'
-        );
-        const enableRoslynAnalyzersNewOption = diagnosticAnalysisScope != 'none';
-        return enableRoslynAnalyzersLegacyOption || enableRoslynAnalyzersNewOption;
-    }
-    public get enableEditorConfigSupport() {
-        return readOption<boolean>('omnisharp.enableEditorConfigSupport', true);
-    }
-    public get enableDecompilationSupport() {
-        return readOption<boolean>('omnisharp.enableDecompilationSupport', false);
-    }
-    public get enableImportCompletion() {
-        return readOption<boolean>(
-            'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
-            false,
-            'omnisharp.enableImportCompletion'
-        );
-    }
-    public get enableAsyncCompletion() {
-        return readOption<boolean>('omnisharp.enableAsyncCompletion', false);
-    }
-    public get analyzeOpenDocumentsOnly() {
-        const analyzeOpenDocumentsOnlyLegacyOption = readOption<boolean>('omnisharp.analyzeOpenDocumentsOnly', false);
-
-        const diagnosticAnalysisScope = readOption<string>(
-            'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
-            commonOptions.useOmnisharpServer ? 'none' : 'openFiles'
-        );
-        const analyzeOpenDocumentsOnlyNewOption = diagnosticAnalysisScope == 'openFiles';
-        return analyzeOpenDocumentsOnlyLegacyOption || analyzeOpenDocumentsOnlyNewOption;
-    }
-    public get disableMSBuildDiagnosticWarning() {
-        return readOption<boolean>('omnisharp.disableMSBuildDiagnosticWarning', false);
-    }
-    public get showOmnisharpLogOnError() {
-        return readOption<boolean>('csharp.showOmnisharpLogOnError', true);
-    }
-    public get minFindSymbolsFilterLength() {
-        return readOption<number>('omnisharp.minFindSymbolsFilterLength', 0);
-    }
-    public get maxFindSymbolsItems() {
-        return readOption<number>('omnisharp.maxFindSymbolsItems', 1000);
-    }
-    public get enableMsBuildLoadProjectsOnDemand() {
-        return readOption<boolean>('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
-    }
-    public get sdkPath() {
-        return readOption<string>('omnisharp.sdkPath', '');
-    }
-    public get sdkVersion() {
-        return readOption<string>('omnisharp.sdkVersion', '');
-    }
-    public get sdkIncludePrereleases() {
-        return readOption<boolean>('omnisharp.sdkIncludePrereleases', true);
-    }
-    public get dotNetCliPaths() {
-        return readOption<string[]>('omnisharp.dotNetCliPaths', []);
-    }
-    public get useFormatting() {
-        return readOption<boolean>('csharp.format.enable', true);
-    }
-    public get showReferencesCodeLens() {
-        return readOption<boolean>(
-            'dotnet.codeLens.enableReferencesCodeLens',
-            true,
-            'csharp.referencesCodeLens.enabled'
-        );
-    }
-    public get showTestsCodeLens() {
-        return readOption<boolean>('dotnet.codeLens.enableTestsCodeLens', true, 'csharp.testsCodeLens.enabled');
-    }
-    public get filteredSymbolsCodeLens() {
-        return readOption<string[]>('csharp.referencesCodeLens.filteredSymbols', []);
-    }
-    public get disableCodeActions() {
-        return readOption<boolean>('csharp.disableCodeActions', false);
-    }
-    public get useSemanticHighlighting() {
-        return readOption<boolean>('csharp.semanticHighlighting.enabled', true);
-    }
-    public get inlayHintsEnableForParameters() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.enableInlayHintsForParameters',
-            false,
-            'csharp.inlayHints.parameters.enabled'
-        );
-    }
-    public get inlayHintsForLiteralParameters() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.enableInlayHintsForLiteralParameters',
-            false,
-            'csharp.inlayHints.parameters.forLiteralParameters'
-        );
-    }
-    public get inlayHintsForObjectCreationParameters() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.enableInlayHintsForObjectCreationParameters',
-            false,
-            'csharp.inlayHints.parameters.forObjectCreationParameters'
-        );
-    }
-    public get inlayHintsForIndexerParameters() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.enableInlayHintsForIndexerParameters',
-            false,
-            'csharp.inlayHints.parameters.forIndexerParameters'
-        );
-    }
-    public get inlayHintsForOtherParameters() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.enableInlayHintsForOtherParameters',
-            false,
-            'csharp.inlayHints.parameters.forOtherParameters'
-        );
-    }
-    public get inlayHintsSuppressForParametersThatDifferOnlyBySuffix() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix',
-            false,
-            'csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix'
-        );
-    }
-    public get inlayHintsSuppressForParametersThatMatchMethodIntent() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent',
-            false,
-            'csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent'
-        );
-    }
-    public get inlayHintsSuppressForParametersThatMatchArgumentName() {
-        return readOption<boolean>(
-            'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName',
-            false,
-            'csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName'
-        );
-    }
-    public get inlayHintsEnableForTypes() {
-        return readOption<boolean>(
-            'csharp.inlayHints.enableInlayHintsForTypes',
-            false,
-            'csharp.inlayHints.types.enabled'
-        );
-    }
-    public get inlayHintsForImplicitVariableTypes() {
-        return readOption<boolean>(
-            'csharp.inlayHints.enableInlayHintsForImplicitVariableTypes',
-            false,
-            'csharp.inlayHints.types.forImplicitVariableTypes'
-        );
-    }
-    public get inlayHintsForLambdaParameterTypes() {
-        return readOption<boolean>(
-            'csharp.inlayHints.enableInlayHintsForLambdaParameterTypes',
-            false,
-            'csharp.inlayHints.types.forLambdaParameterTypes'
-        );
-    }
-    public get inlayHintsForImplicitObjectCreation() {
-        return readOption<boolean>(
-            'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation',
-            false,
-            'csharp.inlayHints.types.forImplicitObjectCreation'
-        );
-    }
-    public get maxProjectFileCountForDiagnosticAnalysis() {
-        return readOption<number>('csharp.maxProjectFileCountForDiagnosticAnalysis', 1000);
-    }
-    public get suppressDotnetRestoreNotification() {
-        return readOption<boolean>('csharp.suppressDotnetRestoreNotification', false);
-    }
-    public get enableLspDriver() {
-        return readOption<boolean>('omnisharp.enableLspDriver', false);
-    }
-    public get dotnetPath() {
-        return readOption<string>('omnisharp.dotnetPath', '');
-    }
-}
-
 class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get documentSelector() {
         return readOption<DocumentSelector>('dotnet.server.documentSelector', ['csharp']);
@@ -430,19 +158,8 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
 }
 
-class RazorOptionsImpl implements RazorOptions {
-    public get razorDevMode() {
-        return readOption<boolean>('razor.devmode', false);
-    }
-    public get razorPluginPath() {
-        return readOption<string>('razor.plugin.path', '');
-    }
-}
-
 export const commonOptions: CommonOptions = new CommonOptionsImpl();
-export const omnisharpOptions: OmnisharpServerOptions = new OmnisharpOptionsImpl();
 export const languageServerOptions: LanguageServerOptions = new LanguageServerOptionsImpl();
-export const razorOptions: RazorOptions = new RazorOptionsImpl();
 
 function getExcludedPaths(): string[] {
     const workspaceConfig = vscode.workspace.getConfiguration();
@@ -485,35 +202,6 @@ export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> 
     'waitForDebugger',
     'serverPath',
     'disableAIFeatures',
-];
-
-export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptions> = [
-    'dotnetPath',
-    'enableMsBuildLoadProjectsOnDemand',
-    'loggingLevel',
-    'enableEditorConfigSupport',
-    'enableDecompilationSupport',
-    'enableImportCompletion',
-    'enableAsyncCompletion',
-    'useModernNet',
-    'enableLspDriver',
-    'sdkPath',
-    'sdkVersion',
-    'sdkIncludePrereleases',
-    'analyzeOpenDocumentsOnly',
-    'enableRoslynAnalyzers',
-    'inlayHintsEnableForParameters',
-    'inlayHintsForLiteralParameters',
-    'inlayHintsForObjectCreationParameters',
-    'inlayHintsForIndexerParameters',
-    'inlayHintsForOtherParameters',
-    'inlayHintsSuppressForParametersThatDifferOnlyBySuffix',
-    'inlayHintsSuppressForParametersThatMatchMethodIntent',
-    'inlayHintsSuppressForParametersThatMatchArgumentName',
-    'inlayHintsEnableForTypes',
-    'inlayHintsForImplicitVariableTypes',
-    'inlayHintsForLambdaParameterTypes',
-    'inlayHintsForImplicitObjectCreation',
 ];
 
 export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [

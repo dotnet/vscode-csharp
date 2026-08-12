@@ -68,14 +68,6 @@ export const migrateOptions = [
         newName: 'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation',
     },
     {
-        oldName: 'omnisharp.defaultLaunchSolution',
-        newName: 'dotnet.defaultSolution',
-    },
-    {
-        oldName: 'omnisharp.enableImportCompletion',
-        newName: 'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
-    },
-    {
         oldName: 'csharp.referencesCodeLens.enabled',
         newName: 'dotnet.codeLens.enableReferencesCodeLens',
     },
@@ -88,20 +80,12 @@ export const migrateOptions = [
         newName: 'dotnet.unitTestDebuggingOptions',
     },
     {
-        oldName: 'omnisharp.testRunSettings',
-        newName: 'dotnet.unitTests.runSettingsPath',
-    },
-    {
         oldName: 'dotnet.implementType.insertionBehavior',
         newName: 'dotnet.typeMembers.memberInsertionLocation',
     },
     {
         oldName: 'dotnet.implementType.propertyGenerationBehavior',
         newName: 'dotnet.typeMembers.propertyGenerationBehavior',
-    },
-    {
-        oldName: 'omnisharp.organizeImportsOnFormat',
-        newName: 'dotnet.formatting.organizeImportsOnFormat',
     },
 ];
 

@@ -16,10 +16,6 @@ export enum LaunchTargetKind {
     LiveShare,
 }
 
-/**
- * Represents the project or solution that OmniSharp is to be launched with.
- * */
-
 export interface LaunchTarget {
     label: string;
     description: string;

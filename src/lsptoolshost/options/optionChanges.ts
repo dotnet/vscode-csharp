@@ -16,7 +16,6 @@ export function registerLanguageServerOptionChanges(optionObservable: Observable
             return {
                 changedCommonOptions: CommonOptionsThatTriggerReload,
                 changedLanguageServerOptions: LanguageServerOptionsThatTriggerReload,
-                changedOmnisharpOptions: [],
             };
         },
         handleOptionChanges(optionChanges) {
