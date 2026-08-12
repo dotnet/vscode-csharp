@@ -18,9 +18,6 @@ export const devKitDependenciesDirectory = path.join(rootPath, componentInfo.ros
 export const xamlToolsDirectory = path.join(rootPath, componentInfo.xamlTools.defaultFolderName);
 export const testDiscoveryDirectory = path.join(rootPath, componentInfo.testDiscovery.defaultFolderName);
 
-export const omnisharpTestRootPath = path.join(rootPath, 'out', 'omnisharptest');
-export const omnisharpFeatureTestRunnerPath = path.join(omnisharpTestRootPath, 'runFeatureTests.js');
-
 export const outPath = path.join(rootPath, 'out');
 
 export const nodePath = path.join(process.env.NVM_BIN ? `${process.env.NVM_BIN}${path.sep}` : '', 'node');
