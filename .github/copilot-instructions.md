@@ -1,13 +1,12 @@
 # Copilot Coding Agent Instructions for `vscode-csharp`
 
 ## Project Overview
-- This is the official C# extension for Visual Studio Code, supporting C# development via OmniSharp and Roslyn-based language servers.
+- This is the official C# extension for Visual Studio Code, supporting C# development via the Roslyn language server.
 - The codebase is TypeScript/JavaScript, with some JSON and configuration files. It integrates with .NET components and external language servers.
 
 ## Architecture & Key Components
 - **src/**: Main extension source. Key subfolders:
   - `lsptoolshost/`: Hosts LSP (Language Server Protocol) logic, including Copilot integration (`copilot/`), Roslyn, and Razor support.
-  - `omnisharp/`: Protocols and logic for OmniSharp-based language server.
   - `razor/`: Razor language support and configuration.
 - **Copilot Integration**:
   - `src/lsptoolshost/copilot/contextProviders.ts` and `relatedFilesProvider.ts` register C# context and related files providers for GitHub Copilot and Copilot Chat extensions.
@@ -39,7 +38,6 @@
 - **Copilot Providers**: Use `registerCopilotContextProviders` and `registerCopilotRelatedFilesProvider` to extend Copilot context for C#.
 - **Testing**: Prefer integration tests over unit tests for features. Structure follows:
   - `test/lsptoolshost/integrationTests/` for Roslyn/LSP features
-  - `test/omnisharp/omnisharpIntegrationTests/` for OmniSharp features
   - `test/razor/razorIntegrationTests/` for Razor features
   - Use `test/*/integrationTests/integrationHelpers.ts` for test setup utilities
   - Tests use Jest with VS Code test environment and require workspace test assets
@@ -49,7 +47,6 @@
 ## Integration Points
 - **GitHub Copilot**: Extension registers C# context and related files providers if Copilot/Copilot Chat extensions are present.
 - **Roslyn Language Server**: Managed as a downloadable component, versioned in `package.json` and updated via pipeline.
-- **OmniSharp**: Legacy support, also downloaded as a component.
 
 ## Examples
 - To add a new Copilot context provider: see `src/lsptoolshost/copilot/contextProviders.ts`.
