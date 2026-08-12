@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.149.x
+* Configure stronger isolation (PR: [#9668](https://github.com/dotnet/vscode-csharp/pull/9668))
+* ensure npx tools use internal feed (PR: [#9667](https://github.com/dotnet/vscode-csharp/pull/9667))
+* Run npm audit fix (PR: [#9666](https://github.com/dotnet/vscode-csharp/pull/9666))
+* Update Azure Pipelines configuration for macOS (PR: [#9662](https://github.com/dotnet/vscode-csharp/pull/9662))
+* Bump fast-uri from 3.1.4 to 3.1.5 (PR: [#9658](https://github.com/dotnet/vscode-csharp/pull/9658))
+* Localization result based on d8377e37c47b6f0c8d2c63fc757a34fa95c89a1b (PR: [#9653](https://github.com/dotnet/vscode-csharp/pull/9653))
+* Use github app instead of pat for loc pipeline (PR: [#9650](https://github.com/dotnet/vscode-csharp/pull/9650))
+* Reduce Node dependencies (PR: [#9642](https://github.com/dotnet/vscode-csharp/pull/9642))
 * Update Roslyn to 5.11.0-1.26405.8 (PR: [#9656](https://github.com/dotnet/vscode-csharp/pull/9656))
   * File-based apps: Add support for `#:ref` directive (PR: [#83985](https://github.com/dotnet/roslyn/pull/83985))
   * Share metadata between lsp server instances in daemon mode (PR: [#84713](https://github.com/dotnet/roslyn/pull/84713))
