@@ -40,7 +40,7 @@ import { DotnetInfo } from '../../shared/utils/dotnetInfo';
 import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents';
 import { registerShowToastNotification } from '../handlers/showToastNotification';
 import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
-import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
+import { commonOptions, languageServerOptions } from '../../shared/options';
 import { VSTextDocumentIdentifier } from './roslynProtocol';
 import { IDisposable } from '../../disposable';
 import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
@@ -60,6 +60,8 @@ import { HoverFeature } from '../hover/hoverFeature';
 let _wasActivatedWithCSharpDevkit: boolean | undefined;
 
 export class RoslynLanguageServer {
+    private static readonly _projectSearchResultLimit = 250;
+
     /**
      * The timeout for stopping the language server (in ms).
      */
@@ -600,7 +602,7 @@ export class RoslynLanguageServer {
                         const projectUris = await vscode.workspace.findFiles(
                             '**/*.csproj',
                             '**/node_modules/**',
-                            omnisharpOptions.maxProjectResults
+                            RoslynLanguageServer._projectSearchResultLimit
                         );
 
                         await this.openProjects(projectUris);

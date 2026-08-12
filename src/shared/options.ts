@@ -95,10 +95,10 @@ export interface RazorOptions {
 
 class CommonOptionsImpl implements CommonOptions {
     public get waitForDebugger() {
-        return readOption<boolean>('dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
+        return readOption<boolean>('dotnet.server.waitForDebugger', false);
     }
     public get serverPath() {
-        return readOption<string>('dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp');
+        return readOption<string>('dotnet.server.path', '');
     }
     public get useOmnisharpServer() {
         return readOption<boolean>('dotnet.server.useOmnisharp', false);
@@ -110,11 +110,7 @@ class CommonOptionsImpl implements CommonOptions {
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
     public get defaultSolution() {
         let defaultSolution = '';
-        const defaultSolutionFromWorkspace = readOption<string>(
-            'dotnet.defaultSolution',
-            '',
-            'omnisharp.defaultLaunchSolution'
-        );
+        const defaultSolutionFromWorkspace = readOption<string>('dotnet.defaultSolution', '');
 
         // If the workspace has defaultSolution disabled, just be done
         if (defaultSolutionFromWorkspace === 'disable') {
@@ -137,8 +133,7 @@ class CommonOptionsImpl implements CommonOptions {
                         const defaultSolutionFromWorkspaceFolder = readOptionFromConfig<string>(
                             workspaceFolderConfig,
                             'dotnet.defaultSolution',
-                            '',
-                            'omnisharp.defaultLaunchSolution'
+                            ''
                         );
                         if (
                             defaultSolutionFromWorkspaceFolder !== '' &&
@@ -159,7 +154,7 @@ class CommonOptionsImpl implements CommonOptions {
         return readOption<object>('dotnet.unitTestDebuggingOptions', {}, 'csharp.unitTestDebuggingOptions');
     }
     public get runSettingsPath() {
-        return readOption<string>('dotnet.unitTests.runSettingsPath', '', 'omnisharp.testRunSettings');
+        return readOption<string>('dotnet.unitTests.runSettingsPath', '');
     }
     public get organizeImportsOnFormat() {
         return readOption<boolean>('dotnet.formatting.organizeImportsOnFormat', false);

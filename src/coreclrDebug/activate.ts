@@ -19,7 +19,6 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { RemoteAttachPicker } from '../shared/processPicker';
 import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
-import { omnisharpOptions } from '../shared/options';
 import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
@@ -180,7 +179,7 @@ async function completeDebuggerInstall(
     eventStream: EventStream
 ): Promise<boolean> {
     try {
-        await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
+        await debugUtil.checkDotNetCli([]);
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
@@ -317,7 +316,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
+            const dotNetInfo = await getDotnetInfo([]);
             const targetArchitecture = getTargetArchitecture(
                 this.platformInfo,
                 _session.configuration.targetArchitecture,
