@@ -102,7 +102,6 @@ export async function activate(
         installDependencies,
         eventStream,
         platformInfo,
-        false,
         requiredPackageIds
     );
 
