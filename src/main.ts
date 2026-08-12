@@ -19,9 +19,9 @@ import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
 import { IInstallDependencies } from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { MigrateOptions } from './shared/migrateOptions';
-import { CSharpExtensionExports, LimitedExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
+import { CSharpExtensionExports, LimitedExtensionExports } from './csharpExtensionExports';
 import { getCSharpDevKit } from './utils/getCSharpDevKit';
-import { commonOptions, omnisharpOptions } from './shared/options';
+import { commonOptions } from './shared/options';
 import { TelemetryEventNames } from './shared/telemetryEventNames';
 import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion';
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
@@ -32,7 +32,7 @@ import { checkCSharpDevKitVersion } from './checkCSharpDevKitVersion';
 
 export async function activate(
     context: vscode.ExtensionContext
-): Promise<CSharpExtensionExports | OmnisharpExtensionExports | LimitedExtensionExports | null> {
+): Promise<CSharpExtensionExports | LimitedExtensionExports | null> {
     // Start measuring the activation time
     const startActivation = process.hrtime();
 
@@ -76,17 +76,12 @@ export async function activate(
 
     const csharpDevkitExtension = getCSharpDevKit();
     await checkCSharpDevKitVersion(csharpDevkitExtension);
-    const useOmnisharpServer = !csharpDevkitExtension && commonOptions.useOmnisharpServer;
-    if (useOmnisharpServer) {
-        requiredPackageIds.push('OmniSharp');
-    }
     requiredPackageIds.push('VSWebAssemblyBridge');
     if (csharpDevkitExtension && !commonOptions.disableAIFeatures) {
         requiredPackageIds.push('RoslynCopilot');
     }
 
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => {
         // Defer loading the download/zip stack (yauzl, proxy agents, etc.) until a
         // component actually needs to be downloaded, which normally never happens after install.
@@ -107,12 +102,12 @@ export async function activate(
         installDependencies,
         eventStream,
         platformInfo,
-        useFramework,
+        false,
         requiredPackageIds
     );
 
     let activationEvent = TelemetryEventNames.CSharpActivated;
-    let exports: CSharpExtensionExports | OmnisharpExtensionExports | LimitedExtensionExports;
+    let exports: CSharpExtensionExports | LimitedExtensionExports;
     if (vscode.workspace.isTrusted !== true) {
         activationEvent = TelemetryEventNames.CSharpLimitedActivation;
         await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Limited');
@@ -143,39 +138,23 @@ export async function activate(
             return coreClrDebugPromise;
         };
 
-        if (!useOmnisharpServer) {
-            exports = activateRoslyn(
-                context,
-                platformInfo,
-                optionStream,
-                eventStream,
-                csharpChannel,
-                reporter,
-                csharpDevkitExtension,
-                getCoreClrDebugPromise
-            );
-        } else {
-            // Defer loading the OmniSharp implementation and its module graph until we actually
-            // activate it, so the default Roslyn activations don't pay to compile/execute it.
-            const { activateOmniSharp } = await import('./activateOmniSharp');
-            exports = activateOmniSharp(
-                context,
-                platformInfo,
-                optionStream,
-                networkSettingsProvider,
-                eventStream,
-                csharpChannel,
-                reporter,
-                getCoreClrDebugPromise
-            );
-        }
+        exports = activateRoslyn(
+            context,
+            platformInfo,
+            optionStream,
+            eventStream,
+            csharpChannel,
+            reporter,
+            csharpDevkitExtension,
+            getCoreClrDebugPromise
+        );
     }
 
     const timeTaken = process.hrtime(startActivation);
     const timeTakenStr = (timeTaken[0] * 1000 + timeTaken[1] / 1000000).toFixed(3);
     csharpChannel.trace('C# Extension activated in ' + timeTakenStr + 'ms.');
     const activationProperties: { [key: string]: string } = {
-        serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',
+        serverKind: 'Roslyn',
         timeTaken: timeTakenStr,
     };
     reporter.sendTelemetryEvent(activationEvent, activationProperties);

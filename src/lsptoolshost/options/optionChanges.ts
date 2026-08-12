@@ -38,18 +38,6 @@ function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void 
         title: vscode.l10n.t('Reload Window'),
         command: 'workbench.action.reloadWindow',
     };
-    if (changedOptions.changedCommonOptions.find((key) => key === 'useOmnisharpServer')) {
-        // If the user has changed the useOmnisharpServer flag we need to reload the window.
-        showInformationMessage(
-            vscode,
-            vscode.l10n.t(
-                'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
-            ),
-            reloadTitle
-        );
-        return;
-    }
-
     // Typically when we have a regular config change, we can just restart the server, but due to
     // https://github.com/dotnet/vscode-csharp/issues/5882 we need to reload the window when using devkit.
     const message = vscode.l10n.t(

@@ -8,7 +8,7 @@ import { IHostExecutableResolver } from '../shared/constants/IHostExecutableReso
 import { basename, dirname } from 'path';
 import { DotnetInfo } from './utils/dotnetInfo';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
-import { commonOptions, LanguageServerOptions, languageServerOptions } from './options';
+import { LanguageServerOptions, languageServerOptions } from './options';
 
 export default async function reportIssue(
     context: vscode.ExtensionContext,
@@ -35,7 +35,6 @@ export default async function reportIssue(
     }
 
     const csharpExtVersion = context.extension.packageJSON.version;
-    const useOmnisharp = commonOptions.useOmnisharpServer;
     const extensionsTable = generateExtensionTable();
     const optionsTable = generateOptionsTable();
     const logInfo = await getLogInfo(logChannels, context);
@@ -56,7 +55,6 @@ ${logInfo}
 ## Environment Information ##
 **VSCode version**: ${vscode.version}
 **C# Extension**: ${csharpExtVersion}
-**Using OmniSharp**: ${useOmnisharp}
 
 ${monoInfo}
 <details><summary>Dotnet Information</summary>

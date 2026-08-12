@@ -68,37 +68,6 @@ describe('Option changes observer', () => {
         });
     });
 
-    [{ config: 'dotnet', section: 'server.useOmnisharp', value: true }].forEach((elem) => {
-        describe(`When the ${elem.config}.${elem.section} changes`, () => {
-            beforeEach(async () => {
-                expect(infoMessage).toBe(undefined);
-                expect(invokedCommand).toBe(undefined);
-                await updateConfig(vscode, elem.config, elem.section, elem.value);
-                optionObservable.next();
-            });
-
-            test(`The information message is shown`, async () => {
-                expect(infoMessage).toEqual(
-                    'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
-                );
-            });
-
-            test('Given an information message if the user clicks cancel, the command is not executed', async () => {
-                doClickCancel();
-                const from = observableFrom(commandDone!).pipe(timeout(1));
-                const fromPromise = from.toPromise();
-                await expect(fromPromise).rejects.toThrow();
-                expect(invokedCommand).toBe(undefined);
-            });
-
-            test('Given an information message if the user clicks Reload, the command is executed', async () => {
-                doClickOk();
-                await commandDone;
-                expect(invokedCommand).toEqual('workbench.action.reloadWindow');
-            });
-        });
-    });
-
     [{ config: 'dotnet', section: 'server.documentSelector', value: ['csharp'] }].forEach((elem) => {
         test(`Information Message is not shown if no change in value for ${elem.config}.${elem.section}`, async () => {
             expect(infoMessage).toBe(undefined);

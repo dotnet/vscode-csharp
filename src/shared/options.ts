@@ -484,7 +484,6 @@ function readOption<T>(option: string, defaultValue: T, ...backCompatOptionNames
 export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
     'waitForDebugger',
     'serverPath',
-    'useOmnisharpServer',
     'disableAIFeatures',
 ];
 
