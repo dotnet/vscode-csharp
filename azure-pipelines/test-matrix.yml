@@ -8,9 +8,6 @@ parameters:
     default: ''
   - name: installDotNet
     type: boolean
-  - name: installAdditionalLinuxDependencies
-    type: boolean
-    default: false
   - name: testVSCodeVersion
     type: string
 
@@ -40,7 +37,6 @@ jobs:
   - template: /azure-pipelines/test.yml@self
     parameters:
       installDotNet: ${{ parameters.installDotNet }}
-      installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
       npmCommand: $(npmCommand)
       testVSCodeVersion: ${{ parameters.testVSCodeVersion }}
       isIntegration: $(isIntegration)

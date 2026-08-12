@@ -86,11 +86,10 @@ stages:
       # Prefer the dotnet from the container.
       installDotNet: false
       testVSCodeVersion: $(testVSCodeVersion)
-      installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet/sdk:8.0-noble
+      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04-net8.0-vscode-csharp-amd64
 
 - stage:
   displayName: Test Linux (.NET 9)
@@ -104,11 +103,10 @@ stages:
       # Prefer the dotnet from the container.
       installDotNet: false
       testVSCodeVersion: $(testVSCodeVersion)
-      installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet/sdk:9.0-noble
+      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04-net9.0-vscode-csharp-amd64
 
 - stage:
   displayName: Test Linux (.NET 10)
@@ -120,11 +118,10 @@ stages:
       # Prefer the dotnet from the container.
       installDotNet: false
       testVSCodeVersion: $(testVSCodeVersion)
-      installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet/sdk:10.0-noble
+      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04-net10.0-vscode-csharp-amd64
 
 - stage:
   displayName: Test Linux (.NET 11)
@@ -136,11 +133,10 @@ stages:
       # Prefer the dotnet from the container.
       installDotNet: false
       testVSCodeVersion: $(testVSCodeVersion)
-      installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet/sdk:11.0-preview
+      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-26.04-net11.0-vscode-csharp-amd64
 
 - stage: Test_Windows_Stage
   displayName: Test Windows
