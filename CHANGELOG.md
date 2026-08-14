@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.150.x
+
 # 2.149.x
 * Bump fast-uri from 3.1.4 to 3.1.5 (PR: [#9658](https://github.com/dotnet/vscode-csharp/pull/9658))
 * Reduce Node dependencies (PR: [#9642](https://github.com/dotnet/vscode-csharp/pull/9642))
