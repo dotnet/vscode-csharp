@@ -1,9 +1,6 @@
 parameters:
   - name: installDotNet
     type: boolean
-  - name: installAdditionalLinuxDependencies
-    type: boolean
-    default: false
   - name: npmCommand
     type: string
   - name: testVSCodeVersion
@@ -22,12 +19,7 @@ steps:
   parameters:
     installDotNet: ${{ parameters.installDotNet }}
 
-- ${{ if eq(parameters.installAdditionalLinuxDependencies, true) }}:
-  - template: test-linux-docker-prereqs.yml
-
 - template: test-prereqs.yml
-  parameters:
-    installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
 
 - script: npm run ${{ parameters.npmCommand }}
   displayName: 🧪 Run $(Agent.JobName)

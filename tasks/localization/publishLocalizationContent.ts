@@ -4,36 +4,49 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as process from 'node:process';
-import minimist from 'minimist';
 import { spawnSync } from 'node:child_process';
 import * as path from 'path';
-import * as util from 'node:util';
+import { format, parseArgs } from 'node:util';
 import { EOL } from 'node:os';
 import { Octokit } from '@octokit/rest';
 import { runTask } from '../runTask';
 
-type Options = {
-    userName?: string;
-    email?: string;
-    commitSha: string;
-    targetRemoteRepo: string;
-    baseBranch: string;
-};
-
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
+
+type GitOptions = {
+    printCommand?: boolean;
+    sensitiveValues?: readonly string[];
+};
 
 runTask(publishLocalizationContent);
 
 async function publishLocalizationContent() {
-    const parsedArgs = minimist<Options>(process.argv.slice(2));
+    const { values } = parseArgs({
+        options: {
+            userName: { type: 'string' },
+            email: { type: 'string' },
+            commitSha: { type: 'string' },
+            targetRemoteRepo: { type: 'string' },
+            baseBranch: { type: 'string' },
+        },
+    });
+    const parsedArgs = {
+        userName: values.userName,
+        email: values.email,
+        commitSha: requireArgument('commitSha', values.commitSha),
+        targetRemoteRepo: requireArgument('targetRemoteRepo', values.targetRemoteRepo),
+        baseBranch: requireArgument('baseBranch', values.baseBranch),
+    };
     const localizationChanges = getAllPossibleLocalizationFiles();
     await git(['add'].concat(localizationChanges));
 
-    const diff = await git_diff(['--name-only', 'HEAD']);
+    // Check only staged localization files; other build steps may leave unrelated tracked files modified.
+    const diff = await git_diff(['--cached', '--name-only']);
     if (diff.length == 0) {
         console.log('No localization file changed');
         return;
     }
+
     console.log(`Changed files going to be staged: ${diff}`);
 
     const newBranchName = `localization/${parsedArgs.commitSha}`;
@@ -48,9 +61,9 @@ async function publishLocalizationContent() {
     await git(['checkout', '-b', newBranchName]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
 
-    const pat = process.env['GitHubPAT'];
-    if (!pat) {
-        throw 'No GitHub Pat found.';
+    const token = process.env['GitHubToken'];
+    if (!token) {
+        throw new Error('No GitHub token found.');
     }
 
     const remoteRepoAlias = 'targetRepo';
@@ -59,31 +72,35 @@ async function publishLocalizationContent() {
             'remote',
             'add',
             remoteRepoAlias,
-            `https://${parsedArgs.userName}:${pat}@github.com/dotnet/${parsedArgs.targetRemoteRepo}.git`,
+            `https://x-access-token:${token}@github.com/dotnet/${parsedArgs.targetRemoteRepo}.git`,
         ],
-        // Note: don't print PAT to console
-        false
+        {
+            printCommand: false,
+            sensitiveValues: [token],
+        }
     );
-    await git(['fetch', remoteRepoAlias]);
+    await git(['fetch', remoteRepoAlias], { sensitiveValues: [token] });
 
-    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
+    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName], {
+        sensitiveValues: [token],
+    });
     if (lsRemote.trim() !== '') {
         // If the localization branch of this commit already exists, don't try to create another one.
         console.log(
             `##vso[task.logissue type=error]${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}. Skip pushing.`
         );
     } else {
-        await git(['push', '-u', remoteRepoAlias]);
+        await git(['push', '-u', remoteRepoAlias], { sensitiveValues: [token] });
     }
 
-    const octokit = new Octokit({ auth: pat });
+    const octokit = new Octokit({ auth: token });
     const listPullRequest = await octokit.rest.pulls.list({
         owner: 'dotnet',
         repo: parsedArgs.targetRemoteRepo,
     });
 
     if (listPullRequest.status != 200) {
-        throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
+        throw new Error(`Failed get response from GitHub, http status code: ${listPullRequest.status}`);
     }
 
     const title = `Localization result based on ${parsedArgs.commitSha}`;
@@ -104,11 +121,18 @@ async function publishLocalizationContent() {
     console.log(`Created pull request: ${pullRequest.data.html_url}.`);
 }
 
+function requireArgument(name: string, value: string | undefined): string {
+    if (!value) {
+        throw new Error(`Missing required argument: --${name}`);
+    }
+    return value;
+}
+
 function getAllPossibleLocalizationFiles(): string[] {
     const files = [];
     for (const lang of localizationLanguages) {
-        files.push('l10n' + path.sep + util.format('bundle.l10n.%s.json', lang));
-        files.push(util.format('package.nls.%s.json', lang));
+        files.push('l10n' + path.sep + format('bundle.l10n.%s.json', lang));
+        files.push(format('package.nls.%s.json', lang));
     }
     // English
     files.push(`l10n${path.sep}bundle.l10n.json`);
@@ -125,23 +149,40 @@ async function git_diff(args: string[]): Promise<string[]> {
         .filter((fileName) => fileName.length !== 0);
 }
 
-async function git(args: string[], printCommand = true): Promise<string> {
+async function git(args: string[], options: GitOptions = {}): Promise<string> {
+    const { printCommand = true, sensitiveValues = [] } = options;
     if (printCommand) {
         console.log(`git ${args.join(' ')}`);
     }
 
-    const git = spawnSync('git', args);
-    if (git.status != 0) {
-        const err = git.stderr.toString();
+    const result = spawnSync('git', args, { encoding: 'utf8' });
+    const command = printCommand ? `git ${args.join(' ')}` : 'git command';
+    if (result.error) {
+        throw new Error(`Failed to start ${command}: ${redact(result.error.message, sensitiveValues)}`);
+    }
+    if (result.status != 0) {
+        const output = redact(
+            [result.stderr, result.stdout]
+                .map((value) => value.trim())
+                .filter((value) => value.length > 0)
+                .join(EOL),
+            sensitiveValues
+        );
         if (printCommand) {
-            console.log(`Failed to execute git ${args.join(' ')}.`);
+            console.error(`Failed to execute ${command}.`);
         }
-        throw err;
+        throw new Error(output || `${command} failed with code ${result.status}.`);
     }
 
-    const stdout = git.stdout.toString();
+    const stdout = result.stdout;
     if (printCommand) {
         console.log(stdout);
     }
     return stdout;
+}
+
+function redact(value: string, sensitiveValues: readonly string[]): string {
+    return sensitiveValues
+        .filter((sensitiveValue) => sensitiveValue.length > 0)
+        .reduce((redactedValue, sensitiveValue) => redactedValue.replaceAll(sensitiveValue, '***'), value);
 }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 import * as path from 'path';
 import { parse as parseJsonc } from 'jsonc-parser';
 
@@ -80,7 +80,7 @@ export async function isBlazorWebAssemblyProject(projectPath: string): Promise<b
     const launchSettingsPath = path.join(projectDirectory, 'Properties', 'launchSettings.json');
 
     try {
-        if (!fs.pathExistsSync(launchSettingsPath)) {
+        if (!fs.existsSync(launchSettingsPath)) {
             return false;
         }
 

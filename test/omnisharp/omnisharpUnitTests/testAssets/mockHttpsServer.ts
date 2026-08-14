@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
-import getPort from 'get-port';
+import { readFile } from 'fs/promises';
+import { createServer } from 'net';
 
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -43,14 +43,31 @@ export default class MockHttpsServer {
     }
 
     public static async CreateMockHttpsServer(): Promise<MockHttpsServer> {
-        const port = await getPort();
+        const port = await getAvailablePort();
         const server = new ServerMock(null, {
             host: 'localhost',
             port: port,
-            key: await fs.readFile('test/omnisharp/omnisharpUnitTests/testAssets/private.pem'),
-            cert: await fs.readFile('test/omnisharp/omnisharpUnitTests/testAssets/public.pem'),
+            key: await readFile('test/omnisharp/omnisharpUnitTests/testAssets/private.pem'),
+            cert: await readFile('test/omnisharp/omnisharpUnitTests/testAssets/public.pem'),
         });
 
         return new MockHttpsServer(server, `https://localhost:${port}`);
     }
+}
+
+async function getAvailablePort(): Promise<number> {
+    return new Promise((resolve, reject) => {
+        const server = createServer();
+        server.unref();
+        server.once('error', reject);
+        server.listen(0, 'localhost', () => {
+            const address = server.address();
+            if (!address || typeof address === 'string') {
+                server.close();
+                reject(new Error('Unable to allocate a local port.'));
+                return;
+            }
+            server.close((error) => (error ? reject(error) : resolve(address.port)));
+        });
+    });
 }

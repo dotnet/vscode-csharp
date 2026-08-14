@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 import * as jsonc from 'jsonc-parser';
 import { FormattingOptions, ModificationOptions } from 'jsonc-parser';
 import * as os from 'os';
@@ -747,7 +747,7 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
         const tasksJson = generator.createTasksConfiguration();
 
         let text: string;
-        if (!fs.pathExistsSync(generator.tasksJsonPath)) {
+        if (!fs.existsSync(generator.tasksJsonPath)) {
             // when tasks.json does not exist create it and write all the content directly
             const tasksJsonText = JSON.stringify(tasksJson);
             const tasksJsonTextFormatted = jsonc.applyEdits(
@@ -785,7 +785,7 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
         const formattingOptions = getFormattingOptions();
 
         let text: string;
-        if (!fs.pathExistsSync(generator.launchJsonPath)) {
+        if (!fs.existsSync(generator.launchJsonPath)) {
             // when launch.json does not exist, create it and write all the content directly
             const configurationsMassaged: string = launchJsonConfigurations;
             const launchJsonText = `
@@ -874,7 +874,7 @@ export async function addAssetsIfNecessary(
                 return AddAssetResult.Cancelled;
             }
 
-            await fs.ensureDir(generator.vscodeFolder);
+            await fs.promises.mkdir(generator.vscodeFolder, { recursive: true });
             await addAssets(generator, operations);
             return AddAssetResult.Done;
         }
@@ -892,7 +892,7 @@ export async function addAssetsIfNecessary(
 async function getExistingAssets(generator: AssetGenerator) {
     return new Promise<string[]>((resolve, _) => {
         let assets: string[] = [];
-        if (fs.pathExistsSync(generator.tasksJsonPath)) {
+        if (fs.existsSync(generator.tasksJsonPath)) {
             const content = fs.readFileSync(generator.tasksJsonPath).toString();
             const taskLabels = ['build', 'publish', 'watch'];
             const tasks = jsonc
@@ -903,7 +903,7 @@ async function getExistingAssets(generator: AssetGenerator) {
             assets = assets.concat(tasks);
         }
 
-        if (fs.pathExistsSync(generator.launchJsonPath)) {
+        if (fs.existsSync(generator.launchJsonPath)) {
             const content = fs.readFileSync(generator.launchJsonPath).toString();
             const configurationNames = [
                 '.NET Core Launch (console)',
@@ -992,7 +992,7 @@ export async function generateAssets(
                     }
                 }
 
-                await fs.ensureDir(generator.vscodeFolder);
+                await fs.promises.mkdir(generator.vscodeFolder, { recursive: true });
                 await addAssets(generator, operations);
             } else {
                 showErrorMessage(

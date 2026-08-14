@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import execa from 'execa';
 import { promises, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
@@ -813,7 +812,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     public static async determineBrowserType(): Promise<string | undefined> {
         // There was no browser specified by the user, so we will do some auto-detection to find a browser,
         // favoring Edge if multiple valid options are installed.
-        const edgeBrowserFinder = new EdgeBrowserFinder(process.env, promises, execa);
+        const edgeBrowserFinder = new EdgeBrowserFinder(process.env, promises);
         const edgeInstallations = await edgeBrowserFinder.findAll();
         if (edgeInstallations.length > 0) {
             showInformationMessage(
@@ -824,7 +823,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             return BlazorDebugConfigurationProvider.edgeBrowserType;
         }
 
-        const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, execa);
+        const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises);
         const chromeInstallations = await chromeBrowserFinder.findAll();
         if (chromeInstallations.length > 0) {
             showInformationMessage(

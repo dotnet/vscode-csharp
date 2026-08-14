@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { commandLineOptions } from './commandLineArguments';
 import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents';
 
 export const rootPath = path.resolve(__dirname, '..');
@@ -13,14 +12,11 @@ const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, '@vscode', 'vsce', 'vsce');
 export const jestPath = path.join(nodeModulesPath, 'jest', 'bin', 'jest');
 
-export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join(rootPath, 'vsix');
 export const nugetTempPath = path.join(rootPath, 'out', '.nuget');
 export const languageServerDirectory = path.join(rootPath, '.roslyn');
 export const devKitDependenciesDirectory = path.join(rootPath, componentInfo.roslynDevKit.defaultFolderName);
 export const xamlToolsDirectory = path.join(rootPath, componentInfo.xamlTools.defaultFolderName);
 export const testDiscoveryDirectory = path.join(rootPath, componentInfo.testDiscovery.defaultFolderName);
-
-export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 
 export const omnisharpTestRootPath = path.join(rootPath, 'out', 'omnisharptest');
 export const omnisharpFeatureTestRunnerPath = path.join(omnisharpTestRootPath, 'runFeatureTests.js');

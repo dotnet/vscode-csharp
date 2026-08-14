@@ -84,7 +84,7 @@ configuration:
       - payloadType: Pull_Request
       - isPullRequest
       - isActivitySender:
-          user: dotnet-bot
+          user: dotnet-oneloc-localization[bot]
           issueAuthor: False
       - titleContains:
           pattern: "Localization result based on"
