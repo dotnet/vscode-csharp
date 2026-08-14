@@ -5,12 +5,6 @@
 
 # 2.149.x
 * Update Debugger to v2.149.0 (PR: [#9677](https://github.com/dotnet/vscode-csharp/pull/9677))
-* Use prebuilt docker images instead of installing dependencies on every run (PR: [#9671](https://github.com/dotnet/vscode-csharp/pull/9671))
-* Configure stronger isolation (PR: [#9668](https://github.com/dotnet/vscode-csharp/pull/9668))
-* ensure npx tools use internal feed (PR: [#9667](https://github.com/dotnet/vscode-csharp/pull/9667))
-* Run npm audit fix (PR: [#9666](https://github.com/dotnet/vscode-csharp/pull/9666))
-* Update Azure Pipelines configuration for macOS (PR: [#9662](https://github.com/dotnet/vscode-csharp/pull/9662))
-* Use github app instead of pat for loc pipeline (PR: [#9650](https://github.com/dotnet/vscode-csharp/pull/9650))
 * Bump fast-uri from 3.1.4 to 3.1.5 (PR: [#9658](https://github.com/dotnet/vscode-csharp/pull/9658))
 * Reduce Node dependencies (PR: [#9642](https://github.com/dotnet/vscode-csharp/pull/9642))
 * Update Roslyn to 5.11.0-1.26405.8 (PR: [#9656](https://github.com/dotnet/vscode-csharp/pull/9656))
