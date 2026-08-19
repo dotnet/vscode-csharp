@@ -15,7 +15,7 @@ This skill describes how to update the Roslyn language server version in the vsc
   - If unable to find local roslyn repo, ask the user for its location.
 2. The `roslyn-tools` CLI tool must be installed as a global .NET tool:
    ```powershell
-   dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+   dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
    ```
    **Note**: After installation, the tool is invoked as `roslyn-tools` (not `dotnet roslyn-tools`)
 3. You must have authenticated with GitHub for `roslyn-tools`:
