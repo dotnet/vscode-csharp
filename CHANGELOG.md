@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.150.x
-* Update Roslyn to 5.11.0-1.26424.9 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.11.0-1.26424.9 (PR: [#9701](https://github.com/dotnet/vscode-csharp/pull/9701))
   * Re-land the sonic decl/impl split with fallback discovery parse reuse (PR: [#84844](https://github.com/dotnet/roslyn/pull/84844))
   * Dispose ISymUnmanagedReader correctly on .NET 10 (PR: [#84944](https://github.com/dotnet/roslyn/pull/84944))
   * Unsafe evolution: symbol display (PR: [#84706](https://github.com/dotnet/roslyn/pull/84706))
