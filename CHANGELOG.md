@@ -6,15 +6,10 @@
 # 2.150.x
 * Update Roslyn to 5.11.0-1.26424.9 (PR: [#9701](https://github.com/dotnet/vscode-csharp/pull/9701))
   * Support loading cached project data from .lscache files (PR: [#84790](https://github.com/dotnet/roslyn/pull/84790))
-  * Tolerate MSBuildWorkspace diagnostic warnings (PR: [#84971](https://github.com/dotnet/roslyn/pull/84971))
   * Fix rename conflict for source generated partial members (PR: [#84951](https://github.com/dotnet/roslyn/pull/84951))
   * Fix IDE0046 code fix throwing on top-level statements (PR: [#84966](https://github.com/dotnet/roslyn/pull/84966))
-  * Add HasPendingUpdates to HotReloadService.Updates to be used in dotnet-watch (PR: [#84891](https://github.com/dotnet/roslyn/pull/84891))
   * Fix/84847 source generated rename conflict (PR: [#84849](https://github.com/dotnet/roslyn/pull/84849))
-  * Return MethodNotFound for unsupported LSP method dispatch (PR: [#84892](https://github.com/dotnet/roslyn/pull/84892))
-  * ShadowCopyAnalyzerPathResolver: Use cache to amortize cost of AV scans (PR: [#84765](https://github.com/dotnet/roslyn/pull/84765))
   * Do not offer introduce parameter for incomplete calls (PR: [#84769](https://github.com/dotnet/roslyn/pull/84769))
-  * Share syntax trees across language server workspaces (PR: [#84758](https://github.com/dotnet/roslyn/pull/84758))
   * Always pass C# formatting options to Razor functions (PR: [#84795](https://github.com/dotnet/roslyn/pull/84795))
   * Fix formatting error when Roslyn adds an extra blank line (PR: [#84751](https://github.com/dotnet/roslyn/pull/84751))
 
