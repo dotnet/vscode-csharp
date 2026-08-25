@@ -173,13 +173,8 @@ export class ProjectContextService {
             return;
         }
 
-        const cachedContext = this.getDocumentContext(document.uri);
         const context =
-            contextList._vs_projectContexts.find((candidate) => candidate._vs_id === cachedContext?._vs_id) ??
-            contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        if (contextList._vs_projectContexts.length > 1) {
-            this._keyToActiveProjectContextMap.set(contextList._vs_key, context);
-        }
+            this.getDocumentContext(document.uri) ?? contextList._vs_projectContexts[contextList._vs_defaultIndex];
         const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
         this._contextChangeEmitter.fire({ document, context, isVerified: false, hasAdditionalContexts });
 
