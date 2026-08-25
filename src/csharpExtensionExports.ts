@@ -33,6 +33,27 @@ export interface ActivityLogResult {
     lspTraceLog: string;
 }
 
+/** Roslyn's language-support classification for the active C# document. */
+export interface ActiveDocumentLanguageSupport {
+    /** Serialized URI of the document to which this snapshot applies. */
+    documentUri: string;
+    /**
+     * `unknown` while the project context is still stabilizing, `full` once Roslyn verifies that
+     * full language support is available, or `limited` once Roslyn verifies that it is not.
+     */
+    state: 'unknown' | 'full' | 'limited';
+    /** Labels of the Roslyn project contexts represented by this snapshot. */
+    projectLabels: readonly string[];
+}
+
+/** Publishes snapshots for the active C# document as Roslyn project information changes. */
+export interface ActiveDocumentLanguageSupportService {
+    /** Most recently published snapshot, or `undefined` when no relevant document is active. */
+    readonly current: ActiveDocumentLanguageSupport | undefined;
+    /** Fires when the active document or its Roslyn language-support classification changes. */
+    readonly onDidChange: vscode.Event<ActiveDocumentLanguageSupport | undefined>;
+}
+
 export interface CSharpExtensionExports {
     isLimitedActivation: false;
     initializationFinished: () => Promise<void>;
@@ -44,6 +65,7 @@ export interface CSharpExtensionExports {
     tryToUseVSDbgForMono: (urlStr: string, projectPath: string) => Promise<[string, number, number]>;
     languageServerProcessId: () => number | undefined;
     captureActivityLogs: () => Promise<ActivityLogCapture>;
+    activeDocumentLanguageSupport: ActiveDocumentLanguageSupportService;
 }
 
 export interface CSharpExtensionExperimentalExports {

@@ -11,5 +11,26 @@ import { getFakeVsCode } from '../test/fakes';
 
 // We can consider switching to an actual jest mock (instead of this manual fake) once we entirely
 // remove the old test framework (mocha/chai).
-const vscode: vscodeAdapter.vscode = getFakeVsCode();
+class EventEmitter<T> {
+    private readonly listeners: ((event: T) => void)[] = [];
+
+    public readonly event = (listener: (event: T) => void) => {
+        this.listeners.push(listener);
+        return { dispose: () => this.listeners.splice(this.listeners.indexOf(listener), 1) };
+    };
+
+    public fire(event: T): void {
+        for (const listener of this.listeners) {
+            listener(event);
+        }
+    }
+
+    public dispose(): void {
+        this.listeners.length = 0;
+    }
+}
+
+const vscode: vscodeAdapter.vscode & { EventEmitter: typeof EventEmitter } = Object.assign(getFakeVsCode(), {
+    EventEmitter,
+});
 module.exports = vscode;

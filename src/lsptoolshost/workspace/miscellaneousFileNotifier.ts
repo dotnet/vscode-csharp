@@ -9,9 +9,19 @@ import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ActionOption, showWarningMessage } from '../../shared/observers/utils/showMessage';
 import { languageServerOptions } from '../../shared/options';
 import { ServerState } from '../server/languageServerEvents';
+import { ProjectContextChangeEvent } from '../projectContext/projectContextService';
 
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();
+
+export function shouldNotifyForMiscellaneousFile(event: ProjectContextChangeEvent, serverState: ServerState): boolean {
+    return (
+        event.document.uri.scheme === 'file' &&
+        event.document.languageId === 'csharp' &&
+        event.context._vs_is_miscellaneous &&
+        serverState === ServerState.ProjectInitializationComplete
+    );
+}
 
 export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
@@ -19,13 +29,7 @@ export function registerMiscellaneousFileNotifier(
 ) {
     languageServer._projectContextService.onActiveFileContextChanged(async (e) => {
         // Only warn for C# miscellaneous files when the workspace is fully initialized.
-        if (
-            e.document.uri.scheme !== 'file' ||
-            e.document.languageId !== 'csharp' ||
-            !e.isVerified ||
-            !e.context._vs_is_miscellaneous ||
-            languageServer.state !== ServerState.ProjectInitializationComplete
-        ) {
+        if (!shouldNotifyForMiscellaneousFile(e, languageServer.state)) {
             return;
         }
 
