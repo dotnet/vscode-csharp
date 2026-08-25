@@ -9,11 +9,13 @@ import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ActionOption, showWarningMessage } from '../../shared/observers/utils/showMessage';
 import { languageServerOptions } from '../../shared/options';
 import { ServerState } from '../server/languageServerEvents';
-import { ProjectContextChangeEvent } from '../projectContext/projectContextService';
+import type { ProjectContextChangeEvent } from '../projectContext/projectContextService';
 
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();
 
+// A miscellaneous context is actionable only after project initialization has completed,
+// when the file can no longer move into a project as part of the initial workspace load.
 export function shouldNotifyForMiscellaneousFile(event: ProjectContextChangeEvent, serverState: ServerState): boolean {
     return (
         event.document.uri.scheme === 'file' &&
@@ -28,7 +30,6 @@ export function registerMiscellaneousFileNotifier(
     languageServer: RoslynLanguageServer
 ) {
     languageServer._projectContextService.onActiveFileContextChanged(async (e) => {
-        // Only warn for C# miscellaneous files when the workspace is fully initialized.
         if (!shouldNotifyForMiscellaneousFile(e, languageServer.state)) {
             return;
         }
