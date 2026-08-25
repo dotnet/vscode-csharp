@@ -272,7 +272,7 @@ export class AssetGenerator {
     private createWatchTaskDescription(): tasks.TaskDescription {
         const commandArgs = ['watch', 'run'];
 
-        const buildProject = this.getBuildProjectPath();
+        const buildProject = this.getBuildProjectPath(/*useSolutionPath*/ false);
         if (buildProject) {
             commandArgs.push('--project');
             commandArgs.push(buildProject);
@@ -300,13 +300,13 @@ export class AssetGenerator {
         commandArgs.push('/consoleloggerparameters:NoSummary;ForceNoAlign');
     }
 
-    private getBuildProjectPath(): string | null {
+    private getBuildProjectPath(useSolutionPath = true): string | null {
         let buildProject = this.startupProject;
         if (!buildProject) {
             buildProject = this.fallbackBuildProject;
         }
         if (buildProject) {
-            if (buildProject.solutionPath) {
+            if (useSolutionPath && buildProject.solutionPath) {
                 return this.getBuildPath(buildProject.solutionPath);
             } else {
                 return this.getBuildPath(buildProject.projectPath);
