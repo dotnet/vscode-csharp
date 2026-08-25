@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.150.x
+* Update Roslyn to 5.11.0-1.26424.9 (PR: [#9701](https://github.com/dotnet/vscode-csharp/pull/9701))
+  * Support loading cached project data from .lscache files (PR: [#84790](https://github.com/dotnet/roslyn/pull/84790))
+  * Fix rename conflict for source generated partial members (PR: [#84951](https://github.com/dotnet/roslyn/pull/84951))
+  * Fix IDE0046 code fix throwing on top-level statements (PR: [#84966](https://github.com/dotnet/roslyn/pull/84966))
+  * Fix/84847 source generated rename conflict (PR: [#84849](https://github.com/dotnet/roslyn/pull/84849))
+  * Do not offer introduce parameter for incomplete calls (PR: [#84769](https://github.com/dotnet/roslyn/pull/84769))
+  * Always pass C# formatting options to Razor functions (PR: [#84795](https://github.com/dotnet/roslyn/pull/84795))
+  * Fix formatting error when Roslyn adds an extra blank line (PR: [#84751](https://github.com/dotnet/roslyn/pull/84751))
 
 # 2.149.x
 * Bump fast-uri from 3.1.4 to 3.1.5 (PR: [#9658](https://github.com/dotnet/vscode-csharp/pull/9658))
