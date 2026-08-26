@@ -10,49 +10,57 @@ import {
 } from '../../csharpExtensionExports';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { shouldNotifyForMiscellaneousFile } from '../workspace/miscellaneousFileNotifier';
+import { ProjectContextChangeEvent } from './projectContextService';
 
 export class ActiveDocumentLanguageSupportService implements IActiveDocumentLanguageSupportService, vscode.Disposable {
     private readonly _onDidChangeEmitter = new vscode.EventEmitter<ActiveDocumentLanguageSupport | undefined>();
     private readonly _activeEditorSubscription: vscode.Disposable;
+    private readonly _outputChannel: vscode.LogOutputChannel | undefined;
     private _projectContextSubscription: vscode.Disposable | undefined;
     private _current: ActiveDocumentLanguageSupport | undefined;
     private _isDisposed = false;
 
-    constructor(languageServerPromise: Promise<RoslynLanguageServer>) {
+    constructor(languageServerPromise: Promise<RoslynLanguageServer>, outputChannel?: vscode.LogOutputChannel) {
         this._activeEditorSubscription = vscode.window.onDidChangeActiveTextEditor(() => this.updateCurrent(undefined));
+        this._outputChannel = outputChannel;
 
-        void languageServerPromise.then((languageServer) => {
-            if (this._isDisposed) {
-                return;
-            }
-
-            this._projectContextSubscription = languageServer._projectContextService.onActiveFileContextChanged(
-                (event) => {
-                    const activeDocument = vscode.window.activeTextEditor?.document;
-                    if (
-                        event.document.uri.scheme !== 'file' ||
-                        event.document.languageId !== 'csharp' ||
-                        activeDocument?.uri.toString() !== event.document.uri.toString()
-                    ) {
-                        return;
-                    }
-
-                    this.updateCurrent({
-                        documentUri: event.document.uri.toString(),
-                        state: event.context._vs_is_miscellaneous
-                            ? shouldNotifyForMiscellaneousFile(event, languageServer.state)
-                                ? 'limited'
-                                : 'unknown'
-                            : event.context._vs_id
-                              ? 'full'
-                              : 'unknown',
-                        projectLabels: event.context._vs_label ? [event.context._vs_label] : [],
-                    });
+        languageServerPromise
+            .then(async (languageServer) => {
+                if (this._isDisposed) {
+                    return;
                 }
-            );
 
-            void languageServer._projectContextService.refresh();
-        });
+                this._projectContextSubscription = languageServer._projectContextService.onActiveFileContextChanged(
+                    (event: ProjectContextChangeEvent) => {
+                        const activeDocumentUriString = vscode.window.activeTextEditor?.document?.uri.toString();
+                        const eventDocumentUriString = event.document.uri.toString();
+                        if (
+                            event.document.uri.scheme !== 'file' ||
+                            event.document.languageId !== 'csharp' ||
+                            activeDocumentUriString !== eventDocumentUriString
+                        ) {
+                            return;
+                        }
+
+                        this.updateCurrent({
+                            documentUri: event.document.uri.toString(),
+                            state: event.context._vs_is_miscellaneous
+                                ? shouldNotifyForMiscellaneousFile(event, languageServer.state)
+                                    ? 'limited'
+                                    : 'unknown'
+                                : event.context._vs_id
+                                  ? 'full'
+                                  : 'unknown',
+                            projectLabels: event.context._vs_label ? [event.context._vs_label] : [],
+                        });
+                    }
+                );
+
+                return languageServer._projectContextService.refresh();
+            })
+            .catch((error) =>
+                this._outputChannel?.error('Failed to initialize active document language support', error)
+            );
     }
 
     public get current(): ActiveDocumentLanguageSupport | undefined {
@@ -72,6 +80,7 @@ export class ActiveDocumentLanguageSupportService implements IActiveDocumentLang
 
     private updateCurrent(value: ActiveDocumentLanguageSupport | undefined): void {
         this._current = value;
+        this._outputChannel?.debug('Changing active document language support to:', value?.state);
         this._onDidChangeEmitter.fire(value);
     }
 }

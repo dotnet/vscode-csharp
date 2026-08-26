@@ -66,7 +66,10 @@ export function activateRoslyn(
     const coreClrDebugPromise = getCoreClrDebugPromise(roslynLanguageServerStartedPromise);
 
     const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
-    const activeDocumentLanguageSupport = new ActiveDocumentLanguageSupportService(roslynLanguageServerStartedPromise);
+    const activeDocumentLanguageSupport = new ActiveDocumentLanguageSupportService(
+        roslynLanguageServerStartedPromise,
+        csharpChannel
+    );
     context.subscriptions.push(activeDocumentLanguageSupport);
     const exports: CSharpExtensionExports = {
         isLimitedActivation: false,

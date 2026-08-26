@@ -61,6 +61,26 @@ describe('ActiveDocumentLanguageSupportService', () => {
         expect(refresh).toHaveBeenCalled();
         service.dispose();
     });
+
+    test('logs a failure from the initial project context refresh', async () => {
+        (vscode.window as any).onDidChangeActiveTextEditor = () => ({ dispose: jest.fn() });
+        const error = new Error('refresh failed');
+        const logError = jest.fn();
+        const languageServer = {
+            _projectContextService: {
+                onActiveFileContextChanged: () => ({ dispose: jest.fn() }),
+                refresh: async () => Promise.reject(error),
+            },
+        };
+
+        const service = new ActiveDocumentLanguageSupportService(Promise.resolve(languageServer as any), {
+            error: logError,
+        } as any);
+        await new Promise((resolve) => setImmediate(resolve));
+
+        expect(logError).toHaveBeenCalledWith('Failed to initialize active document language support', error);
+        service.dispose();
+    });
 });
 
 function createEvent(
