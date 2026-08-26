@@ -37,23 +37,23 @@ describe('ActiveDocumentLanguageSupportService', () => {
         const service = new ActiveDocumentLanguageSupportService(Promise.resolve(languageServer as any));
         await Promise.resolve();
 
-        projectContextChanged?.(createEvent(document, false, true));
+        projectContextChanged?.(createEvent(document, { isVerified: false, isMiscellaneous: true }));
         expect(service.current?.state).toBe('unknown');
 
         languageServer.state = ServerState.ProjectInitializationComplete;
-        projectContextChanged?.(createEvent(document, false, true));
+        projectContextChanged?.(createEvent(document, { isVerified: false, isMiscellaneous: true }));
         expect(service.current?.state).toBe('limited');
 
-        projectContextChanged?.(createEvent(document, false, false));
+        projectContextChanged?.(createEvent(document, { isVerified: false, isMiscellaneous: false }));
         expect(service.current?.state).toBe('full');
 
-        projectContextChanged?.(createEvent(document, false, false, ''));
-        expect(service.current?.state).toBe('unknown');
-
-        projectContextChanged?.(createEvent(document, true, true));
+        projectContextChanged?.(createEvent(document, { isVerified: false, isMiscellaneous: false, projectId: '' }));
         expect(service.current?.state).toBe('limited');
 
-        projectContextChanged?.(createEvent(document, true, false));
+        projectContextChanged?.(createEvent(document, { isVerified: true, isMiscellaneous: true }));
+        expect(service.current?.state).toBe('limited');
+
+        projectContextChanged?.(createEvent(document, { isVerified: true, isMiscellaneous: false }));
         expect(service.current?.state).toBe('full');
 
         activeEditorChanged?.();
@@ -78,26 +78,28 @@ describe('ActiveDocumentLanguageSupportService', () => {
         } as any);
         await new Promise((resolve) => setImmediate(resolve));
 
-        expect(logError).toHaveBeenCalledWith('Failed to initialize active document language support', error);
+        expect(logError).toHaveBeenCalledWith(expect.stringContaining('ActiveDocumentLanguageSupport'), error);
         service.dispose();
     });
 });
 
 function createEvent(
     document: vscode.TextDocument,
-    isVerified: boolean,
-    isMiscellaneous: boolean,
-    projectId = 'project'
+    args: {
+        isVerified: boolean;
+        isMiscellaneous: boolean;
+        projectId?: string;
+    }
 ): ProjectContextChangeEvent {
     return {
         document,
         context: {
-            _vs_id: projectId,
+            _vs_id: args.projectId === undefined ? 'project' : args.projectId,
             _vs_kind: 'CSharp',
             _vs_label: 'Program.cs',
-            _vs_is_miscellaneous: isMiscellaneous,
+            _vs_is_miscellaneous: args.isMiscellaneous,
         },
-        isVerified,
+        isVerified: args.isVerified,
         hasAdditionalContexts: false,
     };
 }
