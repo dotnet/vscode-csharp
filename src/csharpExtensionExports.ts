@@ -33,17 +33,20 @@ export interface ActivityLogResult {
     lspTraceLog: string;
 }
 
+/**
+ * - `unknown` when document language support is still being actively determined.
+ * - `limited` when document language support is incomplete (e.g. miscellaneous file, virtual file, unsupported language, ...).
+ * - `full` when language server has determined full language support is available.
+ */
+export type LanguageSupportState = 'unknown' | 'full' | 'limited';
+
 /** Roslyn's language-support classification for the active C# document. */
 export interface ActiveDocumentLanguageSupport {
     /** Serialized URI of the document to which this snapshot applies. */
     documentUri: string;
-    /**
-     * `unknown` while the project context is still stabilizing, `full` once Roslyn verifies that
-     * full language support is available, or `limited` once Roslyn verifies that it is not.
-     */
-    state: 'unknown' | 'full' | 'limited';
-    /** Labels of the Roslyn project contexts represented by this snapshot. */
-    projectLabels: readonly string[];
+    state: LanguageSupportState;
+    /** Label of the current Roslyn project context represented by this snapshot. */
+    projectLabel: string;
 }
 
 /** Publishes snapshots for the active C# document as Roslyn project information changes. */

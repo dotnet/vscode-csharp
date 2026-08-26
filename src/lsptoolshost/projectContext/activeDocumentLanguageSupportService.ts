@@ -9,7 +9,7 @@ import {
     ActiveDocumentLanguageSupportService as IActiveDocumentLanguageSupportService,
 } from '../../csharpExtensionExports';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { shouldNotifyForMiscellaneousFile } from '../workspace/miscellaneousFileNotifier';
+import { getLanguageSupportState } from '../workspace/miscellaneousFileNotifier';
 import { ProjectContextChangeEvent } from './projectContextService';
 
 export class ActiveDocumentLanguageSupportService implements IActiveDocumentLanguageSupportService, vscode.Disposable {
@@ -34,24 +34,14 @@ export class ActiveDocumentLanguageSupportService implements IActiveDocumentLang
                     (event: ProjectContextChangeEvent) => {
                         const activeDocumentUriString = vscode.window.activeTextEditor?.document?.uri.toString();
                         const eventDocumentUriString = event.document.uri.toString();
-                        if (
-                            event.document.uri.scheme !== 'file' ||
-                            event.document.languageId !== 'csharp' ||
-                            activeDocumentUriString !== eventDocumentUriString
-                        ) {
+                        if (activeDocumentUriString !== eventDocumentUriString) {
                             return;
                         }
 
                         this.updateCurrent({
                             documentUri: event.document.uri.toString(),
-                            state: event.context._vs_is_miscellaneous
-                                ? shouldNotifyForMiscellaneousFile(event, languageServer.state)
-                                    ? 'limited'
-                                    : 'unknown'
-                                : event.context._vs_id
-                                  ? 'full'
-                                  : 'unknown',
-                            projectLabels: event.context._vs_label ? [event.context._vs_label] : [],
+                            state: getLanguageSupportState(event, languageServer.state),
+                            projectLabel: event.context._vs_label,
                         });
                     }
                 );
@@ -78,7 +68,7 @@ export class ActiveDocumentLanguageSupportService implements IActiveDocumentLang
 
     private updateCurrent(value: ActiveDocumentLanguageSupport | undefined): void {
         this._current = value;
-        this._outputChannel?.debug('ActiveDocumentLanguageSupport changing to:', value);
+        this._outputChannel?.debug('ActiveDocumentLanguageSupport changed to', value);
         this._onDidChangeEmitter.fire(value);
     }
 }

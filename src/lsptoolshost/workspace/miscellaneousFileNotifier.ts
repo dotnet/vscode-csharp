@@ -10,19 +10,27 @@ import { ActionOption, showWarningMessage } from '../../shared/observers/utils/s
 import { languageServerOptions } from '../../shared/options';
 import { ServerState } from '../server/languageServerEvents';
 import type { ProjectContextChangeEvent } from '../projectContext/projectContextService';
+import { LanguageSupportState } from '../../csharpExtensionExports';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();
 
-// A miscellaneous context is actionable only after project initialization has completed,
-// when the file can no longer move into a project as part of the initial workspace load.
-export function shouldNotifyForMiscellaneousFile(event: ProjectContextChangeEvent, serverState: ServerState): boolean {
-    return (
-        event.document.uri.scheme === 'file' &&
-        event.document.languageId === 'csharp' &&
-        event.context._vs_is_miscellaneous &&
-        serverState === ServerState.ProjectInitializationComplete
-    );
+export function getLanguageSupportState(
+    event: ProjectContextChangeEvent,
+    serverState: ServerState
+): LanguageSupportState {
+    if (serverState !== ServerState.ProjectInitializationComplete) {
+        return 'unknown';
+    }
+
+    // Note: non-empty '_vs_id' is checked for sanity, before concluding that full support is available,
+    // to ensure that full support is not reported for 'ProjectContextService._emptyProjectContext'
+    if (!event.context._vs_is_miscellaneous && event.context._vs_id) {
+        return 'full';
+    }
+
+    return 'limited';
 }
 
 export function registerMiscellaneousFileNotifier(
@@ -30,7 +38,16 @@ export function registerMiscellaneousFileNotifier(
     languageServer: RoslynLanguageServer
 ) {
     languageServer._projectContextService.onActiveFileContextChanged(async (e) => {
-        if (!shouldNotifyForMiscellaneousFile(e, languageServer.state)) {
+        if (getCSharpDevKit()) {
+            // Don't notify if CDK is loaded, since CDK uses its own degraded experience UI separately.
+            return;
+        }
+
+        if (e.document.uri.scheme !== 'file' || e.document.languageId !== 'csharp') {
+            return;
+        }
+
+        if (getLanguageSupportState(e, languageServer.state) !== 'limited') {
             return;
         }
 
