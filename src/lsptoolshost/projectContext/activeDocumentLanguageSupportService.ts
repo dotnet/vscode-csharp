@@ -58,9 +58,7 @@ export class ActiveDocumentLanguageSupportService implements IActiveDocumentLang
 
                 return languageServer._projectContextService.refresh();
             })
-            .catch((error) =>
-                this._outputChannel?.error('Failed to initialize active document language support', error)
-            );
+            .catch((error) => this._outputChannel?.error('ActiveDocumentLanguageSupport failed to initialize:', error));
     }
 
     public get current(): ActiveDocumentLanguageSupport | undefined {
@@ -80,7 +78,7 @@ export class ActiveDocumentLanguageSupportService implements IActiveDocumentLang
 
     private updateCurrent(value: ActiveDocumentLanguageSupport | undefined): void {
         this._current = value;
-        this._outputChannel?.debug('Changing active document language support to:', value?.state);
+        this._outputChannel?.debug('ActiveDocumentLanguageSupport changing to:', value);
         this._onDidChangeEmitter.fire(value);
     }
 }

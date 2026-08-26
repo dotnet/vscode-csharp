@@ -87,6 +87,7 @@ export function activateRoslyn(
             sendServerRequestWithProgress: async (t, p, pr, ct) =>
                 await languageServerExport.sendRequestWithProgress(t, p, pr, ct),
             languageServerEvents: roslynLanguageServerEvents,
+            activeDocumentLanguageSupport,
         },
         getComponentFolder: (componentName) => {
             return getComponentFolder(componentName, languageServerOptions);
@@ -97,7 +98,6 @@ export function activateRoslyn(
             const languageServer = await roslynLanguageServerStartedPromise;
             return createCaptureActivityLogs(languageServer);
         },
-        activeDocumentLanguageSupport,
     };
 
     return exports;

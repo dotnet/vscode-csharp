@@ -65,7 +65,6 @@ export interface CSharpExtensionExports {
     tryToUseVSDbgForMono: (urlStr: string, projectPath: string) => Promise<[string, number, number]>;
     languageServerProcessId: () => number | undefined;
     captureActivityLogs: () => Promise<ActivityLogCapture>;
-    activeDocumentLanguageSupport: ActiveDocumentLanguageSupportService;
 }
 
 export interface CSharpExtensionExperimentalExports {
@@ -87,4 +86,5 @@ export interface CSharpExtensionExperimentalExports {
         token?: vscode.CancellationToken
     ): Promise<Response>;
     languageServerEvents: LanguageServerEvents;
+    activeDocumentLanguageSupport: ActiveDocumentLanguageSupportService;
 }
