@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscodeAdapter from '../src/vscodeAdapter';
 import { getFakeVsCode } from '../test/fakes';
 
 // This module creates a manual mock for the vscode module for running in unit tests.
@@ -10,4 +11,5 @@ import { getFakeVsCode } from '../test/fakes';
 
 // We can consider switching to an actual jest mock (instead of this manual fake) once we entirely
 // remove the old test framework (mocha/chai).
-module.exports = getFakeVsCode();
+const vscode: vscodeAdapter.vscode = getFakeVsCode();
+module.exports = vscode;
