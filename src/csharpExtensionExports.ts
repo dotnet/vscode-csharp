@@ -40,7 +40,7 @@ export interface ActivityLogResult {
  */
 export type LanguageSupportState = 'unknown' | 'full' | 'limited';
 
-/** Roslyn's language-support classification for the active C# document. */
+/** Roslyn's language-support classification for the active document. */
 export interface ActiveDocumentLanguageSupport {
     /** Serialized URI of the document to which this snapshot applies. */
     documentUri: string;
@@ -49,7 +49,7 @@ export interface ActiveDocumentLanguageSupport {
     projectLabel: string;
 }
 
-/** Publishes snapshots for the active C# document as Roslyn project information changes. */
+/** Publishes snapshots for the active document as Roslyn project information changes. */
 export interface ActiveDocumentLanguageSupportService {
     /** Most recently published snapshot, or `undefined` when no relevant document is active. */
     readonly current: ActiveDocumentLanguageSupport | undefined;

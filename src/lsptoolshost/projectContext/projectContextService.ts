@@ -22,6 +22,12 @@ import { RazorLanguage } from '../../razor/src/razorLanguage';
 export interface ProjectContextChangeEvent {
     document: vscode.TextDocument;
     context: VSProjectContext;
+    /**
+     * False when project context has changed very recently (see {@link VerificationDelay}).
+     * This allows us to gracefully handle situations where a document is briefly a miscellaneous file,
+     * then a design-time build completes, and the document becomes part of a project. (e.g. new/rename document scenarios).
+     * We don't want to warn the user about miscellaneous files in that situation.
+     * */
     isVerified: boolean;
     hasAdditionalContexts: boolean;
 }
@@ -178,7 +184,7 @@ export class ProjectContextService {
         const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
         this._contextChangeEmitter.fire({ document, context, isVerified: false, hasAdditionalContexts });
 
-        // If we do not recieve a refresh even within the timout period, send a verified event.
+        // If we do not receive a refresh even within the timeout period, send a verified event.
         _verifyTimeout = setTimeout(() => {
             this._contextChangeEmitter.fire({ document, context, isVerified: true, hasAdditionalContexts });
         }, VerificationDelay);

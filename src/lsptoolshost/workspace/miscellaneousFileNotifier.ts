@@ -47,6 +47,10 @@ export function registerMiscellaneousFileNotifier(
             return;
         }
 
+        if (!e.isVerified) {
+            return;
+        }
+
         if (getLanguageSupportState(e, languageServer.state) !== 'limited') {
             return;
         }
