@@ -27,7 +27,7 @@ export interface ProjectContextChangeEvent {
      * This allows us to gracefully handle situations where a document is briefly a miscellaneous file,
      * then a design-time build completes, and the document becomes part of a project. (e.g. new/rename document scenarios).
      * We don't want to warn the user about miscellaneous files in that situation.
-     * */
+     */
     isVerified: boolean;
     hasAdditionalContexts: boolean;
 }
