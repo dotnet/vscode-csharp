@@ -7,7 +7,6 @@
 * Update Roslyn to 5.12.0-1.26428.1 (PR: [#9712](https://github.com/dotnet/vscode-csharp/pull/9712))
   * Fix extra newline after primary constructor parameter (PR: [#85030](https://github.com/dotnet/roslyn/pull/85030))
   * Read unopened LSP files from disk without persisting them (PR: [#85061](https://github.com/dotnet/roslyn/pull/85061))
-  * Add a UTF-8 write-literal phase so incremental codegen stops duplicating component methods (PR: [#85051](https://github.com/dotnet/roslyn/pull/85051))
   * Fix Razor formatting around blank lines and Razor comments (PR: [#85064](https://github.com/dotnet/roslyn/pull/85064))
   * Make the Razor decl/impl markup split opt-in (default off) (PR: [#85040](https://github.com/dotnet/roslyn/pull/85040))
   * Avoid duplicate misplaced 'partial' diagnostics (PR: [#85013](https://github.com/dotnet/roslyn/pull/85013))
