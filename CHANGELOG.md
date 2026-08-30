@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.150.x
+* Update Roslyn to 5.12.0-1.26428.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Prevent Introduce Constant crash in top-level lambdas (PR: [#85071](https://github.com/dotnet/roslyn/pull/85071))
 * Update Roslyn to 5.12.0-1.26428.1 (PR: [#9712](https://github.com/dotnet/vscode-csharp/pull/9712))
   * Fix extra newline after primary constructor parameter (PR: [#85030](https://github.com/dotnet/roslyn/pull/85030))
   * Read unopened LSP files from disk without persisting them (PR: [#85061](https://github.com/dotnet/roslyn/pull/85061))
