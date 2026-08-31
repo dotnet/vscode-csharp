@@ -9,23 +9,49 @@ import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ActionOption, showWarningMessage } from '../../shared/observers/utils/showMessage';
 import { languageServerOptions } from '../../shared/options';
 import { ServerState } from '../server/languageServerEvents';
+import type { ProjectContextChangeEvent } from '../projectContext/projectContextService';
+import { LanguageSupportState } from '../../csharpExtensionExports';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();
+
+export function getLanguageSupportState(
+    event: ProjectContextChangeEvent,
+    serverState: ServerState
+): LanguageSupportState {
+    if (serverState !== ServerState.ProjectInitializationComplete) {
+        return 'unknown';
+    }
+
+    // Note: non-empty '_vs_id' is checked for sanity, before concluding that full support is available,
+    // to ensure that full support is not reported for 'ProjectContextService._emptyProjectContext'
+    if (!event.context._vs_is_miscellaneous && event.context._vs_id) {
+        return 'full';
+    }
+
+    return 'limited';
+}
 
 export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer
 ) {
     languageServer._projectContextService.onActiveFileContextChanged(async (e) => {
-        // Only warn for C# miscellaneous files when the workspace is fully initialized.
-        if (
-            e.document.uri.scheme !== 'file' ||
-            e.document.languageId !== 'csharp' ||
-            !e.isVerified ||
-            !e.context._vs_is_miscellaneous ||
-            languageServer.state !== ServerState.ProjectInitializationComplete
-        ) {
+        if (getCSharpDevKit()) {
+            // Don't notify if CDK is loaded, since CDK uses its own degraded experience UI separately.
+            return;
+        }
+
+        if (e.document.uri.scheme !== 'file' || e.document.languageId !== 'csharp') {
+            return;
+        }
+
+        if (!e.isVerified) {
+            return;
+        }
+
+        if (getLanguageSupportState(e, languageServer.state) !== 'limited') {
             return;
         }
 

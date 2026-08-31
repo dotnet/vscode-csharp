@@ -180,8 +180,41 @@ export function getUnresolvedDependenices(fileName: string): OmnisharpServerUnre
     });
 }
 
+class EventEmitter<T> implements vscode.EventEmitter<T> {
+    private readonly listeners: { listener: (event: T) => any; thisArgs?: any }[] = [];
+
+    public readonly event: vscode.Event<T> = (listener, thisArgs, disposables) => {
+        const entry = { listener, thisArgs };
+        this.listeners.push(entry);
+        let isDisposed = false;
+        const disposable = {
+            dispose: () => {
+                if (isDisposed) {
+                    return;
+                }
+
+                isDisposed = true;
+                this.listeners.splice(this.listeners.indexOf(entry), 1);
+            },
+        };
+        disposables?.push(disposable);
+        return disposable;
+    };
+
+    public fire(event: T): void {
+        for (const { listener, thisArgs } of this.listeners) {
+            listener.call(thisArgs, event);
+        }
+    }
+
+    public dispose(): void {
+        this.listeners.length = 0;
+    }
+}
+
 export function getFakeVsCode(): vscode.vscode {
     return {
+        EventEmitter,
         commands: {
             executeCommand: <_T>(_command: string, ..._rest: any[]) => {
                 throw new Error('Not Implemented');

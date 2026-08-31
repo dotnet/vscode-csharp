@@ -25,6 +25,7 @@ import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/soluti
 import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService';
 import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
 import { ObservableLogOutputChannel } from './lsptoolshost/logging/observableLogOutputChannel';
+import { ActiveDocumentLanguageSupportService } from './lsptoolshost/projectContext/activeDocumentLanguageSupportService';
 
 export function activateRoslyn(
     context: vscode.ExtensionContext,
@@ -65,6 +66,11 @@ export function activateRoslyn(
     const coreClrDebugPromise = getCoreClrDebugPromise(roslynLanguageServerStartedPromise);
 
     const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
+    const activeDocumentLanguageSupport = new ActiveDocumentLanguageSupportService(
+        roslynLanguageServerStartedPromise,
+        observableCsharpChannel
+    );
+    context.subscriptions.push(activeDocumentLanguageSupport);
     const exports: CSharpExtensionExports = {
         isLimitedActivation: false,
         initializationFinished: async () => {
@@ -81,6 +87,7 @@ export function activateRoslyn(
             sendServerRequestWithProgress: async (t, p, pr, ct) =>
                 await languageServerExport.sendRequestWithProgress(t, p, pr, ct),
             languageServerEvents: roslynLanguageServerEvents,
+            activeDocumentLanguageSupport,
         },
         getComponentFolder: (componentName) => {
             return getComponentFolder(componentName, languageServerOptions);
