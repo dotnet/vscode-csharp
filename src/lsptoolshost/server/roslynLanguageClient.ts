@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { ChildProcess } from 'child_process';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { CancellationToken, ErrorHandler, LanguageClientOptions, MessageSignature, State } from 'vscode-languageclient';
 import CompositeDisposable from '../../compositeDisposable';
@@ -13,6 +14,26 @@ import { RoslynLspErrorCodes } from './roslynProtocol';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
 import { ITelemetryReporter } from '../../shared/telemetryReporter';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
+
+/**
+ * How long to wait for the server process to be reaped after the connection closes.
+ * The connection closing and the process exiting are separate events, and the exit normally follows
+ * within a few milliseconds. This only elapses if the process is still alive (for example a protocol
+ * error), in which case we report the generic crash message.
+ */
+const serverExitTimeoutMs = 1000;
+
+/**
+ * SIGKILL cannot be caught, blocked, or ignored, and the .NET runtime never raises it on itself -
+ * fatal CLR errors (unhandled exceptions, stack overflow, Environment.FailFast) go through abort()
+ * and surface as SIGABRT instead. So SIGKILL means the OS or another program terminated the server:
+ * a Linux OOM killer, macOS Jetsam, a container memory limit, or `kill -9`.
+ *
+ * Other externally-originated signals such as SIGTERM are deliberately not treated this way. VS Code
+ * and our own teardown can send them during an intentional shutdown, so reporting them as an external
+ * kill risks blaming the user's environment for a normal stop.
+ */
+const externalTerminationSignal: NodeJS.Signals = 'SIGKILL';
 
 /**
  * Implementation of the base LanguageClient type that allows for additional items to be disposed of
@@ -29,6 +50,13 @@ export class RoslynLanguageClient extends LanguageClient {
      * This is reset when the server restarts.
      */
     private _hasShownConnectionClose = false;
+
+    /**
+     * The server process from the current session, retained so we can report how it ended.
+     * The base client clears its own reference before invoking the close handler, so reading
+     * `serverProcess` at crash time is too late.
+     */
+    private _closedServerProcess: ChildProcess | undefined;
 
     constructor(
         id: string,
@@ -59,6 +87,13 @@ export class RoslynLanguageClient extends LanguageClient {
     override async dispose(timeout?: number | undefined): Promise<void> {
         this._disposables.dispose();
         return super.dispose(timeout);
+    }
+
+    protected override async handleConnectionClosed(): Promise<void> {
+        // The base implementation drops its reference to the process before the close handler runs,
+        // so grab it here while it is still available.
+        this._closedServerProcess = this.serverProcess;
+        return super.handleConnectionClosed();
     }
 
     override handleFailedRequest<T>(
@@ -161,15 +196,36 @@ export class RoslynLanguageClient extends LanguageClient {
             return;
         }
 
+        // Set the guard before awaiting so the error and closed handlers cannot both get past it.
         this._hasShownConnectionClose = true;
-        this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ServerCrash);
-        this.showCrashNotificationCore();
+        // The close handler has already cleared serverProcess, so fall back to the process we kept.
+        void this.showCrashNotificationAsync(this.serverProcess ?? this._closedServerProcess);
     }
 
-    private showCrashNotificationCore() {
+    private async showCrashNotificationAsync(serverProcess: ChildProcess | undefined): Promise<void> {
+        const signal = await getExitSignal(serverProcess);
+        const externallyTerminated = signal === externalTerminationSignal;
+
+        this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ServerCrash, {
+            signal: signal ?? '',
+            externallyTerminated: externallyTerminated.toString(),
+        });
+
+        this.showCrashNotificationCore(externallyTerminated);
+    }
+
+    private showCrashNotificationCore(externallyTerminated: boolean) {
         showErrorMessageWithOptions(
             vscode,
-            vscode.l10n.t('The C# language server has crashed. Restart extensions to re-enable C# functionality.'),
+            externallyTerminated
+                ? // The server did not fail on its own, so leading with a crash report or a dump would
+                  // send the user down the wrong path. Name the likely external cause instead.
+                  vscode.l10n.t(
+                      'The C# language server was terminated by the operating system or another program rather than crashing. This is usually caused by running out of memory, a container memory limit, or another process stopping it. Restart extensions to re-enable C# functionality.'
+                  )
+                : vscode.l10n.t(
+                      'The C# language server has crashed. Restart extensions to re-enable C# functionality.'
+                  ),
             { modal: false },
             {
                 title: vscode.l10n.t('Restart extensions'),
@@ -180,9 +236,34 @@ export class RoslynLanguageClient extends LanguageClient {
                 action: async () => {
                     vscode.commands.executeCommand('csharp.reportIssue');
                     // Re-show the notification so the user can still restart extensions after reporting.
-                    this.showCrashNotificationCore();
+                    this.showCrashNotificationCore(externallyTerminated);
                 },
             }
         );
     }
+}
+
+/**
+ * Reports the signal that killed the server process, or null if it was not killed by one.
+ * The connection close is observed a few milliseconds before the process is reaped, so wait briefly
+ * for the exit instead of concluding that no signal was involved.
+ */
+async function getExitSignal(serverProcess: ChildProcess | undefined): Promise<NodeJS.Signals | null> {
+    if (serverProcess === undefined) {
+        return null;
+    }
+
+    // Node populates these once the process is reaped. If it already exited then 'exit' has fired and
+    // will not fire again for a listener added now, so read the result directly.
+    if (serverProcess.exitCode !== null || serverProcess.signalCode !== null) {
+        return serverProcess.signalCode;
+    }
+
+    return new Promise<NodeJS.Signals | null>((resolve) => {
+        const timeout = setTimeout(() => resolve(null), serverExitTimeoutMs);
+        serverProcess.once('exit', (_code, signal) => {
+            clearTimeout(timeout);
+            resolve(signal);
+        });
+    });
 }

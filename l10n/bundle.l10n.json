@@ -108,6 +108,7 @@
   "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?": "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?",
   "Go to output": "Go to output",
   "Report Issue": "Report Issue",
+  "The C# language server was terminated by the operating system or another program rather than crashing. This is usually caused by running out of memory, a container memory limit, or another process stopping it. Restart extensions to re-enable C# functionality.": "The C# language server was terminated by the operating system or another program rather than crashing. This is usually caused by running out of memory, a container memory limit, or another process stopping it. Restart extensions to re-enable C# functionality.",
   "The C# language server has crashed. Restart extensions to re-enable C# functionality.": "The C# language server has crashed. Restart extensions to re-enable C# functionality.",
   "Restart extensions": "Restart extensions",
   "Restore {0}": "Restore {0}",
