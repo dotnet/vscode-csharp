@@ -52,11 +52,12 @@ export class RoslynLanguageClient extends LanguageClient {
     private _hasShownConnectionClose = false;
 
     /**
-     * The server process from the current session, retained so we can report how it ended.
-     * The base client clears its own reference before invoking the close handler, so reading
-     * `serverProcess` at crash time is too late.
+     * The signal that killed the server process for the current session, captured when the connection
+     * closes. Holding the resolved answer rather than the process itself means we do not keep a dead
+     * process and its stdio buffers alive. Reset on restart so a previous session's exit is never
+     * attributed to a later failure.
      */
-    private _closedServerProcess: ChildProcess | undefined;
+    private _serverExitSignal: Promise<NodeJS.Signals | null> | undefined;
 
     constructor(
         id: string,
@@ -80,6 +81,7 @@ export class RoslynLanguageClient extends LanguageClient {
         this.onDidChangeState((e) => {
             if (e.newState === State.Running) {
                 this._hasShownConnectionClose = false;
+                this._serverExitSignal = undefined;
             }
         });
     }
@@ -90,9 +92,10 @@ export class RoslynLanguageClient extends LanguageClient {
     }
 
     protected override async handleConnectionClosed(): Promise<void> {
-        // The base implementation drops its reference to the process before the close handler runs,
-        // so grab it here while it is still available.
-        this._closedServerProcess = this.serverProcess;
+        // The base implementation drops its reference to the process before the close handler runs, so
+        // start listening now. Clearing that reference does not unregister the listener, and the process
+        // is normally reaped a few milliseconds later.
+        this._serverExitSignal = getExitSignal(this.serverProcess);
         return super.handleConnectionClosed();
     }
 
@@ -198,12 +201,13 @@ export class RoslynLanguageClient extends LanguageClient {
 
         // Set the guard before awaiting so the error and closed handlers cannot both get past it.
         this._hasShownConnectionClose = true;
-        // The close handler has already cleared serverProcess, so fall back to the process we kept.
-        void this.showCrashNotificationAsync(this.serverProcess ?? this._closedServerProcess);
+        // The connection close captures the signal itself, since it clears the process reference first.
+        // Reaching here without it means the connection errored while the process is still ours to read.
+        void this.showCrashNotificationAsync(this._serverExitSignal ?? getExitSignal(this.serverProcess));
     }
 
-    private async showCrashNotificationAsync(serverProcess: ChildProcess | undefined): Promise<void> {
-        const signal = await getExitSignal(serverProcess);
+    private async showCrashNotificationAsync(exitSignal: Promise<NodeJS.Signals | null>): Promise<void> {
+        const signal = await exitSignal;
         const externallyTerminated = signal === externalTerminationSignal;
 
         this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ServerCrash, {

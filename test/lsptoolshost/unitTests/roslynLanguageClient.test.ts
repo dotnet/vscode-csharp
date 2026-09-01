@@ -8,7 +8,16 @@ import { ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
 
 jest.mock('vscode-languageclient/node', () => ({
-    LanguageClient: class {},
+    LanguageClient: class {
+        serverProcess: unknown;
+        /**
+         * Stands in for the base implementation, which drops its reference to the server process
+         * before invoking the close handler.
+         */
+        async handleConnectionClosed(): Promise<void> {
+            this.serverProcess = undefined;
+        }
+    },
     State: { Running: 2 },
 }));
 jest.mock('vscode-languageclient', () => ({
@@ -20,10 +29,13 @@ jest.mock('vscode-languageclient', () => ({
     ProtocolRequestType: class {},
     RequestType: class {},
     RequestType0: class {},
+    State: { Running: 2 },
 }));
 
 import { RoslynLanguageClient } from '../../../src/lsptoolshost/server/roslynLanguageClient';
 import { TelemetryEventNames } from '../../../src/shared/telemetryEventNames';
+
+const runningState = 2;
 
 /** A stand-in for an already reaped process, which is what we normally observe on a crash. */
 function exitedProcess(exitCode: number | null, signalCode: NodeJS.Signals | null): ChildProcess {
@@ -45,7 +57,7 @@ function createClient(serverProcess?: ChildProcess) {
 
     client._hasShownConnectionClose = false;
     client._telemetryReporter = { sendTelemetryEvent };
-    client._closedServerProcess = serverProcess;
+    client.serverProcess = serverProcess;
     client.showCrashNotificationCore = showCrashNotificationCore;
 
     return { client, sendTelemetryEvent, showCrashNotificationCore };
@@ -136,17 +148,39 @@ describe('RoslynLanguageClient', () => {
         expect(showCrashNotificationCore).toHaveBeenCalledWith(true);
     });
 
-    test('falls back to the generic crash message when the process outlives the connection', async () => {
-        jest.useFakeTimers();
-        try {
-            const { client, showCrashNotificationCore } = createClient(runningProcess());
+    test('captures the signal before the base client clears the process reference', async () => {
+        const serverProcess = runningProcess();
+        const { client, showCrashNotificationCore } = createClient(serverProcess);
 
-            client.showCrashNotification();
-            await jest.advanceTimersByTimeAsync(1000);
+        await client.handleConnectionClosed();
 
-            expect(showCrashNotificationCore).toHaveBeenCalledWith(false);
-        } finally {
-            jest.useRealTimers();
-        }
+        // The close handler leaves nothing to read the signal from, so the capture has to have
+        // happened first. Clearing that reference does not unregister our exit listener.
+        expect(client.serverProcess).toBeUndefined();
+
+        client.showCrashNotification();
+        serverProcess.emit('exit', null, 'SIGKILL');
+        await flushPendingNotifications();
+
+        expect(showCrashNotificationCore).toHaveBeenCalledWith(true);
+    });
+
+    test('clears the captured exit signal when the server restarts', async () => {
+        const { client, showCrashNotificationCore } = createClient();
+        let onStateChange: ((e: { newState: number }) => void) | undefined;
+        client.onDidChangeState = (handler: (e: { newState: number }) => void) => (onStateChange = handler);
+        client.registerStateChangeHandler();
+
+        // A previous session was killed externally and reported.
+        client._serverExitSignal = Promise.resolve<NodeJS.Signals>('SIGKILL');
+        client._hasShownConnectionClose = true;
+
+        onStateChange!({ newState: runningState });
+
+        // A later failure in the new session must not inherit the old session's exit.
+        client.showCrashNotification();
+        await flushPendingNotifications();
+
+        expect(showCrashNotificationCore).toHaveBeenCalledWith(false);
     });
 });
