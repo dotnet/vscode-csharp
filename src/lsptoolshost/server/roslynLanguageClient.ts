@@ -6,7 +6,14 @@
 import * as vscode from 'vscode';
 import { ChildProcess } from 'child_process';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
-import { CancellationToken, ErrorHandler, LanguageClientOptions, MessageSignature, State } from 'vscode-languageclient';
+import {
+    CancellationToken,
+    ErrorHandler,
+    LanguageClientOptions,
+    MessageSignature,
+    MessageTransports,
+    State,
+} from 'vscode-languageclient';
 import CompositeDisposable from '../../compositeDisposable';
 import { IDisposable } from '../../disposable';
 import { languageServerOptions } from '../../shared/options';
@@ -52,10 +59,11 @@ export class RoslynLanguageClient extends LanguageClient {
     private _hasShownConnectionClose = false;
 
     /**
-     * The signal that killed the server process for the current session, captured when the connection
-     * closes. Holding the resolved answer rather than the process itself means we do not keep a dead
-     * process and its stdio buffers alive. Reset on restart so a previous session's exit is never
-     * attributed to a later failure.
+     * Resolves with the signal that killed the server process, or null if it ended some other way.
+     * Established when the server launches, both because a listener attached after the process has
+     * been reaped never fires and because the base client drops its own reference to the process
+     * before the close handler runs. Replaced on every launch, so it always describes the process
+     * for the current session.
      */
     private _serverExitSignal: Promise<NodeJS.Signals | null> | undefined;
 
@@ -81,7 +89,6 @@ export class RoslynLanguageClient extends LanguageClient {
         this.onDidChangeState((e) => {
             if (e.newState === State.Running) {
                 this._hasShownConnectionClose = false;
-                this._serverExitSignal = undefined;
             }
         });
     }
@@ -91,12 +98,12 @@ export class RoslynLanguageClient extends LanguageClient {
         return super.dispose(timeout);
     }
 
-    protected override async handleConnectionClosed(): Promise<void> {
-        // The base implementation drops its reference to the process before the close handler runs, so
-        // start listening now. Clearing that reference does not unregister the listener, and the process
-        // is normally reaped a few milliseconds later.
-        this._serverExitSignal = getExitSignal(this.serverProcess);
-        return super.handleConnectionClosed();
+    protected override async createMessageTransports(encoding: string): Promise<MessageTransports> {
+        const transports = await super.createMessageTransports(encoding);
+        // Start listening as soon as the process exists - see _serverExitSignal for why waiting until
+        // the crash is reported would be too late.
+        this._serverExitSignal = waitForExitSignal(this.serverProcess);
+        return transports;
     }
 
     override handleFailedRequest<T>(
@@ -201,13 +208,34 @@ export class RoslynLanguageClient extends LanguageClient {
 
         // Set the guard before awaiting so the error and closed handlers cannot both get past it.
         this._hasShownConnectionClose = true;
-        // The connection close captures the signal itself, since it clears the process reference first.
-        // Reaching here without it means the connection errored while the process is still ours to read.
-        void this.showCrashNotificationAsync(this._serverExitSignal ?? getExitSignal(this.serverProcess));
+        void this.showCrashNotificationAsync();
     }
 
-    private async showCrashNotificationAsync(exitSignal: Promise<NodeJS.Signals | null>): Promise<void> {
-        const signal = await exitSignal;
+    /**
+     * Waits briefly for the server process to be reaped. The connection closes a few milliseconds
+     * before the exit is reported, so give it a moment rather than concluding no signal was involved.
+     * If the process outlives the connection this reports no signal and we show the generic message.
+     */
+    private async getExitSignal(): Promise<NodeJS.Signals | null> {
+        if (this._serverExitSignal === undefined) {
+            return null;
+        }
+
+        let timeout: NodeJS.Timeout | undefined;
+        try {
+            return await Promise.race([
+                this._serverExitSignal,
+                new Promise<null>((resolve) => {
+                    timeout = setTimeout(() => resolve(null), serverExitTimeoutMs);
+                }),
+            ]);
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
+    private async showCrashNotificationAsync(): Promise<void> {
+        const signal = await this.getExitSignal();
         const externallyTerminated = signal === externalTerminationSignal;
 
         this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ServerCrash, {
@@ -248,26 +276,16 @@ export class RoslynLanguageClient extends LanguageClient {
 }
 
 /**
- * Reports the signal that killed the server process, or null if it was not killed by one.
- * The connection close is observed a few milliseconds before the process is reaped, so wait briefly
- * for the exit instead of concluding that no signal was involved.
+ * Resolves when the server process exits, reporting the signal that killed it if there was one.
+ * Never times out: callers bound their own wait. Attached while the process is known to be running,
+ * so there is no risk of missing an exit that already happened.
  */
-async function getExitSignal(serverProcess: ChildProcess | undefined): Promise<NodeJS.Signals | null> {
+async function waitForExitSignal(serverProcess: ChildProcess | undefined): Promise<NodeJS.Signals | null> {
     if (serverProcess === undefined) {
-        return null;
-    }
-
-    // Node populates these once the process is reaped. If it already exited then 'exit' has fired and
-    // will not fire again for a listener added now, so read the result directly.
-    if (serverProcess.exitCode !== null || serverProcess.signalCode !== null) {
-        return serverProcess.signalCode;
+        return Promise.resolve(null);
     }
 
     return new Promise<NodeJS.Signals | null>((resolve) => {
-        const timeout = setTimeout(() => resolve(null), serverExitTimeoutMs);
-        serverProcess.once('exit', (_code, signal) => {
-            clearTimeout(timeout);
-            resolve(signal);
-        });
+        serverProcess.once('exit', (_code, signal) => resolve(signal));
     });
 }
