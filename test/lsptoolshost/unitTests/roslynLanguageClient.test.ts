@@ -91,9 +91,38 @@ describe('RoslynLanguageClient', () => {
         await flushPendingNotifications();
 
         expect(sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.ServerCrash, {
-            signal: 'SIGKILL',
             externallyTerminated: 'true',
         });
+        expect(showCrashNotificationCore).toHaveBeenCalledWith(true);
+    });
+
+    // .NET handles SIGTERM rather than dying from it, shutting down and exiting with 128 + SIGTERM.
+    // This is how an external termination usually reaches us, and it arrives as a code, not a signal.
+    test('reports an external termination for the SIGTERM exit code', async () => {
+        const serverProcess = runningProcess();
+        const { client, sendTelemetryEvent, showCrashNotificationCore } = createClient();
+        await launchServer(client, serverProcess);
+
+        serverProcess.emit('exit', 143, null);
+        client.showCrashNotification();
+        await flushPendingNotifications();
+
+        expect(sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.ServerCrash, {
+            externallyTerminated: 'true',
+        });
+        expect(showCrashNotificationCore).toHaveBeenCalledWith(true);
+    });
+
+    // Some runtime paths re-raise SIGTERM instead of exiting with 143.
+    test('reports an external termination when SIGTERM arrives as a signal', async () => {
+        const serverProcess = runningProcess();
+        const { client, showCrashNotificationCore } = createClient();
+        await launchServer(client, serverProcess);
+
+        serverProcess.emit('exit', null, 'SIGTERM');
+        client.showCrashNotification();
+        await flushPendingNotifications();
+
         expect(showCrashNotificationCore).toHaveBeenCalledWith(true);
     });
 
@@ -108,25 +137,22 @@ describe('RoslynLanguageClient', () => {
         await flushPendingNotifications();
 
         expect(sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.ServerCrash, {
-            signal: 'SIGABRT',
             externallyTerminated: 'false',
         });
         expect(showCrashNotificationCore).toHaveBeenCalledWith(false);
     });
 
-    test('reports a crash when the process exited with a code rather than a signal', async () => {
+    // 0xE0434352 is an unhandled managed exception and 0xC0000005 an access violation, both of which
+    // are the server failing on its own rather than being stopped.
+    test.each([3762504530, 3221225477, 1])('reports a crash for exit code %s', async (exitCode) => {
         const serverProcess = runningProcess();
-        const { client, sendTelemetryEvent, showCrashNotificationCore } = createClient();
+        const { client, showCrashNotificationCore } = createClient();
         await launchServer(client, serverProcess);
 
-        serverProcess.emit('exit', 1, null);
+        serverProcess.emit('exit', exitCode, null);
         client.showCrashNotification();
         await flushPendingNotifications();
 
-        expect(sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.ServerCrash, {
-            signal: '',
-            externallyTerminated: 'false',
-        });
         expect(showCrashNotificationCore).toHaveBeenCalledWith(false);
     });
 
