@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.150.x
-* Update Roslyn to 5.12.0-1.26452.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.12.0-1.26452.1 (PR: [#9725](https://github.com/dotnet/vscode-csharp/pull/9725))
   * Ignore spurious TypeScript diagnostics caused by Razor code (PR: [#85129](https://github.com/dotnet/roslyn/pull/85129))
   * Clamp LSP position character to the line end (PR: [#85125](https://github.com/dotnet/roslyn/pull/85125))
   * Various improvements to project loading and restore (PR: [#85109](https://github.com/dotnet/roslyn/pull/85109))
