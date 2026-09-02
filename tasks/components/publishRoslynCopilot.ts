@@ -58,9 +58,9 @@ async function publishRoslynCopilot() {
     const safeVersion = version.replace(/[^A-Za-z0-9_.-]/g, '-');
     const branch = `update/roslyn-copilot-${safeVersion}`;
 
-    const pat = process.env['GitHubPAT'];
-    if (!pat) {
-        throw 'No GitHub PAT found.';
+    const githubToken = process.env['GitHubToken'];
+    if (!githubToken) {
+        throw 'No GitHub token found.';
     }
 
     const owner = 'dotnet';
@@ -73,7 +73,7 @@ async function publishRoslynCopilot() {
         console.log(`##vso[task.logissue type=warning]${branch} already exists in origin. Skip pushing.`);
         return;
     }
-    const existingPRUrl = await findPRByTitle(pat, owner, repo, title);
+    const existingPRUrl = await findPRByTitle(githubToken, owner, repo, title);
     if (existingPRUrl) {
         console.log(
             `##vso[task.logissue type=warning] Pull request with the same name already exists: ${existingPRUrl}`
@@ -98,8 +98,8 @@ async function publishRoslynCopilot() {
     await createCommit(branch, ['package.json'], `Update RoslynCopilot version to ${version}`);
 
     // Push branch and create PR
-    await pushBranch(branch, pat, owner, repo);
-    await createPullRequest(pat, owner, repo, branch, title, body);
+    await pushBranch(branch, githubToken, owner, repo);
+    await createPullRequest(githubToken, owner, repo, branch, title, body);
 }
 
 /**
