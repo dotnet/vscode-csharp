@@ -1,10 +1,6 @@
 trigger: none
 pr: none
 
-variables:
-# Variable group contains PAT for bot account.
-- group: dotnet-vscode-insertion-variables
-
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -68,7 +64,21 @@ extends:
             npm install
           displayName: 'Install tools'
 
+        - task: AzureCLI@2
+          displayName: 'Get GitHub App installation token'
+          inputs:
+            azureSubscription: 'devdiv-oneloc-githubapp'
+            scriptType: pscore
+            scriptLocation: inlineScript
+            inlineScript: |
+              & "$(Build.SourcesDirectory)/azure-pipelines/Get-GitHubAppToken.ps1" `
+                -KeyVaultName 'EngKeyVault' `
+                -KeyName 'oneloc-localization-app-key' `
+                -AppClientId 'Iv23lijBU8x3gc9lDOc9' `
+                -InstallationOwner 'dotnet' `
+                -OutputVariableName 'GitHubAppInstallationToken'
+
         - pwsh: npm run publishRoslynCopilot -- --userName dotnet-maestro-bot --email dotnet-maestro-bot@microsoft.com --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
           displayName: 'Create component update PR'
           env:
-            GitHubPAT: $(BotAccount-dotnet-maestro-bot-PAT)
+            GitHubToken: $(GitHubAppInstallationToken)
