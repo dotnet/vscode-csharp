@@ -46,7 +46,7 @@ describe(`Razor References ${testAssetWorkspace.description}`, function () {
                 expect(locations.length).toBe(1);
                 const definitionLocation = locations[0];
 
-                expect(definitionLocation.uri.toString()).toBe(vscode.window.activeTextEditor!.document.uri.toString());
+                integrationHelpers.expectPath(vscode.window.activeTextEditor!.document.uri, definitionLocation.uri);
                 expect(definitionLocation.range.start.line).toBe(11);
                 expect(definitionLocation.range.start.character).toBe(16);
                 expect(definitionLocation.range.end.line).toBe(11);
@@ -74,21 +74,21 @@ describe(`Razor References ${testAssetWorkspace.description}`, function () {
                 expect(locations.length).toBe(3);
 
                 let definitionLocation = locations[0];
-                expect(definitionLocation.uri.toString()).toBe(vscode.window.activeTextEditor!.document.uri.toString());
+                integrationHelpers.expectPath(vscode.window.activeTextEditor!.document.uri, definitionLocation.uri);
                 expect(definitionLocation.range.start.line).toBe(6);
                 expect(definitionLocation.range.start.character).toBe(33);
                 expect(definitionLocation.range.end.line).toBe(6);
                 expect(definitionLocation.range.end.character).toBe(45);
 
                 definitionLocation = locations[1];
-                expect(definitionLocation.uri.toString()).toBe(vscode.window.activeTextEditor!.document.uri.toString());
+                integrationHelpers.expectPath(vscode.window.activeTextEditor!.document.uri, definitionLocation.uri);
                 expect(definitionLocation.range.start.line).toBe(11);
                 expect(definitionLocation.range.start.character).toBe(16);
                 expect(definitionLocation.range.end.line).toBe(11);
                 expect(definitionLocation.range.end.character).toBe(28);
 
                 definitionLocation = locations[2];
-                expect(definitionLocation.uri.toString()).toBe(vscode.window.activeTextEditor!.document.uri.toString());
+                integrationHelpers.expectPath(vscode.window.activeTextEditor!.document.uri, definitionLocation.uri);
                 expect(definitionLocation.range.start.line).toBe(15);
                 expect(definitionLocation.range.start.character).toBe(8);
                 expect(definitionLocation.range.end.line).toBe(15);
@@ -117,7 +117,7 @@ describe(`Razor References ${testAssetWorkspace.description}`, function () {
                 expect(locations.length).toBe(1);
                 const definitionLocation = locations[0];
 
-                expect(definitionLocation.uri.toString()).toBe(vscode.window.activeTextEditor!.document.uri.toString());
+                integrationHelpers.expectPath(vscode.window.activeTextEditor!.document.uri, definitionLocation.uri);
                 expect(definitionLocation.range.start.line).toBe(23);
                 expect(definitionLocation.range.start.character).toBe(10);
                 expect(definitionLocation.range.end.line).toBe(23);
