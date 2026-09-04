@@ -5,7 +5,7 @@
 
 # 2.152.x
 
-* Update Roslyn to 5.12.0-1.26453.19 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.12.0-1.26453.19 (PR: [#9731](https://github.com/dotnet/vscode-csharp/pull/9731))
   * Allow Razor to supply editorconfig options during code action cleanup (PR: [#85128](https://github.com/dotnet/roslyn/pull/85128))
   * Fix completion crash with stale linked documents (PR: [#85134](https://github.com/dotnet/roslyn/pull/85134))
   * Use vscode-uri semantics for parsing URIs (PR: [#83593](https://github.com/dotnet/roslyn/pull/83593))
