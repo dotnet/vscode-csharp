@@ -39,6 +39,27 @@ describe('Asset generation: csproj', () => {
         expect(segments).toStrictEqual(['${workspaceFolder}', 'testApp.csproj']);
     });
 
+    test("Generated 'watch' task uses the project path when the solution path is available", () => {
+        const rootPath = path.resolve('testRoot');
+        const info = createMSBuildWorkspaceInformation(
+            path.join(rootPath, 'testApp.csproj'),
+            'testApp',
+            'netcoreapp1.0'
+        );
+        info[0].solutionPath = path.join(rootPath, 'testApp.sln');
+        const generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+        generator.setStartupProject(0);
+        const tasksJson = generator.createTasksConfiguration();
+
+        const buildTask = tasksJson.tasks!.find((task) => task.label === 'build');
+        isNotNull(buildTask?.args);
+        expect(buildTask.args).toContain('${workspaceFolder}/testApp.sln');
+
+        const watchTask = tasksJson.tasks!.find((task) => task.label === 'watch');
+        isNotNull(watchTask?.args);
+        expect(watchTask.args).toStrictEqual(['watch', 'run', '--project', '${workspaceFolder}/testApp.csproj']);
+    });
+
     test("Generated 'build' and 'publish' tasks have the property GenerateFullPaths set to true ", () => {
         const rootPath = path.resolve('testRoot');
         const info = createMSBuildWorkspaceInformation(

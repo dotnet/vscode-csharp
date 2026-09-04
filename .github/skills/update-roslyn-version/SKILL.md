@@ -15,7 +15,7 @@ This skill describes how to update the Roslyn language server version in the vsc
   - If unable to find local roslyn repo, ask the user for its location.
 2. The `roslyn-tools` CLI tool must be installed as a global .NET tool:
    ```powershell
-   dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+   dotnet tool install -g Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
    ```
    **Note**: After installation, the tool is invoked as `roslyn-tools` (not `dotnet roslyn-tools`)
 3. You must have authenticated with GitHub for `roslyn-tools`:
@@ -176,21 +176,29 @@ Note: Leave the PR number blank initially (just `[#]`) - it will be updated afte
 
 ### Step 8: Filter Changelog Entries
 
-Review the changelog entries in `CHANGELOG.md` and remove any PRs that obviously don't affect VS Code. Remove entries that are:
+Treat the changelog as a concise list of user-facing VS Code editor and language server changes, not a list of all production changes in Roslyn. Review the PR title and, when its impact is ambiguous, its changed files or description.
+
+Remove entries that are:
 
 - **Infrastructure/Build changes**: CI/CD pipelines, build scripts, Azure DevOps configurations
 - **Visual Studio-only changes**: Features or fixes specific to Visual Studio IDE (not VS Code)
 - **Test-only changes**: Test infrastructure, test fixes that don't affect production code
 - **Internal tooling**: Changes to internal tools not used by the language server
 - **Documentation-only**: README updates, internal docs (unless they document user-facing features)
+- **Compiler-only changes**: Language implementation, parsing, lowering, emit, code generation, compiler APIs, or compiler performance changes without direct editor or language server impact
+- **Razor compiler internals**: Razor parsing, lowering, code generation, or compiler architecture changes that do not directly change the VS Code editing experience
+- **Internal refactoring and dependencies**: Architectural refactors, implementation details, package updates, or internal performance work unless they have a clear user-visible effect in VS Code
 
 Keep entries that are:
 - Language server protocol (LSP) changes
-- Code analysis/diagnostics improvements
+- Code analysis or diagnostics improvements visible in the editor
 - Completion, navigation, refactoring features
-- Performance improvements
+- Performance improvements specifically affecting editor or language server responsiveness
 - Bug fixes that affect language server behavior
-- API changes that could affect VS Code extension
+- Razor changes that directly affect editing features such as formatting, completion, navigation, or code actions
+- API changes consumed by the VS Code extension or language server
+
+When uncertain, omit the entry from `CHANGELOG.md`; the complete unfiltered list remains available in the pull request description.
 
 ### Step 9: Commit and Push
 

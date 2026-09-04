@@ -41,11 +41,11 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.11.0-1.26405.8",
+    "roslyn": "5.12.0-1.26452.1",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.10.12014.341",
-    "testDiscovery": "9.9.223-ge3811b"
+    "testDiscovery": "9.9.434-g84ca4d"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -417,7 +417,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -427,12 +427,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "8C8AA11A7628875DA1E502455AB1C086803F5E02BFF4B620D921B117B7BDCED5"
+      "integrity": "5E3167514EC72B2B08F055C0CB853A7187B86FD5D29CA5623C1FB17178153381"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-win10-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -441,12 +441,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "EFD91A8EBE490C154AA237E7888DE9F6019FEAB943AD4DDBFE3CA846EE8E6544"
+      "integrity": "344AA103DCF6F9A8818C327E0399BB5E3B2C44586D7903A0FAA39E463287CD5C"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -460,12 +460,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "7E83CD507C3566F3CF0DE54EED71A5197476D2373F7BDF67488B8601A1383EF8"
+      "integrity": "AC8C270FA89934E024C8DEEFE342830585E5B53EEC8433517B5D8FB751044A10"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-osx-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -478,12 +478,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "11AE64045BFB087F653DC2296DA5E436971C24DFA0583C6B7F63D037659FB832"
+      "integrity": "5697A1269C7B51BC1E0EFF9478C6835643F16A3292582AD68ADA4D22836F888E"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-linux-arm.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -496,12 +496,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "36FED882BED9C961EF0F5D96209E659AC6CD92E5BB168330C80B83BB5AD633BE"
+      "integrity": "B6A27A559866CC3EC4B8D470E880DC0A38B1AAED25CF28750C775B05F0635136"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-linux-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -514,12 +514,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "46D51AFD9629A2480560209D83D2524655ABE86E27A20FDCE230B69729440B1D"
+      "integrity": "4A98E3798B9D78C44446EA2A54C35233ED2A98C0CDE792D1DAD21B6034121B28"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -532,12 +532,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "B4E2AE93C40FD39FB045626395BFDEDDD4885A0F122EA75D0B955092C2977BBB"
+      "integrity": "F72445BB3931C299A0FC6A7D435B03F6C25625B1BB1D9DDEE7AA5D0F0D6CEB19"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -550,12 +550,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "F101964618437ADE5C8A9438C8C2A59E0149399A1CD468684FB2A1349137B5A6"
+      "integrity": "A4E94F188488CBB1AAAD0CFB087300CABC17285620A582A3A6B01C0A8AAE258E"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6656678b-5409-42ef-990e-c4f3cd7b5f5a/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/dffb86a2-891d-47e3-80bd-fb847397c759/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -568,7 +568,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "C504D062DC09C15FC7C0329147BEAA39117A3CBC4B3D9B0724B65265D1BF25E1"
+      "integrity": "A4C93FB850211AE2138FD8FD1DACDBD2571D65D258A357135740F619DA14E08D"
     },
     {
       "id": "RazorOmnisharp",
