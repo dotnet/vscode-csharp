@@ -22,6 +22,8 @@ import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider'
 import { omnisharpOptions } from '../shared/options';
 import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { CSharpDevKitExports } from '../csharpDevKitExports';
+import { resolveWorkspaceDotnetHost, WorkspaceDotnetHostResolution } from './workspaceDotnetHost';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -29,11 +31,30 @@ export async function activate(
     platformInformation: PlatformInformation,
     eventStream: EventStream,
     csharpOutputChannel: vscode.OutputChannel,
-    languageServerStartedPromise: Promise<any> | undefined
+    languageServerStartedPromise: Promise<any> | undefined,
+    csharpDevKitExports: Promise<CSharpDevKitExports | undefined> | undefined
 ) {
     const disposables = new CompositeDisposable();
+    let disposed = false;
+    context.subscriptions.push({
+        dispose: () => {
+            disposed = true;
+        },
+    });
 
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
+    const workspaceDotnetHost = resolveWorkspaceDotnetHost(csharpDevKitExports);
+    let completeDebuggerInstallPromise: Promise<boolean> | undefined;
+    const ensureDebuggerInstallComplete = async () => {
+        completeDebuggerInstallPromise ??= completeDebuggerInstall(
+            debugUtil,
+            platformInformation,
+            eventStream,
+            workspaceDotnetHost,
+            () => disposed
+        );
+        return await completeDebuggerInstallPromise;
+    };
 
     if (!CoreClrDebugUtil.existsSync(debugUtil.debugAdapterDir())) {
         const isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
@@ -48,7 +69,7 @@ export async function activate(
             showInstallErrorMessage(eventStream);
         }
     } else if (!CoreClrDebugUtil.existsSync(debugUtil.installCompleteFilePath())) {
-        await completeDebuggerInstall(debugUtil, platformInformation, eventStream);
+        await ensureDebuggerInstallComplete();
     }
 
     // register process picker for attach for legacy configurations.
@@ -97,11 +118,12 @@ export async function activate(
     );
 
     const factory = new DebugAdapterExecutableFactory(
-        debugUtil,
         platformInformation,
         eventStream,
         thisExtension.packageJSON,
-        thisExtension.extensionPath
+        thisExtension.extensionPath,
+        ensureDebuggerInstallComplete,
+        workspaceDotnetHost
     );
     /** 'clr' type does not have a intial configuration provider, but we need to register it to support the common debugger features listed in {@link BaseVsDbgConfigurationProvider} */
     context.subscriptions.push(
@@ -177,10 +199,24 @@ async function checkIsValidArchitecture(
 async function completeDebuggerInstall(
     debugUtil: CoreClrDebugUtil,
     platformInformation: PlatformInformation,
-    eventStream: EventStream
+    eventStream: EventStream,
+    workspaceDotnetHost: Promise<WorkspaceDotnetHostResolution>,
+    isDisposed: () => boolean
 ): Promise<boolean> {
     try {
-        await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
+        const workspaceHost = await workspaceDotnetHost;
+        if (workspaceHost.kind === 'blocked') {
+            return false;
+        }
+
+        if (workspaceHost.kind === 'ready') {
+            await debugUtil.checkDotNetCli([], {
+                dotnetExecutablePath: workspaceHost.dotnetPath,
+                environment: workspaceHost.environment,
+            });
+        } else {
+            await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
+        }
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
@@ -201,8 +237,10 @@ async function completeDebuggerInstall(
         const error = err as Error;
 
         // Check for dotnet tools failed. pop the UI
-        showDotnetToolsWarning(error.message);
-        eventStream.post(new DebuggerPrerequisiteWarning(error.message));
+        if (!isDisposed()) {
+            showDotnetToolsWarning(error.message);
+            eventStream.post(new DebuggerPrerequisiteWarning(error.message));
+        }
         // TODO: log telemetry?
         return false;
     }
@@ -257,11 +295,12 @@ function showDotnetToolsWarning(message: string): void {
 // Else it will launch the debug adapter
 export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescriptorFactory {
     constructor(
-        private readonly debugUtil: CoreClrDebugUtil,
         private readonly platformInfo: PlatformInformation,
         private readonly eventStream: EventStream,
         private readonly packageJSON: any,
-        private readonly extensionPath: string
+        private readonly extensionPath: string,
+        private readonly ensureDebuggerInstallComplete: () => Promise<boolean>,
+        private readonly workspaceDotnetHost: Promise<WorkspaceDotnetHostResolution>
     ) {}
 
     async createDebugAdapterDescriptor(
@@ -301,7 +340,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             }
             // install.complete does not exist, check dotnetCLI to see if we can complete.
             else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-                const success = await completeDebuggerInstall(this.debugUtil, this.platformInfo, this.eventStream);
+                const success = await this.ensureDebuggerInstallComplete();
                 if (!success) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());
                     throw new Error(
@@ -317,7 +356,14 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
+            const workspaceHost = await this.workspaceDotnetHost;
+            const dotNetInfo =
+                workspaceHost.kind === 'ready'
+                    ? await getDotnetInfo([], {
+                          dotnetExecutablePath: workspaceHost.dotnetPath,
+                          environment: workspaceHost.environment,
+                      })
+                    : await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
             const targetArchitecture = getTargetArchitecture(
                 this.platformInfo,
                 _session.configuration.targetArchitecture,
@@ -332,7 +378,9 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
             // Look to see if DOTNET_ROOT is set, then use dotnet cli path
             const dotnetRoot: string =
-                process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+                (workspaceHost.kind === 'ready' && workspaceHost.environment?.DOTNET_ROOT) ||
+                process.env.DOTNET_ROOT ||
+                (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
 
             let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
             if (dotnetRoot) {
