@@ -35,7 +35,10 @@ export function activateRoslyn(
     csharpChannel: vscode.LogOutputChannel,
     reporter: TelemetryReporter,
     csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
-    getCoreClrDebugPromise: (languageServerStarted: Promise<any>) => Promise<void>
+    getCoreClrDebugPromise: (
+        languageServerStarted: Promise<any>,
+        csharpDevKitExports: Promise<CSharpDevKitExports | undefined>
+    ) => Promise<void>
 ): CSharpExtensionExports {
     const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
     context.subscriptions.push(roslynLanguageServerEvents);
@@ -62,8 +65,8 @@ export function activateRoslyn(
     );
 
     debugSessionTracker.initializeDebugSessionHandlers(context);
-    tryGetCSharpDevKitExtensionExports(csharpDevkitExtension, observableCsharpChannel);
-    const coreClrDebugPromise = getCoreClrDebugPromise(roslynLanguageServerStartedPromise);
+    const csharpDevKitExports = tryGetCSharpDevKitExtensionExports(csharpDevkitExtension, observableCsharpChannel);
+    const coreClrDebugPromise = getCoreClrDebugPromise(roslynLanguageServerStartedPromise, csharpDevKitExports);
 
     const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
     const activeDocumentLanguageSupport = new ActiveDocumentLanguageSupportService(
@@ -107,11 +110,15 @@ export function activateRoslyn(
  * This method will try to get the CSharpDevKitExports through a thenable promise,
  * awaiting `activate` will cause this extension's activation to hang.
  */
-function tryGetCSharpDevKitExtensionExports(
+async function tryGetCSharpDevKitExtensionExports(
     csharpDevKit: vscode.Extension<CSharpDevKitExports> | undefined,
     csharpChannel: vscode.LogOutputChannel
-): void {
-    csharpDevKit?.activate().then(
+): Promise<CSharpDevKitExports | undefined> {
+    if (!csharpDevKit) {
+        return Promise.resolve(undefined);
+    }
+
+    return Promise.resolve(csharpDevKit.activate()).then(
         async (exports: CSharpDevKitExports) => {
             if (exports && exports.serviceBroker) {
                 // When proffering this IServiceBroker into our own container,
@@ -131,9 +138,12 @@ function tryGetCSharpDevKitExtensionExports(
             } else {
                 csharpChannel.error(`'${csharpDevkitExtensionId}' activated but did not return expected Exports.`);
             }
+
+            return exports;
         },
         () => {
             csharpChannel.error(`Failed to activate '${csharpDevkitExtensionId}'`);
+            return undefined;
         }
     );
 }
