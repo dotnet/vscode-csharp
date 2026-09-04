@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.152.x
+
 # 2.151.x
 * Update Roslyn to 5.12.0-1.26452.1 (PR: [#9725](https://github.com/dotnet/vscode-csharp/pull/9725))
   * Ignore spurious TypeScript diagnostics caused by Razor code (PR: [#85129](https://github.com/dotnet/roslyn/pull/85129))
