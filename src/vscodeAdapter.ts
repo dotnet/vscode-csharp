@@ -991,6 +991,7 @@ export interface vscode {
             options: MessageOptions,
             ...items: T[]
         ): Thenable<T | undefined>;
+        onDidChangeActiveTextEditor: Event<TextEditor | undefined>;
     };
     workspace: {
         getConfiguration: (section?: string, resource?: Uri) => WorkspaceConfiguration;
