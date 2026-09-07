@@ -28,6 +28,28 @@ export function RunScriptBlockSuite() {
             );
         });
 
+        it('script block with type and data attributes', async () => {
+            await assertMatchesSnapshot(
+                `<script type="text/javascript" data-origin="carousel-home-slider">
+    $(function () {
+        // a comment
+    });
+</script>`
+            );
+        });
+
+        it('script block with type and data attributes inside if statement', async () => {
+            await assertMatchesSnapshot(
+                `@if (true) {
+    <script type="text/javascript" data-origin="carousel-home-slider">
+        $(function () {
+            // a comment
+        });
+    </script>
+}`
+            );
+        });
+
         it('script block import', async () => {
             await assertMatchesSnapshot(
                 `<script>
