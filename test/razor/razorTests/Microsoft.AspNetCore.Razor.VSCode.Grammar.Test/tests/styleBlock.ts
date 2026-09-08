@@ -27,5 +27,19 @@ export function RunStyleBlockSuite() {
 </style>`
             );
         });
+
+        it('style block inside if statement', async () => {
+            await assertMatchesSnapshot(
+                `@if (true) {
+    <style>
+        @media (width > 1px) {
+            .carousel {
+                color: red;
+            }
+        }
+    </style>
+}`
+            );
+        });
     });
 }

@@ -10028,6 +10028,193 @@ Line: </script>
 "
 `;
 
+exports[`Grammar tests script block function script block with Razor attribute inside if statement 1`] = `
+"Line: @if (true) {
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.cshtml.transition
+ - token from 1 to 3 (if) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.conditional.if.cs
+ - token from 3 to 4 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 4 to 5 (() with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.open.cs
+ - token from 5 to 9 (true) with scopes text.aspnetcorerazor, meta.statement.if.razor, constant.language.boolean.true.cs
+ - token from 9 to 10 ()) with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.close.cs
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 11 to 12 ({) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.open.cs
+
+Line:     <script nonce="@nonce">
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock
+ - token from 4 to 5 (<) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.begin.html
+ - token from 5 to 11 (script) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, entity.name.tag.html
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html
+ - token from 12 to 17 (nonce) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.nonce.html, entity.other.attribute-name.html
+ - token from 17 to 18 (=) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.nonce.html, punctuation.separator.key-value.html
+ - token from 18 to 19 (") with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.nonce.html, string.quoted.double.html, punctuation.definition.string.begin.html
+ - token from 19 to 20 (@) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.nonce.html, string.quoted.double.html, meta.expression.implicit.cshtml, keyword.control.cshtml.transition
+ - token from 20 to 25 (nonce) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.nonce.html, string.quoted.double.html, meta.expression.implicit.cshtml, source.cs, variable.other.object.cs
+ - token from 25 to 26 (") with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.nonce.html, string.quoted.double.html, punctuation.definition.string.end.html
+ - token from 26 to 27 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.end.html
+
+Line:         const carousel = true;
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js
+ - token from 8 to 13 (const) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.var.expr.js, storage.type.js
+ - token from 13 to 14 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.var.expr.js
+ - token from 14 to 22 (carousel) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.var.expr.js, meta.var-single-variable.expr.js, meta.definition.variable.js, variable.other.constant.js
+ - token from 22 to 23 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.var.expr.js, meta.var-single-variable.expr.js
+ - token from 23 to 24 (=) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.var.expr.js, keyword.operator.assignment.js
+ - token from 24 to 25 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.var.expr.js
+ - token from 25 to 29 (true) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.var.expr.js, constant.language.boolean.true.js
+ - token from 29 to 30 (;) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, punctuation.terminator.statement.js
+
+Line:     </script>
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js
+ - token from 4 to 5 (<) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html, source.js-ignored-vscode
+ - token from 5 to 6 (/) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html
+ - token from 6 to 12 (script) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, entity.name.tag.html
+ - token from 12 to 13 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.end.html
+
+Line: }
+ - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.close.cs
+"
+`;
+
+exports[`Grammar tests script block function script block with type and data attributes 1`] = `
+"Line: <script type="text/javascript" data-origin="carousel-home-slider">
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.begin.html
+ - token from 1 to 7 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, entity.name.tag.html
+ - token from 7 to 8 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html
+ - token from 8 to 12 (type) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, entity.other.attribute-name.html
+ - token from 12 to 13 (=) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, punctuation.separator.key-value.html
+ - token from 13 to 14 (") with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, string.quoted.double.html, punctuation.definition.string.begin.html
+ - token from 14 to 29 (text/javascript) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, string.quoted.double.html
+ - token from 29 to 30 (") with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, string.quoted.double.html, punctuation.definition.string.end.html
+ - token from 30 to 31 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html
+ - token from 31 to 42 (data-origin) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, entity.other.attribute-name.html
+ - token from 42 to 43 (=) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, punctuation.separator.key-value.html
+ - token from 43 to 44 (") with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, string.quoted.double.html, punctuation.definition.string.begin.html
+ - token from 44 to 64 (carousel-home-slider) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, string.quoted.double.html
+ - token from 64 to 65 (") with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, string.quoted.double.html, punctuation.definition.string.end.html
+ - token from 65 to 66 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.end.html
+
+Line:     $(function () {
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js
+ - token from 4 to 5 ($) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function-call.js, entity.name.function.js
+ - token from 5 to 6 (() with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.brace.round.js
+ - token from 6 to 14 (function) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, storage.type.function.js
+ - token from 14 to 15 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js
+ - token from 15 to 16 (() with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.parameters.js, punctuation.definition.parameters.begin.js
+ - token from 16 to 17 ()) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.parameters.js, punctuation.definition.parameters.end.js
+ - token from 17 to 18 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js
+ - token from 18 to 19 ({) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, punctuation.definition.block.js
+
+Line:         // a comment
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, punctuation.whitespace.comment.leading.js
+ - token from 8 to 10 (//) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, comment.line.double-slash.js, punctuation.definition.comment.js
+ - token from 10 to 20 ( a comment) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, comment.line.double-slash.js
+
+Line:     });
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js
+ - token from 4 to 5 (}) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, punctuation.definition.block.js
+ - token from 5 to 6 ()) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.brace.round.js
+ - token from 6 to 7 (;) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, punctuation.terminator.statement.js
+
+Line: </script>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html, source.js-ignored-vscode
+ - token from 1 to 2 (/) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html
+ - token from 2 to 8 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, entity.name.tag.html
+ - token from 8 to 9 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.end.html
+"
+`;
+
+exports[`Grammar tests script block function script block with type and data attributes inside if statement 1`] = `
+"Line: @if (true) {
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.cshtml.transition
+ - token from 1 to 3 (if) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.conditional.if.cs
+ - token from 3 to 4 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 4 to 5 (() with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.open.cs
+ - token from 5 to 9 (true) with scopes text.aspnetcorerazor, meta.statement.if.razor, constant.language.boolean.true.cs
+ - token from 9 to 10 ()) with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.close.cs
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 11 to 12 ({) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.open.cs
+
+Line:     <script type="text/javascript" data-origin="carousel-home-slider">
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock
+ - token from 4 to 5 (<) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.begin.html
+ - token from 5 to 11 (script) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, entity.name.tag.html
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html
+ - token from 12 to 16 (type) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, entity.other.attribute-name.html
+ - token from 16 to 17 (=) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, punctuation.separator.key-value.html
+ - token from 17 to 18 (") with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, string.quoted.double.html, punctuation.definition.string.begin.html
+ - token from 18 to 33 (text/javascript) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, string.quoted.double.html
+ - token from 33 to 34 (") with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.type.html, string.quoted.double.html, punctuation.definition.string.end.html
+ - token from 34 to 35 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html
+ - token from 35 to 46 (data-origin) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, entity.other.attribute-name.html
+ - token from 46 to 47 (=) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, punctuation.separator.key-value.html
+ - token from 47 to 48 (") with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, string.quoted.double.html, punctuation.definition.string.begin.html
+ - token from 48 to 68 (carousel-home-slider) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, string.quoted.double.html
+ - token from 68 to 69 (") with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, meta.attribute.data-x.data-origin.html, string.quoted.double.html, punctuation.definition.string.end.html
+ - token from 69 to 70 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.end.html
+
+Line:         $(function () {
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js
+ - token from 8 to 9 ($) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function-call.js, entity.name.function.js
+ - token from 9 to 10 (() with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.brace.round.js
+ - token from 10 to 18 (function) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, storage.type.function.js
+ - token from 18 to 19 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js
+ - token from 19 to 20 (() with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.parameters.js, punctuation.definition.parameters.begin.js
+ - token from 20 to 21 ()) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.parameters.js, punctuation.definition.parameters.end.js
+ - token from 21 to 22 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js
+ - token from 22 to 23 ({) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, punctuation.definition.block.js
+
+Line:             // a comment
+ - token from 0 to 12 (            ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, punctuation.whitespace.comment.leading.js
+ - token from 12 to 14 (//) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, comment.line.double-slash.js, punctuation.definition.comment.js
+ - token from 14 to 24 ( a comment) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, comment.line.double-slash.js
+
+Line:         });
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js
+ - token from 8 to 9 (}) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.function.expression.js, meta.block.js, punctuation.definition.block.js
+ - token from 9 to 10 ()) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, meta.brace.round.js
+ - token from 10 to 11 (;) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js, punctuation.terminator.statement.js
+
+Line:     </script>
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.js
+ - token from 4 to 5 (<) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html, source.js-ignored-vscode
+ - token from 5 to 6 (/) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html
+ - token from 6 to 12 (script) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, entity.name.tag.html
+ - token from 12 to 13 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.end.html
+
+Line: }
+ - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.close.cs
+"
+`;
+
+exports[`Grammar tests script block function similarly named custom element inside if statement 1`] = `
+"Line: @if (true) {
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.cshtml.transition
+ - token from 1 to 3 (if) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.conditional.if.cs
+ - token from 3 to 4 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 4 to 5 (() with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.open.cs
+ - token from 5 to 9 (true) with scopes text.aspnetcorerazor, meta.statement.if.razor, constant.language.boolean.true.cs
+ - token from 9 to 10 ()) with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.close.cs
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 11 to 12 ({) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.open.cs
+
+Line:     <script-widget>@Model.Content</script-widget>
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock
+ - token from 4 to 5 (<) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.definition.tag.begin.html
+ - token from 5 to 18 (script-widget) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, entity.name.tag.html
+ - token from 18 to 19 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.definition.tag.end.html
+ - token from 19 to 20 (@) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.expression.implicit.cshtml, keyword.control.cshtml.transition
+ - token from 20 to 25 (Model) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.expression.implicit.cshtml, source.cs, variable.other.object.cs
+ - token from 25 to 26 (.) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.expression.implicit.cshtml, source.cs
+ - token from 26 to 33 (Content) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.expression.implicit.cshtml, source.cs, variable.other.object.property.cs
+ - token from 33 to 35 (</) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.definition.tag.begin.html
+ - token from 35 to 48 (script-widget) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, entity.name.tag.html
+ - token from 48 to 49 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.definition.tag.end.html
+
+Line: }
+ - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.close.cs
+"
+`;
+
 exports[`Grammar tests style block colors css colors declaration 1`] = `
 "Line: <style>
  - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.style.start.html, punctuation.definition.tag.begin.html
@@ -10058,6 +10245,74 @@ Line: </style>
  - token from 1 to 2 (/) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.style.end.html, punctuation.definition.tag.begin.html
  - token from 2 to 7 (style) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.style.end.html, entity.name.tag.html
  - token from 7 to 8 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.style.end.html, punctuation.definition.tag.end.html
+"
+`;
+
+exports[`Grammar tests style block colors css style block inside if statement 1`] = `
+"Line: @if (true) {
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.cshtml.transition
+ - token from 1 to 3 (if) with scopes text.aspnetcorerazor, meta.statement.if.razor, keyword.control.conditional.if.cs
+ - token from 3 to 4 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 4 to 5 (() with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.open.cs
+ - token from 5 to 9 (true) with scopes text.aspnetcorerazor, meta.statement.if.razor, constant.language.boolean.true.cs
+ - token from 9 to 10 ()) with scopes text.aspnetcorerazor, meta.statement.if.razor, punctuation.parenthesis.close.cs
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor
+ - token from 11 to 12 ({) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.open.cs
+
+Line:     <style>
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock
+ - token from 4 to 5 (<) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.style.start.html, punctuation.definition.tag.begin.html
+ - token from 5 to 10 (style) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.style.start.html, entity.name.tag.html
+ - token from 10 to 11 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.style.start.html, punctuation.definition.tag.end.html
+
+Line:         @media (width > 1px) {
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css
+ - token from 8 to 9 (@) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, keyword.control.at-rule.media.css, punctuation.definition.keyword.css
+ - token from 9 to 14 (media) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, keyword.control.at-rule.media.css
+ - token from 14 to 15 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css
+ - token from 15 to 16 (() with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, punctuation.definition.parameters.begin.bracket.round.css
+ - token from 16 to 21 (width) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, support.type.property-name.media.css
+ - token from 21 to 22 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css
+ - token from 22 to 23 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, keyword.operator.comparison.css
+ - token from 23 to 24 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css
+ - token from 24 to 25 (1) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, constant.numeric.css
+ - token from 25 to 27 (px) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, constant.numeric.css, keyword.other.unit.px.css
+ - token from 27 to 28 ()) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.header.css, punctuation.definition.parameters.end.bracket.round.css
+ - token from 28 to 29 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css
+ - token from 29 to 30 ({) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, punctuation.section.media.begin.bracket.curly.css
+
+Line:             .carousel {
+ - token from 0 to 12 (            ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css
+ - token from 12 to 13 (.) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.selector.css, entity.other.attribute-name.class.css, punctuation.definition.entity.css
+ - token from 13 to 21 (carousel) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.selector.css, entity.other.attribute-name.class.css
+ - token from 21 to 22 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css
+ - token from 22 to 23 ({) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css, punctuation.section.property-list.begin.bracket.curly.css
+
+Line:                 color: red;
+ - token from 0 to 16 (                ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css
+ - token from 16 to 21 (color) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css, meta.property-name.css, support.type.property-name.css
+ - token from 21 to 22 (:) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css, punctuation.separator.key-value.css
+ - token from 22 to 23 ( ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css
+ - token from 23 to 26 (red) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css, meta.property-value.css, support.constant.color.w3c-standard-color-name.css
+ - token from 26 to 27 (;) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css, punctuation.terminator.rule.css
+
+Line:             }
+ - token from 0 to 12 (            ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css
+ - token from 12 to 13 (}) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, meta.property-list.css, punctuation.section.property-list.end.bracket.curly.css
+
+Line:         }
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css
+ - token from 8 to 9 (}) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css, meta.at-rule.media.body.css, punctuation.section.media.end.bracket.curly.css
+
+Line:     </style>
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, source.css
+ - token from 4 to 5 (<) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.style.end.html, punctuation.definition.tag.begin.html, source.css-ignored-vscode
+ - token from 5 to 6 (/) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.style.end.html, punctuation.definition.tag.begin.html
+ - token from 6 to 11 (style) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.style.end.html, entity.name.tag.html
+ - token from 11 to 12 (>) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, meta.embedded.block.html, meta.tag.metadata.style.end.html, punctuation.definition.tag.end.html
+
+Line: }
+ - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.statement.if.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.close.cs
 "
 `;
 
