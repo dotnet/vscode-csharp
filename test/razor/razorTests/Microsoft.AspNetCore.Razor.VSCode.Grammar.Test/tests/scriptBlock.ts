@@ -50,6 +50,24 @@ export function RunScriptBlockSuite() {
             );
         });
 
+        it('script block with Razor attribute inside if statement', async () => {
+            await assertMatchesSnapshot(
+                `@if (true) {
+    <script nonce="@nonce">
+        const carousel = true;
+    </script>
+}`
+            );
+        });
+
+        it('similarly named custom element inside if statement', async () => {
+            await assertMatchesSnapshot(
+                `@if (true) {
+    <script-widget>@Model.Content</script-widget>
+}`
+            );
+        });
+
         it('script block import', async () => {
             await assertMatchesSnapshot(
                 `<script>
