@@ -5,6 +5,8 @@
 
 # 2.152.x
 
+* Update Roslyn to 5.12.0-1.26459.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Centralize Language Server workspace folder tracking (PR: [#85105](https://github.com/dotnet/roslyn/pull/85105))
 * Update Roslyn to 5.12.0-1.26453.19 (PR: [#9731](https://github.com/dotnet/vscode-csharp/pull/9731))
   * Allow Razor to supply editorconfig options during code action cleanup (PR: [#85128](https://github.com/dotnet/roslyn/pull/85128))
   * Fix completion crash with stale linked documents (PR: [#85134](https://github.com/dotnet/roslyn/pull/85134))
