@@ -5,6 +5,13 @@
 
 # 2.152.x
 
+* Update Roslyn to 5.12.0-1.26461.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Track per-project load completion in LanguageServerProjectLoader (PR: [#85107](https://github.com/dotnet/roslyn/pull/85107))
+  * LSP 3.18 protocol updates (PR: [#82294](https://github.com/dotnet/roslyn/pull/82294))
+  * Forward DOTNET_ROOT and DOTNET_HOST_PATH to BuildHost (PR: [#85195](https://github.com/dotnet/roslyn/pull/85195))
+  * Reduce decl/impl split fallbacks: split header-directive and @inject components (PR: [#85069](https://github.com/dotnet/roslyn/pull/85069))
+  * Fix FBA restore mismatch issue (PR: [#85204](https://github.com/dotnet/roslyn/pull/85204))
+  * Classify parameter discards earlier, syntactically instead of semantically, resolving classification conflict (PR: [#85225](https://github.com/dotnet/roslyn/pull/85225))
 * Update Roslyn to 5.12.0-1.26453.19 (PR: [#9731](https://github.com/dotnet/vscode-csharp/pull/9731))
   * Allow Razor to supply editorconfig options during code action cleanup (PR: [#85128](https://github.com/dotnet/roslyn/pull/85128))
   * Fix completion crash with stale linked documents (PR: [#85134](https://github.com/dotnet/roslyn/pull/85134))
