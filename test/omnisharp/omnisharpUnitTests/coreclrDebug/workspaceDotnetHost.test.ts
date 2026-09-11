@@ -270,12 +270,22 @@ describe('DebugAdapterExecutableFactory', () => {
                 undefined
             )) as vscode.DebugAdapterExecutable;
 
-            expect(executable.options?.env).toEqual({
+            expect(executable.options?.env).toMatchObject({
                 DOTNET_ROOT: 'C:\\selected',
                 DOTNET_HOST_PATH: 'C:\\selected\\dotnet.exe',
                 DOTNET_MULTILEVEL_LOOKUP: '0',
                 PATH: 'C:\\selected;C:\\Windows',
             });
+            const dotnetRootValues = Object.entries(executable.options?.env ?? {})
+                .filter(([key]) => key.toUpperCase() === 'DOTNET_ROOT')
+                .map(([, value]) => value);
+            const dotnetRootX64Values = Object.entries(executable.options?.env ?? {})
+                .filter(([key]) => key.toUpperCase() === 'DOTNET_ROOT_X64')
+                .map(([, value]) => value);
+            expect(dotnetRootValues.length).toBeGreaterThan(0);
+            expect(dotnetRootValues.every((value) => value === 'C:\\selected')).toBe(true);
+            expect(dotnetRootX64Values.length).toBeGreaterThan(0);
+            expect(dotnetRootX64Values.every((value) => value === undefined)).toBe(true);
         } finally {
             if (ambientDotnetRoot === undefined) {
                 delete process.env.DOTNET_ROOT;
