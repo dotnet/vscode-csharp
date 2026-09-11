@@ -9,12 +9,30 @@ import { IServiceBroker } from '@microsoft/servicehub-framework';
 
 export type WorkspaceDotnetHost =
     | {
-          status: 'ready';
-          dotnetPath: string;
-          environment?: Readonly<Record<string, string | null>>;
+          readonly status: 'ready';
+          readonly dotnetPath: string;
+          readonly environment: Readonly<Record<string, string | null>>;
       }
-    | { status: 'blocked' }
-    | { status: 'not-applicable' };
+    | { readonly status: 'blocked' }
+    | { readonly status: 'not-applicable' };
+
+export interface WorkspaceSdkInfo {
+    readonly executablePath: string;
+    readonly sdkPath: string;
+    readonly sdkVersion: string;
+    readonly architecture: string;
+    readonly environment: Readonly<Record<string, string | null>>;
+}
+
+export interface WorkspaceDotnetService {
+    readonly version: '0.1';
+    /** Returns the ready workspace SDK, or undefined while selection is unresolved or blocked. */
+    getSdkInfo(): WorkspaceSdkInfo | undefined;
+    /** Fires when a selection becomes ready or refreshed SDK metadata is available for the same host. */
+    readonly onDidChangeSdkInfo: vscode.Event<WorkspaceSdkInfo>;
+    /** Resolves the settled workspace host state when supported by the service producer. */
+    getWorkspaceDotnetHost?(): Promise<WorkspaceDotnetHost>;
+}
 
 export interface CSharpDevKitExports {
     serviceBroker: IServiceBroker;
@@ -23,6 +41,6 @@ export interface CSharpDevKitExports {
     hasServerProcessLoaded: () => boolean;
     serverProcessLoaded: vscode.Event<void>;
     setupTelemetryEnvironmentAsync: (env: NodeJS.ProcessEnv) => Promise<string | undefined>;
-    /** Gets the immutable dotnet host selected for this workspace by C# Dev Kit. */
-    getWorkspaceDotnetHost?: () => Promise<WorkspaceDotnetHost>;
+    /** The authoritative .NET SDK selected for this workspace. */
+    dotnet?: WorkspaceDotnetService;
 }
