@@ -87,4 +87,26 @@ describe('resolveWorkspaceDotnetHost', () => {
             jest.useRealTimers();
         }
     });
+
+    test('does not request the workspace host when activation completes after the fallback timeout', async () => {
+        jest.useFakeTimers();
+        try {
+            const getWorkspaceDotnetHost = jest.fn(async (): Promise<WorkspaceDotnetHost> => ({ status: 'blocked' }));
+            const extension = extensionWithHost(getWorkspaceDotnetHost);
+            let completeActivation: (exports: Awaited<ReturnType<typeof extension.activate>>) => void = () => {};
+            const activation = new Promise<Awaited<ReturnType<typeof extension.activate>>>((resolve) => {
+                completeActivation = resolve;
+            });
+
+            const result = resolveWorkspaceDotnetHost({ activate: async () => activation }, 100);
+            await jest.advanceTimersByTimeAsync(100);
+            await expect(result).resolves.toBeUndefined();
+
+            completeActivation(await extension.activate());
+            await jest.runAllTimersAsync();
+            expect(getWorkspaceDotnetHost).not.toHaveBeenCalled();
+        } finally {
+            jest.useRealTimers();
+        }
+    });
 });

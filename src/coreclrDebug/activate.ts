@@ -235,15 +235,24 @@ export async function resolveWorkspaceDotnetHost(
         return undefined;
     }
 
+    let timedOut = false;
     let timer: NodeJS.Timeout | undefined;
     try {
         return await Promise.race([
             Promise.resolve()
                 .then(async () => await csharpDevKit.activate())
-                .then(async (exports) => await exports?.dotnet?.getWorkspaceDotnetHost?.())
+                .then(async (exports) => {
+                    if (timedOut) {
+                        return undefined;
+                    }
+                    return await exports?.dotnet?.getWorkspaceDotnetHost?.();
+                })
                 .catch(() => undefined),
             new Promise<undefined>((resolve) => {
-                timer = setTimeout(() => resolve(undefined), timeoutMs);
+                timer = setTimeout(() => {
+                    timedOut = true;
+                    resolve(undefined);
+                }, timeoutMs);
             }),
         ]);
     } finally {
