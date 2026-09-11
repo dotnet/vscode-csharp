@@ -5,8 +5,42 @@
 
 import { describe, expect, jest, test } from '@jest/globals';
 import * as vscode from 'vscode';
-import { WorkspaceDotnetHost, WorkspaceDotnetService, WorkspaceSdkInfo } from '../../../../src/csharpDevKitExports';
-import { resolveWorkspaceDotnetHost } from '../../../../src/coreclrDebug/activate';
+import * as common from '../../../../src/common';
+import {
+    CSharpDevKitExports,
+    WorkspaceDotnetHost,
+    WorkspaceDotnetService,
+    WorkspaceSdkInfo,
+} from '../../../../src/csharpDevKitExports';
+import { DebugAdapterExecutableFactory, resolveWorkspaceDotnetHost } from '../../../../src/coreclrDebug/activate';
+import { CoreClrDebugUtil } from '../../../../src/coreclrDebug/util';
+import { EventStream } from '../../../../src/eventStream';
+import { PlatformInformation } from '../../../../src/shared/platform';
+import { getDotnetInfo } from '../../../../src/shared/utils/getDotnetInfo';
+import { getCSharpDevKit } from '../../../../src/utils/getCSharpDevKit';
+
+jest.mock('vscode', () => {
+    const vscode = jest.requireActual<typeof import('vscode')>('../../../../__mocks__/vscode');
+    return {
+        ...vscode,
+        DebugAdapterExecutable: class {
+            constructor(
+                public readonly command: string,
+                public readonly args: readonly string[],
+                public readonly options?: vscode.DebugAdapterExecutableOptions
+            ) {}
+        },
+    };
+});
+jest.mock('../../../../src/shared/utils/getDotnetInfo', () => ({
+    getDotnetInfo: jest.fn(),
+}));
+jest.mock('../../../../src/utils/getCSharpDevKit', () => ({
+    getCSharpDevKit: jest.fn(),
+}));
+
+const getDotnetInfoMock = jest.mocked(getDotnetInfo);
+const getCSharpDevKitMock = jest.mocked(getCSharpDevKit);
 
 function extensionWithHost(getWorkspaceDotnetHost?: () => Promise<WorkspaceDotnetHost>) {
     const emitter = new vscode.EventEmitter<WorkspaceSdkInfo>();
@@ -107,6 +141,69 @@ describe('resolveWorkspaceDotnetHost', () => {
             expect(getWorkspaceDotnetHost).not.toHaveBeenCalled();
         } finally {
             jest.useRealTimers();
+        }
+    });
+});
+
+describe('DebugAdapterExecutableFactory', () => {
+    test('launches vsdbg-ui with the selected workspace host environment instead of the ambient root', async () => {
+        const ambientDotnetRoot = process.env.DOTNET_ROOT;
+        const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockReturnValue(true);
+        const getExtensionPath = jest.spyOn(common, 'getExtensionPath').mockReturnValue('C:\\extension');
+
+        try {
+            process.env.DOTNET_ROOT = 'C:\\ambient';
+            const environment = {
+                DOTNET_ROOT: 'C:\\selected',
+                DOTNET_HOST_PATH: 'C:\\selected\\dotnet.exe',
+                DOTNET_MULTILEVEL_LOOKUP: '0',
+                PATH: 'C:\\selected;C:\\Windows',
+                DOTNET_ROOT_X64: null,
+            };
+            getCSharpDevKitMock.mockReturnValue(
+                extensionWithHost(async () => ({
+                    status: 'ready',
+                    dotnetPath: 'C:\\selected\\dotnet.exe',
+                    environment,
+                })) as unknown as vscode.Extension<CSharpDevKitExports>
+            );
+            getDotnetInfoMock.mockResolvedValue({
+                CliPath: 'C:\\selected\\dotnet.exe',
+                FullInfo: '',
+                Version: '10.0.100',
+                RuntimeId: 'win-x64',
+                Architecture: 'x64',
+                Runtimes: {},
+            });
+
+            const factory = new DebugAdapterExecutableFactory(
+                new CoreClrDebugUtil('C:\\extension'),
+                new PlatformInformation('win32', 'x64'),
+                new EventStream(),
+                {},
+                'C:\\extension'
+            );
+            const executable = (await factory.createDebugAdapterDescriptor(
+                { configuration: {} } as vscode.DebugSession,
+                undefined
+            )) as vscode.DebugAdapterExecutable;
+
+            expect(executable.options?.env).toEqual({
+                DOTNET_ROOT: 'C:\\selected',
+                DOTNET_HOST_PATH: 'C:\\selected\\dotnet.exe',
+                DOTNET_MULTILEVEL_LOOKUP: '0',
+                PATH: 'C:\\selected;C:\\Windows',
+            });
+        } finally {
+            if (ambientDotnetRoot === undefined) {
+                delete process.env.DOTNET_ROOT;
+            } else {
+                process.env.DOTNET_ROOT = ambientDotnetRoot;
+            }
+            existsSync.mockRestore();
+            getExtensionPath.mockRestore();
+            getCSharpDevKitMock.mockReset();
+            getDotnetInfoMock.mockReset();
         }
     });
 });

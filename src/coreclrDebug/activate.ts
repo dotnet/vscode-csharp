@@ -400,15 +400,26 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                 'vsdbg-ui' + CoreClrDebugUtil.getPlatformExeExtension()
             );
 
-            // Look to see if DOTNET_ROOT is set, then use dotnet cli path
-            const dotnetRoot: string =
-                process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+            const workspaceEnvironment =
+                workspaceHost?.status === 'ready'
+                    ? Object.fromEntries(
+                          Object.entries(workspaceHost.environment).filter(
+                              (entry): entry is [string, string] => entry[1] !== null
+                          )
+                      )
+                    : undefined;
+            const dotnetRoot =
+                workspaceEnvironment?.DOTNET_ROOT ??
+                (workspaceHost?.status === 'ready'
+                    ? path.dirname(workspaceHost.dotnetPath)
+                    : (process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '')));
 
             let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
-            if (dotnetRoot) {
+            if (workspaceEnvironment || dotnetRoot) {
                 options = {
                     env: {
-                        DOTNET_ROOT: dotnetRoot,
+                        ...workspaceEnvironment,
+                        ...(dotnetRoot && { DOTNET_ROOT: dotnetRoot }),
                     },
                 };
             }
