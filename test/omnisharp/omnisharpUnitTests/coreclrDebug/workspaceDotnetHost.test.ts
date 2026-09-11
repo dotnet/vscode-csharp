@@ -206,4 +206,66 @@ describe('DebugAdapterExecutableFactory', () => {
             getDotnetInfoMock.mockReset();
         }
     });
+
+    test('removes ambient environment variables explicitly cleared by the selected workspace host', async () => {
+        const ambientDotnetRoot = process.env.DOTNET_ROOT;
+        const ambientDotnetRootX64 = process.env.DOTNET_ROOT_X64;
+        const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockReturnValue(true);
+        const getExtensionPath = jest.spyOn(common, 'getExtensionPath').mockReturnValue('C:\\extension');
+
+        try {
+            process.env.DOTNET_ROOT = 'C:\\ambient';
+            process.env.DOTNET_ROOT_X64 = 'C:\\ambient-x64';
+            getCSharpDevKitMock.mockReturnValue(
+                extensionWithHost(async () => ({
+                    status: 'ready',
+                    dotnetPath: 'C:\\selected\\dotnet.exe',
+                    environment: {
+                        DOTNET_ROOT: null,
+                        DOTNET_ROOT_X64: null,
+                        DOTNET_HOST_PATH: 'C:\\selected\\dotnet.exe',
+                    },
+                })) as unknown as vscode.Extension<CSharpDevKitExports>
+            );
+            getDotnetInfoMock.mockResolvedValue({
+                CliPath: 'C:\\selected\\dotnet.exe',
+                FullInfo: '',
+                Version: '10.0.100',
+                RuntimeId: 'win-x64',
+                Architecture: 'x64',
+                Runtimes: {},
+            });
+
+            const factory = new DebugAdapterExecutableFactory(
+                new CoreClrDebugUtil('C:\\extension'),
+                new PlatformInformation('win32', 'x64'),
+                new EventStream(),
+                {},
+                'C:\\extension'
+            );
+            const executable = (await factory.createDebugAdapterDescriptor(
+                { configuration: {} } as vscode.DebugSession,
+                undefined
+            )) as vscode.DebugAdapterExecutable;
+
+            expect(executable.options?.env).toHaveProperty('DOTNET_ROOT', undefined);
+            expect(executable.options?.env).toHaveProperty('DOTNET_ROOT_X64', undefined);
+            expect(executable.options?.env).toHaveProperty('DOTNET_HOST_PATH', 'C:\\selected\\dotnet.exe');
+        } finally {
+            if (ambientDotnetRoot === undefined) {
+                delete process.env.DOTNET_ROOT;
+            } else {
+                process.env.DOTNET_ROOT = ambientDotnetRoot;
+            }
+            if (ambientDotnetRootX64 === undefined) {
+                delete process.env.DOTNET_ROOT_X64;
+            } else {
+                process.env.DOTNET_ROOT_X64 = ambientDotnetRootX64;
+            }
+            existsSync.mockRestore();
+            getExtensionPath.mockRestore();
+            getCSharpDevKitMock.mockReset();
+            getDotnetInfoMock.mockReset();
+        }
+    });
 });

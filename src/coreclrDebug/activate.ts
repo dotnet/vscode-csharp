@@ -400,28 +400,28 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                 'vsdbg-ui' + CoreClrDebugUtil.getPlatformExeExtension()
             );
 
-            const workspaceEnvironment =
-                workspaceHost?.status === 'ready'
-                    ? Object.fromEntries(
-                          Object.entries(workspaceHost.environment).filter(
-                              (entry): entry is [string, string] => entry[1] !== null
-                          )
-                      )
-                    : undefined;
-            const dotnetRoot =
-                workspaceEnvironment?.DOTNET_ROOT ??
-                (workspaceHost?.status === 'ready'
-                    ? path.dirname(workspaceHost.dotnetPath)
-                    : (process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '')));
-
             let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
-            if (workspaceEnvironment || dotnetRoot) {
+            if (workspaceHost?.status === 'ready') {
+                const workspaceEnvironment = Object.fromEntries(
+                    Object.entries(workspaceHost.environment).map(([key, value]) => [key, value ?? undefined])
+                );
+                if (!hasEnvironmentVariable(workspaceHost.environment, 'DOTNET_ROOT')) {
+                    workspaceEnvironment.DOTNET_ROOT = path.dirname(workspaceHost.dotnetPath);
+                }
+
                 options = {
-                    env: {
-                        ...workspaceEnvironment,
-                        ...(dotnetRoot && { DOTNET_ROOT: dotnetRoot }),
-                    },
+                    // VS Code merges this object with its environment before spawning. Undefined values survive that
+                    // merge and are omitted by Node, preserving the producer's explicit null removals.
+                    env: workspaceEnvironment as vscode.DebugAdapterExecutableOptions['env'],
                 };
+            } else {
+                const dotnetRoot =
+                    process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+                if (dotnetRoot) {
+                    options = {
+                        env: { DOTNET_ROOT: dotnetRoot },
+                    };
+                }
             }
 
             executable = new vscode.DebugAdapterExecutable(command, [], options);
@@ -430,4 +430,10 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         // make VS Code launch the DA executable
         return executable;
     }
+}
+
+function hasEnvironmentVariable(environment: Readonly<Record<string, string | null>>, name: string): boolean {
+    return Object.keys(environment).some((key) =>
+        process.platform === 'win32' ? key.toUpperCase() === name.toUpperCase() : key === name
+    );
 }
