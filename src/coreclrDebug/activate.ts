@@ -22,6 +22,7 @@ import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider'
 import { omnisharpOptions } from '../shared/options';
 import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { CSharpDevKitExports, WorkspaceDotnetHost } from '../csharpDevKitExports';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -174,13 +175,25 @@ async function checkIsValidArchitecture(
     return false;
 }
 
-async function completeDebuggerInstall(
+export async function completeDebuggerInstall(
     debugUtil: CoreClrDebugUtil,
     platformInformation: PlatformInformation,
     eventStream: EventStream
 ): Promise<boolean> {
     try {
-        await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
+        const workspaceHost = await resolveWorkspaceDotnetHost();
+        if (workspaceHost?.status === 'blocked') {
+            return false;
+        }
+
+        if (workspaceHost?.status === 'ready') {
+            await debugUtil.checkDotNetCli([], {
+                dotnetExecutablePath: workspaceHost.dotnetPath,
+                environment: workspaceHost.environment,
+            });
+        } else {
+            await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
+        }
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
@@ -205,6 +218,47 @@ async function completeDebuggerInstall(
         eventStream.post(new DebuggerPrerequisiteWarning(error.message));
         // TODO: log telemetry?
         return false;
+    }
+}
+
+const DEV_KIT_HOST_TIMEOUT_MS = 90_000;
+
+type WorkspaceDotnetExtension = {
+    activate(): Thenable<Pick<CSharpDevKitExports, 'dotnet'> | undefined>;
+};
+
+export async function resolveWorkspaceDotnetHost(
+    csharpDevKit: WorkspaceDotnetExtension | null | undefined = getCSharpDevKit(),
+    timeoutMs = DEV_KIT_HOST_TIMEOUT_MS
+): Promise<WorkspaceDotnetHost | undefined> {
+    if (!csharpDevKit) {
+        return undefined;
+    }
+
+    let timedOut = false;
+    let timer: NodeJS.Timeout | undefined;
+    try {
+        return await Promise.race([
+            Promise.resolve()
+                .then(async () => await csharpDevKit.activate())
+                .then(async (exports) => {
+                    if (timedOut) {
+                        return undefined;
+                    }
+                    return await exports?.dotnet?.getWorkspaceDotnetHost?.();
+                })
+                .catch(() => undefined),
+            new Promise<undefined>((resolve) => {
+                timer = setTimeout(() => {
+                    timedOut = true;
+                    resolve(undefined);
+                }, timeoutMs);
+            }),
+        ]);
+    } finally {
+        if (timer) {
+            clearTimeout(timer);
+        }
     }
 }
 
@@ -317,7 +371,23 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
+            const workspaceHost = await resolveWorkspaceDotnetHost();
+            if (workspaceHost?.status === 'blocked') {
+                this.eventStream.post(new DebuggerNotInstalledFailure());
+                throw new Error(
+                    vscode.l10n.t(
+                        'Failed to complete the installation of the C# extension. Please see the error in the output window below.'
+                    )
+                );
+            }
+
+            const dotNetInfo =
+                workspaceHost?.status === 'ready'
+                    ? await getDotnetInfo([], {
+                          dotnetExecutablePath: workspaceHost.dotnetPath,
+                          environment: workspaceHost.environment,
+                      })
+                    : await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
             const targetArchitecture = getTargetArchitecture(
                 this.platformInfo,
                 _session.configuration.targetArchitecture,
@@ -330,17 +400,27 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                 'vsdbg-ui' + CoreClrDebugUtil.getPlatformExeExtension()
             );
 
-            // Look to see if DOTNET_ROOT is set, then use dotnet cli path
-            const dotnetRoot: string =
-                process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
-
             let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
-            if (dotnetRoot) {
+            if (workspaceHost?.status === 'ready') {
+                const workspaceEnvironment = createDebugAdapterEnvironment(
+                    workspaceHost.environment,
+                    workspaceHost.dotnetPath,
+                    this.platformInfo.isWindows()
+                );
+
                 options = {
-                    env: {
-                        DOTNET_ROOT: dotnetRoot,
-                    },
+                    // VS Code merges this object with its environment before spawning. Undefined values survive that
+                    // merge and are omitted by Node, preserving the producer's explicit null removals.
+                    env: workspaceEnvironment as vscode.DebugAdapterExecutableOptions['env'],
                 };
+            } else {
+                const dotnetRoot =
+                    process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+                if (dotnetRoot) {
+                    options = {
+                        env: { DOTNET_ROOT: dotnetRoot },
+                    };
+                }
             }
 
             executable = new vscode.DebugAdapterExecutable(command, [], options);
@@ -349,4 +429,38 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         // make VS Code launch the DA executable
         return executable;
     }
+}
+
+function createDebugAdapterEnvironment(
+    contribution: Readonly<Record<string, string | null>>,
+    dotnetPath: string,
+    isWindows: boolean
+): NodeJS.ProcessEnv {
+    const effectiveContribution = hasEnvironmentVariable(contribution, 'DOTNET_ROOT', isWindows)
+        ? contribution
+        : { ...contribution, DOTNET_ROOT: path.dirname(dotnetPath) };
+    const knownKeys = new Set([...Object.keys(process.env), ...Object.keys(effectiveContribution)]);
+    const environment: NodeJS.ProcessEnv = {};
+
+    for (const [key, value] of Object.entries(effectiveContribution)) {
+        for (const knownKey of knownKeys) {
+            if (environmentVariableNamesEqual(knownKey, key, isWindows)) {
+                environment[knownKey] = value ?? undefined;
+            }
+        }
+    }
+
+    return environment;
+}
+
+function hasEnvironmentVariable(
+    environment: Readonly<Record<string, string | null>>,
+    name: string,
+    isWindows: boolean
+): boolean {
+    return Object.keys(environment).some((key) => environmentVariableNamesEqual(key, name, isWindows));
+}
+
+function environmentVariableNamesEqual(left: string, right: string, isWindows: boolean): boolean {
+    return isWindows ? left.toUpperCase() === right.toUpperCase() : left === right;
 }
