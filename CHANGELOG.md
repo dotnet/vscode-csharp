@@ -5,7 +5,7 @@
 
 # 2.152.x
 
-* Update Roslyn to 5.12.0-1.26461.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.12.0-1.26461.1 (PR: [#9751](https://github.com/dotnet/vscode-csharp/pull/9751))
   * Track per-project load completion in LanguageServerProjectLoader (PR: [#85107](https://github.com/dotnet/roslyn/pull/85107))
   * LSP 3.18 protocol updates (PR: [#82294](https://github.com/dotnet/roslyn/pull/82294))
   * Forward DOTNET_ROOT and DOTNET_HOST_PATH to BuildHost (PR: [#85195](https://github.com/dotnet/roslyn/pull/85195))
