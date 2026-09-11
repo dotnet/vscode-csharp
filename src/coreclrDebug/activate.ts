@@ -175,7 +175,7 @@ async function checkIsValidArchitecture(
     return false;
 }
 
-async function completeDebuggerInstall(
+export async function completeDebuggerInstall(
     debugUtil: CoreClrDebugUtil,
     platformInformation: PlatformInformation,
     eventStream: EventStream
@@ -402,12 +402,11 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
             let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
             if (workspaceHost?.status === 'ready') {
-                const workspaceEnvironment = Object.fromEntries(
-                    Object.entries(workspaceHost.environment).map(([key, value]) => [key, value ?? undefined])
+                const workspaceEnvironment = createDebugAdapterEnvironment(
+                    workspaceHost.environment,
+                    workspaceHost.dotnetPath,
+                    this.platformInfo.isWindows()
                 );
-                if (!hasEnvironmentVariable(workspaceHost.environment, 'DOTNET_ROOT')) {
-                    workspaceEnvironment.DOTNET_ROOT = path.dirname(workspaceHost.dotnetPath);
-                }
 
                 options = {
                     // VS Code merges this object with its environment before spawning. Undefined values survive that
@@ -432,8 +431,36 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
     }
 }
 
-function hasEnvironmentVariable(environment: Readonly<Record<string, string | null>>, name: string): boolean {
-    return Object.keys(environment).some((key) =>
-        process.platform === 'win32' ? key.toUpperCase() === name.toUpperCase() : key === name
-    );
+function createDebugAdapterEnvironment(
+    contribution: Readonly<Record<string, string | null>>,
+    dotnetPath: string,
+    isWindows: boolean
+): NodeJS.ProcessEnv {
+    const effectiveContribution = hasEnvironmentVariable(contribution, 'DOTNET_ROOT', isWindows)
+        ? contribution
+        : { ...contribution, DOTNET_ROOT: path.dirname(dotnetPath) };
+    const knownKeys = new Set([...Object.keys(process.env), ...Object.keys(effectiveContribution)]);
+    const environment: NodeJS.ProcessEnv = {};
+
+    for (const [key, value] of Object.entries(effectiveContribution)) {
+        for (const knownKey of knownKeys) {
+            if (environmentVariableNamesEqual(knownKey, key, isWindows)) {
+                environment[knownKey] = value ?? undefined;
+            }
+        }
+    }
+
+    return environment;
+}
+
+function hasEnvironmentVariable(
+    environment: Readonly<Record<string, string | null>>,
+    name: string,
+    isWindows: boolean
+): boolean {
+    return Object.keys(environment).some((key) => environmentVariableNamesEqual(key, name, isWindows));
+}
+
+function environmentVariableNamesEqual(left: string, right: string, isWindows: boolean): boolean {
+    return isWindows ? left.toUpperCase() === right.toUpperCase() : left === right;
 }
