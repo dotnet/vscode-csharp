@@ -63,7 +63,7 @@
   "configuration.dotnet.typeMembers.propertyGenerationBehavior.preferAutoProperties": "Prefer auto properties.",
   "configuration.dotnet.codeLens.enableReferencesCodeLens": "Specifies whether the references CodeLens should be shown. (Previously `csharp.referencesCodeLens.enabled`)",
   "configuration.dotnet.codeLens.enableTestsCodeLens": "Specifies whether the run and debug test CodeLens should be shown. (Previously `csharp.testsCodeLens.enabled`)",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. This may make test CodeLens slower to resolve.",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Perform automatic object name completion for the members that you have recently selected.",
   "configuration.dotnet.completion.provideRegexCompletions": "Show regular expressions in completion list.",
