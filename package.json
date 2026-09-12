@@ -798,6 +798,11 @@
             "default": true,
             "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
           },
+          "dotnet.testing.useSemanticTestDiscovery": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.testing.useSemanticTestDiscovery%"
+          },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
             "default": true,
