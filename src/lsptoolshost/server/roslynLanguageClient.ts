@@ -4,8 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { ChildProcess } from 'child_process';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
-import { CancellationToken, ErrorHandler, LanguageClientOptions, MessageSignature, State } from 'vscode-languageclient';
+import {
+    CancellationToken,
+    ErrorHandler,
+    LanguageClientOptions,
+    MessageSignature,
+    MessageTransports,
+    State,
+} from 'vscode-languageclient';
 import CompositeDisposable from '../../compositeDisposable';
 import { IDisposable } from '../../disposable';
 import { languageServerOptions } from '../../shared/options';
@@ -13,6 +21,11 @@ import { RoslynLspErrorCodes } from './roslynProtocol';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
 import { ITelemetryReporter } from '../../shared/telemetryReporter';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
+
+/**
+ * How long to wait for the server process to be reaped after the connection closes (which can happen milliseconds before the process actually exits)
+ */
+const serverExitTimeoutMs = 1000;
 
 /**
  * Implementation of the base LanguageClient type that allows for additional items to be disposed of
@@ -29,6 +42,11 @@ export class RoslynLanguageClient extends LanguageClient {
      * This is reset when the server restarts.
      */
     private _hasShownConnectionClose = false;
+
+    /**
+     * Resolves when the process exits, true when the server process was terminated externally.
+     */
+    private _serverExit: Promise<boolean> | undefined;
 
     constructor(
         id: string,
@@ -59,6 +77,12 @@ export class RoslynLanguageClient extends LanguageClient {
     override async dispose(timeout?: number | undefined): Promise<void> {
         this._disposables.dispose();
         return super.dispose(timeout);
+    }
+
+    protected override async createMessageTransports(encoding: string): Promise<MessageTransports> {
+        const transports = await super.createMessageTransports(encoding);
+        this._serverExit = waitForExternalTermination(this.serverProcess);
+        return transports;
     }
 
     override handleFailedRequest<T>(
@@ -161,28 +185,97 @@ export class RoslynLanguageClient extends LanguageClient {
             return;
         }
 
+        // Set the guard before awaiting so the error and closed handlers cannot both get past it.
         this._hasShownConnectionClose = true;
-        this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ServerCrash);
-        this.showCrashNotificationCore();
+        void this.showCrashNotificationAsync();
     }
 
-    private showCrashNotificationCore() {
-        showErrorMessageWithOptions(
-            vscode,
-            vscode.l10n.t('The C# language server has crashed. Restart extensions to re-enable C# functionality.'),
-            { modal: false },
-            {
-                title: vscode.l10n.t('Restart extensions'),
-                command: 'workbench.action.restartExtensionHost',
-            },
-            {
-                title: vscode.l10n.t('Report Issue'),
-                action: async () => {
-                    vscode.commands.executeCommand('csharp.reportIssue');
-                    // Re-show the notification so the user can still restart extensions after reporting.
-                    this.showCrashNotificationCore();
-                },
-            }
-        );
+    /**
+     * Waits for the server process to exit, racing with a timeout.
+     * Reports false if the process outlives the connection.
+     */
+    private async waitForProcessExit(): Promise<boolean> {
+        if (this._serverExit === undefined) {
+            return false;
+        }
+
+        let timeout: NodeJS.Timeout | undefined;
+        try {
+            return await Promise.race([
+                this._serverExit,
+                new Promise<false>((resolve) => {
+                    timeout = setTimeout(() => resolve(false), serverExitTimeoutMs);
+                }),
+            ]);
+        } finally {
+            clearTimeout(timeout);
+        }
     }
+
+    private async showCrashNotificationAsync(): Promise<void> {
+        const externallyTerminated = await this.waitForProcessExit();
+
+        this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ServerCrash, {
+            externallyTerminated: externallyTerminated.toString(),
+        });
+
+        this.showCrashNotificationCore(externallyTerminated);
+    }
+
+    private showCrashNotificationCore(externallyTerminated: boolean) {
+        const restartCommand = {
+            title: vscode.l10n.t('Restart extensions'),
+            command: 'workbench.action.restartExtensionHost',
+        };
+        if (externallyTerminated) {
+            // Show a notification without a report issue command - there's nothing we can if the server
+            // was terminated by some external process.
+            showErrorMessageWithOptions(
+                vscode,
+                vscode.l10n.t(
+                    'The C# language server was terminated externally. Restart extensions to re-enable C# functionality.'
+                ),
+                { modal: false },
+                restartCommand
+            );
+        } else {
+            showErrorMessageWithOptions(
+                vscode,
+                vscode.l10n.t('The C# language server has crashed. Restart extensions to re-enable C# functionality.'),
+                { modal: false },
+                restartCommand,
+                {
+                    title: vscode.l10n.t('Report Issue'),
+                    action: async () => {
+                        vscode.commands.executeCommand('csharp.reportIssue');
+                        // Re-show the notification so the user can still restart extensions after reporting.
+                        this.showCrashNotificationCore(externallyTerminated);
+                    },
+                }
+            );
+        }
+    }
+}
+
+/**
+ * Resolves when the server process exits, reporting whether it was stopped externally or not.
+ * Note that this is only reliable on non-windows platforms - on windows a killed process has no signal and can have any exit code.
+ */
+function waitForExternalTermination(serverProcess: ChildProcess | undefined): Promise<boolean> | undefined {
+    if (serverProcess === undefined) {
+        return undefined;
+    }
+
+    return new Promise<boolean>((resolve) => {
+        serverProcess.once('exit', (code, signal) => {
+            resolve(
+                // SIGKILL cannot be caught, blocked, or ignored, so it was sent by an external process.
+                signal === 'SIGKILL' ||
+                    // .NET normally handles SIGTERM and exits with 128 + SIGTERM instead of reporting the signal.
+                    code === 143 ||
+                    // The PAL re-raises SIGTERM on some paths.
+                    signal === 'SIGTERM'
+            );
+        });
+    });
 }
