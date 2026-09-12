@@ -27,6 +27,7 @@ import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensio
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateRoslyn } from './activateRoslyn';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
+import { registerSolutionFileWorkspaceHandler } from './solutionFileWorkspaceHandler';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -36,6 +37,10 @@ export async function activate(
 
     const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
     csharpChannel.trace('Activating C# Extension');
+
+    // Handle the case where a user opens a solution file via `code ./solution.sln`
+    // This must happen early to redirect to the correct folder before other initialization.
+    registerSolutionFileWorkspaceHandler(context, csharpChannel);
 
     util.setExtensionPath(context.extension.extensionPath);
 
