@@ -11,6 +11,7 @@ import {
     activateCSharpExtension,
     closeAllEditorsAsync,
     describeIfCSharp,
+    findRangeOfString,
     getCodeLensesAsync,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
@@ -75,6 +76,45 @@ describeIfCSharp(`Unit Testing Tests`, () => {
         expect(codeLenses[8].command?.title).toBe('Run Test');
         expect(codeLenses[8].command?.arguments![0].attachDebugger).toBe(false);
         expect(codeLenses[8].range).toStrictEqual(methodRange);
+    });
+
+    test('Semantic test discovery finds tests with derived test attributes', async () => {
+        await openFileInWorkspaceAsync(path.join('test', 'SemanticTestDiscovery.cs'));
+        const activeEditor = vscode.window.activeTextEditor!;
+        const methodRange = findRangeOfString(activeEditor, 'DerivedFactTest')[0];
+        const dotnetConfiguration = vscode.workspace.getConfiguration('dotnet');
+
+        const getTestCodeLensTitles = async () =>
+            (await getCodeLensesAsync())
+                .filter(
+                    (codeLens) => codeLens.range.isEqual(methodRange) && codeLens.command?.command === 'dotnet.test.run'
+                )
+                .map((codeLens) => codeLens.command!.title)
+                .sort();
+
+        await dotnetConfiguration.update(
+            'testing.useSemanticTestDiscovery',
+            false,
+            vscode.ConfigurationTarget.Workspace
+        );
+
+        try {
+            expect(await getTestCodeLensTitles()).toEqual([]);
+
+            await dotnetConfiguration.update(
+                'testing.useSemanticTestDiscovery',
+                true,
+                vscode.ConfigurationTarget.Workspace
+            );
+
+            expect(await getTestCodeLensTitles()).toEqual(['Debug Test', 'Run Test']);
+        } finally {
+            await dotnetConfiguration.update(
+                'testing.useSemanticTestDiscovery',
+                undefined,
+                vscode.ConfigurationTarget.Workspace
+            );
+        }
     });
 
     test('Code lens command executes tests', async () => {
