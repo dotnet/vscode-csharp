@@ -5,7 +5,7 @@
 
 # 2.152.x
 
-* Update Roslyn to 5.12.0-1.26461.7 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.12.0-1.26461.7 (PR: [#9752](https://github.com/dotnet/vscode-csharp/pull/9752))
   * Add semantic test attribute discovery option (PR: [#85255](https://github.com/dotnet/roslyn/pull/85255))
 * Update Roslyn to 5.12.0-1.26461.1 (PR: [#9751](https://github.com/dotnet/vscode-csharp/pull/9751))
   * Track per-project load completion in LanguageServerProjectLoader (PR: [#85107](https://github.com/dotnet/roslyn/pull/85107))
