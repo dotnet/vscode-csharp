@@ -8,6 +8,7 @@ import { convertServerOptionNameToClientConfigurationName } from '../../../src/l
 import { describe, test, expect } from '@jest/globals';
 
 const editorBehaviorSection = 1;
+const lspServerSection = 3;
 const testData = [
     {
         serverOption: 'csharp|symbol_search.dotnet_search_reference_assemblies',
@@ -272,6 +273,12 @@ const testData = [
         vsCodeConfiguration: 'dotnet.formatting.organizeImportsOnFormat',
         declareInPackageJson: true,
         section: editorBehaviorSection,
+    },
+    {
+        serverOption: 'projects.dotnet_load_on_demand',
+        vsCodeConfiguration: 'dotnet.projects.loadOnDemand',
+        declareInPackageJson: true,
+        section: lspServerSection,
     },
 ];
 
