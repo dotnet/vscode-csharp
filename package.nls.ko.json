@@ -88,6 +88,7 @@
   "configuration.dotnet.server.useServerGC": ".NET 서버 가비지 수집을 사용하도록 언어 서버를 구성합니다.  서버 가비지 수집은 일반적으로 메모리 사용량이 많을수록 성능이 향상됩니다. (확장을 다시 시작해야 함)",
   "configuration.dotnet.server.waitForDebugger": "디버거를 연결할 수 있도록 서버를 시작할 때 --debug 플래그를 전달합니다. (확장을 다시 시작해야 함)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "참조 어셈블리에서 기호를 검색합니다. 가져오기 추가와 같은 기호 검색이 필요한 기능에 영향을 줍니다.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "인터페이스 또는 추상 클래스를 구현할 때 속성, 이벤트 및 메서드의 삽입 위치입니다.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "끝에 배치합니다.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "동일한 종류의 다른 멤버와 함께 배치합니다.",

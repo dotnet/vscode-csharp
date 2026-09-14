@@ -88,6 +88,7 @@
   "configuration.dotnet.server.useServerGC": "Dil sunucusunu .NET sunucu atık toplama özelliğini kullanacak şekilde yapılandırın.  Sunucu atık toplama genellikle daha yüksek bellek tüketimi pahasına daha iyi performans sağlar. (Uzantının yeniden başlatılması gerekir)",
   "configuration.dotnet.server.waitForDebugger": "Sunucuyu başlatırken --debug bayrağını geçirerek hata ayıklayıcısının eklenmesine izin verir. (Uzantının yeniden başlatılması gerekir)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Başvuru derlemeleri içinde sembolleri arama. İçeri aktarma ekleme gibi sembol arama gerektiren özellikleri etkiler.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "Arabirim veya soyut sınıf uygulanırken özellikler, olaylar ve yöntemlerin eklenme konumu.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Bunları sona yerleştir.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Bunları aynı türdeki diğer üyelerle birlikte yerleştir.",
