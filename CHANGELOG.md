@@ -5,6 +5,7 @@
 
 # 2.152.x
 
+* Fix TextMate highlighting for JavaScript and CSS inside Razor files (PR: [#9740](https://github.com/dotnet/vscode-csharp/pull/9740))
 * Update Roslyn to 5.12.0-1.26463.1 (PR: [#9757](https://github.com/dotnet/vscode-csharp/pull/9757))
   * Add semantic test attribute discovery option (PR: [#85255](https://github.com/dotnet/roslyn/pull/85255))
 * Update Roslyn to 5.12.0-1.26461.1 (PR: [#9751](https://github.com/dotnet/vscode-csharp/pull/9751))
