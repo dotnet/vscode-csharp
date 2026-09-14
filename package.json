@@ -1561,6 +1561,11 @@
             "default": true,
             "description": "%configuration.dotnet.projects.enableAutomaticRestore%"
           },
+          "dotnet.projects.loadOnDemand": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.projects.loadOnDemand%"
+          },
           "dotnet.projects.enableFileBasedPrograms": {
             "type": "boolean",
             "default": true,
