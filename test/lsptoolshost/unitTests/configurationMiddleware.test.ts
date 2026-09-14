@@ -262,6 +262,12 @@ const testData = [
         declareInPackageJson: false,
     },
     {
+        serverOption: 'csharp|testing.dotnet_use_semantic_test_discovery',
+        vsCodeConfiguration: 'dotnet.testing.useSemanticTestDiscovery',
+        declareInPackageJson: true,
+        section: editorBehaviorSection,
+    },
+    {
         serverOption: 'csharp|auto_insert.dotnet_enable_auto_insert',
         vsCodeConfiguration: 'dotnet.autoInsert.enableAutoInsert',
         declareInPackageJson: true,
