@@ -88,6 +88,7 @@
   "configuration.dotnet.server.useServerGC": ".NET サーバーの GC を使用するように言語サーバーを構成します。 一般に、サーバー GC では、メモリ消費量が多くなる代わりにパフォーマンスが向上します。(拡張機能の再起動が必要)",
   "configuration.dotnet.server.waitForDebugger": "サーバーの起動時に --debug フラグを渡して、デバッガーのアタッチを許可します。(拡張機能の再起動が必要)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "参照アセンブリ内のシンボルを検索します。影響を受ける機能には、インポートの追加などのシンボル検索が必要です。",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "インターフェイスまたは抽象クラスを実装する場合の、プロパティ、イベント、メソッドの挿入場所です。",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "最後に配置します。",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "同じ種類の他のメンバーと共に配置します。",

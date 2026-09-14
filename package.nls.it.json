@@ -88,6 +88,7 @@
   "configuration.dotnet.server.useServerGC": "Configurare il server del linguaggio per l'utilizzo di Garbage Collection del server .NET.  Garbage Collection del server offre in genere prestazioni migliori ma un consumo di memoria più elevato. (Richiede il riavvio dell'estensione)",
   "configuration.dotnet.server.waitForDebugger": "Passa il flag --debug all'avvio del server per consentire il collegamento di un debugger. (Richiede il riavvio dell'estensione)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Cerca simboli negli assembly di riferimento. Influisce sulle funzionalità che richiedono la ricerca di simboli, ad esempio l'aggiunta di importazioni.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "La posizione di inserimento di proprietà, eventi e metodi quando si implementa un'interfaccia o una classe astratta.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Posizionarli alla fine.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Posizionarli con altri membri dello stesso tipo.",
