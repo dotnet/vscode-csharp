@@ -88,7 +88,7 @@
   "configuration.dotnet.server.useServerGC": "設定語言伺服器以使用 .NET 伺服器記憶體回收。 伺服器記憶體回收通常會在記憶體耗用量較高時提供較佳的效能。(需要重新啟動延伸模組)",
   "configuration.dotnet.server.waitForDebugger": "啟動伺服器時傳遞 --debug 旗標，以允許連結偵錯工具。(需要重新啟動延伸模組)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "在參考組件中搜尋符號。這會影響需要符號搜尋的功能，例如新增匯入。",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "在測試探索期間使用語意資訊，辨識從已知測試架構屬性衍生的測試屬性。測試 CodeLens 可能需要更長時間才能解析。",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "實作介面或抽象類別時，屬性、事件和方法的插入位置。",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "將它們放置在結尾。",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "將它們與其他相同種類的成員放在一起。",
