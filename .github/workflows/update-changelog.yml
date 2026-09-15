@@ -14,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
         with:
           fetch-depth: 0
       - name: Install roslyn-tools
         run: dotnet tool install -g Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
       - name: Install NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@38e0b6e68b4c852a5500a94740f0e535e0d7ba54 # v4
         with:
           node-version: '24.x'
       - name: Install dependencies
@@ -28,7 +28,7 @@ jobs:
       - name: Update CHANGELOG
         run: npm run updateChangelog
       - name: Create update PR
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update ${{ github.ref_name }} CHANGELOG

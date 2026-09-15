@@ -12,7 +12,7 @@ jobs:
   # So we can modify the release creation without having to wait for the change to flow into the commit
   # that we're tagging, we call a reusable workflow from main
   create-release:
-    uses: dotnet/vscode-csharp/.github/workflows/release-reusable.yml@main
+    uses: ./.github/workflows/release-reusable.yml
     with:
       tag: ${{ github.ref_name }}
     secrets: inherit

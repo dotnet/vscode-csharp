@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   check-script:
-    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@main
+    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@291c2c52fe3d6079af97062f8918eda41e02e133
     with:
       configuration_file_path: '.config/snap-flow.json'
 
@@ -24,9 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       - name: Install NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@38e0b6e68b4c852a5500a94740f0e535e0d7ba54 # v4
         with:
           node-version: '24.x'
       - name: Install dependencies
@@ -39,7 +39,7 @@ jobs:
             npm run incrementVersion
           fi
       - name: Create version update PR
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update main version
@@ -52,12 +52,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out merge branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           ref: merge/prerelease-to-release
           fetch-depth: 0
       - name: Install NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@38e0b6e68b4c852a5500a94740f0e535e0d7ba54 # v4
         with:
           node-version: '24.x'
       - name: Install dependencies
