@@ -88,7 +88,7 @@
   "configuration.dotnet.server.useServerGC": "Настройте языковой сервер для использования сборки мусора сервера .NET.  Сборка мусора сервера обычно обеспечивает более высокую производительность за счет более высокого потребления памяти. (Требуется перезапуск расширения)",
   "configuration.dotnet.server.waitForDebugger": "Передает флаг --debug при запуске сервера, чтобы разрешить подключение отладчика. (Требуется перезапуск расширения)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Поиск символов в эталонных сборках. Он влияет на функции, для которых требуется поиск символов, например добавление импортов.",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Используйте семантическую информацию во время обнаружения тестов, чтобы распознавать атрибуты тестов, выведенные на основе известных атрибутов тестовых платформ. Сопоставление CodeLens для тестов может занять больше времени.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "Расположение вставки свойств, событий и методов. При реализации интерфейса или абстрактного класса.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Поместите их в конец.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Поместите их вместе с другими элементами того же типа.",

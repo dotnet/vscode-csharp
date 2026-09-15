@@ -88,7 +88,7 @@
   "configuration.dotnet.server.useServerGC": "将语言服务器配置为使用 .NET 服务器垃圾回收。 服务器垃圾回收在提供更好的性能时通常需要消耗更多内存。(需要重启扩展)",
   "configuration.dotnet.server.waitForDebugger": "启动服务器时传递 --debug 标志，以允许附加调试器。(需要重启扩展)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "在引用程序集中搜索符号。它会影响需要符号搜索的功能，例如添加导入。",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "请在测试发现过程中使用语义信息，以识别源自已知测试框架属性的测试属性。测试 CodeLens 可能需要更长时间才能完成解析。",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "实现接口或抽象类时属性、事件和方法的插入位置。",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "将它们放在末尾。",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "将它们与相同类型的其他成员放置在一起。",
