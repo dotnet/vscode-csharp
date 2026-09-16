@@ -1564,14 +1564,11 @@
           "dotnet.projects.enableFileBasedPrograms": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.projects.enableFileBasedPrograms%",
-            "tags": [
-              "preview"
-            ]
+            "description": "%configuration.dotnet.projects.enableFileBasedPrograms%"
           },
           "dotnet.projects.enableFileBasedProgramsWhenAmbiguous": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
             "tags": [
               "preview"
@@ -1579,7 +1576,7 @@
           },
           "dotnet.fileBasedApps.enableAutomaticDiscovery": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "description": "%configuration.dotnet.fileBasedApps.enableAutomaticDiscovery%",
             "tags": [
               "preview"
