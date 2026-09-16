@@ -21,16 +21,13 @@ describe('C# Dev Kit version check', () => {
         expect(showErrorMessage).not.toHaveBeenCalled();
     });
 
-    test.each(['11.0.0', '11.0.0-pre.1', '12.0.0'])(
-        'allows activation with C# Dev Kit version %s',
-        async (version) => {
-            const showErrorMessage = jest.spyOn(vscode.window, 'showErrorMessage');
+    test.each(['11.0.0', '11.0.0-pre.1', '12.0.0'])('allows activation with C# Dev Kit version %s', async (version) => {
+        const showErrorMessage = jest.spyOn(vscode.window, 'showErrorMessage');
 
-            await checkCSharpDevKitVersion(createExtension(version));
+        await checkCSharpDevKitVersion(createExtension(version));
 
-            expect(showErrorMessage).not.toHaveBeenCalled();
-        }
-    );
+        expect(showErrorMessage).not.toHaveBeenCalled();
+    });
 
     test('blocks activation with an older C# Dev Kit version', async () => {
         const showErrorMessage = jest.spyOn(vscode.window, 'showErrorMessage').mockResolvedValue(undefined);
