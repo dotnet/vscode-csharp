@@ -5,6 +5,10 @@
 
 # 2.152.x
 
+* Update Roslyn to 5.12.0-1.26466.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Avoid cache misses due to cancellation in deprioritized analyzer cache (PR: [#85222](https://github.com/dotnet/roslyn/pull/85222))
+  * Move the LanguageServerProjectLoader over to our priority queue (PR: [#85272](https://github.com/dotnet/roslyn/pull/85272))
+  * Fix nested script indentation in Razor (PR: [#85289](https://github.com/dotnet/roslyn/pull/85289))
 * Add option to enable semantic test discovery (PR: [#9752](https://github.com/dotnet/vscode-csharp/pull/9752))
 * Fix TextMate highlighting for JavaScript and CSS inside Razor files (PR: [#9740](https://github.com/dotnet/vscode-csharp/pull/9740))
 * Update Roslyn to 5.12.0-1.26463.1 (PR: [#9757](https://github.com/dotnet/vscode-csharp/pull/9757))
