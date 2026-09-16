@@ -5,7 +5,7 @@
 
 # 2.152.x
 
-* Update Roslyn to 5.12.0-1.26465.4 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.12.0-1.26465.4 (PR: [#9772](https://github.com/dotnet/vscode-csharp/pull/9772))
   * Avoid cache misses due to cancellation in deprioritized analyzer cache (PR: [#85222](https://github.com/dotnet/roslyn/pull/85222))
   * Move the LanguageServerProjectLoader over to our priority queue (PR: [#85272](https://github.com/dotnet/roslyn/pull/85272))
   * Fix nested script indentation in Razor (PR: [#85289](https://github.com/dotnet/roslyn/pull/85289))
