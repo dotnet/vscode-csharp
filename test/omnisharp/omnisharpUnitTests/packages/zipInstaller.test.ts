@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import * as fs from 'fs-extra';
+import { stat } from 'fs/promises';
 import * as path from 'path';
 import * as util from '../../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset';
@@ -60,7 +60,7 @@ describe('ZipInstaller', () => {
             await InstallZip(testZip.buffer, fileDescription, installationPath, absoluteBinaries, eventStream);
             for (const binaryPath of absoluteBinaries) {
                 expect(await util.fileExists(binaryPath.value)).toBe(true);
-                const mode = (await fs.stat(binaryPath.value)).mode;
+                const mode = (await stat(binaryPath.value)).mode;
                 expect(mode & 0o7777).toEqual(0o755);
             }
         }

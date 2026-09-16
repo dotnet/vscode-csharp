@@ -7,5 +7,8 @@ import { TextDocumentIdentifier } from 'vscode-languageclient';
 import { GeneratedDocumentKind } from './generatedDocumentKind';
 
 export class DocumentContentsRequest {
-    constructor(public readonly textDocument: TextDocumentIdentifier, public readonly kind: GeneratedDocumentKind) {}
+    constructor(
+        public readonly textDocument: TextDocumentIdentifier,
+        public readonly kind: GeneratedDocumentKind
+    ) {}
 }

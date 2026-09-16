@@ -16,9 +16,8 @@ export function registerNestedCodeActionCommands(
     outputChannel: vscode.LogOutputChannel
 ) {
     context.subscriptions.push(
-        vscode.commands.registerCommand(
-            'roslyn.client.nestedCodeAction',
-            async (request): Promise<void> => registerNestedResolveCodeAction(languageServer, request, outputChannel)
+        vscode.commands.registerCommand('roslyn.client.nestedCodeAction', async (request): Promise<void> =>
+            registerNestedResolveCodeAction(languageServer, request, outputChannel)
         )
     );
 }

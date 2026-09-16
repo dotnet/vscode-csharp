@@ -6,7 +6,10 @@
 import { vscode } from './vscodeAdapter';
 
 export default class NetworkSettings {
-    constructor(public readonly proxy: string, public readonly strictSSL: boolean) {}
+    constructor(
+        public readonly proxy: string,
+        public readonly strictSSL: boolean
+    ) {}
 }
 
 export interface NetworkSettingsProvider {

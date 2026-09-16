@@ -7,7 +7,10 @@ import archiver from 'archiver';
 import { TestFile } from './testFile';
 
 export default class TestZip {
-    constructor(private readonly _buffer: Buffer, private readonly _files: TestFile[]) {}
+    constructor(
+        private readonly _buffer: Buffer,
+        private readonly _files: TestFile[]
+    ) {}
 
     get buffer(): Buffer {
         return this._buffer;

@@ -24,7 +24,8 @@ import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework'
 import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/solutionSnapshotProvider';
 import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService';
 import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
-import { RazorLogger } from './razor/src/razorLogger';
+import { ObservableLogOutputChannel } from './lsptoolshost/logging/observableLogOutputChannel';
+import { ActiveDocumentLanguageSupportService } from './lsptoolshost/projectContext/activeDocumentLanguageSupportService';
 
 export function activateRoslyn(
     context: vscode.ExtensionContext,
@@ -39,7 +40,7 @@ export function activateRoslyn(
     const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
     context.subscriptions.push(roslynLanguageServerEvents);
 
-    const razorLogger = new RazorLogger();
+    const observableCsharpChannel = new ObservableLogOutputChannel(csharpChannel);
 
     // Setup a listener for project initialization complete before we start the server.
     const projectInitializationCompletePromise = new Promise<void>((resolve, _) => {
@@ -55,17 +56,21 @@ export function activateRoslyn(
         context,
         platformInfo,
         optionStream,
-        csharpChannel,
+        observableCsharpChannel,
         reporter,
-        roslynLanguageServerEvents,
-        razorLogger
+        roslynLanguageServerEvents
     );
 
     debugSessionTracker.initializeDebugSessionHandlers(context);
-    tryGetCSharpDevKitExtensionExports(csharpDevkitExtension, csharpChannel);
+    tryGetCSharpDevKitExtensionExports(csharpDevkitExtension, observableCsharpChannel);
     const coreClrDebugPromise = getCoreClrDebugPromise(roslynLanguageServerStartedPromise);
 
     const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
+    const activeDocumentLanguageSupport = new ActiveDocumentLanguageSupportService(
+        roslynLanguageServerStartedPromise,
+        observableCsharpChannel
+    );
+    context.subscriptions.push(activeDocumentLanguageSupport);
     const exports: CSharpExtensionExports = {
         isLimitedActivation: false,
         initializationFinished: async () => {
@@ -82,6 +87,7 @@ export function activateRoslyn(
             sendServerRequestWithProgress: async (t, p, pr, ct) =>
                 await languageServerExport.sendRequestWithProgress(t, p, pr, ct),
             languageServerEvents: roslynLanguageServerEvents,
+            activeDocumentLanguageSupport,
         },
         getComponentFolder: (componentName) => {
             return getComponentFolder(componentName, languageServerOptions);
@@ -90,7 +96,7 @@ export function activateRoslyn(
         languageServerProcessId: () => RoslynLanguageServer.processId,
         captureActivityLogs: async () => {
             const languageServer = await roslynLanguageServerStartedPromise;
-            return createCaptureActivityLogs(languageServer, razorLogger);
+            return createCaptureActivityLogs(languageServer);
         },
     };
 

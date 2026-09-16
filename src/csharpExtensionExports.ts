@@ -31,7 +31,30 @@ export interface ActivityLogCapture extends vscode.Disposable {
 export interface ActivityLogResult {
     csharpLog: string;
     lspTraceLog: string;
-    razorLog: string;
+}
+
+/**
+ * - `unknown` when document language support is still being actively determined.
+ * - `limited` when document language support is incomplete (e.g. miscellaneous file, virtual file, unsupported language, ...).
+ * - `full` when language server has determined full language support is available.
+ */
+export type LanguageSupportState = 'unknown' | 'full' | 'limited';
+
+/** Roslyn's language-support classification for the active document. */
+export interface ActiveDocumentLanguageSupport {
+    /** Serialized URI of the document to which this snapshot applies. */
+    documentUri: string;
+    state: LanguageSupportState;
+    /** Label of the current Roslyn project context represented by this snapshot. */
+    projectLabel: string;
+}
+
+/** Publishes snapshots for the active document as Roslyn project information changes. */
+export interface ActiveDocumentLanguageSupportService {
+    /** Most recently published snapshot, or `undefined` when no relevant document is active. */
+    readonly current: ActiveDocumentLanguageSupport | undefined;
+    /** Fires when the active document or its Roslyn language-support classification changes. */
+    readonly onDidChange: vscode.Event<ActiveDocumentLanguageSupport | undefined>;
 }
 
 export interface CSharpExtensionExports {
@@ -58,7 +81,7 @@ export interface CSharpExtensionExperimentalExports {
         Response,
         PartialResult,
         Error,
-        RegistrationOptions
+        RegistrationOptions,
     >(
         type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
         params: RequestParam<Params>,
@@ -66,4 +89,5 @@ export interface CSharpExtensionExperimentalExports {
         token?: vscode.CancellationToken
     ): Promise<Response>;
     languageServerEvents: LanguageServerEvents;
+    activeDocumentLanguageSupport: ActiveDocumentLanguageSupportService;
 }

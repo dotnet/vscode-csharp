@@ -302,6 +302,11 @@ export interface Event<T> {
     (listener: (e: T) => any, thisArgs?: any, disposables?: Disposable[]): Disposable;
 }
 
+export interface EventEmitter<T> extends Disposable {
+    readonly event: Event<T>;
+    fire(data: T): void;
+}
+
 export interface Disposable {
     /**
      * Dispose this object.
@@ -957,6 +962,9 @@ export interface Extension<_T> {
 }
 
 export interface vscode {
+    EventEmitter: {
+        new <T>(): EventEmitter<T>;
+    };
     commands: {
         executeCommand: <T>(command: string, ...rest: any[]) => Thenable<T | undefined>;
     };

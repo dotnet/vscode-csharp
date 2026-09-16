@@ -21,7 +21,7 @@ So for a release at version `2.130`, the prerelease entries are `2.121.x` throug
 
 ### Branch Structure
 
-- `main` — Active development; CHANGELOG here contains the latest prerelease entries.
+- `main` — Active development.
 - `prerelease` — Published prerelease builds; CHANGELOG here is the **canonical source** for prerelease entries.
 - `release` — Published stable builds.
 
@@ -29,29 +29,28 @@ So for a release at version `2.130`, the prerelease entries are `2.121.x` throug
 
 ## Input Required
 
-- **Target release version** (optional): The stable version being released (e.g., `2.130`). If not provided, determine it from the current `version.json` on `main` by rounding up the minor version to the next ten.
+- **Target release version** (optional): The stable version being released (e.g., `2.130`). If not provided, determine it from the current `version.json` on `prerelease` by rounding up the minor version to the next ten.
 
 ## Process
 
 ### Step 1: Determine the version range
 
-1. Identify the **target release version**. If not given, read `version.json` on `main` to get the current minor version, and round up to the next ten (e.g., if current is `2.131`, the next release is `2.140`).
+1. Identify the **target release version**. If not given, read `version.json` on `prerelease` to get the current minor version, and round up to the next ten (e.g., if current is `2.131`, the next release is `2.140`).
 2. Calculate the **previous release version** by subtracting 10 from the target minor (e.g., target `2.140` → previous `2.130`).
 3. The prerelease sections to gather are all minor versions **after** the previous release and **before** the target release. For example, for target `2.140`: sections `2.131.x`, `2.132.x`, ..., `2.139.x`.
 
-### Step 2: Fetch the CHANGELOG from prerelease and main branches
+### Step 2: Fetch the CHANGELOG from the prerelease branch
 
-The prerelease entries may be spread across the `prerelease` and `main` branches. The `prerelease` branch is the canonical source, but `main` may contain newer entries that haven't been published to prerelease yet.
+The prerelease entries are in the `prerelease` branch. The `prerelease` branch is the canonical source.
 
-Fetch both branches and retrieve their CHANGELOGs:
+Fetch the `prerelease` branch and retrieve its CHANGELOG:
 
 ```bash
-git fetch origin prerelease main
+git fetch origin prerelease
 git show origin/prerelease:CHANGELOG.md
-git show origin/main:CHANGELOG.md
 ```
 
-Extract sections for the prerelease versions identified in Step 1 from **both** branches, deduplicating any sections that appear in both. Prefer the `prerelease` branch version if a section appears in both.
+Extract sections for the prerelease versions identified in Step 1.
 
 ### Step 3: Follow PR and issue links to gather details
 

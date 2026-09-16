@@ -573,8 +573,7 @@ interface UpdateSourceGeneratedFileModifiedResponse {
 }
 
 export type UpdateSourceGeneratedFileResponse =
-    | UpdateSourceGeneratedFileNotModifiedResponse
-    | UpdateSourceGeneratedFileModifiedResponse;
+    UpdateSourceGeneratedFileNotModifiedResponse | UpdateSourceGeneratedFileModifiedResponse;
 
 export enum UpdateType {
     Unchanged,

@@ -5,5 +5,7 @@
 
 import { omnisharpTestIntegration } from './omnisharptestTasks';
 import { runTask } from '../runTask';
+import { parseCodeExtensionPath } from './omnisharptestArguments';
 
-runTask(omnisharpTestIntegration);
+const codeExtensionPath = parseCodeExtensionPath();
+runTask(async () => await omnisharpTestIntegration(codeExtensionPath));

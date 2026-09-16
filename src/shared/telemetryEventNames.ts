@@ -32,4 +32,11 @@ export enum TelemetryEventNames {
     ProjectContextChangeFileExplorer = 'roslyn/projectContextChangeFileExplorer',
     ProjectContextChangeEditor = 'roslyn/projectContextChangeEditor',
     ProjectContextChangeCommand = 'roslyn/projectContextChangeCommand',
+
+    // Copilot Chat survey lifecycle. Emitted with an `outcome` property: `shown` when the toast is
+    // presented (emitted up front, since a non-modal toast may never be responded to), and
+    // `accepted`/`dismissed` when the user makes an explicit choice.
+    CopilotChatSurvey = 'roslyn/copilotChatSurvey',
+    // The Copilot Chat survey qualified but failed to be presented due to an error.
+    CopilotChatSurveyError = 'roslyn/copilotChatSurvey/error',
 }

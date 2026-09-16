@@ -73,11 +73,13 @@ export async function activate(
             if (languageServerStartedPromise) {
                 try {
                     await languageServerStartedPromise;
-                } catch (e: any) {
-                    if (e as Error) {
-                        throw new Error(vscode.l10n.t('Unable to launch Attach to Process dialog: ') + e.message);
+                } catch (error) {
+                    if (error instanceof Error) {
+                        throw new Error(vscode.l10n.t('Unable to launch Attach to Process dialog: ') + error.message, {
+                            cause: error,
+                        });
                     } else {
-                        throw e;
+                        throw error;
                     }
                 }
             }
@@ -112,6 +114,7 @@ export async function activate(
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('monovsdbg', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('monovsdbg_wasm', factory));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr_mobile', factory));
 
     context.subscriptions.push(disposables);
 }

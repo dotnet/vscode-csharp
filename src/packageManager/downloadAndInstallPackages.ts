@@ -12,7 +12,7 @@ import { NetworkSettingsProvider } from '../networkSettings';
 import { AbsolutePathPackage } from './absolutePathPackage';
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from '../common';
 import { InstallationFailure, IntegrityCheckFailure } from '../shared/loggingEvents';
-import { mkdirpSync } from 'fs-extra';
+import { mkdirSync } from 'fs';
 import { PackageInstallStart } from '../shared/loggingEvents';
 import { DownloadValidator } from './isValidDownload';
 import { CancellationToken } from 'vscode';
@@ -32,7 +32,7 @@ export async function downloadAndInstallPackages(
     for (const pkg of packages) {
         let installationStage = 'touchBeginFile';
         try {
-            mkdirpSync(pkg.installPath.value);
+            mkdirSync(pkg.installPath.value, { recursive: true });
             await touchInstallFile(pkg.installPath, InstallFileType.Begin);
             let count = 1;
             const willTryInstallingPackage = () => count <= 2; // try 2 times

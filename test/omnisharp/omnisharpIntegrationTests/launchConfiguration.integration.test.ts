@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
-import * as fs from 'fs-extra';
+import { existsSync } from 'fs';
 import * as vscode from 'vscode';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
@@ -24,7 +24,7 @@ describe.skip(`Tasks generation: ${testAssetWorkspace.description}`, function ()
 
     test('Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session', async () => {
         await vscode.commands.executeCommand('dotnet.generateAssets', 0);
-        await poll(async () => fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
+        await poll(async () => existsSync(testAssetWorkspace.launchJsonPath), 10000, 100);
 
         const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((_) => {
             onChangeSubscription.dispose();

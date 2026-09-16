@@ -18,6 +18,7 @@ export interface CommonOptions {
     readonly unitTestDebuggingOptions: object;
     readonly runSettingsPath: string;
     readonly organizeImportsOnFormat: boolean;
+    readonly disableAIFeatures: boolean;
 }
 
 export interface OmnisharpServerOptions {
@@ -162,6 +163,9 @@ class CommonOptionsImpl implements CommonOptions {
     }
     public get organizeImportsOnFormat() {
         return readOption<boolean>('dotnet.formatting.organizeImportsOnFormat', false);
+    }
+    public get disableAIFeatures() {
+        return readOption<boolean>('chat.disableAIFeatures', false);
     }
 }
 
@@ -486,6 +490,7 @@ export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> 
     'waitForDebugger',
     'serverPath',
     'useOmnisharpServer',
+    'disableAIFeatures',
 ];
 
 export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptions> = [

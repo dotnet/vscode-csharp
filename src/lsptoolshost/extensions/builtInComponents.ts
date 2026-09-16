@@ -29,15 +29,16 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
             'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll',
         ],
     },
-    razorExtension: {
-        defaultFolderName: '.razorExtension',
-        optionName: 'razorExtension',
-        componentDllPaths: ['Microsoft.VisualStudioCode.RazorExtension.dll'],
-    },
     roslynCopilot: {
         defaultFolderName: '.roslynCopilot',
         optionName: 'roslynCopilot',
         componentDllPaths: ['Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll'],
+        isOptional: true,
+    },
+    testDiscovery: {
+        defaultFolderName: '.testDiscovery',
+        optionName: 'testDiscovery',
+        componentDllPaths: ['Microsoft.VisualStudio.CSharpDevKit.SourceTestDiscovery.dll'],
         isOptional: true,
     },
 };

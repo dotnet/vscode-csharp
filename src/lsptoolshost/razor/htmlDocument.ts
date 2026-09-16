@@ -11,7 +11,10 @@ export class HtmlDocument {
     private content = '';
     private checksum = '';
 
-    public constructor(public readonly uri: vscode.Uri, checksum: string) {
+    public constructor(
+        public readonly uri: vscode.Uri,
+        checksum: string
+    ) {
         this.path = getUriPath(uri);
         this.checksum = checksum;
     }

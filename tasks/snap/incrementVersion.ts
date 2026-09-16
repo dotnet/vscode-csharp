@@ -3,15 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import minimist from 'minimist';
+import { parseArgs } from 'util';
 import { addChangelogSection, getNextReleaseVersion, readVersionJson, writeVersionJson } from './snapTasks';
 import { runTask } from '../runTask';
 
 runTask(incrementVersion);
 
 async function incrementVersion(): Promise<void> {
-    const argv = minimist(process.argv.slice(2));
-    const isReleaseCandidate = argv['releaseCandidate'] === true || argv['releaseCandidate'] === 'true';
+    const { values } = parseArgs({
+        options: {
+            releaseCandidate: { type: 'boolean' },
+        },
+    });
+    const isReleaseCandidate = values.releaseCandidate ?? false;
 
     // Get the current version from version.json
     const versionJson = readVersionJson();

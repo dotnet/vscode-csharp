@@ -6,7 +6,7 @@
 import * as process from 'node:process';
 import * as fs from 'fs';
 import * as path from 'path';
-import minimist from 'minimist';
+import { parseArgs } from 'util';
 import {
     configureGitUser,
     createCommit,
@@ -18,15 +18,16 @@ import {
 import { updatePackageDependencies } from '../../src/tools/updatePackageDependencies';
 import { runTask } from '../runTask';
 
-type Options = {
-    userName?: string;
-    email?: string;
-};
-
 runTask(publishRoslynCopilot);
 
 async function publishRoslynCopilot() {
-    const parsedArgs = minimist<Options>(process.argv.slice(2));
+    const { values: parsedArgs } = parseArgs({
+        options: {
+            userName: { type: 'string' },
+            email: { type: 'string' },
+            stagingDirectory: { type: 'string' },
+        },
+    });
 
     if (!parsedArgs.stagingDirectory || !fs.existsSync(parsedArgs.stagingDirectory)) {
         throw new Error(`Staging directory not found at ${parsedArgs.stagingDirectory}; skipping package.json update.`);
@@ -83,9 +84,8 @@ async function publishRoslynCopilot() {
     // Set environment variables for updatePackageDependencies
     process.env['NEW_DEPS_ID'] = 'RoslynCopilot';
     process.env['NEW_DEPS_VERSION'] = version;
-    process.env[
-        'NEW_DEPS_URLS'
-    ] = `https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-${version}.zip`;
+    process.env['NEW_DEPS_URLS'] =
+        `https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-${version}.zip`;
 
     // Update package dependencies using the extracted utility
     await updatePackageDependencies();
