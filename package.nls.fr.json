@@ -88,7 +88,7 @@
   "configuration.dotnet.server.useServerGC": "Configurez le serveur de langue pour qu’il utilise le serveur .NET GC.  Le serveur GC offre généralement un meilleur niveau de performance au prix d’une consommation de mémoire plus élevée. (Nécessite le redémarrage de l’extension)",
   "configuration.dotnet.server.waitForDebugger": "Passe l’indicateur --debug au lancement du serveur pour permettre l’attachement d’un débogueur. (Nécessite le redémarrage de l’extension)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Rechercher des symboles dans les assemblys de référence. Elle affecte les fonctionnalités nécessitant une recherche de symboles, comme l’ajout d’importations.",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Utilisez les informations sémantiques lors de la découverte des tests pour reconnaître les attributs de test dérivés d’attributs connus du framework de test. Le CodeLens de test peut mettre plus de temps à s’afficher.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "Emplacement d’insertion des propriétés, des événements et des méthodes lors de l’implémentation d’une interface ou d’une classe abstraite.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Placez-les à la fin.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Placez-les avec d’autres membres du même type.",
