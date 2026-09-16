@@ -21,7 +21,7 @@ describe('C# Dev Kit version check', () => {
         expect(showErrorMessage).not.toHaveBeenCalled();
     });
 
-    test.each(['11.1.0', '11.1.1-pre.1', '12.0.0'])('allows activation with C# Dev Kit version %s', async (version) => {
+    test.each(['11.0.0', '11.0.0-pre.1', '12.0.0'])('allows activation with C# Dev Kit version %s', async (version) => {
         const showErrorMessage = jest.spyOn(vscode.window, 'showErrorMessage');
 
         await checkCSharpDevKitVersion(createExtension(version));
@@ -32,8 +32,8 @@ describe('C# Dev Kit version check', () => {
     test('blocks activation with an older C# Dev Kit version', async () => {
         const showErrorMessage = jest.spyOn(vscode.window, 'showErrorMessage').mockResolvedValue(undefined);
 
-        await expect(checkCSharpDevKitVersion(createExtension('11.0.99'))).rejects.toThrow(
-            'This version of the C# extension requires C# Dev Kit version 11.1 or later. Please install the pre-release version of C# Dev Kit or use the release version of the C# extension.'
+        await expect(checkCSharpDevKitVersion(createExtension('10.9.99'))).rejects.toThrow(
+            'This version of the C# extension requires C# Dev Kit version 11 or later. Please install the pre-release version of C# Dev Kit or use the release version of the C# extension.'
         );
         expect(showErrorMessage).toHaveBeenCalledTimes(1);
     });
