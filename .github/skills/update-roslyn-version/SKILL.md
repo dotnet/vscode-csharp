@@ -13,14 +13,13 @@ This skill describes how to update the Roslyn language server version in the vsc
   - `C:\Users\<username>\source\repos\roslyn`
   - Next to the current repo directory, e.g. `<current-repo-root>/../roslyn`
   - If unable to find local roslyn repo, ask the user for its location.
-2. The `roslyn-tools` CLI tool must be installed as a global .NET tool:
+2. The `dnx` command must be available. It is included with the .NET 10 SDK and later:
    ```powershell
-   dotnet tool install -g Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+   dnx --help
    ```
-   **Note**: After installation, the tool is invoked as `roslyn-tools` (not `dotnet roslyn-tools`)
-3. You must have authenticated with GitHub for `roslyn-tools`:
+3. The GitHub CLI must be installed and authenticated so its token can be passed to Roslyn Tools:
    ```powershell
-   roslyn-tools authenticate
+   gh auth status
    ```
 
 ## Input Required
@@ -148,17 +147,17 @@ Navigate to the roslyn repository, fetch the latest, and run the pr-finder tool:
 ```powershell
 cd <path-to-roslyn-repo>
 git fetch origin
-roslyn-tools pr-finder --start <old-commit-sha> --end <new-commit-sha> --format "o#"
+dnx Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json -- pr-finder --github-token "$(gh auth token)" --start <old-commit-sha> --end <new-commit-sha> --format "o#"
 ```
 
-**Important**: The tool is invoked as `roslyn-tools` (a global tool), NOT `dotnet roslyn-tools`.
+**Important**: Invoke Roslyn Tools through `dnx` instead of a globally installed `roslyn-tools` executable. Always pass the GitHub token explicitly with `--github-token`.
 
 This will output a list of PRs in the format needed for the changelog:
 ```
   * <PR title> (PR: [#<number>](https://github.com/dotnet/roslyn/pull/<number>))
 ```
 
-Keep the raw output from `roslyn-tools pr-finder`; you'll use it unchanged in the pull request description in Step 10.
+Keep the raw output from `pr-finder`; you'll use it unchanged in the pull request description in Step 10.
 
 ### Step 7: Update CHANGELOG.md
 
@@ -213,7 +212,7 @@ git push -u origin update/roslyn-<version>
 Create a pull request on GitHub:
 - Title: `Update roslyn to <new-version>`
 - Base: `main`
-- Description/body: the raw, unfiltered output from `roslyn-tools pr-finder` in Step 6, including the compare link and full PR list exactly as produced by the tool. Do not apply the Step 8 changelog filtering to the PR description.
+- Description/body: the raw, unfiltered output from `pr-finder` in Step 6, including the compare link and full PR list exactly as produced by the tool. Do not apply the Step 8 changelog filtering to the PR description.
 
 ### Step 11: Update Changelog with PR Number
 
@@ -267,8 +266,8 @@ If you encounter authentication errors:
 Ensure:
 1. You have fetched the latest from origin in the roslyn repo: `git fetch origin`
 2. Both commit SHAs exist in your local repo
-3. You have authenticated with `roslyn-tools authenticate`
-4. You are invoking the tool correctly as `roslyn-tools pr-finder` (not `dotnet roslyn-tools`)
+3. `gh auth status` succeeds and `gh auth token` returns a token
+4. You are invoking the tool through `dnx` and passing `--github-token "$(gh auth token)"`
 
 ### Finding Commit SHAs
 
