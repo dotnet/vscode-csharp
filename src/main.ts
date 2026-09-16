@@ -27,6 +27,7 @@ import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensio
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateRoslyn } from './activateRoslyn';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
+import { checkCSharpDevKitVersion } from './checkCSharpDevKitVersion';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -71,6 +72,7 @@ export async function activate(
     const requiredPackageIds: string[] = ['Debugger', 'Razor'];
 
     const csharpDevkitExtension = getCSharpDevKit();
+    await checkCSharpDevKitVersion(csharpDevkitExtension);
     const useOmnisharpServer = !csharpDevkitExtension && commonOptions.useOmnisharpServer;
     if (useOmnisharpServer) {
         requiredPackageIds.push('OmniSharp');
