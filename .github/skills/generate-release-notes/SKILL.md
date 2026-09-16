@@ -57,7 +57,8 @@ Extract sections for the prerelease versions identified in Step 1.
 For each entry in the extracted CHANGELOG sections:
 
 1. **Follow the PR link** (e.g., `https://github.com/dotnet/vscode-csharp/pull/8954`) to read the PR description for additional context about the change.
-2. **If the PR has a linked issue**, follow that link too to understand the user-facing problem being solved.
+2. For component updates, follow the nested upstream PR links in the CHANGELOG or wrapper PR description. Use the upstream PR that introduced each user-facing Roslyn or Razor change as the release-note reference, not the `dotnet/vscode-csharp` PR that only updated the component version.
+3. **If the PR has a linked issue**, follow that link too to understand the user-facing problem being solved.
 
 This additional context is critical for writing meaningful, user-facing release notes rather than just echoing commit messages.
 
@@ -98,7 +99,11 @@ Within each section, lead with new features and improvements, then list fixes.
 - Where a change fixes a user-visible bug, describe the symptom that was fixed.
 - Where a change adds a new feature, describe what users can now do.
 - Use present tense (e.g., "The extension now supports..." not "Added support for...").
-- Link to the relevant PR from `dotnet/vscode-csharp` for each item (not the upstream Roslyn/Razor PR).
+- Link each item to the PR that introduced the user-facing change:
+  - Use the upstream `dotnet/roslyn` or `dotnet/razor` PR for changes delivered by those components.
+  - Use the `dotnet/vscode-csharp` PR for changes implemented in the extension itself.
+  - If a component has no public upstream PR, as may be the case for `xamlTools`, link to the `dotnet/vscode-csharp` component update PR.
+  - When one item summarizes multiple changes, link every upstream PR needed to support the claims. Do not substitute a component update PR for the originating PRs.
 
 ### Step 5: Create a PR against the release branch
 
@@ -227,8 +232,8 @@ if needed. ([vscode-csharp#8970](https://github.com/dotnet/vscode-csharp/pull/89
 ### Formatting fixes
 
 - Fixed formatting of multiline `@if` statements, ternary expressions, and
-  wrapped CSS. ([razor#12786](https://github.com/dotnet/razor/pull/12786))
-- Fixed indentation after complete tags. ([razor#12784](https://github.com/dotnet/razor/pull/12784))
+  wrapped CSS. ([dotnet/razor#12786](https://github.com/dotnet/razor/pull/12786))
+- Fixed indentation after complete tags. ([dotnet/razor#12784](https://github.com/dotnet/razor/pull/12784))
 ```
 
 ## Notes
