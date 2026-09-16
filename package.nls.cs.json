@@ -88,7 +88,7 @@
   "configuration.dotnet.server.useServerGC": "Nakonfigurujte jazykový server tak, aby používal uvolňování paměti serveru .NET.  Uvolňování paměti serveru obecně poskytuje lepší výkon za cenu vyšší spotřeby paměti. (Vyžaduje restartování rozšíření)",
   "configuration.dotnet.server.waitForDebugger": "Při spuštění serveru předá příznak --debug, aby bylo možné připojit ladicí program. (Vyžaduje restartování rozšíření)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Hledat symboly v referenčních sestaveních Ovlivňuje funkce, které vyžadují vyhledávání symbolů, například přidání importů.",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Při zjišťování testů používejte sémantické informace k rozpoznání atributů testů odvozených od známých atributů testovacího frameworku. Vyhodnocení testu CodeLens může trvat déle.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "Umístění vložení vlastností, událostí a metod při implementaci rozhraní nebo abstraktní třídy.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Umístit je na konec.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Umístěte je s ostatními členy stejného druhu.",
