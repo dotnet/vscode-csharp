@@ -88,7 +88,7 @@
   "configuration.dotnet.server.useServerGC": "Configurar o servidor de linguagem para usar a coleta de lixo do servidor do .NET.  A GC do servidor geralmente fornece melhor desempenho às custas de um maior consumo de memória. (Requer reinicialização da extensão)",
   "configuration.dotnet.server.waitForDebugger": "Passa a opção --debug ao iniciar o servidor para permitir que um depurador seja conectado. (Requer reinicialização da extensão)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Pesquisar símbolos em montagens de referência. Afeta os recursos que exigem pesquisa de símbolos, como adicionar importações.",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use informações semânticas durante a descoberta de testes para reconhecer atributos de teste derivados de atributos conhecidos do framework de teste. O CodeLens de teste pode demorar mais para ser resolvido.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "O local de inserção de propriedades, eventos e métodos Ao implementar interface ou classe abstrata.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Coloque-os no final.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Coloque-os com outros membros do mesmo tipo.",

@@ -88,7 +88,7 @@
   "configuration.dotnet.server.useServerGC": "Skonfiguruj serwer językowy do używania funkcji odzyskiwania pamięci serwera .NET.  Odzyskiwanie pamięci serwera zwykle zapewnia lepszą wydajność kosztem większego zużycia pamięci. (Wymaga ponownego uruchomienia rozszerzenia)",
   "configuration.dotnet.server.waitForDebugger": "Przekazuje flagę --debug podczas uruchamiania serwera, aby umożliwić dołączenie debugera. (Wymaga ponownego uruchomienia rozszerzenia)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Wyszukaj symbole w zestawach odwołań. Ma to wpływ na funkcje wymagające wyszukiwania symboli, takie jak dodawanie importów.",
-  "configuration.dotnet.testing.useSemanticTestDiscovery": "Use semantic information during test discovery to recognize test attributes derived from known test framework attributes. The test CodeLens may take longer to resolve.",
+  "configuration.dotnet.testing.useSemanticTestDiscovery": "Informacje semantyczne podczas odnajdywania testów umożliwiają rozpoznawanie atrybutów testowych pochodzących ze znanych atrybutów struktury testów. Rozpoznanie testowej funkcji CodeLens może potrwać dłużej.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "Lokalizacja wstawiania właściwości, zdarzeń i metod podczas implementowania interfejsu lub klasy abstrakcyjnej.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Umieść je na końcu.",
   "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Umieść je z innymi elementami członkowskimi tego samego rodzaju.",
