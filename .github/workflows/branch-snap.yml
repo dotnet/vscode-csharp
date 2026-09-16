@@ -34,7 +34,7 @@ jobs:
       - name: Update version.json
         run: |
           if [ "${{ github.event.inputs.releaseCandidate }}" = "true" ]; then
-            npm run incrementVersion -- --releaseCandidate=true
+            npm run incrementVersion -- --releaseCandidate
           else
             npm run incrementVersion
           fi

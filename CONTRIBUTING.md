@@ -77,14 +77,14 @@ This section shows how to set up local Razor or Roslyn language servers for debu
 1. Clone the [Roslyn repository](https://github.com/dotnet/roslyn). This repository contains the Roslyn server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
+The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net10.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
 
 #### Razor
 
 1. Clone the [Razor repository](https://github.com/dotnet/razor). This repository contains the Razor server implementation.
 2. Follow the build instructions provided in the repository.
 
-The extension is typically at `$razorRepoRoot/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0`.
+The extension is typically at `$razorRepoRoot/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net10.0`.
 
 ### Debugging Local Language Servers
 
@@ -120,7 +120,7 @@ Add the following lines to your `settings.json`. Replace `<roslynRepoRoot>` with
 
 ```json
 "dotnet.server.waitForDebugger": true,
-"dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll"
+"dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net10.0/Microsoft.CodeAnalysis.LanguageServer.dll"
 ```
 
 ---
@@ -128,7 +128,7 @@ Add the following lines to your `settings.json`. Replace `<roslynRepoRoot>` with
 **If using C# Dev Kit**, you also need to override the Roslyn DevKit component in your `settings.json`. This step is not necessary if you are not loading the Dev Kit extension.
 ```json
 "dotnet.server.componentPaths": {
-    "roslynDevKit": "<roslynRepoRoot>/artifacts/bin/Microsoft.VisualStudio.LanguageServices.DevKit/Debug/net9.0"
+    "roslynDevKit": "<roslynRepoRoot>/artifacts/bin/Microsoft.VisualStudio.LanguageServices.DevKit/Debug/net10.0"
 },
 ```
 
@@ -147,7 +147,7 @@ Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with 
 
 ```json
 "dotnet.server.componentPaths": {
-    "razorExtension": "<razorRepoRoot>/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0"
+    "razorExtension": "<razorRepoRoot>/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net10.0"
 },
 ```
 

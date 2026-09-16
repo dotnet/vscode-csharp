@@ -19,7 +19,7 @@ export default async function reportIssue(
     monoResolver?: IHostExecutableResolver
 ) {
     // Get info for the dotnet that the language server executable is run on, not the dotnet the language server will execute user code on.
-    let fullDotnetInfo = '';
+    let fullDotnetInfo: string;
     try {
         const info = await dotnetResolver.getHostExecutableInfo();
         const dotnetInfo = await getDotnetInfo([dirname(info.path)]);
@@ -134,7 +134,7 @@ function getLanguageServerOptionData(k: keyof LanguageServerOptions): { name: st
 }
 
 async function getMonoIfPlatformValid(monoResolver: IHostExecutableResolver): Promise<string> {
-    let monoVersion = 'Unknown Mono version';
+    let monoVersion: string;
     try {
         const monoInfo = await monoResolver.getHostExecutableInfo();
         monoVersion = `OmniSharp using mono: ${monoInfo.version}`;

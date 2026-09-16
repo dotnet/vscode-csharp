@@ -14,7 +14,8 @@ export default function createOptionStream(vscode: vscode): Observable<void> {
             if (
                 e.affectsConfiguration('dotnet') ||
                 e.affectsConfiguration('omnisharp') ||
-                e.affectsConfiguration('csharp')
+                e.affectsConfiguration('csharp') ||
+                e.affectsConfiguration('chat')
             ) {
                 observer.next();
             }

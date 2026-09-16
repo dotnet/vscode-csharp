@@ -31,7 +31,10 @@ export class TelemetryErrorEvent implements BaseEvent {
 
 export class TelemetryEventWithMeasures implements BaseEvent {
     type = EventType.TelemetryEvent;
-    constructor(public eventName: string, public measures: { [key: string]: number }) {}
+    constructor(
+        public eventName: string,
+        public measures: { [key: string]: number }
+    ) {}
 }
 
 export class OmnisharpDelayTrackerEventMeasures extends TelemetryEventWithMeasures {
@@ -44,7 +47,11 @@ export class OmnisharpStart extends TelemetryEventWithMeasures {
 
 export class OmnisharpInitialisation implements BaseEvent {
     type = EventType.OmnisharpInitialisation;
-    constructor(public dotNetCliPaths: string[], public timeStamp: Date, public solutionPath: string) {}
+    constructor(
+        public dotNetCliPaths: string[],
+        public timeStamp: Date,
+        public solutionPath: string
+    ) {}
 }
 
 export class OmnisharpLaunch implements BaseEvent {
@@ -60,12 +67,18 @@ export class OmnisharpLaunch implements BaseEvent {
 
 export class OmnisharpFailure implements BaseEvent {
     type = EventType.OmnisharpFailure;
-    constructor(public message: string, public error: Error) {}
+    constructor(
+        public message: string,
+        public error: Error
+    ) {}
 }
 
 export class OmnisharpRequestMessage implements BaseEvent {
     type = EventType.OmnisharpRequestMessage;
-    constructor(public request: Request, public id: number) {}
+    constructor(
+        public request: Request,
+        public id: number
+    ) {}
 }
 
 export class TestExecutionCountReport implements BaseEvent {
@@ -98,27 +111,45 @@ export class OmnisharpServerUnresolvedDependencies implements BaseEvent {
 
 export class OmnisharpServerEnqueueRequest implements BaseEvent {
     type = EventType.OmnisharpServerEnqueueRequest;
-    constructor(public queueName: string, public command: string) {}
+    constructor(
+        public queueName: string,
+        public command: string
+    ) {}
 }
 
 export class OmnisharpServerDequeueRequest implements BaseEvent {
     type = EventType.OmnisharpServerDequeueRequest;
-    constructor(public queueName: string, public queueStatus: string, public command: string, public id?: number) {}
+    constructor(
+        public queueName: string,
+        public queueStatus: string,
+        public command: string,
+        public id?: number
+    ) {}
 }
 
 export class OmnisharpServerRequestCancelled implements BaseEvent {
     type = EventType.OmnisharpServerRequestCancelled;
-    constructor(public command: string, public id: number | undefined) {}
+    constructor(
+        public command: string,
+        public id: number | undefined
+    ) {}
 }
 
 export class OmnisharpServerProcessRequestStart implements BaseEvent {
     type = EventType.OmnisharpServerProcessRequestStart;
-    constructor(public name: string, public availableRequestSlots: number) {}
+    constructor(
+        public name: string,
+        public availableRequestSlots: number
+    ) {}
 }
 
 export class OmnisharpEventPacketReceived implements BaseEvent {
     type = EventType.OmnisharpEventPacketReceived;
-    constructor(public logLevel: string, public name: string, public message: string) {}
+    constructor(
+        public logLevel: string,
+        public name: string,
+        public message: string
+    ) {}
 }
 
 export class OmnisharpServerOnServerError implements BaseEvent {
@@ -173,17 +204,28 @@ export class DotNetTestsInClassDebugStart implements BaseEvent {
 
 export class DotNetTestRunInContextStart implements BaseEvent {
     type = EventType.DotNetTestRunInContextStart;
-    constructor(public fileName: string, public line: number, public column: number) {}
+    constructor(
+        public fileName: string,
+        public line: number,
+        public column: number
+    ) {}
 }
 
 export class DotNetTestDebugInContextStart implements BaseEvent {
     type = EventType.DotNetTestDebugInContextStart;
-    constructor(public fileName: string, public line: number, public column: number) {}
+    constructor(
+        public fileName: string,
+        public line: number,
+        public column: number
+    ) {}
 }
 
 export class DocumentSynchronizationFailure implements BaseEvent {
     type = EventType.DocumentSynchronizationFailure;
-    constructor(public documentPath: string, public errorMessage: string) {}
+    constructor(
+        public documentPath: string,
+        public errorMessage: string
+    ) {}
 }
 
 export class RazorPluginPathSpecified implements BaseEvent {

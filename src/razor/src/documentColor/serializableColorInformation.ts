@@ -7,5 +7,8 @@ import * as vscode from 'vscode';
 import { SerializableRange } from '../rpc/serializableRange';
 
 export class SerializableColorInformation {
-    constructor(public readonly range: SerializableRange, public readonly color: vscode.Color) {}
+    constructor(
+        public readonly range: SerializableRange,
+        public readonly color: vscode.Color
+    ) {}
 }

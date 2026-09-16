@@ -5,12 +5,12 @@
 
 import * as vscode from 'vscode';
 import { FoldingRange, FoldingRangeKind } from 'vscode-languageclient';
-import { RazorLogger } from '../razorLogger';
+import { ObservableLogOutputChannel } from '../../../lsptoolshost/logging/observableLogOutputChannel';
 
 export class FoldingRangeHandler {
     constructor() {}
 
-    public static convertFoldingRanges(foldingRanges: vscode.FoldingRange[], logger: RazorLogger) {
+    public static convertFoldingRanges(foldingRanges: vscode.FoldingRange[], logger: ObservableLogOutputChannel) {
         const convertedFoldingRanges = new Array<FoldingRange>();
         foldingRanges.forEach((foldingRange) => {
             const convertedFoldingRange: FoldingRange = {
@@ -30,7 +30,7 @@ export class FoldingRangeHandler {
         return convertedFoldingRanges;
     }
 
-    private static convertFoldingRangeKind(kind: vscode.FoldingRangeKind, logger: RazorLogger) {
+    private static convertFoldingRangeKind(kind: vscode.FoldingRangeKind, logger: ObservableLogOutputChannel) {
         if (kind === vscode.FoldingRangeKind.Comment) {
             return FoldingRangeKind.Comment;
         } else if (kind === vscode.FoldingRangeKind.Imports) {
@@ -38,7 +38,7 @@ export class FoldingRangeHandler {
         } else if (kind === vscode.FoldingRangeKind.Region) {
             return FoldingRangeKind.Region;
         } else {
-            logger.logWarning(`Unexpected FoldingRangeKind ${kind}`);
+            logger.warn(`Unexpected FoldingRangeKind ${kind}`);
             return undefined;
         }
     }

@@ -5,7 +5,7 @@
 
 import psList from 'ps-list';
 import { DebugSession } from 'vscode';
-import { RazorLogger } from '../razorLogger';
+import { LogOutputChannel } from 'vscode';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
 
 export const isValidEvent = (name: string) => {
@@ -14,23 +14,23 @@ export const isValidEvent = (name: string) => {
     return name.startsWith(JS_DEBUG_NAME) || name === SERVER_APP_NAME;
 };
 
-const killProcess = (targetPid: number | undefined, logger: RazorLogger) => {
+const killProcess = (targetPid: number | undefined, logger: LogOutputChannel) => {
     // If no PID was provided, then exit early.
     if (!targetPid) {
         return;
     }
 
     try {
-        logger.logTrace(`[DEBUGGER] Terminating debugging session with PID ${targetPid}...`);
+        logger.trace(`[DEBUGGER] Terminating debugging session with PID ${targetPid}...`);
         process.kill(targetPid);
     } catch (error) {
-        logger.logError(`[DEBUGGER] Error terminating debug processes with PID ${targetPid}: `, error as Error);
+        logger.error(`[DEBUGGER] Error terminating debug processes with PID ${targetPid}: `, error as Error);
     }
 };
 
 export async function onDidTerminateDebugSession(
     event: DebugSession,
-    logger: RazorLogger,
+    logger: LogOutputChannel,
     target: string | number | undefined
 ) {
     if (!target) {
@@ -44,7 +44,7 @@ export async function onDidTerminateDebugSession(
     }
 }
 
-function terminateByPid(event: DebugSession, logger: RazorLogger, targetPid: number | undefined) {
+function terminateByPid(event: DebugSession, logger: LogOutputChannel, targetPid: number | undefined) {
     // Ignore debug sessions that are not applicable to us
     if (!isValidEvent(event.name)) {
         return;
@@ -53,7 +53,7 @@ function terminateByPid(event: DebugSession, logger: RazorLogger, targetPid: num
     killProcess(targetPid, logger);
 }
 
-async function terminateByProcessName(event: DebugSession, logger: RazorLogger, targetProcess: string) {
+async function terminateByProcessName(event: DebugSession, logger: LogOutputChannel, targetProcess: string) {
     // Ignore debug sessions that are not applicable to us
     if (!isValidEvent(event.name)) {
         return;
@@ -63,7 +63,7 @@ async function terminateByProcessName(event: DebugSession, logger: RazorLogger, 
     try {
         processes = await psList();
     } catch (error) {
-        logger.logError(`Error retrieving processes to clean-up: `, error as Error);
+        logger.error(`Error retrieving processes to clean-up: `, error as Error);
     }
 
     const devserver = processes.find(

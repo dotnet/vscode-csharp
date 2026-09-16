@@ -29,6 +29,7 @@ import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit';
+
 import { randomUUID } from 'crypto';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
@@ -561,7 +562,7 @@ export class RoslynLanguageServer {
                 await this.openSolution(vscode.Uri.file(defaultSolution));
             } else {
                 // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
-                const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
+                const solutionUris = await vscode.workspace.findFiles('**/*.slnx?', '**/node_modules/**', 2);
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
                         await this.openSolution(solutionUris[0]);
@@ -582,9 +583,8 @@ export class RoslynLanguageServer {
                                     .getConfiguration()
                                     .update('dotnet.defaultSolution', 'disable', false);
                             } else {
-                                const chosenSolution: vscode.Uri | undefined = await vscode.commands.executeCommand(
-                                    'dotnet.openSolution'
-                                );
+                                const chosenSolution: vscode.Uri | undefined =
+                                    await vscode.commands.executeCommand('dotnet.openSolution');
                                 if (chosen.action === 'openAndSetDefault' && chosenSolution) {
                                     const relativePath = vscode.workspace.asRelativePath(chosenSolution);
                                     await vscode.workspace
@@ -671,19 +671,6 @@ export class RoslynLanguageServer {
             args.push('--sourceGeneratorExecutionPreference', sourceGeneratorExecution);
         }
 
-        let razorComponentPath = '';
-        getComponentPaths('razorExtension', languageServerOptions, channel).forEach((extPath) => {
-            additionalExtensionPaths.push(extPath);
-            razorComponentPath = path.dirname(extPath);
-        });
-
-        args.push('--razorSourceGenerator', path.join(razorComponentPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
-
-        args.push(
-            '--razorDesignTimePath',
-            path.join(razorComponentPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
-        );
-
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         if (csharpDevKitExtensionExports) {
             _wasActivatedWithCSharpDevkit = true;
@@ -696,12 +683,9 @@ export class RoslynLanguageServer {
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths, channel);
             args = args.concat(csharpDevKitArgs);
 
-            await this.setupDevKitEnvironment(
-                dotnetInfo.env,
-                csharpDevKitExtensionExports,
-                additionalExtensionPaths,
-                channel
-            );
+            await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevKitExtensionExports);
+
+            this.setupCopilotEnvironment(additionalExtensionPaths, channel);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             channel.info('Activating C# standalone...');
@@ -712,6 +696,7 @@ export class RoslynLanguageServer {
 
             // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
             // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
+            const razorComponentPath = path.dirname(serverPath);
             args.push(
                 '--csharpDesignTimePath',
                 path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
@@ -875,16 +860,16 @@ export class RoslynLanguageServer {
                     return;
                 }
 
-                const title: CommandOption = {
-                    title: vscode.l10n.t('Reload C# Extension'),
-                    command: 'workbench.action.restartExtensionHost',
-                };
                 if (csharpDevkitExtension && !_wasActivatedWithCSharpDevkit) {
                     // We previously started without C# Dev Kit and it's now installed.
                     // Offer a prompt to restart extensions in order to use C# Dev Kit.
                     this._channel.info(`Detected new installation of ${csharpDevkitExtensionId}`);
                     const message = `Detected installation of C# Dev Kit. Please reload the C# extension to continue.`;
-                    showInformationMessage(vscode, message, title);
+                    const reloadAction: CommandOption = {
+                        title: vscode.l10n.t('Reload C# Extension'),
+                        command: 'workbench.action.restartExtensionHost',
+                    };
+                    showInformationMessage(vscode, message, reloadAction);
                 } else {
                     // Any other change to extensions is irrelevant - an uninstall requires the extension host to restart
                     // which will automatically restart this extension too.
@@ -909,6 +894,17 @@ export class RoslynLanguageServer {
         );
     }
 
+    private static setupCopilotEnvironment(additionalExtensionPaths: string[], channel: vscode.LogOutputChannel): void {
+        if (commonOptions.disableAIFeatures) {
+            channel.info('AI features are disabled (chat.disableAIFeatures). Skipping Roslyn Copilot component.');
+            return;
+        }
+
+        getComponentPaths('roslynCopilot', languageServerOptions, channel).forEach((extPath) => {
+            additionalExtensionPaths.push(extPath);
+        });
+    }
+
     private static getCSharpDevKitExportArgs(
         additionalExtensionPaths: string[],
         channel: vscode.LogOutputChannel
@@ -931,24 +927,28 @@ export class RoslynLanguageServer {
             );
         }
 
+        // Also include the C# Dev Kit source-based test discovery extension, if present. The component
+        // is built by C# Dev Kit (vs-green), published as a NuGet package, and restored into this
+        // extension at build time (see allNugetPackages in offlinePackagingTasks.ts), using the same
+        // mechanism as the Xaml tools and roslynDevKit components above. It is optional: builds
+        // that don't restore the package won't have the folder, in which case getComponentPaths returns
+        // an empty array and we skip it. The consumer of the discovery service is the C# Dev Kit server.
+        getComponentPaths('testDiscovery', languageServerOptions, channel).forEach((path) =>
+            additionalExtensionPaths.push(path)
+        );
+
         return args;
     }
 
     private static async setupDevKitEnvironment(
         env: NodeJS.ProcessEnv,
-        csharpDevkitExtensionExports: CSharpDevKitExports,
-        additionalExtensionPaths: string[],
-        channel: vscode.LogOutputChannel
+        csharpDevkitExtensionExports: CSharpDevKitExports
     ): Promise<void> {
         // setupTelemetryEnvironmentAsync was a later addition to devkit (not in preview 1)
         // so it may not exist in whatever version of devkit the user has installed
         if (csharpDevkitExtensionExports.setupTelemetryEnvironmentAsync) {
             await csharpDevkitExtensionExports.setupTelemetryEnvironmentAsync(env);
         }
-
-        getComponentPaths('roslynCopilot', languageServerOptions, channel).forEach((extPath) => {
-            additionalExtensionPaths.push(extPath);
-        });
     }
 
     /**

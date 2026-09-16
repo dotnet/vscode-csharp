@@ -64,6 +64,9 @@ describe(`Razor Rename ${testAssetWorkspace.description}`, function () {
                 expect(uri.path).toStrictEqual(activeDocument.path);
                 expect(edits.length).toBe(3);
 
+                // Rename edits can come from multiple generated documents, so their order is not guaranteed.
+                edits.sort((a, b) => a.range.start.compareTo(b.range.start));
+
                 const edit1 = edits[0];
                 expect(edit1.range).toStrictEqual(
                     new vscode.Range(new vscode.Position(6, 33), new vscode.Position(6, 45))

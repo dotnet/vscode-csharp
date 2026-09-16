@@ -27,7 +27,7 @@ When investigating issues, the C# extension provides a command to collect logs, 
    ![alt text](docs/images/collect_logs.png)
 2. **Select Additional Logs to Collect**:
    - You will be presented with a multi-select picker. Choose from:
-     - **Record Activity** - Capture live C#, LSP trace, and Razor log output
+     - **Record Activity** - Capture live C# output (including Razor) and LSP trace output
      - **Performance Trace** - Record a dotnet-trace of the language server
      - **Memory Dump** - Process memory dump using dotnet-dump
      - **GC Dump** - Garbage collector heap dump using dotnet-gcdump
@@ -46,12 +46,10 @@ When investigating issues, the C# extension provides a command to collect logs, 
    - You will be notified that the archive has been saved and a button is provided to open the containing folder.
 6. **Share the Logs**:
    - The saved archive may contain (depending on selections):
-     - `csharp.log` - The existing C# log file
+     - `csharp.log` - The existing C# log file, including Razor messages
      - `csharp-lsp-trace.log` - The existing LSP trace log file
-     - `razor.log` - The existing Razor log file
-     - `csharp.activity.log` - Captured C# log activity during the recording session
+     - `csharp.activity.log` - Captured C# log activity during the recording session, including Razor messages
      - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the recording session
-     - `razor.activity.log` - Captured Razor log activity during the recording session
      - `csharp-settings.json` - Current C# extension settings
      - `.nettrace` file from dotnet-trace (if Performance Trace selected)
      - `.dmp` memory dump files (if Memory Dump selected)
@@ -76,13 +74,13 @@ If you need to set the trace level manually:
 - Invoke the `Developer: Set Log Level` command from the VS Code command palette, find the `C#` entry, and set the level.
 
 #### Collecting Razor Logs
-For issues with Razor, the Razor Log output window can contain useful information.
+For issues with Razor, the `C#` output window contains the relevant Razor log messages.
 
 1. **Set the Log Level to Trace**:
-   - Open the `Razor Logs` output window (`View` -> `Output`).
+   - Open the `C#` output window (`View` -> `Output`).
    - Set the log level to `Trace`.
 
-     ![razor log output window showing trace option](./docs/images/razor_logs.png)
+     ![c# output window showing trace option](./docs/images/csharp_trace.png)
 
 2. **Reproduce the Issue**:
    - Perform the actions that reproduce the issue.

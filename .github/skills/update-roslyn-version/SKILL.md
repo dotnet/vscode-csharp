@@ -15,7 +15,7 @@ This skill describes how to update the Roslyn language server version in the vsc
   - If unable to find local roslyn repo, ask the user for its location.
 2. The `roslyn-tools` CLI tool must be installed as a global .NET tool:
    ```powershell
-   dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+   dotnet tool install -g Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
    ```
    **Note**: After installation, the tool is invoked as `roslyn-tools` (not `dotnet roslyn-tools`)
 3. You must have authenticated with GitHub for `roslyn-tools`:
@@ -158,6 +158,8 @@ This will output a list of PRs in the format needed for the changelog:
   * <PR title> (PR: [#<number>](https://github.com/dotnet/roslyn/pull/<number>))
 ```
 
+Keep the raw output from `roslyn-tools pr-finder`; you'll use it unchanged in the pull request description in Step 10.
+
 ### Step 7: Update CHANGELOG.md
 
 Add an entry to `CHANGELOG.md` under the current version section (e.g., `# 2.121.x`):
@@ -174,21 +176,29 @@ Note: Leave the PR number blank initially (just `[#]`) - it will be updated afte
 
 ### Step 8: Filter Changelog Entries
 
-Review the changelog entries and remove any PRs that obviously don't affect VS Code. Remove entries that are:
+Treat the changelog as a concise list of user-facing VS Code editor and language server changes, not a list of all production changes in Roslyn. Review the PR title and, when its impact is ambiguous, its changed files or description.
+
+Remove entries that are:
 
 - **Infrastructure/Build changes**: CI/CD pipelines, build scripts, Azure DevOps configurations
 - **Visual Studio-only changes**: Features or fixes specific to Visual Studio IDE (not VS Code)
 - **Test-only changes**: Test infrastructure, test fixes that don't affect production code
 - **Internal tooling**: Changes to internal tools not used by the language server
 - **Documentation-only**: README updates, internal docs (unless they document user-facing features)
+- **Compiler-only changes**: Language implementation, parsing, lowering, emit, code generation, compiler APIs, or compiler performance changes without direct editor or language server impact
+- **Razor compiler internals**: Razor parsing, lowering, code generation, or compiler architecture changes that do not directly change the VS Code editing experience
+- **Internal refactoring and dependencies**: Architectural refactors, implementation details, package updates, or internal performance work unless they have a clear user-visible effect in VS Code
 
 Keep entries that are:
 - Language server protocol (LSP) changes
-- Code analysis/diagnostics improvements
+- Code analysis or diagnostics improvements visible in the editor
 - Completion, navigation, refactoring features
-- Performance improvements
+- Performance improvements specifically affecting editor or language server responsiveness
 - Bug fixes that affect language server behavior
-- API changes that could affect VS Code extension
+- Razor changes that directly affect editing features such as formatting, completion, navigation, or code actions
+- API changes consumed by the VS Code extension or language server
+
+When uncertain, omit the entry from `CHANGELOG.md`; the complete unfiltered list remains available in the pull request description.
 
 ### Step 9: Commit and Push
 
@@ -203,6 +213,7 @@ git push -u origin update/roslyn-<version>
 Create a pull request on GitHub:
 - Title: `Update roslyn to <new-version>`
 - Base: `main`
+- Description/body: the raw, unfiltered output from `roslyn-tools pr-finder` in Step 6, including the compare link and full PR list exactly as produced by the tool. Do not apply the Step 8 changelog filtering to the PR description.
 
 ### Step 11: Update Changelog with PR Number
 

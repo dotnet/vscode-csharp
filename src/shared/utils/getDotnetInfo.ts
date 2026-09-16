@@ -44,7 +44,7 @@ async function runDotnetInfo(dotnetExecutablePath: string | undefined): Promise<
         return data;
     } catch (error) {
         const message = error instanceof Error ? error.message : `${error}`;
-        throw new Error(`Error running dotnet --info: ${message}`);
+        throw new Error(`Error running dotnet --info: ${message}`, { cause: error });
     }
 }
 
@@ -109,6 +109,6 @@ async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string 
         throw new Error('Failed to parse dotnet version information');
     } catch (error) {
         const message = error instanceof Error ? error.message : `${error}`;
-        throw new Error(`Error parsing dotnet --info: ${message}, raw info was:${EOL}${dotnetInfo}`);
+        throw new Error(`Error parsing dotnet --info: ${message}, raw info was:${EOL}${dotnetInfo}`, { cause: error });
     }
 }

@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RazorLogger } from '../../razor/src/razorLogger';
 import { PlatformInformation } from '../../shared/platform';
 import { getUriPath } from '../../razor/src/uriPaths';
 import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider';
 import { HtmlDocument } from './htmlDocument';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
 import { RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
 import { UriConverter } from '../utils/uriConverter';
 
@@ -33,7 +33,7 @@ export class HtmlDocumentManager {
     constructor(
         private readonly platformInfo: PlatformInformation,
         private readonly roslynLanguageServer: RoslynLanguageServer,
-        private readonly logger: RazorLogger
+        private readonly logger: ObservableLogOutputChannel
     ) {
         this.contentProvider = new HtmlDocumentContentProvider(this, this.logger);
     }
@@ -60,13 +60,13 @@ export class HtmlDocumentManager {
         const didCloseRegistration = vscode.workspace.onDidCloseTextDocument(async (document) => {
             // We log when a virtual document is closed just in case it helps track down future bugs
             if (document.uri.scheme === HtmlDocumentContentProvider.scheme) {
-                this.logger.logTrace(`Virtual document '${document.uri}' timed out.`);
+                this.logger.trace(`Virtual document '${document.uri}' timed out.`);
                 return;
             }
 
             // When a Razor document is closed, only then can we be sure its okay to remove the virtual document.
             if (document.languageId === 'aspnetcorerazor') {
-                this.logger.logTrace(`Document '${document.uri}' was closed.`);
+                this.logger.trace(`Document '${document.uri}' was closed.`);
 
                 await this.closeDocument(document.uri);
 
@@ -93,13 +93,13 @@ export class HtmlDocumentManager {
         let document = await this.findDocument(uri);
 
         if (!document) {
-            this.logger.logTrace(
+            this.logger.trace(
                 `File '${uri}' didn't exist in the Razor document list, so adding it with checksum '${checksum}'.`
             );
             document = this.addDocument(uri, checksum);
         }
 
-        this.logger.logTrace(`New content for '${uri}', updating '${document.path}', checksum '${checksum}'.`);
+        this.logger.trace(`New content for '${uri}', updating '${document.path}', checksum '${checksum}'.`);
 
         // Create a promise for this document update
         let resolve: () => void;
@@ -123,7 +123,7 @@ export class HtmlDocumentManager {
         const document = await this.findDocument(uri);
 
         if (document) {
-            this.logger.logTrace(`Removing '${document.uri}' from the document manager.`);
+            this.logger.trace(`Removing '${document.uri}' from the document manager.`);
 
             // Clean up any pending update promises for this document
             const pendingUpdate = this.pendingUpdates[document.path];
@@ -140,12 +140,12 @@ export class HtmlDocumentManager {
         const document = this.findDocument(uri);
 
         if (!document) {
-            this.logger.logTrace(`File '${uri}' didn't exist in the Razor document list. Doing nothing.`);
+            this.logger.trace(`File '${uri}' didn't exist in the Razor document list. Doing nothing.`);
             return undefined;
         }
 
         if (checksum && document.getChecksum() !== checksum) {
-            this.logger.logInfo(
+            this.logger.info(
                 `Found '${uri}' in the Razor document list, but the checksum '${document.getChecksum()}' doesn't match '${checksum}'.`
             );
             return undefined;
@@ -172,7 +172,7 @@ export class HtmlDocumentManager {
                         ),
                     ]);
                 } catch (error) {
-                    this.logger.logWarning(`Failed to wait for document update: ${error}`);
+                    this.logger.warn(`Failed to wait for document update: ${error}`);
                 } finally {
                     // Clean up the promise reference
                     delete this.pendingUpdates[document.path];
@@ -186,7 +186,7 @@ export class HtmlDocumentManager {
     private addDocument(uri: vscode.Uri, checksum: string): HtmlDocument {
         let document = this.findDocument(uri);
         if (document) {
-            this.logger.logInfo(`Skipping document creation for '${document.path}' because it already exists.`);
+            this.logger.info(`Skipping document creation for '${document.path}' because it already exists.`);
             return document;
         }
 

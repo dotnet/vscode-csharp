@@ -23,7 +23,10 @@ import { PlatformInformation } from '../../shared/platform';
 import { Logger } from '../../logger';
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
-    constructor(channel: vscode.OutputChannel | Logger, private platformInformation: PlatformInformation) {
+    constructor(
+        channel: vscode.OutputChannel | Logger,
+        private platformInformation: PlatformInformation
+    ) {
         super(channel);
     }
 

@@ -22,7 +22,10 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
         providedCodeActionKinds: [OmniSharpFixAllProvider.fixAllCodeActionKind],
     };
 
-    public constructor(private server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    public constructor(
+        private server: OmniSharpServer,
+        languageMiddlewareFeature: LanguageMiddlewareFeature
+    ) {
         super(server, languageMiddlewareFeature);
         const disposable = new CompositeDisposable();
         disposable.add(

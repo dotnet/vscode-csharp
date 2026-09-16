@@ -49,7 +49,7 @@ export async function changeProjectContext(
         return;
     }
 
-    let context: VSProjectContext | undefined = undefined;
+    let context: VSProjectContext | undefined;
 
     if (options !== undefined) {
         const contextLabel = `${options.projectName} (${options.tfm})`;

@@ -16,7 +16,11 @@ import { CommandOption, showWarningMessage } from '../../shared/observers/utils/
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
 
-    constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
+    constructor(
+        private vscode: vscode,
+        private disableMsBuildDiagnosticWarning: () => boolean,
+        scheduler?: Scheduler
+    ) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
         this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe((_) => {
             const message = l10n.t('Some projects have trouble loading. Please review the output for more details.');

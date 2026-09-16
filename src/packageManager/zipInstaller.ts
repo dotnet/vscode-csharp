@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
-import { ensureDir } from 'fs-extra';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from '../eventStream';
@@ -38,7 +37,7 @@ export async function InstallZip(
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
                     try {
-                        await ensureDir(absoluteEntryPath, 0o775);
+                        await fs.promises.mkdir(absoluteEntryPath, { recursive: true, mode: 0o775 });
                         zipFile.readEntry();
                     } catch (err) {
                         const error = err as NodeJS.ErrnoException; // Hack for TypeScript to type err correctly
@@ -54,7 +53,7 @@ export async function InstallZip(
                         }
 
                         try {
-                            await ensureDir(path.dirname(absoluteEntryPath), 0o775);
+                            await fs.promises.mkdir(path.dirname(absoluteEntryPath), { recursive: true, mode: 0o775 });
 
                             // Make sure executable files have correct permissions when extracted
                             const binaryPaths = binaries?.map((binary) => binary.value);

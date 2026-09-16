@@ -19,7 +19,10 @@ import SymbolPropertyNames = protocol.V2.SymbolPropertyNames;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
 
 abstract class OmniSharpCodeLens extends vscode.CodeLens {
-    constructor(range: protocol.V2.Range, public fileName: string) {
+    constructor(
+        range: protocol.V2.Range,
+        public fileName: string
+    ) {
         super(new vscode.Range(range.Start.Line, range.Start.Column, range.End.Line, range.End.Column));
     }
 }
