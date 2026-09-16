@@ -20,8 +20,8 @@ export async function checkCSharpDevKitVersion(
     }
 
     const message = vscode.l10n.t(
-        'This version of the C# extension requires C# Dev Kit version 11 or later. Please install the pre-release version of C# Dev Kit or use the release version of the C# extension.'
+        'This version of the C# extension requires C# Dev Kit version 11 or later. Please install the latest pre-release version of C# Dev Kit or use the release version of the C# extension.'
     );
-    await vscode.window.showErrorMessage(message);
+    await vscode.window.showErrorMessage(message, { modal: true });
     throw new Error(message);
 }

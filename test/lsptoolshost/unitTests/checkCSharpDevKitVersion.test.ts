@@ -36,6 +36,7 @@ describe('C# Dev Kit version check', () => {
             'This version of the C# extension requires C# Dev Kit version 11 or later. Please install the pre-release version of C# Dev Kit or use the release version of the C# extension.'
         );
         expect(showErrorMessage).toHaveBeenCalledTimes(1);
+        expect(showErrorMessage).toHaveBeenCalledWith(expect.any(String), { modal: true });
     });
 });
 
