@@ -10,6 +10,9 @@ parameters:
     type: boolean
   - name: testVSCodeVersion
     type: string
+  - name: runDevKitTests
+    type: boolean
+    default: true
 
 jobs:
 - job:
@@ -21,9 +24,10 @@ jobs:
       CSharpIntegrationTests:
         npmCommand: test:integration:csharp
         isIntegration: true
-      DevKitTests:
-        npmCommand: test:integration:devkit
-        isIntegration: true
+      ${{ if parameters.runDevKitTests }}:
+        DevKitTests:
+          npmCommand: test:integration:devkit
+          isIntegration: true
       RazorCohostTests:
         npmCommand: test:integration:razor:cohost
         isIntegration: true

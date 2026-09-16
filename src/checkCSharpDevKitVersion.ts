@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { major } from 'semver';
 import { CSharpDevKitExports } from './csharpDevKitExports';
+import { csharpDevkitExtensionId } from './utils/getCSharpDevKit';
 
 const requiredCSharpDevKitMajorVersion = 11;
 
@@ -20,8 +21,12 @@ export async function checkCSharpDevKitVersion(
     }
 
     const message = vscode.l10n.t(
-        'This version of the C# extension requires C# Dev Kit version 11 or later. Please install the latest pre-release version of C# Dev Kit or use the release version of the C# extension.'
+        'C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.'
     );
-    await vscode.window.showErrorMessage(message, { modal: true });
+    const openCSharpDevKit = vscode.l10n.t('Open C# Dev Kit');
+    const selection = await vscode.window.showErrorMessage(message, { modal: true }, openCSharpDevKit);
+    if (selection === openCSharpDevKit) {
+        await vscode.commands.executeCommand('extension.open', csharpDevkitExtensionId);
+    }
     throw new Error(message);
 }

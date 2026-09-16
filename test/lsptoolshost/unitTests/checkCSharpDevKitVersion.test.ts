@@ -33,10 +33,19 @@ describe('C# Dev Kit version check', () => {
         const showErrorMessage = jest.spyOn(vscode.window, 'showErrorMessage').mockResolvedValue(undefined);
 
         await expect(checkCSharpDevKitVersion(createExtension('10.9.99'))).rejects.toThrow(
-            'This version of the C# extension requires C# Dev Kit version 11 or later. Please install the pre-release version of C# Dev Kit or use the release version of the C# extension.'
+            'C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.'
         );
         expect(showErrorMessage).toHaveBeenCalledTimes(1);
-        expect(showErrorMessage).toHaveBeenCalledWith(expect.any(String), { modal: true });
+        expect(showErrorMessage).toHaveBeenCalledWith(expect.any(String), { modal: true }, 'Open C# Dev Kit');
+    });
+
+    test('opens C# Dev Kit when requested', async () => {
+        jest.spyOn(vscode.window, 'showErrorMessage').mockResolvedValue('Open C# Dev Kit' as never);
+        const executeCommand = jest.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
+
+        await expect(checkCSharpDevKitVersion(createExtension('10.9.99'))).rejects.toThrow();
+
+        expect(executeCommand).toHaveBeenCalledWith('extension.open', 'ms-dotnettools.csdevkit');
     });
 });
 
