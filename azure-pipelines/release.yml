@@ -75,6 +75,17 @@ extends:
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                 displayName: Set BuildNumber
               - template: /azure-pipelines/install-node.yml@self
+              # Saving uncached packages from upstream requires authentication, even for the public feed.
+              - pwsh: |
+                  Set-Content -Path '$(Agent.TempDirectory)/vsce.npmrc' -Value @(
+                    'registry=https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-npm/npm/registry/'
+                    'always-auth=true'
+                  )
+                displayName: 'Configure npm feed'
+              - task: npmAuthenticate@0
+                displayName: 'Authenticate npm feed'
+                inputs:
+                  workingFile: $(Agent.TempDirectory)/vsce.npmrc
               - task: AzureCLI@2
                 displayName: '🚀 Publish to Marketplace'
                 name: PublishToMarketplaceStep
@@ -132,7 +143,7 @@ extends:
                     Write-Host "##[command]& $publishScript $publishArgsDisplay"
                     & $publishScript @publishArgs
                 env:
-                  NPM_CONFIG_REGISTRY: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-npm/npm/registry/
+                  NPM_CONFIG_USERCONFIG: $(Agent.TempDirectory)/vsce.npmrc
 
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'
