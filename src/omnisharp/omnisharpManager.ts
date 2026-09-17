@@ -8,11 +8,9 @@ import * as semver from 'semver';
 import * as util from '../common';
 import { OmnisharpDownloader } from './omnisharpDownloader';
 import { PlatformInformation } from '../shared/platform';
-import { modernNetVersion } from './omnisharpPackageCreator';
+import { getModernNetVersion } from './omnisharpPackageCreator';
 
 export class OmnisharpManager {
-    private readonly latestVersionFileServerPath = 'releases/versioninfo.txt';
-
     private readonly installPath = '.omnisharp';
 
     public constructor(
@@ -20,7 +18,8 @@ export class OmnisharpManager {
         private platformInfo: PlatformInformation,
         // Only the tests set this. Instead of making this configurable,
         // we should probably just mock the HTTP requests, not create an entire mock HTTP server.
-        private serverUrl: string = 'https://roslynomnisharp.blob.core.windows.net'
+        private serverUrl: string = 'https://github.com/OmniSharp/omnisharp-roslyn',
+        private latestVersionUrl: string = 'https://raw.githubusercontent.com/OmniSharp/omnisharp-roslyn/version/latestVersion.txt'
     ) {}
 
     public async GetOmniSharpLaunchPath(
@@ -54,7 +53,7 @@ export class OmnisharpManager {
     }
 
     private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, extensionPath: string): Promise<string> {
-        const version = await this.downloader.GetLatestVersion(this.serverUrl, this.latestVersionFileServerPath);
+        const version = await this.downloader.GetLatestVersion(this.latestVersionUrl);
         return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, extensionPath);
     }
 
@@ -80,7 +79,7 @@ export class OmnisharpManager {
         const basePath = path.resolve(
             extensionPath,
             this.installPath,
-            version + (useFramework ? '' : `-net${modernNetVersion}`)
+            version + (useFramework ? '' : `-net${getModernNetVersion(version)}`)
         );
         if (!useFramework) {
             return path.join(basePath, 'OmniSharp.dll');
