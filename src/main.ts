@@ -27,6 +27,7 @@ import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensio
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateRoslyn } from './activateRoslyn';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
+import { registerDotnetPlugin } from './shared/copilot/dotnetPlugin';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -62,6 +63,8 @@ export async function activate(
     if (!checkIsSupportedPlatform(context, platformInfo)) {
         return null;
     }
+
+    registerDotnetPlugin(context, reporter, csharpChannel);
 
     await checkDotNetRuntimeExtensionVersion(context);
 

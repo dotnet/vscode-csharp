@@ -10,6 +10,9 @@ export enum TelemetryEventNames {
     // Common extension events
     CSharpActivated = 'CSharpActivated',
     CSharpLimitedActivation = 'CSharpLimitedActivation',
+    CopilotDotnetPlugin = 'copilotDotnetPlugin',
+    CopilotDotnetPluginUninstall = 'copilotDotnetPlugin/uninstall',
+    CopilotDotnetPluginError = 'copilotDotnetPlugin/error',
 
     // Events related to the roslyn language server.
 

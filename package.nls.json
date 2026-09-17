@@ -1,4 +1,5 @@
 {
+  "command.dotnet.copilot.uninstallDotnetPlugin": "Uninstall Copilot C# LSP plugin",
   "command.o.restart": "Restart OmniSharp",
   "command.o.pickProjectAndStart": "Select Project",
   "command.dotnet.openSolution": "Open Solution",

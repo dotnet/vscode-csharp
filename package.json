@@ -1860,6 +1860,11 @@
     ],
     "commands": [
       {
+        "command": "dotnet.copilot.uninstallDotnetPlugin",
+        "title": "%command.dotnet.copilot.uninstallDotnetPlugin%",
+        "category": ".NET"
+      },
+      {
         "command": "o.restart",
         "title": "%command.o.restart%",
         "category": "OmniSharp",
