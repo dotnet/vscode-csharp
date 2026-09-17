@@ -27,7 +27,7 @@ import {
 } from '../../../src/shared/loggingEvents';
 import TestEventBus from './testAssets/testEventBus';
 import { testPackageJSON } from './testAssets/testAssets';
-import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
+import { getModernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
 
 [true, false].forEach((useFramework) => {
     describe(`OmnisharpDownloader (useFramework: ${useFramework})`, () => {
@@ -42,7 +42,7 @@ import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator
         let tmpDir: TmpAsset;
         let testZip: TestZip;
         let eventBus: TestEventBus;
-        const suffix = useFramework ? '' : `-net${modernNetVersion}`;
+        const suffix = useFramework ? '' : `-net${getModernNetVersion(version)}`;
 
         beforeEach(async () => {
             eventStream = new EventStream();
@@ -61,7 +61,7 @@ import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator
             await server.start();
             server.addRequestHandler(
                 'GET',
-                `/releases/${version}/omnisharp-win-x64${suffix}.zip`,
+                `/releases/download/v${version}/omnisharp-win-x64${suffix}.zip`,
                 200,
                 {
                     'content-type': 'application/zip',
