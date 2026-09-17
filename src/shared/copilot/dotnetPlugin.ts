@@ -7,7 +7,14 @@ import * as vscode from 'vscode';
 import { commonOptions } from '../options';
 import { ITelemetryReporter } from '../telemetryReporter';
 import { TelemetryEventNames } from '../telemetryEventNames';
-import type { CopilotCli, CopilotCliSource, CopilotPlugin } from './copilotCli';
+import {
+    CopilotCli,
+    CopilotCliSource,
+    CopilotPlugin,
+    findCopilotCli,
+    parsePluginList,
+    runCopilotCli,
+} from './copilotCli';
 
 export const uninstallDotnetPluginCommand = 'dotnet.copilot.uninstallDotnetPlugin';
 export const dotnetPluginOptOutKey = 'csharp.copilotDotnetPlugin.autoInstallDisabled';
@@ -24,374 +31,277 @@ type Outcome =
     | 'optedOut'
     | 'aiDisabled'
     | 'untrustedWorkspace'
-    | 'uninstallRequested'
-    | 'disposed'
+    | 'cancelled'
     | 'installFailed'
     | 'uninstalled'
     | 'alreadyAbsent'
     | 'uninstallFailed';
-type Stage = 'eligibility' | 'cache' | 'discovery' | 'inventory' | 'install' | 'confirmation' | 'optOut' | 'uninstall';
-type Runtime = typeof import('./copilotCli');
-type Context = {
-    globalState: vscode.Memento;
-    extension: Pick<vscode.Extension<unknown>, 'packageJSON'>;
-};
-type Channel = Pick<vscode.LogOutputChannel, 'error' | 'info'>;
+type Stage = 'optOut' | 'cache' | 'discovery' | 'inventory' | 'install' | 'uninstall';
+type Source = CopilotCliSource | 'none';
 type Cache = { extensionVersion: string; outcome: CachedOutcome; source: CopilotCliSource };
-type Operation = {
+type InstallResult = {
     outcome: Outcome;
-    source: CopilotCliSource | 'none';
-    cached: boolean;
-    stage: Stage;
-    signal: AbortSignal;
+    source: Source;
+    cache?: Omit<Cache, 'extensionVersion'>;
+};
+
+export type DotnetPluginHost = {
+    context: {
+        globalState: vscode.Memento;
+        extension: Pick<vscode.Extension<unknown>, 'packageJSON'>;
+    };
+    reporter: ITelemetryReporter;
+    channel: Pick<vscode.LogOutputChannel, 'error' | 'info'>;
 };
 
 export function registerDotnetPlugin(
-    context: Context & Pick<vscode.ExtensionContext, 'subscriptions' | 'extensionMode'>,
+    context: DotnetPluginHost['context'] & Pick<vscode.ExtensionContext, 'subscriptions' | 'extensionMode'>,
     reporter: ITelemetryReporter,
-    channel: Channel
+    channel: DotnetPluginHost['channel']
 ): void {
-    const manager = new DotnetPluginManager(context, reporter, channel);
+    const host: DotnetPluginHost = { context, reporter, channel };
+    const controller = new AbortController();
+    // Other integration suites must not install into the developer's real Copilot profile.
+    let operation =
+        context.extensionMode === vscode.ExtensionMode.Test
+            ? Promise.resolve()
+            : installDotnetPlugin(host, controller.signal);
+    context.subscriptions.push(
+        { dispose: () => controller.abort(named('AbortError', 'The C# extension was deactivated.')) },
+        vscode.commands.registerCommand(uninstallDotnetPluginCommand, async () => {
+            operation = operation.then(async () => uninstallDotnetPlugin(host, controller.signal));
+            await operation;
+        })
+    );
+}
+
+/**
+ * Installs only when AI is enabled, the workspace is trusted, the user has not opted out, Copilot is available,
+ * and no existing or conflicting .NET plugin is found. Stable results are cached per extension version.
+ */
+export async function installDotnetPlugin(host: DotnetPluginHost, signal: AbortSignal): Promise<void> {
+    let stage: Stage = 'optOut';
+    let source: Source = 'none';
+    let done = () => {};
     try {
-        context.subscriptions.push(
-            manager,
-            vscode.commands.registerCommand(uninstallDotnetPluginCommand, async () => manager.uninstall())
-        );
-        // Other integration suites must not install into the developer's real Copilot profile.
-        if (context.extensionMode !== vscode.ExtensionMode.Test) {
-            const scheduled = setImmediate(() => {
-                void manager.install();
-            });
-            context.subscriptions.push({ dispose: () => clearImmediate(scheduled) });
+        const blocked = blockedReason(host.context);
+        if (blocked) {
+            report(host, TelemetryEventNames.CopilotDotnetPlugin, blocked, 'none', false);
+            return;
         }
+
+        stage = 'cache';
+        const cached = readCache(host.context);
+        if (cached) {
+            report(host, TelemetryEventNames.CopilotDotnetPlugin, cached.outcome, cached.source, true);
+            return;
+        }
+
+        stage = 'discovery';
+        const deadlineResult = deadline(signal);
+        const operation = deadlineResult.signal;
+        done = deadlineResult.done;
+        const cli = await findCopilotCli();
+        if (!cli) {
+            return await completeInstallation(host, { outcome: 'copilotNotAvailable', source: 'none' });
+        }
+
+        source = cli.source;
+        stage = 'inventory';
+        const plugins = await listPlugins(cli, operation);
+        const existing = plugins.filter(isDotnetPlugin);
+        if (existing.length > 0) {
+            const outcome = enabledOutcome(existing);
+            stage = 'cache';
+            return await completeInstallation(host, {
+                outcome,
+                source,
+                cache: { outcome, source: cli.source },
+            });
+        }
+
+        if (plugins.some(isConflictingPlugin)) {
+            host.channel.info('Skipping Copilot .NET plugin installation: another plugin uses its name.');
+            stage = 'cache';
+            return await completeInstallation(host, {
+                outcome: 'conflictingPlugin',
+                source,
+                cache: { outcome: 'conflictingPlugin', source: cli.source },
+            });
+        }
+
+        stage = 'install';
+        await runCopilotCli(cli, ['plugin', 'install', pluginSource], operation);
+        stage = 'cache';
+        return await completeInstallation(host, {
+            outcome: 'installed',
+            source,
+            cache: { outcome: 'alreadyInstalled', source: cli.source },
+        });
     } catch (error) {
-        manager.dispose();
-        channel.error('Failed to register the Copilot .NET plugin integration', error);
+        const outcome = signal.aborted ? 'cancelled' : 'installFailed';
+        const failure = signal.aborted ? signal.reason : error;
+        reportError(host, stage, outcome, failure);
+        finishInstallation(host, { outcome, source });
+    } finally {
+        done();
     }
 }
 
-export class DotnetPluginManager implements vscode.Disposable {
-    private pending = Promise.resolve();
-    private installation: Promise<void> | undefined;
-    private controller: AbortController | undefined;
-    private disposed = false;
-    private uninstallRequested = false;
-
-    constructor(
-        private readonly context: Context,
-        private readonly reporter: ITelemetryReporter,
-        private readonly channel: Channel
-    ) {}
-
-    public dispose(): void {
-        this.disposed = true;
-        this.controller?.abort(new Error('Copilot plugin operation disposed'));
+async function completeInstallation(host: DotnetPluginHost, result: InstallResult): Promise<void> {
+    if (result.cache) {
+        await host.context.globalState.update(dotnetPluginCacheKey, {
+            extensionVersion: host.context.extension.packageJSON.version,
+            ...result.cache,
+        } satisfies Cache);
     }
+    finishInstallation(host, result);
+}
 
-    public async install(): Promise<void> {
-        this.installation ??= this.enqueue(async () => {
-            const result = await this.operate(false, async (operation) => this.installCore(operation));
-            if (result.outcome === 'installed' && !this.disposed && !this.uninstallRequested) {
-                void this.showInstalled();
-            }
-        });
-        await this.installation;
+function finishInstallation(host: DotnetPluginHost, result: InstallResult): void {
+    report(host, TelemetryEventNames.CopilotDotnetPlugin, result.outcome, result.source, false);
+    if (result.outcome === 'installed') {
+        void showInstalled();
     }
+}
 
-    public async uninstall(): Promise<void> {
-        this.uninstallRequested = true;
-        // Start persisting the opt-out immediately, even if removal must wait for an active install.
-        const optOut = this.persistOptOut();
-        await this.enqueue(async () => {
-            const result = await this.operate(true, async (operation) => {
-                operation.stage = 'optOut';
-                const persisted = await interruptible(optOut, operation.signal);
-                if (!persisted.success) {
-                    throw persisted.error;
-                }
-                await this.clearCache(operation);
-                const runtime = await this.loadRuntime(operation);
-                const cli = await this.discover(runtime, operation);
-                if (!cli) {
-                    operation.outcome = 'copilotNotAvailable';
-                    return;
-                }
-                const plugins = await this.inventory(runtime, cli, operation, 'inventory');
-                const targets = plugins.filter(isDotnetPlugin);
-                if (targets.length === 0) {
-                    if (plugins.some(isConflictingPlugin)) {
-                        throw new Error('A different plugin uses the dotnet name; it has not been removed.');
-                    }
-                    operation.outcome = 'alreadyAbsent';
-                    return;
-                }
-                for (const plugin of targets) {
-                    operation.stage = 'uninstall';
-                    operation.signal.throwIfAborted();
-                    await runtime.runCopilotCli(cli, ['plugin', 'uninstall', plugin.name], operation.signal);
-                }
-                const remaining = await this.inventory(runtime, cli, operation, 'confirmation');
-                if (remaining.some(isDotnetPlugin)) {
-                    throw new Error('Copilot still lists the .NET plugin after uninstalling it.');
-                }
-                operation.outcome = 'uninstalled';
-            });
-            if (!this.disposed) {
-                void this.showUninstallResult(result);
-            }
-        });
-    }
-
-    private async enqueue(work: () => Promise<void>): Promise<void> {
-        const next = this.pending.then(work);
-        // Keep the gate usable even if an unexpected failure escapes an operation's boundary.
-        this.pending = next.catch((error) => {
-            this.channel.error('Copilot .NET plugin operation failed', error);
-        });
-        await this.pending;
-    }
-
-    private async operate(uninstall: boolean, work: (operation: Operation) => Promise<void>): Promise<Operation> {
-        const controller = new AbortController();
-        this.controller = controller;
-        const operation: Operation = {
-            outcome: uninstall ? 'uninstallFailed' : 'installFailed',
-            source: 'none',
-            cached: false,
-            stage: 'eligibility',
-            signal: controller.signal,
-        };
-        const timeout = setTimeout(() => {
-            const error = new Error('Copilot plugin operation timed out');
-            error.name = 'TimeoutError';
-            controller.abort(error);
-        }, operationTimeoutMs);
-        try {
-            if (this.disposed) {
-                operation.outcome = 'disposed';
-            } else {
-                await work(operation);
-            }
-        } catch (error) {
-            operation.outcome = this.disposed ? 'disposed' : uninstall ? 'uninstallFailed' : 'installFailed';
-            this.reportError(operation, controller.signal.aborted ? controller.signal.reason : error);
-        } finally {
-            clearTimeout(timeout);
-            this.controller = undefined;
-        }
-        this.reportOutcome(operation, uninstall);
-        return operation;
-    }
-
-    private async installCore(operation: Operation): Promise<void> {
-        const skip = this.skipReason();
-        if (skip) {
-            operation.outcome = skip;
-            return;
-        }
-        operation.stage = 'cache';
-        const stored = this.context.globalState.get<unknown>(dotnetPluginCacheKey);
-        if (isCache(stored) && stored.extensionVersion === this.context.extension.packageJSON.version) {
-            operation.outcome = stored.outcome;
-            operation.source = stored.source;
-            operation.cached = true;
-            return;
-        }
-        if (stored !== undefined) {
-            await this.clearCache(operation);
-        }
-        const runtime = await this.loadRuntime(operation);
-        const cli = await this.discover(runtime, operation);
+export async function uninstallDotnetPlugin(host: DotnetPluginHost, signal: AbortSignal): Promise<void> {
+    let stage: Stage = 'optOut';
+    let outcome: Outcome;
+    let source: Source = 'none';
+    const { signal: operation, done } = deadline(signal);
+    try {
+        // Persist the opt-out first so that a failed removal still stops automatic installation.
+        await host.context.globalState.update(dotnetPluginOptOutKey, true);
+        stage = 'cache';
+        await host.context.globalState.update(dotnetPluginCacheKey, undefined);
+        stage = 'discovery';
+        const cli = await findCopilotCli();
+        source = cli?.source ?? 'none';
         if (!cli) {
-            operation.outcome = 'copilotNotAvailable';
-            return;
+            outcome = 'copilotNotAvailable';
+        } else {
+            stage = 'inventory';
+            const plugins = await listPlugins(cli, operation);
+            const targets = plugins.filter(isDotnetPlugin);
+            if (targets.length === 0 && plugins.some(isConflictingPlugin)) {
+                throw new Error('A different plugin uses the dotnet name; it has not been removed.');
+            } else if (targets.length === 0) {
+                outcome = 'alreadyAbsent';
+            } else {
+                stage = 'uninstall';
+                for (const target of targets) {
+                    await runCopilotCli(cli, ['plugin', 'uninstall', target.name], operation);
+                }
+                outcome = 'uninstalled';
+            }
         }
-        const plugins = await this.inventory(runtime, cli, operation, 'inventory');
-        const installed = plugins.filter(isDotnetPlugin);
-        if (installed.length > 0) {
-            operation.outcome = installed.some((plugin) => plugin.enabled)
-                ? 'alreadyInstalled'
-                : 'alreadyInstalledDisabled';
-            await this.cache(operation, operation.outcome, cli.source);
-            return;
-        }
-        if (plugins.some(isConflictingPlugin)) {
-            operation.outcome = 'conflictingPlugin';
-            this.channel.info('Skipping Copilot .NET plugin installation because a different plugin uses its name.');
-            await this.cache(operation, operation.outcome, cli.source);
-            return;
-        }
-        const lateSkip = this.skipReason();
-        if (lateSkip) {
-            operation.outcome = lateSkip;
-            return;
-        }
-        operation.stage = 'install';
-        operation.signal.throwIfAborted();
-        await runtime.runCopilotCli(cli, ['plugin', 'install', pluginSource], operation.signal);
-        const confirmed = (await this.inventory(runtime, cli, operation, 'confirmation')).filter(isDotnetPlugin);
-        if (confirmed.length === 0) {
-            throw new Error('Copilot did not list the .NET plugin after installation.');
-        }
-        operation.outcome = 'installed';
-        await this.cache(
-            operation,
-            confirmed.some((plugin) => plugin.enabled) ? 'alreadyInstalled' : 'alreadyInstalledDisabled',
-            cli.source
+    } catch (error) {
+        outcome = signal.aborted ? 'cancelled' : 'uninstallFailed';
+        reportError(host, stage, outcome, signal.aborted ? signal.reason : error);
+    } finally {
+        done();
+    }
+
+    report(host, TelemetryEventNames.CopilotDotnetPluginUninstall, outcome, source);
+    void showUninstallResult(outcome, stage);
+}
+
+function blockedReason(context: DotnetPluginHost['context']): Outcome | undefined {
+    if (context.globalState.get<boolean>(dotnetPluginOptOutKey, false)) {
+        return 'optedOut';
+    }
+    if (commonOptions.disableAIFeatures) {
+        return 'aiDisabled';
+    }
+    if (!vscode.workspace.isTrusted) {
+        return 'untrustedWorkspace';
+    }
+    return undefined;
+}
+
+function readCache(context: DotnetPluginHost['context']): Cache | undefined {
+    const cache = context.globalState.get<Cache>(dotnetPluginCacheKey);
+    return cache?.extensionVersion === context.extension.packageJSON.version ? cache : undefined;
+}
+
+function deadline(signal: AbortSignal): { signal: AbortSignal; done: () => void } {
+    const timer = new AbortController();
+    const handle = setTimeout(
+        () => timer.abort(named('TimeoutError', 'The Copilot CLI did not respond in time.')),
+        operationTimeoutMs
+    );
+    return { signal: AbortSignal.any([signal, timer.signal]), done: () => clearTimeout(handle) };
+}
+
+async function listPlugins(cli: CopilotCli, signal: AbortSignal): Promise<CopilotPlugin[]> {
+    return parsePluginList(await runCopilotCli(cli, ['plugin', 'list'], signal));
+}
+
+function enabledOutcome(plugins: CopilotPlugin[]): CachedOutcome {
+    return plugins.some((plugin) => plugin.enabled) ? 'alreadyInstalled' : 'alreadyInstalledDisabled';
+}
+
+function report(
+    host: DotnetPluginHost,
+    event: TelemetryEventNames,
+    outcome: Outcome,
+    source: Source,
+    cached?: boolean
+): void {
+    host.reporter.sendTelemetryEvent(event, {
+        outcome,
+        source,
+        ...(cached === undefined ? {} : { cached: String(cached) }),
+    });
+}
+
+function reportError(host: DotnetPluginHost, stage: Stage, outcome: Outcome, error: unknown): void {
+    host.channel.error(`Copilot .NET plugin ${stage} failed`, error);
+    host.reporter.sendTelemetryErrorEvent(TelemetryEventNames.CopilotDotnetPluginError, {
+        stage,
+        outcome,
+        'error.name': telemetryErrorName(error),
+    });
+}
+
+async function showInstalled(): Promise<void> {
+    const learnMore = vscode.l10n.t('Learn More');
+    const selected = await vscode.window.showInformationMessage(
+        vscode.l10n.t('Installed the C# LSP .NET plugin for GitHub Copilot'),
+        learnMore
+    );
+    if (selected === learnMore) {
+        await vscode.env.openExternal(vscode.Uri.parse(documentationUrl));
+    }
+}
+
+async function showUninstallResult(outcome: Outcome, stage: Stage): Promise<void> {
+    if (outcome === 'uninstalled' || outcome === 'alreadyAbsent') {
+        await vscode.window.showInformationMessage(
+            outcome === 'uninstalled'
+                ? vscode.l10n.t('Uninstalled the Copilot C# LSP plugin. Automatic installation is disabled.')
+                : vscode.l10n.t('The Copilot C# LSP plugin is not installed. Automatic installation is disabled.'),
+            { modal: true }
+        );
+    } else {
+        await vscode.window.showWarningMessage(
+            outcome === 'copilotNotAvailable'
+                ? vscode.l10n.t(
+                      'Automatic installation is disabled, but Copilot is unavailable to uninstall the C# LSP plugin.'
+                  )
+                : stage === 'optOut'
+                  ? vscode.l10n.t('Could not disable automatic installation. See the C# output for details.')
+                  : vscode.l10n.t(
+                        'Could not uninstall the Copilot C# LSP plugin. Automatic installation is disabled. See the C# output for details.'
+                    ),
+            { modal: true }
         );
     }
+}
 
-    private skipReason(): Outcome | undefined {
-        if (this.disposed) {
-            return 'disposed';
-        }
-        if (this.context.globalState.get<boolean>(dotnetPluginOptOutKey, false)) {
-            return 'optedOut';
-        }
-        if (this.uninstallRequested) {
-            return 'uninstallRequested';
-        }
-        if (commonOptions.disableAIFeatures) {
-            return 'aiDisabled';
-        }
-        if (!vscode.workspace.isTrusted) {
-            return 'untrustedWorkspace';
-        }
-        return undefined;
-    }
-
-    private async persistOptOut(): Promise<{ success: true } | { success: false; error: unknown }> {
-        try {
-            await this.context.globalState.update(dotnetPluginOptOutKey, true);
-            return { success: true };
-        } catch (error) {
-            return { success: false, error };
-        }
-    }
-
-    private async loadRuntime(operation: Operation): Promise<Runtime> {
-        operation.stage = 'discovery';
-        return await interruptible(import('./copilotCli'), operation.signal);
-    }
-
-    private async discover(runtime: Runtime, operation: Operation): Promise<CopilotCli | undefined> {
-        operation.stage = 'discovery';
-        const cli = await interruptible(runtime.findCopilotCli(operation.signal), operation.signal);
-        operation.source = cli?.source ?? 'none';
-        return cli;
-    }
-
-    private async inventory(
-        runtime: Runtime,
-        cli: CopilotCli,
-        operation: Operation,
-        stage: 'inventory' | 'confirmation'
-    ): Promise<CopilotPlugin[]> {
-        operation.stage = stage;
-        operation.signal.throwIfAborted();
-        // The runner observes cancellation and waits for its process to exit before releasing the gate.
-        const output = await runtime.runCopilotCli(cli, ['plugin', 'list'], operation.signal);
-        operation.signal.throwIfAborted();
-        return runtime.parsePluginList(output);
-    }
-
-    private async clearCache(operation: Operation): Promise<void> {
-        try {
-            await interruptible(this.context.globalState.update(dotnetPluginCacheKey, undefined), operation.signal);
-        } catch (error) {
-            this.reportError({ ...operation, stage: 'cache' }, error);
-            operation.signal.throwIfAborted();
-        }
-    }
-
-    private async cache(operation: Operation, outcome: CachedOutcome, source: CopilotCliSource): Promise<void> {
-        if (this.skipReason()) {
-            return;
-        }
-        const value: Cache = {
-            extensionVersion: this.context.extension.packageJSON.version,
-            outcome,
-            source,
-        };
-        try {
-            await interruptible(this.context.globalState.update(dotnetPluginCacheKey, value), operation.signal);
-        } catch (error) {
-            this.reportError({ ...operation, stage: 'cache' }, error);
-        }
-    }
-
-    private reportOutcome(operation: Operation, uninstall: boolean): void {
-        try {
-            const properties: Record<string, string> = { outcome: operation.outcome, source: operation.source };
-            if (!uninstall) {
-                properties.cached = String(operation.cached);
-            }
-            this.reporter.sendTelemetryEvent(
-                uninstall ? TelemetryEventNames.CopilotDotnetPluginUninstall : TelemetryEventNames.CopilotDotnetPlugin,
-                properties
-            );
-        } catch (error) {
-            this.channel.error('Failed to report Copilot .NET plugin telemetry', error);
-        }
-    }
-
-    private reportError(operation: Operation, error: unknown): void {
-        this.channel.error(`Copilot .NET plugin ${operation.stage} failed`, error);
-        try {
-            this.reporter.sendTelemetryErrorEvent(TelemetryEventNames.CopilotDotnetPluginError, {
-                stage: operation.stage,
-                outcome: operation.outcome,
-                'error.name': telemetryErrorName(error),
-            });
-        } catch (telemetryError) {
-            this.channel.error('Failed to report Copilot .NET plugin error telemetry', telemetryError);
-        }
-    }
-
-    private async showInstalled(): Promise<void> {
-        try {
-            const learnMore = vscode.l10n.t('Learn More');
-            const selected = await vscode.window.showInformationMessage(
-                vscode.l10n.t('Installed the C# LSP .NET plugin for GitHub Copilot'),
-                learnMore
-            );
-            if (selected === learnMore && !this.disposed) {
-                if (!(await vscode.env.openExternal(vscode.Uri.parse(documentationUrl)))) {
-                    this.channel.error('Could not open the Copilot .NET plugin documentation.');
-                }
-            }
-        } catch (error) {
-            this.channel.error('Failed to show the Copilot .NET plugin notification or documentation', error);
-        }
-    }
-
-    private async showUninstallResult(operation: Operation): Promise<void> {
-        try {
-            if (operation.outcome === 'uninstalled' || operation.outcome === 'alreadyAbsent') {
-                await vscode.window.showInformationMessage(
-                    operation.outcome === 'uninstalled'
-                        ? vscode.l10n.t('Uninstalled the Copilot C# LSP plugin. Automatic installation is disabled.')
-                        : vscode.l10n.t(
-                              'The Copilot C# LSP plugin is not installed. Automatic installation is disabled.'
-                          )
-                );
-            } else {
-                await vscode.window.showWarningMessage(
-                    operation.outcome === 'copilotNotAvailable'
-                        ? vscode.l10n.t(
-                              'Automatic installation is disabled, but Copilot is unavailable to uninstall the C# LSP plugin.'
-                          )
-                        : operation.stage === 'optOut'
-                          ? vscode.l10n.t('Could not disable automatic installation. See the C# output for details.')
-                          : vscode.l10n.t(
-                                'Could not uninstall the Copilot C# LSP plugin. Automatic installation is disabled. See the C# output for details.'
-                            )
-                );
-            }
-        } catch (error) {
-            this.channel.error('Failed to show the Copilot .NET plugin uninstall result', error);
-        }
-    }
+function named(name: string, message: string): Error {
+    return Object.assign(new Error(message), { name });
 }
 
 function isDotnetPlugin(plugin: CopilotPlugin): boolean {
@@ -402,37 +312,7 @@ function isConflictingPlugin(plugin: CopilotPlugin): boolean {
     return (plugin.name === 'dotnet' || plugin.name.startsWith('dotnet@')) && !isDotnetPlugin(plugin);
 }
 
-function isCache(value: unknown): value is Cache {
-    if (typeof value !== 'object' || value === null) {
-        return false;
-    }
-    return (
-        'extensionVersion' in value &&
-        typeof value.extensionVersion === 'string' &&
-        'outcome' in value &&
-        (value.outcome === 'alreadyInstalled' ||
-            value.outcome === 'alreadyInstalledDisabled' ||
-            value.outcome === 'conflictingPlugin') &&
-        'source' in value &&
-        (value.source === 'standalone' || value.source === 'app')
-    );
-}
-
 function telemetryErrorName(error: unknown): string {
     const allowedNames = ['Error', 'AbortError', 'TimeoutError', 'TypeError', 'RangeError', 'SyntaxError'];
     return error instanceof Error && allowedNames.includes(error.name) ? error.name : 'Error';
-}
-
-async function interruptible<T>(work: PromiseLike<T>, signal: AbortSignal): Promise<T> {
-    return await new Promise<T>((resolve, reject) => {
-        const aborted = () => reject(signal.reason);
-        if (signal.aborted) {
-            aborted();
-        } else {
-            signal.addEventListener('abort', aborted, { once: true });
-        }
-        void Promise.resolve(work)
-            .then(resolve, reject)
-            .finally(() => signal.removeEventListener('abort', aborted));
-    });
 }
