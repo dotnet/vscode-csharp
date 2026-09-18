@@ -67,6 +67,8 @@
   "Replace existing build and debug assets?": "Replace existing build and debug assets?",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "Could not locate .NET Core project in '{0}'. Assets were not generated.",
   "Unable to generate assets to build and debug. {0}.": "Unable to generate assets to build and debug. {0}.",
+  "Learn More": "Learn More",
+  "Installed the C# LSP .NET plugin for GitHub Copilot": "Installed the C# LSP .NET plugin for GitHub Copilot",
   "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'",
   "Run and Debug: auto-detection found {0} for a launch browser": "Run and Debug: auto-detection found {0} for a launch browser",
   "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.",
