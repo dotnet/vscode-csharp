@@ -136,7 +136,8 @@ stages:
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-26.04-net11.0-vscode-csharp-amd64
+      # Remove the digest pin once the image contains the fix tracked by #9791.
+      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-26.04-net11.0-vscode-csharp-amd64@sha256:74206e5cb93b8a254539effe1b220c51ef6d97b7c488b9029335f1a62df53975
 
 - stage: Test_Windows_Stage
   displayName: Test Windows
