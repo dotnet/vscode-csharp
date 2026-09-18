@@ -5,7 +5,7 @@
 
 # 2.152.x
 
-* Update OmniSharp to 2.0.0
+* Update OmniSharp to 2.0.0 (PR: [#9786](https://github.com/dotnet/vscode-csharp/pull/9786))
   * Use Roslyn BuildHost for project loading and update Roslyn to 5.12.0-1.26463.1 (PR: [omnisharp-roslyn#2714](https://github.com/OmniSharp/omnisharp-roslyn/pull/2714))
   * Remove .NET Framework and Mono hosts (PR: [omnisharp-roslyn#2721](https://github.com/OmniSharp/omnisharp-roslyn/pull/2721))
 * Update Roslyn to 5.12.0-1.26465.4 (PR: [#9772](https://github.com/dotnet/vscode-csharp/pull/9772))
