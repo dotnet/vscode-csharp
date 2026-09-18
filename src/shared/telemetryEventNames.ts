@@ -11,7 +11,6 @@ export enum TelemetryEventNames {
     CSharpActivated = 'CSharpActivated',
     CSharpLimitedActivation = 'CSharpLimitedActivation',
     CopilotDotnetPlugin = 'copilotDotnetPlugin',
-    CopilotDotnetPluginUninstall = 'copilotDotnetPlugin/uninstall',
     CopilotDotnetPluginError = 'copilotDotnetPlugin/error',
 
     // Events related to the roslyn language server.

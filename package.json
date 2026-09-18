@@ -738,6 +738,12 @@
         "id": "ms-dotnettools.csharp.project",
         "order": 0,
         "properties": {
+          "dotnet.copilotDotnetPlugin.enableAutoInstall": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.copilotDotnetPlugin.enableAutoInstall%",
+            "scope": "machine"
+          },
           "dotnet.defaultSolution": {
             "type": "string",
             "description": "%configuration.dotnet.defaultSolution.description%",
@@ -1859,11 +1865,6 @@
       }
     ],
     "commands": [
-      {
-        "command": "dotnet.copilot.uninstallDotnetPlugin",
-        "title": "%command.dotnet.copilot.uninstallDotnetPlugin%",
-        "category": ".NET"
-      },
       {
         "command": "o.restart",
         "title": "%command.o.restart%",

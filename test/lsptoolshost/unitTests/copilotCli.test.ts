@@ -210,7 +210,7 @@ describe('Copilot CLI filesystem discovery', () => {
 describe('Copilot CLI process execution', () => {
     test('uses the shell for a standalone CLI with an argument array and closed stdin', async () => {
         const fixture = executionFixture();
-        const args = ['plugin', 'install', 'dotnet/skills:plugins/dotnet'];
+        const args = ['plugin', 'install', 'dotnet@dotnet-agent-skills'];
         const operation = signal();
         const promise = runCopilotCli(runtime, args, operation);
         expect(execFileMock).toHaveBeenCalledWith(
