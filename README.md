@@ -8,12 +8,6 @@ While it is possible to use the C# extension as a standalone extension, we highl
 2. Open a folder/workspace that contains a C# project (.csproj) and a C# solution (.sln/.slnx) and the extension will activate.
 3. Whether you install C# Dev Kit or just the C# extension, the [.NET Install Tool](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscode-dotnet-runtime) will be installed as a dependency.
 
-Note: If working on a solution that requires versions prior to .NET 6 or non-solution based projects, install a .NET Framework runtime and [MSBuild tooling](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
-  * Set omnisharp.useModernNet to false and set dotnet.server.useOmnisharp to true
-  * Uninstall or disable C# Dev Kit
-  * Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
-  * MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/preview/)
-
 ## Features
 Learn more about the rich features of the C# extension:
   * [Refactoring](https://code.visualstudio.com/docs/csharp/refactoring): Edit your code with code fixes and refactorings

@@ -19,9 +19,6 @@ export class CSharpLoggerObserver extends BaseLoggerObserver {
             case EventType.DocumentSynchronizationFailure:
                 this.handleDocumentSynchronizationFailure(<DocumentSynchronizationFailure>event);
                 break;
-            case EventType.LatestBuildDownloadStart:
-                this.logger.appendLine('Getting latest OmniSharp version information');
-                break;
         }
     };
 

@@ -111,10 +111,9 @@ export class OmniSharpServer {
         private vscode: vscode,
         networkSettingsProvider: NetworkSettingsProvider,
         private packageJSON: any,
-        private platformInfo: PlatformInformation,
+        platformInfo: PlatformInformation,
         private eventStream: EventStream,
         private extensionPath: string,
-        private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
         private context: ExtensionContext,
         private outputChannel: OutputChannel,
@@ -129,7 +128,7 @@ export class OmniSharpServer {
             extensionPath,
             reporter
         );
-        this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
+        this._omnisharpManager = new OmnisharpManager(downloader);
         this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe(async (_) => {
             await this.updateProjectInfo();
         });
@@ -300,7 +299,7 @@ export class OmniSharpServer {
             return;
         }
 
-        if (!(await validateRequirements())) {
+        if (!(await validateRequirements(this.dotnetResolver))) {
             this.eventStream.post(
                 new ObservableEvents.OmnisharpServerMessage(
                     'OmniSharp failed to start because of missing requirements.'
@@ -321,19 +320,10 @@ export class OmniSharpServer {
                 this.outputChannel as LogOutputChannel,
                 disposables,
                 this.languageMiddlewareFeature,
-                this.platformInfo,
-                this.monoResolver,
                 this.dotnetResolver
             );
         } else {
-            engine = new StdioEngine(
-                this._eventBus,
-                this.eventStream,
-                this.platformInfo,
-                this.monoResolver,
-                this.dotnetResolver,
-                disposables
-            );
+            engine = new StdioEngine(this._eventBus, this.eventStream, this.dotnetResolver, disposables);
         }
 
         disposables.add(
@@ -478,20 +468,6 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
-        const sdkPath = omnisharpOptions.sdkPath;
-        if (sdkPath.length > 0) {
-            args.push(`Sdk:Path=${sdkPath}`);
-        }
-
-        const sdkVersion = omnisharpOptions.sdkVersion;
-        if (sdkVersion.length > 0) {
-            args.push(`Sdk:Version=${sdkVersion}`);
-        }
-
-        if (omnisharpOptions.sdkIncludePrereleases) {
-            args.push(`Sdk:IncludePrereleases=true`);
-        }
-
         const enableInlayHintsForParameters = omnisharpOptions.inlayHintsEnableForParameters;
         if (enableInlayHintsForParameters === true) {
             args.push(
@@ -550,7 +526,6 @@ export class OmniSharpServer {
             launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(
                 this.packageJSON.defaults.omniSharp,
                 commonOptions.serverPath,
-                /* useFramework */ !omnisharpOptions.useModernNet,
                 this.extensionPath
             );
         } catch (e) {

@@ -5,20 +5,13 @@
 
 import { GetPackagesFromVersion } from './omnisharpPackageCreator';
 import { PlatformInformation } from '../shared/platform';
-import {
-    PackageInstallation,
-    LogPlatformInfo,
-    InstallationSuccess,
-    InstallationFailure,
-} from '../shared/loggingEvents';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from '../shared/loggingEvents';
 import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
 import { downloadAndInstallPackages } from '../packageManager/downloadAndInstallPackages';
-import { DownloadFile } from '../packageManager/fileDownloader';
 import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../packageManager/isValidDownload';
-import { LatestBuildDownloadStart } from './omnisharpLoggingEvents';
 import { ITelemetryReporter } from '../shared/telemetryReporter';
 
 export class OmnisharpDownloader {
@@ -33,18 +26,11 @@ export class OmnisharpDownloader {
 
     public async DownloadAndInstallOmnisharp(
         version: string,
-        useFramework: boolean,
         serverUrl: string,
         installPath: string
     ): Promise<boolean> {
         const runtimeDependencies = getRuntimeDependenciesPackages(this.packageJSON);
-        const omniSharpPackages = GetPackagesFromVersion(
-            version,
-            useFramework,
-            runtimeDependencies,
-            serverUrl,
-            installPath
-        );
+        const omniSharpPackages = GetPackagesFromVersion(version, runtimeDependencies, serverUrl, installPath);
         const packagesToInstall = await getAbsolutePathPackagesToInstall(
             omniSharpPackages,
             this.platformInfo,
@@ -69,22 +55,5 @@ export class OmnisharpDownloader {
             }
         }
         return false;
-    }
-
-    public async GetLatestVersion(latestVersionUrl: string): Promise<string> {
-        const description = 'Latest OmniSharp Version Information';
-        try {
-            this.eventStream.post(new LatestBuildDownloadStart());
-            const versionBuffer = await DownloadFile(
-                description,
-                this.eventStream,
-                this.networkSettingsProvider,
-                latestVersionUrl
-            );
-            return versionBuffer.toString('utf8').trim();
-        } catch (error) {
-            this.eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error));
-            throw error;
-        }
     }
 }

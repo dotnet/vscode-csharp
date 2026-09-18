@@ -16,7 +16,7 @@ import { testPackageJSON } from './testAssets/testAssets';
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../createTmpAsset';
 import * as path from 'path';
 import * as util from '../../../src/common';
-import { getModernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
+import { getPackageSuffix } from '../../../src/omnisharp/omnisharpPackageCreator';
 
 describe(OmnisharpManager.name, () => {
     let server: MockHttpsServer;
@@ -24,59 +24,32 @@ describe(OmnisharpManager.name, () => {
     let manager: OmnisharpManager;
     const defaultVersion = '0.1.2';
     const testVersion = '1.2.3';
-    const latestVersion = '2.3.4';
     const installPath = '.omnisharp';
     let tmpInstallDir: TmpAsset;
     let extensionPath: string;
     let tmpFile: TmpAsset | undefined;
     let testZip: TestZip;
-    let useFramework: boolean;
     let suffix: string;
-    let latestSuffix: string;
 
     [
         {
             platformInfo: new PlatformInformation('win32', 'x86_64'),
             platformId: 'win-x64',
-            useFramework: false,
-        },
-        {
-            platformInfo: new PlatformInformation('win32', 'x86_64'),
-            platformId: 'win-x64',
-            useFramework: true,
         },
         {
             platformInfo: new PlatformInformation('linux', 'x86_64'),
             platformId: 'linux-x64',
-            useFramework: false,
-        },
-        {
-            platformInfo: new PlatformInformation('linux', 'x86_64'),
-            platformId: 'linux-x64',
-            useFramework: true,
         },
         {
             platformInfo: new PlatformInformation('linux', 'x86'),
             platformId: 'linux-x86',
-            useFramework: false,
-        },
-        {
-            platformInfo: new PlatformInformation('linux', 'x86'),
-            platformId: 'linux-x86',
-            useFramework: true,
         },
         {
             platformInfo: new PlatformInformation('darwin', 'x86'),
             platformId: 'osx',
-            useFramework: false,
-        },
-        {
-            platformInfo: new PlatformInformation('darwin', 'x86'),
-            platformId: 'osx',
-            useFramework: true,
         },
     ].forEach((elem) => {
-        describe(`${elem.platformInfo.toString()},${elem.platformId},framework:${elem.useFramework},`, () => {
+        describe(`${elem.platformInfo.toString()},${elem.platformId}`, () => {
             beforeEach(async () => {
                 server = await MockHttpsServer.CreateMockHttpsServer();
                 await server.start();
@@ -84,9 +57,7 @@ describe(OmnisharpManager.name, () => {
                 extensionPath = tmpInstallDir.name;
                 manager = GetTestOmniSharpManager(elem.platformInfo, eventStream, extensionPath, server.baseUrl);
                 testZip = await TestZip.createTestZipAsync(createTestFile('Foo', 'foo.txt'));
-                useFramework = elem.useFramework;
-                suffix = useFramework ? '' : `-net${getModernNetVersion(testVersion)}`;
-                latestSuffix = useFramework ? '' : `-net${getModernNetVersion(latestVersion)}`;
+                suffix = getPackageSuffix(testVersion);
                 server.addRequestHandler(
                     'GET',
                     `/releases/download/v${testVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
@@ -97,126 +68,53 @@ describe(OmnisharpManager.name, () => {
                     },
                     testZip.buffer
                 );
-
-                server.addRequestHandler(
-                    'GET',
-                    `/version/latestVersion.txt`,
-                    200,
-                    {
-                        'content-type': 'application/text',
-                    },
-                    `${latestVersion}\n`
-                );
-
-                server.addRequestHandler(
-                    'GET',
-                    `/releases/download/v${latestVersion}/omnisharp-${elem.platformId}${latestSuffix}.zip`,
-                    200,
-                    {
-                        'content-type': 'application/zip',
-                        'content-length': testZip.size,
-                    },
-                    testZip.buffer
-                );
             });
 
-            test('Throws error if the path is neither an absolute path nor a valid semver, nor the string "latest"', async () => {
+            test('Throws error if the path is neither an absolute path nor a valid semver', async () => {
                 await expect(
-                    manager.GetOmniSharpLaunchPath(defaultVersion, 'Some incorrect path', useFramework, extensionPath)
+                    manager.GetOmniSharpLaunchPath(defaultVersion, 'Some incorrect path', extensionPath)
                 ).rejects.toThrowError(Error);
             });
 
             test('Throws error when the specified path is an invalid semver', async () => {
                 await expect(
-                    manager.GetOmniSharpLaunchPath(defaultVersion, 'a.b.c', useFramework, extensionPath)
+                    manager.GetOmniSharpLaunchPath(defaultVersion, 'a.b.c', extensionPath)
                 ).rejects.toThrowError(Error);
+            });
+
+            test('Throws error when the specified path is "latest"', async () => {
+                await expect(
+                    manager.GetOmniSharpLaunchPath(defaultVersion, 'latest', extensionPath)
+                ).rejects.toThrowError('Invalid OmniSharp version - latest');
             });
 
             test('Returns the same path if absolute path to an existing file is passed', async () => {
                 tmpFile = await CreateTmpFile();
-                const launchPath = await manager.GetOmniSharpLaunchPath(
-                    defaultVersion,
-                    tmpFile.name,
-                    useFramework,
-                    extensionPath
-                );
+                const launchPath = await manager.GetOmniSharpLaunchPath(defaultVersion, tmpFile.name, extensionPath);
                 expect(launchPath).toEqual(tmpFile.name);
             });
 
             test('Returns the default path if the omnisharp path is empty', async () => {
-                const launchPath = await manager.GetOmniSharpLaunchPath(
-                    defaultVersion,
-                    '',
-                    useFramework,
-                    extensionPath
+                const launchPath = await manager.GetOmniSharpLaunchPath(defaultVersion, '', extensionPath);
+                expect(launchPath).toEqual(
+                    path.join(
+                        extensionPath,
+                        '.omnisharp',
+                        defaultVersion + getPackageSuffix(defaultVersion),
+                        'OmniSharp.dll'
+                    )
                 );
-                if (useFramework) {
-                    if (elem.platformInfo.isWindows()) {
-                        expect(launchPath).toEqual(
-                            path.join(extensionPath, '.omnisharp', defaultVersion + suffix, 'OmniSharp.exe')
-                        );
-                    } else {
-                        expect(launchPath).toEqual(
-                            path.join(extensionPath, '.omnisharp', defaultVersion, 'omnisharp', 'OmniSharp.exe')
-                        );
-                    }
-                } else {
-                    expect(launchPath).toEqual(
-                        path.join(extensionPath, '.omnisharp', defaultVersion + suffix, 'OmniSharp.dll')
-                    );
-                }
-            });
-
-            test('Installs the latest version and returns the launch path ', async () => {
-                const launchPath = await manager.GetOmniSharpLaunchPath(
-                    defaultVersion,
-                    'latest',
-                    useFramework,
-                    extensionPath
-                );
-                if (useFramework) {
-                    if (elem.platformInfo.isWindows()) {
-                        expect(launchPath).toEqual(
-                            path.join(extensionPath, installPath, latestVersion + latestSuffix, 'OmniSharp.exe')
-                        );
-                    } else {
-                        expect(launchPath).toEqual(
-                            path.join(extensionPath, installPath, latestVersion, 'omnisharp', 'OmniSharp.exe')
-                        );
-                    }
-                } else {
-                    expect(launchPath).toEqual(
-                        path.join(extensionPath, installPath, latestVersion + latestSuffix, 'OmniSharp.dll')
-                    );
-                }
             });
 
             test('Installs the test version and returns the launch path', async () => {
-                const launchPath = await manager.GetOmniSharpLaunchPath(
-                    defaultVersion,
-                    testVersion,
-                    useFramework,
-                    extensionPath
+                const launchPath = await manager.GetOmniSharpLaunchPath(defaultVersion, testVersion, extensionPath);
+                expect(launchPath).toEqual(
+                    path.join(extensionPath, installPath, testVersion + suffix, 'OmniSharp.dll')
                 );
-                if (useFramework) {
-                    if (elem.platformInfo.isWindows()) {
-                        expect(launchPath).toEqual(
-                            path.join(extensionPath, installPath, testVersion + suffix, 'OmniSharp.exe')
-                        );
-                    } else {
-                        expect(launchPath).toEqual(
-                            path.join(extensionPath, installPath, testVersion, 'omnisharp', 'OmniSharp.exe')
-                        );
-                    }
-                } else {
-                    expect(launchPath).toEqual(
-                        path.join(extensionPath, installPath, testVersion + suffix, 'OmniSharp.dll')
-                    );
-                }
             });
 
             test('Downloads package from given url and installs them at the specified path', async () => {
-                await manager.GetOmniSharpLaunchPath(defaultVersion, testVersion, useFramework, extensionPath);
+                await manager.GetOmniSharpLaunchPath(defaultVersion, testVersion, extensionPath);
                 for (const elem of testZip.files) {
                     const filePath = path.join(extensionPath, installPath, testVersion + suffix, elem.path);
                     expect(await util.fileExists(filePath)).toBe(true);
@@ -249,5 +147,5 @@ function GetTestOmniSharpManager(
         platformInfo,
         extensionPath
     );
-    return new OmnisharpManager(downloader, platformInfo, serverUrl, `${serverUrl}/version/latestVersion.txt`);
+    return new OmnisharpManager(downloader, serverUrl);
 }

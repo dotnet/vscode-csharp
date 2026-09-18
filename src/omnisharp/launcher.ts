@@ -6,10 +6,9 @@
 import { spawn } from 'child_process';
 import { ChildProcessWithoutNullStreams } from 'child_process';
 
-import { PlatformInformation } from '../shared/platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { commonOptions, omnisharpOptions } from '../shared/options';
+import { omnisharpOptions } from '../shared/options';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { LaunchTarget, LaunchTargetKind, createLaunchTargetForSolution } from '../shared/launchTarget';
 
@@ -260,7 +259,6 @@ interface IntermediateLaunchResult {
 }
 
 export interface LaunchConfiguration {
-    hostKind: '.NET' | 'Windows .NET Framework' | 'Mono .NET Framework';
     hostPath: string;
     hostVersion: string;
     path: string;
@@ -274,12 +272,10 @@ export async function launchOmniSharp(
     cwd: string,
     args: string[],
     launchPath: string,
-    platformInfo: PlatformInformation,
-    monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver
 ): Promise<LaunchResult> {
     return new Promise((resolve, reject) => {
-        launch(cwd, args, launchPath, platformInfo, monoResolver, dotnetResolver)
+        launch(cwd, args, launchPath, dotnetResolver)
             .then((result) => {
                 // async error - when target not not ENEOT
                 result.process.on('error', (err) => {
@@ -298,8 +294,6 @@ export async function configure(
     cwd: string,
     args: string[],
     launchPath: string,
-    platformInfo: PlatformInformation,
-    monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver
 ): Promise<LaunchConfiguration> {
     if (omnisharpOptions.useEditorFormattingSettings) {
@@ -327,112 +321,48 @@ export async function configure(
         );
     }
 
-    if (omnisharpOptions.useModernNet) {
-        const argsCopy = args.slice(0);
-
-        let command: string;
-        if (!launchPath.endsWith('.dll')) {
-            // If we're not being asked to launch a dll, assume whatever we're given is an executable
-            command = launchPath;
-        } else {
-            command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-            argsCopy.unshift(launchPath);
-        }
-
-        const dotnetInfo = await dotnetResolver.getHostExecutableInfo();
-
-        return {
-            hostKind: '.NET',
-            hostPath: dotnetInfo.path,
-            hostVersion: dotnetInfo.version,
-            path: command,
-            launchPath: launchPath,
-            cwd,
-            args: argsCopy,
-            env: dotnetInfo.env,
-        };
-    }
-
-    if (platformInfo.isWindows()) {
-        return {
-            hostKind: 'Windows .NET Framework',
-            hostPath: '',
-            hostVersion: '',
-            path: launchPath,
-            launchPath: launchPath,
-            cwd,
-            args,
-            env: process.env,
-        };
-    }
-
-    const monoInfo = await monoResolver.getHostExecutableInfo();
-    if (monoInfo !== undefined) {
-        const argsCopy = args.slice(0); // create copy of details args
+    const argsCopy = args.slice(0);
+    const dotnetInfo = await dotnetResolver.getHostExecutableInfo();
+    let command: string;
+    if (!launchPath.endsWith('.dll')) {
+        command = launchPath;
+    } else {
+        command = dotnetInfo.path;
         argsCopy.unshift(launchPath);
-        argsCopy.unshift('--assembly-loader=strict');
-
-        if (commonOptions.waitForDebugger) {
-            argsCopy.unshift('--debug');
-            argsCopy.unshift('--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555');
-        }
-
-        return {
-            hostKind: 'Mono .NET Framework',
-            hostPath: monoInfo.path,
-            hostVersion: monoInfo.version,
-            path: 'mono',
-            launchPath,
-            cwd,
-            args: argsCopy,
-            env: monoInfo.env,
-        };
     }
 
-    throw new Error('Unable to find Mono installation.');
+    return {
+        hostPath: dotnetInfo.path,
+        hostVersion: dotnetInfo.version,
+        path: command,
+        launchPath,
+        cwd,
+        args: argsCopy,
+        env: dotnetInfo.env,
+    };
 }
 
 async function launch(
     cwd: string,
     args: string[],
     launchPath: string,
-    platformInfo: PlatformInformation,
-    monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver
 ): Promise<IntermediateLaunchResult> {
-    const configureResults = await configure(cwd, args, launchPath, platformInfo, monoResolver, dotnetResolver);
-    return coreLaunch(platformInfo, configureResults);
+    const configureResults = await configure(cwd, args, launchPath, dotnetResolver);
+    return coreLaunch(configureResults);
 }
 
-function coreLaunch(platformInfo: PlatformInformation, configuration: LaunchConfiguration): IntermediateLaunchResult {
+function coreLaunch(configuration: LaunchConfiguration): IntermediateLaunchResult {
     const { cwd, args, path, launchPath, env } = configuration;
+    const process = spawn(path, args, { detached: false, cwd, env });
 
-    switch (configuration.hostKind) {
-        case '.NET': {
-            const process = spawn(path, args, { detached: false, cwd, env });
-
-            return {
-                process,
-                command: launchPath,
-                hostIsMono: false,
-                hostVersion: configuration.hostVersion,
-                hostPath: configuration.hostPath,
-            };
-            break;
-        }
-        case 'Windows .NET Framework': {
-            return launchWindows(path, cwd, args);
-        }
-        case 'Mono .NET Framework': {
-            return {
-                command: launchPath,
-                process: launchNixMono(configuration.hostPath, cwd, args, configuration.env),
-                hostIsMono: true,
-                hostVersion: configuration.hostVersion,
-                hostPath: configuration.hostPath,
-            };
-        }
-    }
+    return {
+        process,
+        command: launchPath,
+        hostIsMono: false,
+        hostVersion: configuration.hostVersion,
+        hostPath: configuration.hostPath,
+    };
 }
 
 function getConfigurationValue(
@@ -446,42 +376,4 @@ function getConfigurationValue(
     }
 
     return globalConfig.get(configurationPath, defaultValue);
-}
-
-function launchWindows(launchPath: string, cwd: string, args: string[]): IntermediateLaunchResult {
-    function escapeIfNeeded(arg: string) {
-        const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
-        return hasSpaceWithoutQuotes.test(arg) ? `"${arg}"` : arg.replace('&', '^&');
-    }
-
-    let argsCopy = args.slice(0); // create copy of args
-    argsCopy.unshift(`"${launchPath}"`);
-    argsCopy = [['/s', '/c', '"' + argsCopy.map(escapeIfNeeded).join(' ') + '"'].join(' ')];
-
-    const process = spawn('cmd', argsCopy, {
-        windowsVerbatimArguments: true,
-        detached: false,
-        cwd: cwd,
-    });
-
-    return {
-        process,
-        command: launchPath,
-        hostIsMono: false,
-    };
-}
-
-function launchNixMono(
-    launchPath: string,
-    cwd: string,
-    args: string[],
-    environment: NodeJS.ProcessEnv
-): ChildProcessWithoutNullStreams {
-    const process = spawn('mono', args, {
-        detached: false,
-        cwd: cwd,
-        env: environment,
-    });
-
-    return process;
 }

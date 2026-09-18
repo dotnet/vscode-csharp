@@ -251,8 +251,7 @@ export class RoslynLanguageServer {
                 params,
                 this._platformInfo,
                 dotnetInfo,
-                this._solutionFile?.fsPath,
-                true
+                this._solutionFile?.fsPath
             );
         });
     }

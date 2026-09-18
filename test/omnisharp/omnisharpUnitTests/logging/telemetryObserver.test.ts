@@ -27,38 +27,33 @@ describe('TelemetryReporterObserver', () => {
     let property: { [key: string]: string } | undefined = undefined;
     let measure: { [key: string]: number }[] = [];
     let errorProp: string[] = [];
-    const useModernNet = true;
-    const observer = new TelemetryObserver(
-        platformInfo,
-        () => {
-            return {
-                ...getNullTelemetryReporter,
-                sendTelemetryEvent: (
-                    eventName: string,
-                    properties?: { [key: string]: string },
-                    measures?: { [key: string]: number }
-                ) => {
-                    name += eventName;
-                    property = properties;
-                    measure.push(measures!);
-                },
-                sendTelemetryErrorEvent: (
-                    eventName: string,
-                    properties?: { [key: string]: string },
-                    measures?: { [key: string]: number },
-                    errorProps?: string[]
-                ) => {
-                    name += eventName;
-                    property = properties;
-                    measure.push(measures!);
-                    errorProps!.forEach((prop) => {
-                        errorProp.push(prop);
-                    });
-                },
-            };
-        },
-        useModernNet
-    );
+    const observer = new TelemetryObserver(platformInfo, () => {
+        return {
+            ...getNullTelemetryReporter,
+            sendTelemetryEvent: (
+                eventName: string,
+                properties?: { [key: string]: string },
+                measures?: { [key: string]: number }
+            ) => {
+                name += eventName;
+                property = properties;
+                measure.push(measures!);
+            },
+            sendTelemetryErrorEvent: (
+                eventName: string,
+                properties?: { [key: string]: string },
+                measures?: { [key: string]: number },
+                errorProps?: string[]
+            ) => {
+                name += eventName;
+                property = properties;
+                measure.push(measures!);
+                errorProps!.forEach((prop) => {
+                    errorProp.push(prop);
+                });
+            },
+        };
+    });
 
     beforeEach(() => {
         name = '';
@@ -115,7 +110,6 @@ describe('TelemetryReporterObserver', () => {
         expect(property['References']).toEqual('ref1|ref2');
         expect(property['FileExtensions']).toEqual('.cs|.cshtml');
         expect(property['FileCounts']).toEqual('7|3');
-        expect(property['useModernNet']).toEqual('true');
         expect(property['sdkStyleProject']).toEqual('true');
         expect(property['HasSolutionFile']).toEqual('true');
         expect(property['IsFileBasedProgram']).toEqual('true');

@@ -15,7 +15,6 @@ describe('Options tests', () => {
     });
     test('Verify defaults', () => {
         expect(commonOptions.serverPath).toEqual('');
-        expect(omnisharpOptions.monoPath).toEqual('');
         expect(commonOptions.defaultSolution).toEqual('');
         expect(commonOptions.waitForDebugger).toEqual(false);
         expect(omnisharpOptions.loggingLevel).toEqual('information');

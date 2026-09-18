@@ -17,7 +17,6 @@ import { ExtensionContext, CancellationTokenSource, LogOutputChannel, Location, 
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
 import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
-import { PlatformInformation } from '../../shared/platform';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import { Command, RequestType, Trace } from 'vscode-languageclient';
 import { DynamicFeature, LanguageClientOptions, StaticFeature } from 'vscode-languageclient';
@@ -44,8 +43,6 @@ export class LspEngine implements IEngine {
         private outputChannel: LogOutputChannel,
         private disposables: CompositeDisposable,
         private languageMiddlewareFeature: LanguageMiddlewareFeature,
-        private platformInfo: PlatformInformation,
-        private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver
     ) {}
 
@@ -56,8 +53,6 @@ export class LspEngine implements IEngine {
             cwd,
             ['-lsp', '--encoding', 'ascii'].concat(args),
             launchPath,
-            this.platformInfo,
-            this.monoResolver,
             this.dotnetResolver
         );
         const serverOptions: ServerOptions = {
@@ -294,7 +289,7 @@ export class LspEngine implements IEngine {
             new ObservableEvents.OmnisharpLaunch(
                 configuration.hostVersion ?? '',
                 configuration.hostPath,
-                configuration.hostKind === 'Mono .NET Framework',
+                false,
                 configuration.hostPath ?? configuration.path,
                 -1
             )

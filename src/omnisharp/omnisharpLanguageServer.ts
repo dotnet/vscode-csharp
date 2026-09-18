@@ -26,7 +26,6 @@ import { RazorLoggerObserver } from './observers/razorLoggerObserver';
 import { RazorOmnisharpDownloader } from '../razor/razorOmnisharpDownloader';
 import { omnisharpOptions, razorOptions } from '../shared/options';
 import CompositeDisposable from '../compositeDisposable';
-import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
 import { DotnetResolver } from './dotnetResolver';
 import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
 import { OmniSharpServer } from './server';
@@ -43,7 +42,6 @@ import {
     RazorDevModeActive,
 } from './omnisharpLoggingEvents';
 import { DotnetWorkspaceConfigurationProvider } from '../shared/workspaceConfigurationProvider';
-import { getMonoVersion } from '../utils/getMonoVersion';
 import { safeLength, sum } from '../common';
 import { TelemetryObserver } from './observers/telemetryObserver';
 import { ITelemetryReporter } from '../shared/telemetryReporter';
@@ -72,8 +70,7 @@ export async function activateOmniSharpLanguageServer(
     // Set command enablement to use O# commands.
     vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'OmniSharp');
 
-    const useModernNetOption = omnisharpOptions.useModernNet;
-    const telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);
+    const telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     eventStream.subscribe(telemetryObserver.post);
 
     const csharpLoggerObserver = new CSharpLoggerObserver(csharpChannel);
@@ -196,7 +193,6 @@ async function activate(
 ) {
     const disposables = new CompositeDisposable();
 
-    const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
     const omnisharpDotnetResolver = new DotnetResolver(platformInfo);
 
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
@@ -210,7 +206,6 @@ async function activate(
         platformInfo,
         eventStream,
         extensionPath,
-        omnisharpMonoResolver,
         omnisharpDotnetResolver,
         context,
         outputChannel,
@@ -240,9 +235,7 @@ async function activate(
         registerCommands(
             context,
             server,
-            platformInfo,
             eventStream,
-            omnisharpMonoResolver,
             omnisharpDotnetResolver,
             workspaceInformationProvider,
             outputChannel

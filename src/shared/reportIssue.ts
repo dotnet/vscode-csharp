@@ -13,10 +13,8 @@ import { commonOptions, LanguageServerOptions, languageServerOptions } from './o
 export default async function reportIssue(
     context: vscode.ExtensionContext,
     getDotnetInfo: (dotNetCliPaths: string[]) => Promise<DotnetInfo>,
-    shouldIncludeMonoInfo: boolean,
     logChannels: vscode.LogOutputChannel[],
-    dotnetResolver: IHostExecutableResolver,
-    monoResolver?: IHostExecutableResolver
+    dotnetResolver: IHostExecutableResolver
 ) {
     // Get info for the dotnet that the language server executable is run on, not the dotnet the language server will execute user code on.
     let fullDotnetInfo: string;
@@ -27,11 +25,6 @@ export default async function reportIssue(
     } catch (error) {
         const message = error instanceof Error ? error.message : `${error}`;
         fullDotnetInfo = message;
-    }
-
-    let monoInfo = '';
-    if (shouldIncludeMonoInfo && monoResolver) {
-        monoInfo = await getMonoIfPlatformValid(monoResolver);
     }
 
     const csharpExtVersion = context.extension.packageJSON.version;
@@ -58,7 +51,6 @@ ${logInfo}
 **C# Extension**: ${csharpExtVersion}
 **Using OmniSharp**: ${useOmnisharp}
 
-${monoInfo}
 <details><summary>Dotnet Information</summary>
 ${fullDotnetInfo}</details>
 <details><summary>Visual Studio Code Extensions</summary>
@@ -131,19 +123,6 @@ function getLanguageServerOptionData(k: keyof LanguageServerOptions): { name: st
         name: k,
         value: languageServerOptions[k]?.toString(),
     };
-}
-
-async function getMonoIfPlatformValid(monoResolver: IHostExecutableResolver): Promise<string> {
-    let monoVersion: string;
-    try {
-        const monoInfo = await monoResolver.getHostExecutableInfo();
-        monoVersion = `OmniSharp using mono: ${monoInfo.version}`;
-    } catch (error) {
-        monoVersion = error instanceof Error ? error.message : `${error}`;
-    }
-
-    return `<details><summary>Mono Information</summary>
-    ${monoVersion}</details>`;
 }
 
 async function getLogInfo(logChannels: vscode.LogOutputChannel[], context: vscode.ExtensionContext): Promise<string> {
