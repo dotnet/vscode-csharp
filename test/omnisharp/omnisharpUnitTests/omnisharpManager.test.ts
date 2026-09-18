@@ -16,7 +16,7 @@ import { testPackageJSON } from './testAssets/testAssets';
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../createTmpAsset';
 import * as path from 'path';
 import * as util from '../../../src/common';
-import { getModernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
+import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
 
 describe(OmnisharpManager.name, () => {
     let server: MockHttpsServer;
@@ -32,7 +32,6 @@ describe(OmnisharpManager.name, () => {
     let testZip: TestZip;
     let useFramework: boolean;
     let suffix: string;
-    let latestSuffix: string;
 
     [
         {
@@ -85,11 +84,10 @@ describe(OmnisharpManager.name, () => {
                 manager = GetTestOmniSharpManager(elem.platformInfo, eventStream, extensionPath, server.baseUrl);
                 testZip = await TestZip.createTestZipAsync(createTestFile('Foo', 'foo.txt'));
                 useFramework = elem.useFramework;
-                suffix = useFramework ? '' : `-net${getModernNetVersion(testVersion)}`;
-                latestSuffix = useFramework ? '' : `-net${getModernNetVersion(latestVersion)}`;
+                suffix = useFramework ? '' : `-net${modernNetVersion}`;
                 server.addRequestHandler(
                     'GET',
-                    `/releases/download/v${testVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
+                    `/releases/${testVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
                     200,
                     {
                         'content-type': 'application/zip',
@@ -100,17 +98,17 @@ describe(OmnisharpManager.name, () => {
 
                 server.addRequestHandler(
                     'GET',
-                    `/version/latestVersion.txt`,
+                    `/releases/versioninfo.txt`,
                     200,
                     {
                         'content-type': 'application/text',
                     },
-                    `${latestVersion}\n`
+                    latestVersion
                 );
 
                 server.addRequestHandler(
                     'GET',
-                    `/releases/download/v${latestVersion}/omnisharp-${elem.platformId}${latestSuffix}.zip`,
+                    `/releases/${latestVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
                     200,
                     {
                         'content-type': 'application/zip',
@@ -177,7 +175,7 @@ describe(OmnisharpManager.name, () => {
                 if (useFramework) {
                     if (elem.platformInfo.isWindows()) {
                         expect(launchPath).toEqual(
-                            path.join(extensionPath, installPath, latestVersion + latestSuffix, 'OmniSharp.exe')
+                            path.join(extensionPath, installPath, latestVersion + suffix, 'OmniSharp.exe')
                         );
                     } else {
                         expect(launchPath).toEqual(
@@ -186,7 +184,7 @@ describe(OmnisharpManager.name, () => {
                     }
                 } else {
                     expect(launchPath).toEqual(
-                        path.join(extensionPath, installPath, latestVersion + latestSuffix, 'OmniSharp.dll')
+                        path.join(extensionPath, installPath, latestVersion + suffix, 'OmniSharp.dll')
                     );
                 }
             });
@@ -249,5 +247,5 @@ function GetTestOmniSharpManager(
         platformInfo,
         extensionPath
     );
-    return new OmnisharpManager(downloader, platformInfo, serverUrl, `${serverUrl}/version/latestVersion.txt`);
+    return new OmnisharpManager(downloader, platformInfo, serverUrl);
 }
