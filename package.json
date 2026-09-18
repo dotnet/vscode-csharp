@@ -1575,22 +1575,6 @@
             "default": true,
             "description": "%configuration.omnisharp.csharp.showOmnisharpLogOnError%"
           },
-          "omnisharp.sdkPath": {
-            "type": "string",
-            "scope": "window",
-            "description": "%configuration.omnisharp.sdkPath%"
-          },
-          "omnisharp.sdkVersion": {
-            "type": "string",
-            "scope": "window",
-            "description": "%configuration.omnisharp.sdkVersion%"
-          },
-          "omnisharp.sdkIncludePrereleases": {
-            "type": "boolean",
-            "scope": "window",
-            "default": true,
-            "description": "%configuration.omnisharp.sdkIncludePrereleases%"
-          },
           "omnisharp.loggingLevel": {
             "type": "string",
             "default": "information",

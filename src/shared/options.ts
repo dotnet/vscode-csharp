@@ -39,9 +39,6 @@ export interface OmnisharpServerOptions {
     readonly minFindSymbolsFilterLength: number;
     readonly maxFindSymbolsItems: number;
     readonly enableMsBuildLoadProjectsOnDemand: boolean;
-    readonly sdkPath: string;
-    readonly sdkVersion: string;
-    readonly sdkIncludePrereleases: boolean;
     readonly dotNetCliPaths: string[];
     readonly useFormatting: boolean;
     readonly showReferencesCodeLens: boolean;
@@ -243,15 +240,6 @@ class OmnisharpOptionsImpl implements OmnisharpServerOptions {
     }
     public get enableMsBuildLoadProjectsOnDemand() {
         return readOption<boolean>('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
-    }
-    public get sdkPath() {
-        return readOption<string>('omnisharp.sdkPath', '');
-    }
-    public get sdkVersion() {
-        return readOption<string>('omnisharp.sdkVersion', '');
-    }
-    public get sdkIncludePrereleases() {
-        return readOption<boolean>('omnisharp.sdkIncludePrereleases', true);
     }
     public get dotNetCliPaths() {
         return readOption<string[]>('omnisharp.dotNetCliPaths', []);
@@ -494,9 +482,6 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
     'enableImportCompletion',
     'enableAsyncCompletion',
     'enableLspDriver',
-    'sdkPath',
-    'sdkVersion',
-    'sdkIncludePrereleases',
     'analyzeOpenDocumentsOnly',
     'enableRoslynAnalyzers',
     'inlayHintsEnableForParameters',

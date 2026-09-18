@@ -475,20 +475,6 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
-        const sdkPath = omnisharpOptions.sdkPath;
-        if (sdkPath.length > 0) {
-            args.push(`Sdk:Path=${sdkPath}`);
-        }
-
-        const sdkVersion = omnisharpOptions.sdkVersion;
-        if (sdkVersion.length > 0) {
-            args.push(`Sdk:Version=${sdkVersion}`);
-        }
-
-        if (omnisharpOptions.sdkIncludePrereleases) {
-            args.push(`Sdk:IncludePrereleases=true`);
-        }
-
         const enableInlayHintsForParameters = omnisharpOptions.inlayHintsEnableForParameters;
         if (enableInlayHintsForParameters === true) {
             args.push(
