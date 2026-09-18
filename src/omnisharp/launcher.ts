@@ -6,7 +6,6 @@
 import { spawn } from 'child_process';
 import { ChildProcessWithoutNullStreams } from 'child_process';
 
-import { PlatformInformation } from '../shared/platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { omnisharpOptions } from '../shared/options';
@@ -273,11 +272,10 @@ export async function launchOmniSharp(
     cwd: string,
     args: string[],
     launchPath: string,
-    platformInfo: PlatformInformation,
     dotnetResolver: IHostExecutableResolver
 ): Promise<LaunchResult> {
     return new Promise((resolve, reject) => {
-        launch(cwd, args, launchPath, platformInfo, dotnetResolver)
+        launch(cwd, args, launchPath, dotnetResolver)
             .then((result) => {
                 // async error - when target not not ENEOT
                 result.process.on('error', (err) => {
@@ -296,7 +294,6 @@ export async function configure(
     cwd: string,
     args: string[],
     launchPath: string,
-    platformInfo: PlatformInformation,
     dotnetResolver: IHostExecutableResolver
 ): Promise<LaunchConfiguration> {
     if (omnisharpOptions.useEditorFormattingSettings) {
@@ -325,15 +322,14 @@ export async function configure(
     }
 
     const argsCopy = args.slice(0);
+    const dotnetInfo = await dotnetResolver.getHostExecutableInfo();
     let command: string;
     if (!launchPath.endsWith('.dll')) {
         command = launchPath;
     } else {
-        command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+        command = dotnetInfo.path;
         argsCopy.unshift(launchPath);
     }
-
-    const dotnetInfo = await dotnetResolver.getHostExecutableInfo();
 
     return {
         hostPath: dotnetInfo.path,
@@ -350,10 +346,9 @@ async function launch(
     cwd: string,
     args: string[],
     launchPath: string,
-    platformInfo: PlatformInformation,
     dotnetResolver: IHostExecutableResolver
 ): Promise<IntermediateLaunchResult> {
-    const configureResults = await configure(cwd, args, launchPath, platformInfo, dotnetResolver);
+    const configureResults = await configure(cwd, args, launchPath, dotnetResolver);
     return coreLaunch(configureResults);
 }
 

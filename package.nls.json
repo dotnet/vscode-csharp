@@ -103,7 +103,7 @@
     ]
   },
   "configuration.omnisharp.dotnet.server.useOmnisharp": "Switches to use the Omnisharp server for language features when enabled (requires restart). This option will not be honored with C# Dev Kit installed.",
-  "configuration.omnisharp.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the OmniSharp server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.omnisharp.dotnetPath": "Specifies the directory containing the .NET 10 executable used to host the OmniSharp server. When unset, the system PATH is used. This setting does not override explicit omnisharp.dotNetCliPaths used for project and debugging operations. Example: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.omnisharp.csharp.format.enable": "Enable/disable default C# formatter (requires restart).",
   "configuration.omnisharp.csharp.suppressDotnetInstallWarning": "Suppress the warning that the .NET Core SDK is not on the path.",
   "configuration.omnisharp.csharp.suppressDotnetRestoreNotification": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved.",
@@ -128,7 +128,7 @@
   "configuration.omnisharp.enableDecompilationSupport": "Enables support for decompiling external references instead of viewing metadata.",
   "configuration.omnisharp.enableLspDriver": "Enables support for the experimental language protocol based engine (requires reload to setup bindings correctly)",
   "configuration.omnisharp.enableAsyncCompletion": "Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results.",
-  "configuration.omnisharp.dotNetCliPaths": "Paths to a local download of the .NET CLI to use for running any user code.",
+  "configuration.omnisharp.dotNetCliPaths": "Ordered directories containing .NET CLI installations used for project operations and debugging. These paths do not select the .NET 10 executable that hosts OmniSharp; use omnisharp.dotnetPath for that.",
   "configuration.omnisharp.razor.plugin.path": "Overrides the path to the Razor plugin dll.",
   "configuration.omnisharp.razor.devmode": "Forces the extension to run in a mode that enables local Razor.VSCode development.",
   "configuration.omnisharp.razor.format.enable": "Enable/disable default Razor formatter.",

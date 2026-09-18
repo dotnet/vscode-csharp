@@ -4,19 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as semver from 'semver';
-import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { omnisharpOptions } from '../shared/options';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 
-export interface RequirementResult {
-    needsDotNetSdk: boolean;
-}
-
-export async function validateRequirements(): Promise<boolean> {
-    const result = await checkRequirements();
-
-    if (result.needsDotNetSdk) {
-        const downloadSdk = await promptToDownloadDotNetSDK();
+export async function validateRequirements(dotnetResolver: IHostExecutableResolver): Promise<boolean> {
+    try {
+        await dotnetResolver.getHostExecutableInfo();
+        return true;
+    } catch (error) {
+        const message = error instanceof Error ? error.message : `${error}`;
+        const downloadSdk = await promptToDownloadDotNetSDK(message);
 
         if (downloadSdk === PromptResult.Yes) {
             const dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
@@ -25,15 +21,6 @@ export async function validateRequirements(): Promise<boolean> {
 
         return false;
     }
-
-    return true;
-}
-
-async function checkRequirements(): Promise<RequirementResult> {
-    const dotnetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
-    return {
-        needsDotNetSdk: dotnetInfo.Version === undefined || semver.lt(dotnetInfo.Version, '10.0.0'),
-    };
 }
 
 enum PromptResult {
@@ -45,10 +32,9 @@ interface PromptItem extends vscode.MessageItem {
     result: PromptResult;
 }
 
-async function promptToDownloadDotNetSDK() {
+async function promptToDownloadDotNetSDK(reason: string) {
     return new Promise<PromptResult>((resolve, _) => {
-        const message =
-            'OmniSharp requires the .NET 10 SDK to provide language services. Please install the latest .NET 10 SDK and restart VS Code. If you continue to see this error, you may need to restart your system for changes to the PATH to take effect.';
+        const message = `OmniSharp requires the .NET 10 SDK to provide language services. ${reason} Please install the latest .NET 10 SDK and restart VS Code. If you continue to see this error, you may need to restart your system for changes to the PATH to take effect.`;
 
         const messageOptions: vscode.MessageOptions = { modal: true };
 

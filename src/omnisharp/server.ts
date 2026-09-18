@@ -111,7 +111,7 @@ export class OmniSharpServer {
         private vscode: vscode,
         networkSettingsProvider: NetworkSettingsProvider,
         private packageJSON: any,
-        private platformInfo: PlatformInformation,
+        platformInfo: PlatformInformation,
         private eventStream: EventStream,
         private extensionPath: string,
         private dotnetResolver: IHostExecutableResolver,
@@ -299,7 +299,7 @@ export class OmniSharpServer {
             return;
         }
 
-        if (!(await validateRequirements())) {
+        if (!(await validateRequirements(this.dotnetResolver))) {
             this.eventStream.post(
                 new ObservableEvents.OmnisharpServerMessage(
                     'OmniSharp failed to start because of missing requirements.'
@@ -320,17 +320,10 @@ export class OmniSharpServer {
                 this.outputChannel as LogOutputChannel,
                 disposables,
                 this.languageMiddlewareFeature,
-                this.platformInfo,
                 this.dotnetResolver
             );
         } else {
-            engine = new StdioEngine(
-                this._eventBus,
-                this.eventStream,
-                this.platformInfo,
-                this.dotnetResolver,
-                disposables
-            );
+            engine = new StdioEngine(this._eventBus, this.eventStream, this.dotnetResolver, disposables);
         }
 
         disposables.add(

@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import { promisify } from 'util';
@@ -12,30 +13,49 @@ import { IHostExecutableResolver } from '../shared/constants/IHostExecutableReso
 import { PlatformInformation } from '../shared/platform';
 import { omnisharpOptions } from '../shared/options';
 
-export class DotnetResolver implements IHostExecutableResolver {
-    private readonly minimumDotnetVersion = '6.0.100';
+type ExecuteDotnetVersion = (dotnetExecutable: string, env: NodeJS.ProcessEnv) => Promise<string>;
 
-    constructor(private platformInfo: PlatformInformation) {}
+async function executeDotnetVersion(dotnetExecutable: string, env: NodeJS.ProcessEnv): Promise<string> {
+    const result = await promisify(execFile)(dotnetExecutable, ['--version'], { env, encoding: 'utf8' });
+    if (result.stderr) {
+        throw new Error(`Unable to read dotnet version information. Error ${result.stderr}`);
+    }
+
+    return result.stdout;
+}
+
+export class DotnetResolver implements IHostExecutableResolver {
+    private readonly minimumDotnetVersion = '10.0.0';
+    private hostExecutableInfo: Promise<HostExecutableInformation> | undefined;
+
+    constructor(
+        private platformInfo: PlatformInformation,
+        private executeVersion: ExecuteDotnetVersion = executeDotnetVersion
+    ) {}
 
     public async getHostExecutableInfo(): Promise<HostExecutableInformation> {
+        this.hostExecutableInfo ??= this.resolveHostExecutableInfo();
+        return this.hostExecutableInfo;
+    }
+
+    private async resolveHostExecutableInfo(): Promise<HostExecutableInformation> {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const env = { ...process.env };
 
         const dotnetPathOption = omnisharpOptions.dotnetPath;
+        let dotnetExecutable = dotnet;
         if (dotnetPathOption.length > 0) {
             env['PATH'] = dotnetPathOption + path.delimiter + env['PATH'];
+            dotnetExecutable = path.join(dotnetPathOption, dotnet);
+            if (!fs.existsSync(dotnetExecutable)) {
+                throw new Error(`The configured OmniSharp .NET host does not exist: ${dotnetExecutable}`);
+            }
         }
 
-        // Test the dotnet exe for version
-        const result = await promisify(exec)(`${dotnet} --version`, { env });
-
-        if (result.stderr) {
-            throw new Error(`Unable to read dotnet version information. Error ${result.stderr}`);
-        }
-
-        const dotnetVersion = semver.parse(result.stdout.trimEnd());
+        const version = (await this.executeVersion(dotnetExecutable, env)).trim();
+        const dotnetVersion = semver.parse(version);
         if (!dotnetVersion) {
-            throw new Error(`Unknown result output from 'dotnet --version'. Received ${result.stdout}`);
+            throw new Error(`Unknown result output from 'dotnet --version'. Received ${version}`);
         }
 
         if (semver.lt(dotnetVersion, this.minimumDotnetVersion)) {
@@ -45,8 +65,8 @@ export class DotnetResolver implements IHostExecutableResolver {
         }
 
         return {
-            version: result.stdout,
-            path: dotnetPathOption,
+            version,
+            path: dotnetExecutable,
             env,
         };
     }

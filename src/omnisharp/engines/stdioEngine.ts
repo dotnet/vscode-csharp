@@ -12,7 +12,6 @@ import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from '../requestQueue';
 import { EventEmitter } from 'events';
 import { omnisharpOptions } from '../../shared/options';
-import { PlatformInformation } from '../../shared/platform';
 import { launchOmniSharp } from '../launcher';
 import { setTimeout } from 'timers';
 import * as ObservableEvents from '../omnisharpLoggingEvents';
@@ -61,7 +60,6 @@ export class StdioEngine implements IEngine {
     constructor(
         eventBus: EventEmitter,
         private eventStream: EventStream,
-        private platformInfo: PlatformInformation,
         private dotnetResolver: IHostExecutableResolver,
         disposables: CompositeDisposable
     ) {
@@ -308,7 +306,6 @@ export class StdioEngine implements IEngine {
             cwd,
             args.concat('--encoding', 'utf-8'),
             launchPath,
-            this.platformInfo,
             this.dotnetResolver
         );
         this.eventStream.post(

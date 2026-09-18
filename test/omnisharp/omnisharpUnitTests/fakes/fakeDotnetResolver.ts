@@ -6,7 +6,7 @@
 import { IHostExecutableResolver } from '../../../../src/shared/constants/IHostExecutableResolver';
 import { HostExecutableInformation } from '../../../../src/shared/constants/hostExecutableInformation';
 
-export const fakeMonoInfo: HostExecutableInformation = {
+export const fakeDotnetInfo: HostExecutableInformation = {
     version: 'someDotNetVersion',
     path: 'someDotNetPath',
     env: {},
@@ -22,7 +22,7 @@ export class FakeDotnetResolver implements IHostExecutableResolver {
     async getHostExecutableInfo(): Promise<HostExecutableInformation> {
         this.getDotnetCalled = true;
         if (this.willReturnDotnetInfo) {
-            return Promise.resolve(fakeMonoInfo);
+            return Promise.resolve(fakeDotnetInfo);
         }
 
         return Promise.resolve(undefined!);
