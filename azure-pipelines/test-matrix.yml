@@ -10,6 +10,10 @@ parameters:
     type: boolean
   - name: testVSCodeVersion
     type: string
+  - name: runDevKitTests
+    type: boolean
+    # Re-enable once the C# Dev Kit v11 prerelease integration test failures are fixed.
+    default: false
 
 jobs:
 - job:
@@ -21,9 +25,10 @@ jobs:
       CSharpIntegrationTests:
         npmCommand: test:integration:csharp
         isIntegration: true
-      DevKitTests:
-        npmCommand: test:integration:devkit
-        isIntegration: true
+      ${{ if parameters.runDevKitTests }}:
+        DevKitTests:
+          npmCommand: test:integration:devkit
+          isIntegration: true
       RazorCohostTests:
         npmCommand: test:integration:razor:cohost
         isIntegration: true
