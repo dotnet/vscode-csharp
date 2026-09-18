@@ -28,7 +28,7 @@ export async function prepareVSCodeAndExecuteTests(
 
     // Different test runs may want to have Dev Kit be active or in-active.
     // Rather than having to uninstall Dev Kit between different test runs, we use workspace settings
-    // to control which extensions are active - and we always install Dev Kit.
+    // and launch arguments to control which extensions are active - and we always install Dev Kit.
     const extensionsToInstall = [
         'ms-dotnettools.vscode-dotnet-runtime@3.0.0',
         'ms-dotnettools.csharp',
@@ -56,6 +56,11 @@ export async function prepareVSCodeAndExecuteTests(
     }
 
     const launchArgs = [workspacePath, '-n', '--user-data-dir', userDataDir, '--log', 'ms-dotnettools.csharp:trace'];
+    if (env.CODE_DISABLE_CSHARP_DEV_KIT === 'true') {
+        // Disabling all extensions would also disable C#'s required .NET runtime extension.
+        launchArgs.push('--disable-extension=ms-dotnettools.csdevkit');
+    }
+
     if (process.platform === 'linux') {
         // CI containers have a small /dev/shm allocation, which can cause the renderer to crash.
         launchArgs.push('--disable-dev-shm-usage');

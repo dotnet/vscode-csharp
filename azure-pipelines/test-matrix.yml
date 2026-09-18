@@ -12,7 +12,8 @@ parameters:
     type: string
   - name: runDevKitTests
     type: boolean
-    default: true
+    # Re-enable once the C# Dev Kit v11 prerelease integration test failures are fixed.
+    default: false
 
 jobs:
 - job:

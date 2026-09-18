@@ -40,7 +40,7 @@ async function runOmnisharpJestIntegrationTest(
         CODE_WORKSPACE_ROOT: rootPath,
         OMNISHARP_ENGINE: engine,
         OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
-        CODE_DISABLE_EXTENSIONS: 'true',
+        CODE_DISABLE_CSHARP_DEV_KIT: 'true',
     };
 
     await runJestIntegrationTest(testAssetName, testFolder, workspaceFile, suiteName, env);
