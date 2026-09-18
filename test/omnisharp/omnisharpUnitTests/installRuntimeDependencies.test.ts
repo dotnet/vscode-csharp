@@ -23,8 +23,6 @@ describe(`${installRuntimeDependencies.name}`, () => {
     let eventStream: EventStream;
     let eventBus: TestEventBus;
     const platformInfo = new PlatformInformation('linux', 'architecture1');
-    const useFramework = true;
-
     beforeEach(() => {
         eventStream = new EventStream();
         eventBus = new TestEventBus(eventStream);
@@ -46,7 +44,6 @@ describe(`${installRuntimeDependencies.name}`, () => {
                 installDependencies,
                 eventStream,
                 platformInfo,
-                useFramework,
                 ['Debugger', 'Omnisharp', 'Razor']
             );
             expect(installed['Debugger']).toBe(true);
@@ -65,7 +62,6 @@ describe(`${installRuntimeDependencies.name}`, () => {
                 installDependencies,
                 eventStream,
                 platformInfo,
-                useFramework,
                 ['Debugger', 'Omnisharp', 'Razor']
             );
             expect(eventBus.getEvents()).toHaveLength(0);
@@ -102,7 +98,6 @@ describe(`${installRuntimeDependencies.name}`, () => {
                 installDependencies,
                 eventStream,
                 platformInfo,
-                useFramework,
                 ['myPackage']
             );
             expect(installed['myPackage']).toBe(true);
@@ -122,7 +117,6 @@ describe(`${installRuntimeDependencies.name}`, () => {
                 installDependencies,
                 eventStream,
                 platformInfo,
-                useFramework,
                 ['myPackage']
             );
             expect(installed['myPackage']).toBe(false);

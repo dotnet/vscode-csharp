@@ -110,7 +110,6 @@ describe('Option changes observer', () => {
     });
 
     [
-        { config: 'omnisharp', section: 'useModernNet', value: false },
         { config: 'csharp', section: 'format.enable', value: false },
         { config: 'files', section: 'exclude', value: false },
         { config: 'search', section: 'exclude', value: 1000 },

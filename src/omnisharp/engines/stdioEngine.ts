@@ -62,7 +62,6 @@ export class StdioEngine implements IEngine {
         eventBus: EventEmitter,
         private eventStream: EventStream,
         private platformInfo: PlatformInformation,
-        private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
         disposables: CompositeDisposable
     ) {
@@ -310,7 +309,6 @@ export class StdioEngine implements IEngine {
             args.concat('--encoding', 'utf-8'),
             launchPath,
             this.platformInfo,
-            this.monoResolver,
             this.dotnetResolver
         );
         this.eventStream.post(

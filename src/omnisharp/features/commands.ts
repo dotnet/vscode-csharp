@@ -21,7 +21,6 @@ import {
     CommandDotNetRestoreFailed,
 } from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
-import { PlatformInformation } from '../../shared/platform';
 import CompositeDisposable from '../../compositeDisposable';
 import reportIssue from '../../shared/reportIssue';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
@@ -31,9 +30,7 @@ import { IWorkspaceDebugInformationProvider } from '../../shared/IWorkspaceDebug
 export default function registerCommands(
     context: vscode.ExtensionContext,
     server: OmniSharpServer,
-    platformInfo: PlatformInformation,
     eventStream: EventStream,
-    monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver,
     workspaceInformationProvider: IWorkspaceDebugInformationProvider,
     outputChannel: vscode.OutputChannel
@@ -69,14 +66,7 @@ export default function registerCommands(
     disposable.add(
         vscode.commands.registerCommand('csharp.reportIssue', async () => {
             const logOutputChannel = isLogOutputChannel(outputChannel);
-            return reportIssue(
-                context,
-                getDotnetInfo,
-                platformInfo.isValidPlatformForMono(),
-                logOutputChannel ? [logOutputChannel] : [],
-                dotnetResolver,
-                monoResolver
-            );
+            return reportIssue(context, getDotnetInfo, logOutputChannel ? [logOutputChannel] : [], dotnetResolver);
         })
     );
 

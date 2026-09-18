@@ -114,7 +114,6 @@ export class OmniSharpServer {
         private platformInfo: PlatformInformation,
         private eventStream: EventStream,
         private extensionPath: string,
-        private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
         private context: ExtensionContext,
         private outputChannel: OutputChannel,
@@ -129,7 +128,7 @@ export class OmniSharpServer {
             extensionPath,
             reporter
         );
-        this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
+        this._omnisharpManager = new OmnisharpManager(downloader);
         this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe(async (_) => {
             await this.updateProjectInfo();
         });
@@ -322,7 +321,6 @@ export class OmniSharpServer {
                 disposables,
                 this.languageMiddlewareFeature,
                 this.platformInfo,
-                this.monoResolver,
                 this.dotnetResolver
             );
         } else {
@@ -330,7 +328,6 @@ export class OmniSharpServer {
                 this._eventBus,
                 this.eventStream,
                 this.platformInfo,
-                this.monoResolver,
                 this.dotnetResolver,
                 disposables
             );
@@ -550,7 +547,6 @@ export class OmniSharpServer {
             launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(
                 this.packageJSON.defaults.omniSharp,
                 commonOptions.serverPath,
-                /* useFramework */ !omnisharpOptions.useModernNet,
                 this.extensionPath
             );
         } catch (e) {

@@ -25,12 +25,10 @@ export class TelemetryObserver {
     private platformInfo: PlatformInformation;
     private solutionPath?: string;
     private dotnetInfo?: DotnetInfo;
-    private useModernNet: boolean;
 
-    constructor(platformInfo: PlatformInformation, reporterCreator: () => ITelemetryReporter, useModernNet: boolean) {
+    constructor(platformInfo: PlatformInformation, reporterCreator: () => ITelemetryReporter) {
         this.platformInfo = platformInfo;
         this.reporter = reporterCreator();
-        this.useModernNet = useModernNet;
     }
 
     public post = async (event: BaseEvent) => {
@@ -121,8 +119,7 @@ export class TelemetryObserver {
             projectConfig,
             this.platformInfo,
             this.dotnetInfo,
-            this.solutionPath ?? '',
-            this.useModernNet
+            this.solutionPath ?? ''
         );
     }
 }

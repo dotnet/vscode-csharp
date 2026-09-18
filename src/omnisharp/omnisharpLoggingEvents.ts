@@ -322,10 +322,6 @@ export class OmnisharpServerOnStart implements BaseEvent {
     type = EventType.OmnisharpServerOnStart;
 }
 
-export class LatestBuildDownloadStart implements BaseEvent {
-    type = EventType.LatestBuildDownloadStart;
-}
-
 export class OmnisharpRestart implements BaseEvent {
     type = EventType.OmnisharpRestart;
 }

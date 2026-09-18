@@ -12,9 +12,9 @@ export function getModernNetVersion(version: string): string {
     return normalizedVersion && semver.gte(normalizedVersion, '1.39.16') ? '10.0' : '6.0';
 }
 
-export function getPackageSuffix(version: string, useFramework: boolean): string {
+export function getPackageSuffix(version: string): string {
     const normalizedVersion = semver.coerce(version);
-    if (useFramework || (normalizedVersion && semver.gte(normalizedVersion, '2.0.0'))) {
+    if (normalizedVersion && semver.gte(normalizedVersion, '2.0.0')) {
         return '';
     }
 
@@ -23,45 +23,26 @@ export function getPackageSuffix(version: string, useFramework: boolean): string
 
 export function GetPackagesFromVersion(
     version: string,
-    useFramework: boolean,
     runTimeDependencies: Package[],
     serverUrl: string,
     installPath: string
 ): Package[] {
     return runTimeDependencies
-        .filter((inputPackage) => inputPackage.platformId !== undefined && inputPackage.isFramework === useFramework)
-        .map((inputPackage) => SetBinaryAndGetPackage(inputPackage, useFramework, serverUrl, version, installPath));
+        .filter((inputPackage) => inputPackage.id === 'OmniSharp' && inputPackage.platformId !== undefined)
+        .map((inputPackage) => SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
 }
 
 export function SetBinaryAndGetPackage(
     inputPackage: Package,
-    useFramework: boolean,
     serverUrl: string,
     version: string,
     installPath: string
 ): Package {
-    let installBinary: string;
-    if (!useFramework) {
-        // Modern .NET packages use system `dotnet OmniSharp.dll`.
-        installBinary = 'OmniSharp.dll';
-    } else if (inputPackage.platforms.includes('win32')) {
-        installBinary = 'OmniSharp.exe';
-    } else {
-        installBinary = 'run';
-    }
-
-    return GetPackage(inputPackage, useFramework, serverUrl, version, installPath, installBinary);
+    return GetPackage(inputPackage, serverUrl, version, installPath);
 }
 
-function GetPackage(
-    inputPackage: Package,
-    useFramework: boolean,
-    serverUrl: string,
-    version: string,
-    installPath: string,
-    installBinary: string
-): Package {
-    const packageSuffix = getPackageSuffix(version, useFramework);
+function GetPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string): Package {
+    const packageSuffix = getPackageSuffix(version);
 
     return {
         ...inputPackage,
@@ -69,6 +50,6 @@ function GetPackage(
         description: `${inputPackage.description}, Version = ${version}`,
         url: `${serverUrl}/releases/download/v${version}/omnisharp-${inputPackage.platformId}${packageSuffix}.zip`,
         installPath: `${installPath}/${version}${packageSuffix}`,
-        installTestPath: `./${installPath}/${version}${packageSuffix}/${installBinary}`,
+        installTestPath: `./${installPath}/${version}${packageSuffix}/OmniSharp.dll`,
     };
 }

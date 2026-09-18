@@ -48,7 +48,7 @@ export enum EventType {
     CommandDotNetRestoreProgress = 42,
     DownloadValidation = 43,
     DotNetTestDebugComplete = 44,
-    LatestBuildDownloadStart = 45,
+    // LatestBuildDownloadStart = 45, Obsolete
     ActiveTextEditorChanged = 46,
     OmnisharpOnBeforeServerStart = 47,
     ProjectJsonDeprecatedWarning = 48,

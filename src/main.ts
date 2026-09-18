@@ -21,7 +21,7 @@ import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { MigrateOptions } from './shared/migrateOptions';
 import { CSharpExtensionExports, LimitedExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { getCSharpDevKit } from './utils/getCSharpDevKit';
-import { commonOptions, omnisharpOptions } from './shared/options';
+import { commonOptions } from './shared/options';
 import { TelemetryEventNames } from './shared/telemetryEventNames';
 import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion';
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
@@ -81,7 +81,6 @@ export async function activate(
     }
 
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => {
         // Defer loading the download/zip stack (yauzl, proxy agents, etc.) until a
         // component actually needs to be downloaded, which normally never happens after install.
@@ -102,7 +101,6 @@ export async function activate(
         installDependencies,
         eventStream,
         platformInfo,
-        useFramework,
         requiredPackageIds
     );
 

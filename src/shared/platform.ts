@@ -196,8 +196,4 @@ export class PlatformInformation {
             return err instanceof Error ? err.message.includes('musl') : false;
         }
     }
-
-    public isValidPlatformForMono(): boolean {
-        return this.isLinux() || this.isMacOS();
-    }
 }

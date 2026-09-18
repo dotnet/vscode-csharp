@@ -171,7 +171,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "win-x64",
-      "isFramework": false,
       "integrity": "05E961233B4B620F46E6BD46D762122E3008F49B01E6FD31C8D7A70E917F7BFB"
     },
     {
@@ -187,7 +186,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "win-arm64",
-      "isFramework": false,
       "integrity": "90BDCB071AA62CA68E01E4B7A92DEB8AE5D35921C79980E670A07A68318849F1"
     },
     {
@@ -203,7 +201,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "osx-x64",
-      "isFramework": false,
       "integrity": "89B39594F410ED00E0D71A60F6ED5D83A188BE1EE38CA5538009CFA13AAA8B48"
     },
     {
@@ -219,7 +216,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "osx-arm64",
-      "isFramework": false,
       "integrity": "6620CB1620FBF74CE34C636ADC984F6DCD7821AB4C5B84B20D03F58C22499C2A"
     },
     {
@@ -235,7 +231,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "linux-x64",
-      "isFramework": false,
       "integrity": "B1A8C1DF228893C7C1842721B6155B2240B91438E857D822C7FA5FBDC04F527A"
     },
     {
@@ -251,7 +246,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "linux-arm64",
-      "isFramework": false,
       "integrity": "AB4EF2C639EF0A116BF85335563693DC7C5B911357B21CBCFABB81AA2E44C8C1"
     },
     {
@@ -267,7 +261,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "linux-musl-x64",
-      "isFramework": false,
       "integrity": "57201A32D58B91EFDEBEB40B1F9DFA2195660DCE965FB6454C49ADD7FBF6834E"
     },
     {
@@ -283,7 +276,6 @@
       ],
       "installTestPath": "./.omnisharp/2.0.0/OmniSharp.dll",
       "platformId": "linux-musl-arm64",
-      "isFramework": false,
       "integrity": "B1F5B507BAD8437BB4946D41AE598BF06F5F8EA91DBB9CC8CB8328214F5AA689"
     },
     {

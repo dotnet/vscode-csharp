@@ -7,7 +7,6 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as util from '../common';
 import { OmnisharpDownloader } from './omnisharpDownloader';
-import { PlatformInformation } from '../shared/platform';
 import { getPackageSuffix } from './omnisharpPackageCreator';
 
 export class OmnisharpManager {
@@ -15,26 +14,18 @@ export class OmnisharpManager {
 
     public constructor(
         private downloader: OmnisharpDownloader,
-        private platformInfo: PlatformInformation,
         // Only the tests set this. Instead of making this configurable,
         // we should probably just mock the HTTP requests, not create an entire mock HTTP server.
-        private serverUrl: string = 'https://github.com/OmniSharp/omnisharp-roslyn',
-        private latestVersionUrl: string = 'https://raw.githubusercontent.com/OmniSharp/omnisharp-roslyn/version/latestVersion.txt'
+        private serverUrl: string = 'https://github.com/OmniSharp/omnisharp-roslyn'
     ) {}
 
     public async GetOmniSharpLaunchPath(
         defaultOmnisharpVersion: string,
         omnisharpPath: string,
-        useFramework: boolean,
         extensionPath: string
     ): Promise<string> {
         if (omnisharpPath.length === 0) {
-            return this.GetLaunchPathForVersion(
-                defaultOmnisharpVersion,
-                this.platformInfo,
-                useFramework,
-                extensionPath
-            );
+            return this.GetLaunchPathForVersion(defaultOmnisharpVersion, extensionPath);
         }
 
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
@@ -44,49 +35,23 @@ export class OmnisharpManager {
             }
 
             return omnisharpPath;
-        } else if (omnisharpPath === 'latest') {
-            return await this.InstallLatestAndReturnLaunchInfo(useFramework, extensionPath);
         }
 
-        // If the path is neither a valid path on disk not the string "latest", treat it as a version
-        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, useFramework, extensionPath);
+        // If the path is not a valid path on disk, treat it as a pinned version.
+        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, extensionPath);
     }
 
-    private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, extensionPath: string): Promise<string> {
-        const version = await this.downloader.GetLatestVersion(this.latestVersionUrl);
-        return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, extensionPath);
-    }
-
-    private async InstallVersionAndReturnLaunchInfo(
-        version: string,
-        useFramework: boolean,
-        extensionPath: string
-    ): Promise<string> {
+    private async InstallVersionAndReturnLaunchInfo(version: string, extensionPath: string): Promise<string> {
         if (semver.valid(version)) {
-            await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, this.serverUrl, this.installPath);
-            return this.GetLaunchPathForVersion(version, this.platformInfo, useFramework, extensionPath);
+            await this.downloader.DownloadAndInstallOmnisharp(version, this.serverUrl, this.installPath);
+            return this.GetLaunchPathForVersion(version, extensionPath);
         } else {
             throw new Error(`Invalid OmniSharp version - ${version}`);
         }
     }
 
-    private GetLaunchPathForVersion(
-        version: string,
-        platformInfo: PlatformInformation,
-        useFramework: boolean,
-        extensionPath: string
-    ): string {
-        const basePath = path.resolve(
-            extensionPath,
-            this.installPath,
-            version + getPackageSuffix(version, useFramework)
-        );
-        if (!useFramework) {
-            return path.join(basePath, 'OmniSharp.dll');
-        } else if (platformInfo.isWindows()) {
-            return path.join(basePath, 'OmniSharp.exe');
-        }
-
-        return path.join(basePath, 'omnisharp', 'OmniSharp.exe');
+    private GetLaunchPathForVersion(version: string, extensionPath: string): string {
+        const basePath = path.resolve(extensionPath, this.installPath, version + getPackageSuffix(version));
+        return path.join(basePath, 'OmniSharp.dll');
     }
 }

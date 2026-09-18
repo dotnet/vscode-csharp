@@ -45,7 +45,6 @@ export class LspEngine implements IEngine {
         private disposables: CompositeDisposable,
         private languageMiddlewareFeature: LanguageMiddlewareFeature,
         private platformInfo: PlatformInformation,
-        private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver
     ) {}
 
@@ -57,7 +56,6 @@ export class LspEngine implements IEngine {
             ['-lsp', '--encoding', 'ascii'].concat(args),
             launchPath,
             this.platformInfo,
-            this.monoResolver,
             this.dotnetResolver
         );
         const serverOptions: ServerOptions = {
@@ -294,7 +292,7 @@ export class LspEngine implements IEngine {
             new ObservableEvents.OmnisharpLaunch(
                 configuration.hostVersion ?? '',
                 configuration.hostPath,
-                configuration.hostKind === 'Mono .NET Framework',
+                false,
                 configuration.hostPath ?? configuration.path,
                 -1
             )

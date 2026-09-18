@@ -22,8 +22,6 @@ export interface CommonOptions {
 }
 
 export interface OmnisharpServerOptions {
-    readonly useModernNet: boolean;
-    readonly monoPath: string;
     readonly loggingLevel: string;
     readonly autoStart: boolean;
     readonly projectFilesExcludePattern: string;
@@ -170,13 +168,6 @@ class CommonOptionsImpl implements CommonOptions {
 }
 
 class OmnisharpOptionsImpl implements OmnisharpServerOptions {
-    public get useModernNet() {
-        // OmniSharp 2.0 removed the .NET Framework and Mono hosts.
-        return true;
-    }
-    public get monoPath() {
-        return readOption<string>('omnisharp.monoPath', '');
-    }
     public get loggingLevel() {
         let loggingLevel = readOption<string>('omnisharp.loggingLevel', 'information');
         if (loggingLevel && loggingLevel.toLowerCase() === 'verbose') {

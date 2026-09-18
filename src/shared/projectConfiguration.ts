@@ -29,8 +29,7 @@ export function reportProjectConfigurationEvent(
     projectConfig: ProjectConfigurationMessage,
     platformInfo: PlatformInformation,
     dotnetInfo: DotnetInfo | undefined,
-    solutionPath?: string,
-    useModernNet?: boolean
+    solutionPath?: string
 ) {
     let solutionId = '';
     if (solutionPath) {
@@ -60,10 +59,6 @@ export function reportProjectConfigurationEvent(
 
     if (projectConfig.IsMiscellaneousFile != null) {
         telemetryProps['IsMiscellaneousFile'] = projectConfig.IsMiscellaneousFile.toString();
-    }
-
-    if (useModernNet) {
-        telemetryProps['useModernNet'] = useModernNet.toString();
     }
 
     reporter.sendTelemetryEvent('ProjectConfiguration', telemetryProps);
