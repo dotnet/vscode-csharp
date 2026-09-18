@@ -218,6 +218,7 @@ describe(`Go To Definition Tests`, () => {
         );
     });
 
+    // Re-enable when the C# Dev Kit v11 Source Link bug is fixed.
     test.skip('Navigates to definition in source link', async () => {
         await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
 
