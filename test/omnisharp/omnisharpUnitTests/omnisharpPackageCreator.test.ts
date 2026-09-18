@@ -8,6 +8,7 @@ import {
     SetBinaryAndGetPackage,
     GetPackagesFromVersion,
     getModernNetVersion,
+    getPackageSuffix,
 } from '../../../src/omnisharp/omnisharpPackageCreator';
 import { Package } from '../../../src/packageManager/package';
 import { testPackageJSON } from './testAssets/testAssets';
@@ -30,7 +31,7 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
     const useFrameworkOptions = [true, false];
 
     useFrameworkOptions.forEach((useFramework) => {
-        const pathSuffix = useFramework ? '' : `-net${getModernNetVersion('1.2.3')}`;
+        const pathSuffix = getPackageSuffix('1.2.3', useFramework);
 
         test(`Architectures, binaries and platforms do not change ${useFramework ? 'on framework' : ''}`, () => {
             const testPackage = inputPackages.find(
@@ -176,6 +177,12 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
         expect(getModernNetVersion('1.39.16-beta.1')).toEqual('10.0');
         expect(getModernNetVersion('1.39.16')).toEqual('10.0');
     });
+
+    test('Modern packages use unsuffixed asset names starting with OmniSharp 2.0.0', () => {
+        expect(getPackageSuffix('1.39.16', false)).toEqual('-net10.0');
+        expect(getPackageSuffix('2.0.0-preview.1', false)).toEqual('');
+        expect(getPackageSuffix('2.0.0', false)).toEqual('');
+    });
 });
 
 describe('GetPackagesFromVersion : Gets the experimental omnisharp packages from a set of input packages', () => {
@@ -233,7 +240,7 @@ describe('GetPackagesFromVersion : Gets the experimental omnisharp packages from
                 serverUrl,
                 'experimentPath'
             );
-            const suffix = useFramework ? '' : `-net${getModernNetVersion('1.1.1')}`;
+            const suffix = getPackageSuffix('1.1.1', useFramework);
             expect(outPackages).toHaveLength(2);
             expect(outPackages[0].installTestPath).toEqual(
                 `./experimentPath/1.1.1${suffix}/OmniSharp.${useFramework ? 'exe' : 'dll'}`

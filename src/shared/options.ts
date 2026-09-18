@@ -171,7 +171,8 @@ class CommonOptionsImpl implements CommonOptions {
 
 class OmnisharpOptionsImpl implements OmnisharpServerOptions {
     public get useModernNet() {
-        return readOption<boolean>('omnisharp.useModernNet', true);
+        // OmniSharp 2.0 removed the .NET Framework and Mono hosts.
+        return true;
     }
     public get monoPath() {
         return readOption<string>('omnisharp.monoPath', '');
@@ -501,7 +502,6 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
     'enableDecompilationSupport',
     'enableImportCompletion',
     'enableAsyncCompletion',
-    'useModernNet',
     'enableLspDriver',
     'sdkPath',
     'sdkVersion',

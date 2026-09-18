@@ -8,7 +8,7 @@ import * as semver from 'semver';
 import * as util from '../common';
 import { OmnisharpDownloader } from './omnisharpDownloader';
 import { PlatformInformation } from '../shared/platform';
-import { getModernNetVersion } from './omnisharpPackageCreator';
+import { getPackageSuffix } from './omnisharpPackageCreator';
 
 export class OmnisharpManager {
     private readonly installPath = '.omnisharp';
@@ -79,7 +79,7 @@ export class OmnisharpManager {
         const basePath = path.resolve(
             extensionPath,
             this.installPath,
-            version + (useFramework ? '' : `-net${getModernNetVersion(version)}`)
+            version + getPackageSuffix(version, useFramework)
         );
         if (!useFramework) {
             return path.join(basePath, 'OmniSharp.dll');

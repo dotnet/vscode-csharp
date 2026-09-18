@@ -16,7 +16,7 @@ import { testPackageJSON } from './testAssets/testAssets';
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../createTmpAsset';
 import * as path from 'path';
 import * as util from '../../../src/common';
-import { getModernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
+import { getPackageSuffix } from '../../../src/omnisharp/omnisharpPackageCreator';
 
 describe(OmnisharpManager.name, () => {
     let server: MockHttpsServer;
@@ -85,8 +85,8 @@ describe(OmnisharpManager.name, () => {
                 manager = GetTestOmniSharpManager(elem.platformInfo, eventStream, extensionPath, server.baseUrl);
                 testZip = await TestZip.createTestZipAsync(createTestFile('Foo', 'foo.txt'));
                 useFramework = elem.useFramework;
-                suffix = useFramework ? '' : `-net${getModernNetVersion(testVersion)}`;
-                latestSuffix = useFramework ? '' : `-net${getModernNetVersion(latestVersion)}`;
+                suffix = getPackageSuffix(testVersion, useFramework);
+                latestSuffix = getPackageSuffix(latestVersion, useFramework);
                 server.addRequestHandler(
                     'GET',
                     `/releases/download/v${testVersion}/omnisharp-${elem.platformId}${suffix}.zip`,

@@ -12,6 +12,15 @@ export function getModernNetVersion(version: string): string {
     return normalizedVersion && semver.gte(normalizedVersion, '1.39.16') ? '10.0' : '6.0';
 }
 
+export function getPackageSuffix(version: string, useFramework: boolean): string {
+    const normalizedVersion = semver.coerce(version);
+    if (useFramework || (normalizedVersion && semver.gte(normalizedVersion, '2.0.0'))) {
+        return '';
+    }
+
+    return `-net${getModernNetVersion(version)}`;
+}
+
 export function GetPackagesFromVersion(
     version: string,
     useFramework: boolean,
@@ -52,7 +61,7 @@ function GetPackage(
     installPath: string,
     installBinary: string
 ): Package {
-    const packageSuffix = useFramework ? '' : `-net${getModernNetVersion(version)}`;
+    const packageSuffix = getPackageSuffix(version, useFramework);
 
     return {
         ...inputPackage,
