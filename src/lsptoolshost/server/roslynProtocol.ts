@@ -154,6 +154,11 @@ export interface RunTestsParams extends WorkDoneProgressParams, PartialResultPar
      * The absolute path to a .runsettings file to configure the test run.
      */
     runSettingsPath?: string;
+
+    /**
+     * The absolute path to a global.json file to configure the test run.
+     */
+    globalJsonPath?: string;
 }
 
 export interface TestProgress {

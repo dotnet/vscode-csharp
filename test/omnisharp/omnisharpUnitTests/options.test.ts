@@ -17,6 +17,7 @@ describe('Options tests', () => {
         expect(commonOptions.serverPath).toEqual('');
         expect(omnisharpOptions.monoPath).toEqual('');
         expect(commonOptions.defaultSolution).toEqual('');
+        expect(commonOptions.defaultGlobalJson).toEqual('');
         expect(commonOptions.waitForDebugger).toEqual(false);
         expect(omnisharpOptions.loggingLevel).toEqual('information');
         expect(omnisharpOptions.autoStart).toEqual(true);
@@ -92,6 +93,25 @@ describe('Options tests', () => {
         await vscode.workspace.getConfiguration().update('omnisharp.defaultLaunchSolution', 'some_valid_solution.sln');
 
         expect(commonOptions.defaultSolution).toEqual(path.join(workspaceFolderUri.fsPath, 'some_valid_solution.sln'));
+    });
+
+    test('"dotnet.defaultGlobalJson" is resolved relative to the workspace folder if set', async () => {
+        const workspaceFolderUri = vscode.Uri.file('/Test');
+        jest.replaceProperty(vscode.workspace, 'workspaceFolders', [
+            { index: 0, name: 'Test', uri: workspaceFolderUri },
+        ]);
+
+        await vscode.workspace.getConfiguration().update('dotnet.defaultGlobalJson', 'dotnet/global.json');
+
+        expect(commonOptions.defaultGlobalJson).toEqual(path.join(workspaceFolderUri.fsPath, 'dotnet', 'global.json'));
+    });
+
+    test('"dotnet.defaultGlobalJson" supports absolute paths', async () => {
+        const defaultGlobalJson = path.join('/Test', 'dotnet', 'global.json');
+
+        await vscode.workspace.getConfiguration().update('dotnet.defaultGlobalJson', defaultGlobalJson);
+
+        expect(commonOptions.defaultGlobalJson).toEqual(defaultGlobalJson);
     });
 
     test('"omnisharp.testRunSettings" is used if set', async () => {

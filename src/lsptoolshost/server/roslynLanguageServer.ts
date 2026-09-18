@@ -41,6 +41,7 @@ import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents'
 import { registerShowToastNotification } from '../handlers/showToastNotification';
 import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
+import { getValidatedDefaultGlobalJsonPath } from '../../shared/globalJson';
 import { VSTextDocumentIdentifier } from './roslynProtocol';
 import { IDisposable } from '../../disposable';
 import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
@@ -744,6 +745,15 @@ export class RoslynLanguageServer {
             command = serverPath;
         }
 
+        const defaultGlobalJson = getValidatedDefaultGlobalJsonPath((message) => {
+            channel.error(message);
+            void vscode.window.showErrorMessage(message);
+        });
+        const cwd = defaultGlobalJson !== undefined ? path.dirname(defaultGlobalJson) : undefined;
+        if (cwd !== undefined) {
+            channel.info(`Using dotnet.defaultGlobalJson: ${defaultGlobalJson}`);
+        }
+
         channel.debug(`Starting server at ${command}`);
         channel.debug(`Server arguments ${args.join(' ')}`);
 
@@ -754,6 +764,7 @@ export class RoslynLanguageServer {
             options: {
                 detached: true,
                 env: env,
+                cwd: cwd,
             },
         };
     }

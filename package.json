@@ -742,6 +742,11 @@
             "type": "string",
             "description": "%configuration.dotnet.defaultSolution.description%",
             "order": 0
+          },
+          "dotnet.defaultGlobalJson": {
+            "type": "string",
+            "description": "%configuration.dotnet.defaultGlobalJson.description%",
+            "order": 1
           }
         }
       },

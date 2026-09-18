@@ -15,6 +15,8 @@ export interface CommonOptions {
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
     readonly defaultSolution: string;
+    /** The default global.json; this has been normalized to a full file path from the workspace folder it was configured in. */
+    readonly defaultGlobalJson: string;
     readonly unitTestDebuggingOptions: object;
     readonly runSettingsPath: string;
     readonly organizeImportsOnFormat: boolean;
@@ -153,6 +155,38 @@ class CommonOptionsImpl implements CommonOptions {
         }
 
         return defaultSolution;
+    }
+
+    /** The default global.json; this has been normalized to a full file path from the workspace folder it was configured in. */
+    public get defaultGlobalJson() {
+        const defaultGlobalJsonFromWorkspace = readOption<string>('dotnet.defaultGlobalJson', '');
+        if (defaultGlobalJsonFromWorkspace === '') {
+            return '';
+        }
+
+        if (path.isAbsolute(defaultGlobalJsonFromWorkspace)) {
+            return defaultGlobalJsonFromWorkspace;
+        }
+
+        if (vscode.workspace.workspaceFolders !== undefined) {
+            for (const workspaceFolder of vscode.workspace.workspaceFolders) {
+                const workspaceFolderConfig = vscode.workspace.getConfiguration(undefined, workspaceFolder.uri);
+                const defaultGlobalJsonFromWorkspaceFolder = readOptionFromConfig<string>(
+                    workspaceFolderConfig,
+                    'dotnet.defaultGlobalJson',
+                    ''
+                );
+                if (defaultGlobalJsonFromWorkspaceFolder !== '') {
+                    if (path.isAbsolute(defaultGlobalJsonFromWorkspaceFolder)) {
+                        return defaultGlobalJsonFromWorkspaceFolder;
+                    }
+
+                    return path.join(workspaceFolder.uri.fsPath, defaultGlobalJsonFromWorkspaceFolder);
+                }
+            }
+        }
+
+        return defaultGlobalJsonFromWorkspace;
     }
 
     public get unitTestDebuggingOptions() {

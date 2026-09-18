@@ -34,6 +34,7 @@ import TestManager from './features/dotnetTest';
 import { findLaunchTargets } from './launcher';
 import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 import { commonOptions, omnisharpOptions, razorOptions } from '../shared/options';
+import { getValidatedDefaultGlobalJsonPath } from '../shared/globalJson';
 import { ITelemetryReporter } from '../shared/telemetryReporter';
 
 enum ServerState {
@@ -413,7 +414,10 @@ export class OmniSharpServer {
         this._launchTarget = launchTarget;
 
         const solutionPath = launchTarget.target;
-        const cwd = path.dirname(solutionPath);
+        const defaultGlobalJson = getValidatedDefaultGlobalJsonPath((message) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(message))
+        );
+        const cwd = defaultGlobalJson !== undefined ? path.dirname(defaultGlobalJson) : path.dirname(solutionPath);
 
         const args: string[] = [
             '-z',

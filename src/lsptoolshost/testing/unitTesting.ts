@@ -10,6 +10,7 @@ import * as languageClient from 'vscode-languageclient';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from '../server/roslynProtocol';
 import { commonOptions } from '../../shared/options';
+import { getValidatedDefaultGlobalJsonPath } from '../../shared/globalJson';
 import { UriConverter } from '../utils/uriConverter';
 import { showErrorMessage } from '../../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
@@ -74,6 +75,7 @@ async function runTests(
     }
 
     request.runSettingsPath = getRunSettings(request.textDocument.uri, dotnetTestChannel);
+    request.globalJsonPath = getValidatedDefaultGlobalJsonPath((message) => dotnetTestChannel.appendLine(message));
 
     _testRunInProgress = true;
 
