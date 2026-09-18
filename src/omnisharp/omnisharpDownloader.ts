@@ -71,17 +71,13 @@ export class OmnisharpDownloader {
         return false;
     }
 
-    public async GetLatestVersion(latestVersionUrl: string): Promise<string> {
+    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
         const description = 'Latest OmniSharp Version Information';
+        const url = `${serverUrl}/${latestVersionFileServerPath}`;
         try {
             this.eventStream.post(new LatestBuildDownloadStart());
-            const versionBuffer = await DownloadFile(
-                description,
-                this.eventStream,
-                this.networkSettingsProvider,
-                latestVersionUrl
-            );
-            return versionBuffer.toString('utf8').trim();
+            const versionBuffer = await DownloadFile(description, this.eventStream, this.networkSettingsProvider, url);
+            return versionBuffer.toString('utf8');
         } catch (error) {
             this.eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error));
             throw error;

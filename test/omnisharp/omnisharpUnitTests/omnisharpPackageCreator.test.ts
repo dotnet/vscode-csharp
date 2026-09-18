@@ -7,7 +7,7 @@ import { describe, test, expect, beforeEach } from '@jest/globals';
 import {
     SetBinaryAndGetPackage,
     GetPackagesFromVersion,
-    getModernNetVersion,
+    modernNetVersion,
 } from '../../../src/omnisharp/omnisharpPackageCreator';
 import { Package } from '../../../src/packageManager/package';
 import { testPackageJSON } from './testAssets/testAssets';
@@ -30,7 +30,7 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
     const useFrameworkOptions = [true, false];
 
     useFrameworkOptions.forEach((useFramework) => {
-        const pathSuffix = useFramework ? '' : `-net${getModernNetVersion('1.2.3')}`;
+        const pathSuffix = useFramework ? '' : `-net${modernNetVersion}`;
 
         test(`Architectures, binaries and platforms do not change ${useFramework ? 'on framework' : ''}`, () => {
             const testPackage = inputPackages.find(
@@ -152,7 +152,7 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
             '1.1.1',
             installPath
         );
-        expect(resultPackage.url).toEqual('http://someurl/releases/download/v1.1.1/omnisharp-os-architecture.zip');
+        expect(resultPackage.url).toEqual('http://someurl/releases/1.1.1/omnisharp-os-architecture.zip');
     });
 
     test('Download url is calculated using server url and version (useFramework: false)', () => {
@@ -167,14 +167,8 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
             installPath
         );
         expect(resultPackage.url).toEqual(
-            `http://someurl/releases/download/v1.1.1/omnisharp-os-architecture-net${getModernNetVersion('1.1.1')}.zip`
+            `http://someurl/releases/1.1.1/omnisharp-os-architecture-net${modernNetVersion}.zip`
         );
-    });
-
-    test('Modern package target framework follows the OmniSharp release version', () => {
-        expect(getModernNetVersion('1.39.15')).toEqual('6.0');
-        expect(getModernNetVersion('1.39.16-beta.1')).toEqual('10.0');
-        expect(getModernNetVersion('1.39.16')).toEqual('10.0');
     });
 });
 
@@ -233,7 +227,7 @@ describe('GetPackagesFromVersion : Gets the experimental omnisharp packages from
                 serverUrl,
                 'experimentPath'
             );
-            const suffix = useFramework ? '' : `-net${getModernNetVersion('1.1.1')}`;
+            const suffix = useFramework ? '' : `-net${modernNetVersion}`;
             expect(outPackages).toHaveLength(2);
             expect(outPackages[0].installTestPath).toEqual(
                 `./experimentPath/1.1.1${suffix}/OmniSharp.${useFramework ? 'exe' : 'dll'}`
