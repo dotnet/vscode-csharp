@@ -4,13 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Package } from '../packageManager/package';
-import * as semver from 'semver';
 
-export function getModernNetVersion(version: string): string {
-    // OmniSharp 1.39.16 moved modern packages from .NET 6 to .NET 10.
-    const normalizedVersion = semver.coerce(version);
-    return normalizedVersion && semver.gte(normalizedVersion, '1.39.16') ? '10.0' : '6.0';
-}
+export const modernNetVersion = '6.0';
 
 export function GetPackagesFromVersion(
     version: string,
@@ -33,7 +28,7 @@ export function SetBinaryAndGetPackage(
 ): Package {
     let installBinary: string;
     if (!useFramework) {
-        // Modern .NET packages use system `dotnet OmniSharp.dll`.
+        // .NET 6 packages use system `dotnet OmniSharp.dll`
         installBinary = 'OmniSharp.dll';
     } else if (inputPackage.platforms.includes('win32')) {
         installBinary = 'OmniSharp.exe';
@@ -52,13 +47,13 @@ function GetPackage(
     installPath: string,
     installBinary: string
 ): Package {
-    const packageSuffix = useFramework ? '' : `-net${getModernNetVersion(version)}`;
+    const packageSuffix = useFramework ? '' : `-net${modernNetVersion}`;
 
     return {
         ...inputPackage,
         integrity: undefined,
         description: `${inputPackage.description}, Version = ${version}`,
-        url: `${serverUrl}/releases/download/v${version}/omnisharp-${inputPackage.platformId}${packageSuffix}.zip`,
+        url: `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}${packageSuffix}.zip`,
         installPath: `${installPath}/${version}${packageSuffix}`,
         installTestPath: `./${installPath}/${version}${packageSuffix}/${installBinary}`,
     };

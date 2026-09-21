@@ -3,8 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# 2.152.x
-
+# 11.1.x
+* Require C# Dev Kit version 11 or later (PR: [#9776](https://github.com/dotnet/vscode-csharp/pull/9776))
 * Update Roslyn to 5.12.0-1.26465.4 (PR: [#9772](https://github.com/dotnet/vscode-csharp/pull/9772))
   * Avoid cache misses due to cancellation in deprioritized analyzer cache (PR: [#85222](https://github.com/dotnet/roslyn/pull/85222))
   * Move the LanguageServerProjectLoader over to our priority queue (PR: [#85272](https://github.com/dotnet/roslyn/pull/85272))
