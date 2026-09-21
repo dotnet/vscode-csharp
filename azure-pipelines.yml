@@ -85,6 +85,7 @@ stages:
       os: linux
       # Prefer the dotnet from the container.
       installDotNet: false
+      runDevKitTests: false
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: NetCore-Public
@@ -102,6 +103,7 @@ stages:
       os: linux
       # Prefer the dotnet from the container.
       installDotNet: false
+      runDevKitTests: false
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: NetCore-Public

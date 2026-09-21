@@ -32,7 +32,7 @@ describeIfNotRazorOrGenerator(`WorkspaceSymbolProvider: ${testAssetWorkspace.des
         await omnisharpConfig.update('minFindSymbolsFilterLength', 2);
 
         const symbols = await GetWorkspaceSymbols('P');
-        expect(symbols.length).toEqual(0);
+        expect(symbols).toEqual([]);
     });
 
     test('Returns elements when minimum filter length is configured and search term is longer or equal', async function () {
