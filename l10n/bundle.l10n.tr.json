@@ -9,7 +9,7 @@
   "Active Context": "Etkin Bağlam",
   "An error occurred during installation of the .NET Debugger. The C# extension may need to be reinstalled.": ".NET Hata Ayıklayıcısı yüklenirken bir hata oluştu. C# uzantısının yeniden yüklenmesi gerekebilir.",
   "C# Activation Status": "C# Etkinleştirme Durumu",
-  "C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.": "C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.",
+  "C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.": "C# Geliştirme Seti sürüm 11 veya üzeri gereklidir. Lütfen C# Geliştirme Setinin yayın öncesi sürümüne geçin.",
   "C# LSP Trace Logs": "C# LSP İzleme Günlükleri",
   "C# Project Context Status": "C# Proje Bağlamı Durumu",
   "C# Workspace Status": "C# Çalışma Alanı Durumu",
