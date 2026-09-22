@@ -38,13 +38,22 @@ if ($usesKeyVaultKey -eq $usesPrivateKeySecret) {
 }
 
 if ($usesPrivateKeySecret) {
-    $keyVaultAccessToken = az account get-access-token `
-        --resource https://vault.azure.net `
-        --query accessToken `
-        --output tsv `
-        --only-show-errors
-    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($keyVaultAccessToken)) {
-        throw "'az account get-access-token' failed with exit code $LASTEXITCODE for vault '$KeyVaultName'."
+    $previousNativeCommandErrorPreference = $PSNativeCommandUseErrorActionPreference
+    try {
+        # Azure CLI can emit non-fatal Python warnings to stderr.
+        $PSNativeCommandUseErrorActionPreference = $false
+        $keyVaultAccessToken = az account get-access-token `
+            --resource https://vault.azure.net `
+            --query accessToken `
+            --output tsv `
+            --only-show-errors
+        $tokenExitCode = $LASTEXITCODE
+    }
+    finally {
+        $PSNativeCommandUseErrorActionPreference = $previousNativeCommandErrorPreference
+    }
+    if ($tokenExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($keyVaultAccessToken)) {
+        throw "'az account get-access-token' failed with exit code $tokenExitCode for vault '$KeyVaultName'."
     }
 
     function Get-KeyVaultSecret([string] $SecretName) {

@@ -1,6 +1,11 @@
 trigger: none
 pr: none
 
+variables:
+# This group supplies the Azure Storage publication settings. Its legacy PAT is
+# intentionally not consumed by this pipeline.
+- group: dotnet-vscode-insertion-variables
+
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
