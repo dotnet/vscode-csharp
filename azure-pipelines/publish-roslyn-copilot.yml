@@ -67,14 +67,14 @@ extends:
         - task: AzureCLI@2
           displayName: 'Get GitHub App installation token'
           inputs:
-            azureSubscription: 'devdiv-oneloc-githubapp'
+            azureSubscription: 'devdiv-dotnet-publishing-githubapp'
             scriptType: pscore
             scriptLocation: inlineScript
             inlineScript: |
               & "$(Build.SourcesDirectory)/azure-pipelines/Get-GitHubAppToken.ps1" `
                 -KeyVaultName 'EngKeyVault' `
-                -KeyName 'oneloc-localization-app-key' `
-                -AppClientId 'Iv23lijBU8x3gc9lDOc9' `
+                -AppIdSecretName 'dotnet-publishing-github-app-app-id' `
+                -AppPrivateKeySecretName 'dotnet-publishing-github-app-app-private-key' `
                 -InstallationOwner 'dotnet' `
                 -OutputVariableName 'GitHubAppInstallationToken'
 

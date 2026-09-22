@@ -60,7 +60,7 @@ async function publishRoslynCopilot() {
 
     const githubToken = process.env['GitHubToken'];
     if (!githubToken) {
-        throw 'No GitHub token found.';
+        throw new Error('No GitHub token found.');
     }
 
     const owner = 'dotnet';
