@@ -9,7 +9,7 @@
   "Active Context": "Contexto Ativo",
   "An error occurred during installation of the .NET Debugger. The C# extension may need to be reinstalled.": "Ocorreu um erro durante a instalação do Depurador do .NET. Talvez seja necessário reinstalar a extensão C#.",
   "C# Activation Status": "Status de Ativação do C#",
-  "C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.": "C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.",
+  "C# Dev Kit version 11 or later is required. Please switch to the pre-release version of the C# Dev Kit.": "O Kit de Desenvolvimento C# versão 11 ou posterior é necessário. Alterne para a versão de pré-lançamento do Kit de Desenvolvimento em C#.",
   "C# LSP Trace Logs": "C# Logs de Rastreamento LSP",
   "C# Project Context Status": "Status do Contexto do Projeto do C#",
   "C# Workspace Status": "Status do workspace do C#",
