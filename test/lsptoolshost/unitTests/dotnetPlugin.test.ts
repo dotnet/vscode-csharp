@@ -194,7 +194,35 @@ describe('Copilot .NET plugin installation', () => {
         ]);
     });
 
-    test.each(['alreadyInstalled', 'alreadyInstalledDisabled', 'conflictingPlugin'])(
+    test('caches an unexpected marketplace source as a conflict', async () => {
+        const testFixture = fixture();
+        const { state, reporter, channel } = testFixture;
+        parse.mockReturnValueOnce([]);
+        run.mockImplementation(async (_runtime, args) =>
+            args[1] === 'marketplace' && args[2] === 'list'
+                ? '[{"name":"dotnet-agent-skills","source":"GitHub: example/skills","isDefault":false}]'
+                : 'inventory'
+        );
+
+        await expect(install(testFixture)).resolves.toBe('conflictingMarketplace');
+        expect(run.mock.calls.map((call) => call[1])).toEqual([
+            ['plugin', 'list'],
+            ['plugin', 'marketplace', 'list', '--json'],
+        ]);
+        expect(state.get(dotnetPluginCacheKey)).toEqual({
+            extensionVersion: '1.2.3',
+            outcome: 'conflictingMarketplace',
+            source: 'standalone',
+        });
+        expect(channel.info).toHaveBeenCalledWith(expect.stringContaining('unexpected source'));
+        expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.CopilotDotnetPlugin, {
+            outcome: 'conflictingMarketplace',
+            source: 'standalone',
+            cached: 'false',
+        });
+    });
+
+    test.each(['alreadyInstalled', 'alreadyInstalledDisabled', 'conflictingPlugin', 'conflictingMarketplace'])(
         'cached %s skips discovery and all CLI calls',
         async (outcome) => {
             const testFixture = fixture();
@@ -312,7 +340,7 @@ describe('Copilot .NET plugin installation', () => {
                         throw error;
                     }
                     if (args[1] === 'marketplace' && args[2] === 'list') {
-                        return '[{"name":"dotnet-agent-skills"}]';
+                        return '[{"name":"dotnet-agent-skills","source":"GitHub: dotnet/skills"}]';
                     }
                     if (stage === 'install' && args[1] === 'install') {
                         throw error;

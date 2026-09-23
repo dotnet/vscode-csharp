@@ -20,11 +20,12 @@ export const dotnetPluginAutoInstallKey = 'dotnet.copilotDotnetPlugin.enableAuto
 export const dotnetPluginCacheKey = 'csharp.copilotDotnetPlugin.checkResult';
 const marketplaceName = 'dotnet-agent-skills';
 const marketplaceSource = 'dotnet/skills';
+const expectedMarketplaceSource = `GitHub: ${marketplaceSource}`;
 const pluginSource = `dotnet@${marketplaceName}`;
 const documentationUrl = 'https://github.com/dotnet/vscode-csharp/blob/main/docs/Copilot-Dotnet-Plugin.md';
 const operationTimeoutMs = 120_000;
 
-type CachedOutcome = 'alreadyInstalled' | 'alreadyInstalledDisabled' | 'conflictingPlugin';
+type CachedOutcome = 'alreadyInstalled' | 'alreadyInstalledDisabled' | 'conflictingPlugin' | 'conflictingMarketplace';
 type BlockingOutcome = 'autoInstallDisabled' | 'aiDisabled' | 'untrustedWorkspace';
 type Outcome = CachedOutcome | 'installed' | 'copilotNotAvailable' | BlockingOutcome | 'installFailed';
 type Stage = 'configuration' | 'cache' | 'discovery' | 'inventory' | 'marketplace' | 'install';
@@ -111,12 +112,15 @@ export async function registerDotnetPlugin(
             host.channel.info('Skipping Copilot .NET plugin installation: a plugin by that name is already installed.');
         } else {
             stage = 'marketplace';
-            await ensureMarketplace(cli, cancellation.token, host);
-            stage = 'install';
-            host.channel.trace(`Copilot .NET plugin: Installing ${pluginSource} using ${source} source.`);
-            await runCopilotCli(cli, ['plugin', 'install', pluginSource], cancellation.token);
-            host.channel.trace(`Copilot .NET plugin: Installed ${pluginSource}.`);
-            outcome = 'installed';
+            if (!(await ensureMarketplace(cli, cancellation.token, host))) {
+                outcome = 'conflictingMarketplace';
+            } else {
+                stage = 'install';
+                host.channel.trace(`Copilot .NET plugin: Installing ${pluginSource} using ${source} source.`);
+                await runCopilotCli(cli, ['plugin', 'install', pluginSource], cancellation.token);
+                host.channel.trace(`Copilot .NET plugin: Installed ${pluginSource}.`);
+                outcome = 'installed';
+            }
         }
 
         stage = 'cache';
@@ -163,26 +167,39 @@ async function ensureMarketplace(
     cli: CopilotCli,
     token: vscode.CancellationToken,
     host: DotnetPluginHost
-): Promise<void> {
+): Promise<boolean> {
     const output = await runCopilotCli(cli, ['plugin', 'marketplace', 'list', '--json'], token);
     const inventory: unknown = JSON.parse(output);
     if (
         !Array.isArray(inventory) ||
         !inventory.every(
-            (marketplace): marketplace is { name: string } =>
+            (marketplace): marketplace is { name: string; source: string } =>
                 typeof marketplace === 'object' &&
                 marketplace !== null &&
                 'name' in marketplace &&
-                typeof marketplace.name === 'string'
+                typeof marketplace.name === 'string' &&
+                'source' in marketplace &&
+                typeof marketplace.source === 'string'
         )
     ) {
         throw new Error('Unrecognized Copilot marketplace inventory');
     }
 
-    if (!inventory.some((marketplace) => marketplace.name === marketplaceName)) {
+    const marketplace = inventory.find((marketplace) => marketplace.name === marketplaceName);
+    if (!marketplace) {
         host.channel.trace(`Copilot .NET plugin: Registering ${marketplaceName} marketplace.`);
         await runCopilotCli(cli, ['plugin', 'marketplace', 'add', marketplaceSource], token);
+        return true;
     }
+
+    if (marketplace.source !== expectedMarketplaceSource) {
+        host.channel.info(
+            `Skipping Copilot .NET plugin installation: the ${marketplaceName} marketplace is registered from an unexpected source.`
+        );
+        return false;
+    }
+
+    return true;
 }
 
 function report(host: DotnetPluginHost, outcome: Outcome, source: Source, cached: boolean): void {
