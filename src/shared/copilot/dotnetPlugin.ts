@@ -71,6 +71,7 @@ export async function registerDotnetPlugin(
     }, operationTimeoutMs);
 
     try {
+        // 1. Check whether configuration, AI settings, or workspace trust block automatic installation.
         throwIfCancellationRequested(cancellation.token);
         const blocked = getBlockingOutcome();
         if (blocked) {
@@ -79,6 +80,7 @@ export async function registerDotnetPlugin(
             return blocked;
         }
 
+        // 2. Reuse a stable result already cached for this extension version.
         stage = 'cache';
         const cached = host.context.globalState.get<Cache>(dotnetPluginCacheKey);
         if (cached && cached.extensionVersion === host.context.extension.packageJSON.version) {
@@ -89,6 +91,7 @@ export async function registerDotnetPlugin(
             return cached.outcome;
         }
 
+        // 3. Find a compatible Copilot CLI from either the standalone install or Copilot app.
         stage = 'discovery';
         const cli = await findCopilotCli();
         throwIfCancellationRequested(cancellation.token);
@@ -100,6 +103,8 @@ export async function registerDotnetPlugin(
 
         source = cli.source;
         host.channel.trace(`Copilot .NET plugin: Using ${source} Copilot CLI source.`);
+
+        // 4. Check for an existing supported plugin or a conflicting plugin with the same name.
         stage = 'inventory';
         const plugins = parsePluginList(await runCopilotCli(cli, ['plugin', 'list'], cancellation.token));
         const existing = plugins.filter(isDotnetPlugin);
@@ -111,6 +116,7 @@ export async function registerDotnetPlugin(
             outcome = 'conflictingPlugin';
             host.channel.info('Skipping Copilot .NET plugin installation: a plugin by that name is already installed.');
         } else {
+            // 5. Validate or register the expected marketplace, then install the plugin.
             stage = 'marketplace';
             if (!(await ensureMarketplace(cli, cancellation.token, host))) {
                 outcome = 'conflictingMarketplace';
@@ -123,6 +129,7 @@ export async function registerDotnetPlugin(
             }
         }
 
+        // 6. Cache the stable result, report telemetry, and notify after a new installation.
         stage = 'cache';
         await host.context.globalState.update(dotnetPluginCacheKey, {
             extensionVersion: host.context.extension.packageJSON.version,
