@@ -4,16 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.1.x
-* Update test discovery to 11.0.59-g6f54c5 (PR: [#9797](https://github.com/dotnet/vscode-csharp/pull/9797))
-* Authenticate npm feed for Marketplace publishing (PR: [#9784](https://github.com/dotnet/vscode-csharp/pull/9784))
-* Revert "Use GitHub Releases for OmniSharp packages (#9781)" (PR: [#9789](https://github.com/dotnet/vscode-csharp/pull/9789))
-* Pin .NET 11 CI container to last green digest (PR: [#9792](https://github.com/dotnet/vscode-csharp/pull/9792))
-* Use GitHub Releases for OmniSharp packages (PR: [#9781](https://github.com/dotnet/vscode-csharp/pull/9781))
-* Use upstream PRs in generated release notes (PR: [#9779](https://github.com/dotnet/vscode-csharp/pull/9779))
-* Update Roslyn version skill to use dnx (PR: [#9773](https://github.com/dotnet/vscode-csharp/pull/9773))
 * Bump js-yaml (PR: [#9744](https://github.com/dotnet/vscode-csharp/pull/9744))
-* Bump dotnet-sdk from 10.0.400 to 10.0.401 in /msbuild (PR: [#9769](https://github.com/dotnet/vscode-csharp/pull/9769))
-* Update source test discovery (PR: [#9765](https://github.com/dotnet/vscode-csharp/pull/9765))
+* Update source test discovery (PR: [#9765](https://github.com/dotnet/vscode-csharp/pull/9765), PR: [#9797](https://github.com/dotnet/vscode-csharp/pull/9797))
 * Update Roslyn to 5.12.0-1.26471.3 (PR: [#9795](https://github.com/dotnet/vscode-csharp/pull/9795))
   * Handle empty diagnostic help links (PR: [#85734](https://github.com/dotnet/roslyn/pull/85734))
   * Fix Razor crash for incomplete render modes (PR: [#85693](https://github.com/dotnet/roslyn/pull/85693))
