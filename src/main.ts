@@ -65,7 +65,7 @@ export async function activate(
         return null;
     }
 
-    registerDotnetPlugin(context, reporter, csharpChannel);
+    void registerDotnetPlugin(context, reporter, csharpChannel);
 
     await checkDotNetRuntimeExtensionVersion(context);
 

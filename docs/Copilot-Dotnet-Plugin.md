@@ -12,9 +12,9 @@ The plugin's C# language server requires the **.NET 10 SDK** and `dotnet` on PAT
 
 Set `dotnet.copilotDotnetPlugin.enableAutoInstall` to `false` and restart the C# extension. This prevents future automatic installation but does not remove an already-installed plugin.
 
-To uninstall make sure all Copilot / VSCode instances are closed, then:
+To uninstall, make sure all GitHub Copilot and VS Code instances are closed, then:
 1.  For the Copilot CLI, run `copilot plugin uninstall dotnet@dotnet-agent-skills`
-2.  For the GitHub Copilot App, go to `Customize`, select the `Plugins` tab and right click to uninstall the `dotnet` plugin from `dotnet-agent-skills`
+2.  For the GitHub Copilot App, go to `Customize`, select the `Plugins` tab and right-click to uninstall the `dotnet` plugin from `dotnet-agent-skills`
 
 ## Install manually
 

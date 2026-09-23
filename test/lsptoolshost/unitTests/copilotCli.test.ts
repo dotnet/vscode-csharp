@@ -10,6 +10,7 @@ import { existsSync, promises as fs, PathLike } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { PassThrough } from 'stream';
+import type { CancellationToken } from 'vscode';
 import { CopilotCli, findCopilotCli, parsePluginList, runCopilotCli } from '../../../src/shared/copilot/copilotCli';
 
 jest.mock('fs', () => ({
@@ -40,9 +41,38 @@ const execFileMock =
 const home = 'C:\\Users\\fixture';
 const local = `${home}\\AppData\\Local`;
 const roaming = `${home}\\AppData\\Roaming`;
-const signal = () => new AbortController().signal;
 const runtime: CopilotCli = { command: 'copilot', source: 'standalone' };
 const appRuntime: CopilotCli = { command: 'C:\\Tools\\copilot.exe', source: 'app' };
+
+class TestCancellationTokenSource {
+    private cancelled = false;
+    private readonly listeners = new Set<(event: unknown) => unknown>();
+    readonly token: CancellationToken;
+
+    constructor() {
+        const isCancelled = () => this.cancelled;
+        this.token = {
+            get isCancellationRequested() {
+                return isCancelled();
+            },
+            onCancellationRequested: (listener) => {
+                this.listeners.add(listener);
+                return { dispose: () => this.listeners.delete(listener) };
+            },
+        };
+    }
+
+    cancel(): void {
+        this.cancelled = true;
+        for (const listener of this.listeners) {
+            listener(undefined);
+        }
+        this.listeners.clear();
+    }
+}
+
+const token = () => new TestCancellationTokenSource().token;
+
 function missing(file: string): Error {
     return Object.assign(new Error(`Missing fixture: ${file}`), { code: 'ENOENT' });
 }
@@ -211,8 +241,7 @@ describe('Copilot CLI process execution', () => {
     test('uses the shell for a standalone CLI with an argument array and closed stdin', async () => {
         const fixture = executionFixture();
         const args = ['plugin', 'install', 'dotnet@dotnet-agent-skills'];
-        const operation = signal();
-        const promise = runCopilotCli(runtime, args, operation);
+        const promise = runCopilotCli(runtime, args, token());
         expect(execFileMock).toHaveBeenCalledWith(
             runtime.command,
             args,
@@ -221,7 +250,7 @@ describe('Copilot CLI process execution', () => {
                 env: process.env,
                 windowsHide: true,
                 shell: true,
-                signal: operation,
+                signal: expect.any(AbortSignal),
             },
             expect.any(Function)
         );
@@ -233,7 +262,7 @@ describe('Copilot CLI process execution', () => {
 
     test('executes an app runtime directly', async () => {
         const fixture = executionFixture();
-        const promise = runCopilotCli(appRuntime, ['plugin', 'list'], signal());
+        const promise = runCopilotCli(appRuntime, ['plugin', 'list'], token());
         expect(execFileMock).toHaveBeenCalledWith(
             appRuntime.command,
             ['plugin', 'list'],
@@ -246,14 +275,14 @@ describe('Copilot CLI process execution', () => {
 
     test('preserves UTF-8 output', async () => {
         const fixture = executionFixture();
-        const promise = runCopilotCli(runtime, ['plugin', 'list'], signal());
+        const promise = runCopilotCli(runtime, ['plugin', 'list'], token());
         fixture.callback()(null, '  • dotnet', '');
         await expect(promise).resolves.toBe('  • dotnet');
     });
 
     test('rejects a nonzero exit with useful stderr and exit details', async () => {
         const fixture = executionFixture();
-        const promise = runCopilotCli(runtime, ['plugin', 'list'], signal());
+        const promise = runCopilotCli(runtime, ['plugin', 'list'], token());
         fixture.callback()(Object.assign(new Error('failed'), { code: 7 }), '', 'permission denied');
         await expect(promise).rejects.toMatchObject({
             name: 'Error',
@@ -263,7 +292,7 @@ describe('Copilot CLI process execution', () => {
 
     test('rejects termination by a signal instead of treating it as successful empty output', async () => {
         const fixture = executionFixture();
-        const promise = runCopilotCli(runtime, ['plugin', 'list'], signal());
+        const promise = runCopilotCli(runtime, ['plugin', 'list'], token());
         fixture.callback()(
             Object.assign(new Error('terminated'), { code: null, signal: 'SIGTERM' as NodeJS.Signals }),
             '',
@@ -278,19 +307,20 @@ describe('Copilot CLI process execution', () => {
     test('preserves a generic execution error', async () => {
         const fixture = executionFixture();
         const error = Object.assign(new Error('execution failed'), { code: 'ENOENT' });
-        const promise = runCopilotCli(runtime, [], signal());
+        const promise = runCopilotCli(runtime, [], token());
         fixture.callback()(error, '', '');
         await expect(promise).rejects.toBe(error);
     });
 
-    test('returns the abort reason reported by execFile', async () => {
+    test('cancels the process when requested', async () => {
         const fixture = executionFixture();
-        const controller = new AbortController();
-        const reason = new Error('cancelled');
-        const promise = runCopilotCli(runtime, [], controller.signal);
-        controller.abort(reason);
+        const source = new TestCancellationTokenSource();
+        const promise = runCopilotCli(runtime, [], source.token);
+        const operation = execFileMock.mock.calls[0][2].signal;
+        source.cancel();
+        expect(operation?.aborted).toBe(true);
         fixture.callback()(Object.assign(new Error('aborted'), { code: 'ABORT_ERR' }), '', '');
-        await expect(promise).rejects.toBe(reason);
+        await expect(promise).rejects.toMatchObject({ name: 'AbortError' });
     });
 
     test('preserves a synchronous execFile error', async () => {
@@ -298,13 +328,13 @@ describe('Copilot CLI process execution', () => {
         execFileMock.mockImplementationOnce(() => {
             throw error;
         });
-        await expect(runCopilotCli(runtime, [], signal())).rejects.toBe(error);
+        await expect(runCopilotCli(runtime, [], token())).rejects.toBe(error);
     });
 
-    test('does not spawn for a pre-aborted operation', async () => {
-        const controller = new AbortController();
-        controller.abort();
-        await expect(runCopilotCli(runtime, [], controller.signal)).rejects.toMatchObject({ name: 'AbortError' });
+    test('does not spawn for a pre-cancelled operation', async () => {
+        const source = new TestCancellationTokenSource();
+        source.cancel();
+        await expect(runCopilotCli(runtime, [], source.token)).rejects.toMatchObject({ name: 'AbortError' });
         expect(execFileMock).not.toHaveBeenCalled();
     });
 });

@@ -25,25 +25,18 @@ const documentationUrl = 'https://github.com/dotnet/vscode-csharp/blob/main/docs
 const operationTimeoutMs = 120_000;
 
 type CachedOutcome = 'alreadyInstalled' | 'alreadyInstalledDisabled' | 'conflictingPlugin';
-type Outcome =
-    | CachedOutcome
-    | 'installed'
-    | 'copilotNotAvailable'
-    | 'autoInstallDisabled'
-    | 'aiDisabled'
-    | 'untrustedWorkspace'
-    | 'cancelled'
-    | 'installFailed';
+type BlockingOutcome = 'autoInstallDisabled' | 'aiDisabled' | 'untrustedWorkspace';
+type Outcome = CachedOutcome | 'installed' | 'copilotNotAvailable' | BlockingOutcome | 'installFailed';
 type Stage = 'configuration' | 'cache' | 'discovery' | 'inventory' | 'marketplace' | 'install';
 type Source = CopilotCliSource | 'none';
 type Cache = { extensionVersion: string; outcome: CachedOutcome; source: CopilotCliSource };
 type InstallResult = {
-    outcome: Outcome;
+    outcome: Exclude<Outcome, 'installFailed'>;
     source: Source;
-    cache?: Omit<Cache, 'extensionVersion'>;
+    cached: boolean;
 };
 
-export type DotnetPluginHost = {
+type DotnetPluginHost = {
     context: {
         globalState: vscode.Memento;
         extension: Pick<vscode.Extension<unknown>, 'packageJSON'>;
@@ -52,123 +45,130 @@ export type DotnetPluginHost = {
     channel: Pick<vscode.LogOutputChannel, 'error' | 'info' | 'trace'>;
 };
 
-export function registerDotnetPlugin(
+export async function registerDotnetPlugin(
     context: DotnetPluginHost['context'] & Pick<vscode.ExtensionContext, 'subscriptions' | 'extensionMode'>,
     reporter: ITelemetryReporter,
     channel: DotnetPluginHost['channel']
-): void {
+): Promise<Outcome | undefined> {
     const host: DotnetPluginHost = { context, reporter, channel };
-    const controller = new AbortController();
-    // Other integration suites must not install into the developer's real Copilot profile.
-    if (context.extensionMode !== vscode.ExtensionMode.Test) {
-        void installDotnetPlugin(host, controller.signal);
-    }
+    const cancellation = new vscode.CancellationTokenSource();
+    let deactivated = false;
     context.subscriptions.push({
-        dispose: () => controller.abort(named('AbortError', 'The C# extension was deactivated.')),
+        dispose: () => {
+            deactivated = true;
+            cancellation.cancel();
+            cancellation.dispose();
+        },
     });
-}
 
-/**
- * Installs only when automatic installation and AI are enabled, the workspace is trusted, Copilot is available,
- * and no existing or conflicting .NET plugin is found. Stable results are cached per extension version.
- */
-export async function installDotnetPlugin(host: DotnetPluginHost, signal: AbortSignal): Promise<void> {
+    // Other integration suites must not install into the developer's real Copilot profile.
+    if (context.extensionMode === vscode.ExtensionMode.Test) {
+        return undefined;
+    }
+
     let stage: Stage = 'configuration';
     let source: Source = 'none';
-    let done = () => {};
+    let timedOut = false;
+    const timeout = setTimeout(() => {
+        timedOut = true;
+        cancellation.cancel();
+    }, operationTimeoutMs);
+
     try {
-        const blocked = blockedReason();
-        if (blocked) {
-            trace(host, `Automatic installation skipped (${blocked}).`);
-            report(host, TelemetryEventNames.CopilotDotnetPlugin, blocked, 'none', false);
-            return;
-        }
+        const result = await (async (): Promise<InstallResult> => {
+            throwIfCancellationRequested(cancellation.token);
+            const blocked = getBlockingOutcome();
+            if (blocked) {
+                trace(host, `Automatic installation skipped (${blocked}).`);
+                return { outcome: blocked, source: 'none', cached: false };
+            }
 
-        stage = 'cache';
-        const cached = readCache(host.context);
-        if (cached) {
-            trace(host, `Using cached result ${cached.outcome} from ${cached.source} source.`);
-            report(host, TelemetryEventNames.CopilotDotnetPlugin, cached.outcome, cached.source, true);
-            return;
-        }
-
-        stage = 'discovery';
-        const deadlineResult = deadline(signal);
-        const operation = deadlineResult.signal;
-        done = deadlineResult.done;
-        const cli = await findCopilotCli();
-        if (!cli) {
-            trace(host, 'No compatible Copilot CLI found.');
-            return await completeInstallation(host, { outcome: 'copilotNotAvailable', source: 'none' });
-        }
-
-        source = cli.source;
-        trace(host, `Using ${source} Copilot CLI source.`);
-        stage = 'inventory';
-        const plugins = await listPlugins(cli, operation);
-        const existing = plugins.filter(isDotnetPlugin);
-        if (existing.length > 0) {
-            const outcome = enabledOutcome(existing);
-            trace(host, `Existing plugin found (${outcome}).`);
             stage = 'cache';
-            return await completeInstallation(host, {
-                outcome,
-                source,
-                cache: { outcome, source: cli.source },
-            });
-        }
+            const cached = host.context.globalState.get<Cache>(dotnetPluginCacheKey);
+            if (cached && cached.extensionVersion === host.context.extension.packageJSON.version) {
+                trace(host, `Using cached result ${cached.outcome} from ${cached.source} source.`);
+                return { outcome: cached.outcome, source: cached.source, cached: true };
+            }
 
-        if (plugins.some(isConflictingPlugin)) {
-            host.channel.info('Skipping Copilot .NET plugin installation: a plugin by that name is already installed.');
+            stage = 'discovery';
+            const cli = await findCopilotCli();
+            throwIfCancellationRequested(cancellation.token);
+            if (!cli) {
+                trace(host, 'No compatible Copilot CLI found.');
+                return { outcome: 'copilotNotAvailable', source: 'none', cached: false };
+            }
+
+            source = cli.source;
+            trace(host, `Using ${source} Copilot CLI source.`);
+            stage = 'inventory';
+            const plugins = parsePluginList(await runCopilotCli(cli, ['plugin', 'list'], cancellation.token));
+            const existing = plugins.filter(isDotnetPlugin);
+            if (existing.length > 0) {
+                const outcome: CachedOutcome = existing.some((plugin) => plugin.enabled)
+                    ? 'alreadyInstalled'
+                    : 'alreadyInstalledDisabled';
+                trace(host, `Existing plugin found (${outcome}).`);
+                stage = 'cache';
+                await host.context.globalState.update(dotnetPluginCacheKey, {
+                    extensionVersion: host.context.extension.packageJSON.version,
+                    outcome,
+                    source: cli.source,
+                } satisfies Cache);
+                throwIfCancellationRequested(cancellation.token);
+                return { outcome, source, cached: false };
+            }
+
+            if (plugins.some(isConflictingPlugin)) {
+                host.channel.info(
+                    'Skipping Copilot .NET plugin installation: a plugin by that name is already installed.'
+                );
+                stage = 'cache';
+                await host.context.globalState.update(dotnetPluginCacheKey, {
+                    extensionVersion: host.context.extension.packageJSON.version,
+                    outcome: 'conflictingPlugin',
+                    source: cli.source,
+                } satisfies Cache);
+                throwIfCancellationRequested(cancellation.token);
+                return { outcome: 'conflictingPlugin', source, cached: false };
+            }
+
+            stage = 'marketplace';
+            await ensureMarketplace(cli, cancellation.token, host);
+            stage = 'install';
+            trace(host, `Installing ${pluginSource} using ${source} source.`);
+            await runCopilotCli(cli, ['plugin', 'install', pluginSource], cancellation.token);
+            trace(host, `Installed ${pluginSource}.`);
             stage = 'cache';
-            return await completeInstallation(host, {
-                outcome: 'conflictingPlugin',
-                source,
-                cache: { outcome: 'conflictingPlugin', source: cli.source },
-            });
-        }
+            await host.context.globalState.update(dotnetPluginCacheKey, {
+                extensionVersion: host.context.extension.packageJSON.version,
+                outcome: 'alreadyInstalled',
+                source: cli.source,
+            } satisfies Cache);
+            throwIfCancellationRequested(cancellation.token);
+            return { outcome: 'installed', source, cached: false };
+        })();
 
-        stage = 'marketplace';
-        await ensureMarketplace(cli, operation, host);
-        stage = 'install';
-        trace(host, `Installing ${pluginSource} using ${source} source.`);
-        await runCopilotCli(cli, ['plugin', 'install', pluginSource], operation);
-        trace(host, `Installed ${pluginSource}.`);
-        stage = 'cache';
-        return await completeInstallation(host, {
-            outcome: 'installed',
-            source,
-            cache: { outcome: 'alreadyInstalled', source: cli.source },
-        });
+        report(host, TelemetryEventNames.CopilotDotnetPlugin, result.outcome, result.source, result.cached);
+        if (result.outcome === 'installed') {
+            void showInstalled();
+        }
+        return result.outcome;
     } catch (error) {
-        const outcome = signal.aborted ? 'cancelled' : 'installFailed';
-        const failure = signal.aborted ? signal.reason : error;
-        reportError(host, stage, outcome, failure);
-        finishInstallation(host, { outcome, source });
+        if (deactivated || (error instanceof vscode.CancellationError && !timedOut)) {
+            return undefined;
+        }
+
+        const failure = timedOut ? named('TimeoutError', 'The Copilot CLI did not respond in time.') : error;
+        reportError(host, stage, 'installFailed', failure);
+        report(host, TelemetryEventNames.CopilotDotnetPlugin, 'installFailed', source, false);
+        return 'installFailed';
     } finally {
-        done();
+        clearTimeout(timeout);
+        cancellation.dispose();
     }
 }
 
-async function completeInstallation(host: DotnetPluginHost, result: InstallResult): Promise<void> {
-    if (result.cache) {
-        trace(host, `Caching ${result.cache.outcome} result for ${result.cache.source} source.`);
-        await host.context.globalState.update(dotnetPluginCacheKey, {
-            extensionVersion: host.context.extension.packageJSON.version,
-            ...result.cache,
-        } satisfies Cache);
-    }
-    finishInstallation(host, result);
-}
-
-function finishInstallation(host: DotnetPluginHost, result: InstallResult): void {
-    report(host, TelemetryEventNames.CopilotDotnetPlugin, result.outcome, result.source, false);
-    if (result.outcome === 'installed') {
-        void showInstalled();
-    }
-}
-
-function blockedReason(): Outcome | undefined {
+function getBlockingOutcome(): BlockingOutcome | undefined {
     if (!vscode.workspace.getConfiguration().get(dotnetPluginAutoInstallKey, true)) {
         return 'autoInstallDisabled';
     }
@@ -181,26 +181,12 @@ function blockedReason(): Outcome | undefined {
     return undefined;
 }
 
-function readCache(context: DotnetPluginHost['context']): Cache | undefined {
-    const cache = context.globalState.get<Cache>(dotnetPluginCacheKey);
-    return cache?.extensionVersion === context.extension.packageJSON.version ? cache : undefined;
-}
-
-function deadline(signal: AbortSignal): { signal: AbortSignal; done: () => void } {
-    const timer = new AbortController();
-    const handle = setTimeout(
-        () => timer.abort(named('TimeoutError', 'The Copilot CLI did not respond in time.')),
-        operationTimeoutMs
-    );
-    return { signal: AbortSignal.any([signal, timer.signal]), done: () => clearTimeout(handle) };
-}
-
-async function listPlugins(cli: CopilotCli, signal: AbortSignal): Promise<CopilotPlugin[]> {
-    return parsePluginList(await runCopilotCli(cli, ['plugin', 'list'], signal));
-}
-
-async function ensureMarketplace(cli: CopilotCli, signal: AbortSignal, host: DotnetPluginHost): Promise<void> {
-    const output = await runCopilotCli(cli, ['plugin', 'marketplace', 'list', '--json'], signal);
+async function ensureMarketplace(
+    cli: CopilotCli,
+    token: vscode.CancellationToken,
+    host: DotnetPluginHost
+): Promise<void> {
+    const output = await runCopilotCli(cli, ['plugin', 'marketplace', 'list', '--json'], token);
     const inventory: unknown = JSON.parse(output);
     if (!Array.isArray(inventory)) {
         throw new Error('Unrecognized Copilot marketplace inventory');
@@ -221,12 +207,8 @@ async function ensureMarketplace(cli: CopilotCli, signal: AbortSignal, host: Dot
 
     if (!names.includes(marketplaceName)) {
         trace(host, `Registering ${marketplaceName} marketplace.`);
-        await runCopilotCli(cli, ['plugin', 'marketplace', 'add', marketplaceSource], signal);
+        await runCopilotCli(cli, ['plugin', 'marketplace', 'add', marketplaceSource], token);
     }
-}
-
-function enabledOutcome(plugins: CopilotPlugin[]): CachedOutcome {
-    return plugins.some((plugin) => plugin.enabled) ? 'alreadyInstalled' : 'alreadyInstalledDisabled';
 }
 
 function report(
@@ -234,13 +216,13 @@ function report(
     event: TelemetryEventNames,
     outcome: Outcome,
     source: Source,
-    cached?: boolean
+    cached: boolean
 ): void {
-    host.channel.trace(`Copilot .NET plugin result: ${outcome} (source: ${source}, cached: ${cached ?? false})`);
+    host.channel.trace(`Copilot .NET plugin result: ${outcome} (source: ${source}, cached: ${cached})`);
     host.reporter.sendTelemetryEvent(event, {
         outcome,
         source,
-        ...(cached === undefined ? {} : { cached: String(cached) }),
+        cached: String(cached),
     });
 }
 
@@ -270,6 +252,12 @@ async function showInstalled(): Promise<void> {
 
 function named(name: string, message: string): Error {
     return Object.assign(new Error(message), { name });
+}
+
+function throwIfCancellationRequested(token: vscode.CancellationToken): void {
+    if (token.isCancellationRequested) {
+        throw new vscode.CancellationError();
+    }
 }
 
 function isDotnetPlugin(plugin: CopilotPlugin): boolean {

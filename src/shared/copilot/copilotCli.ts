@@ -8,6 +8,7 @@ import { existsSync, promises as fs } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { stripVTControlCharacters } from 'util';
+import type { CancellationToken } from 'vscode';
 
 export type CopilotCliSource = 'standalone' | 'app';
 
@@ -128,37 +129,50 @@ export async function findCopilotCli(): Promise<CopilotCli | undefined> {
     return await appCli(directories);
 }
 
-export async function runCopilotCli(cli: CopilotCli, args: readonly string[], signal: AbortSignal): Promise<string> {
-    signal.throwIfAborted();
-    return await new Promise<string>((resolve, reject) => {
-        const child = execFile(
-            cli.command,
-            [...args],
-            {
-                windowsHide: true,
-                shell: cli.source === 'standalone',
-                cwd: os.homedir(),
-                env: process.env,
-                signal,
-            },
-            (error, stdout, stderr) => {
-                if (!error) {
-                    resolve(stdout);
-                } else if (signal.aborted) {
-                    reject(signal.reason);
-                } else if (typeof error.code === 'number' || error.signal) {
-                    reject(
-                        new Error(`Copilot CLI exited with code ${error.code}, signal ${error.signal}: ${stderr}`, {
-                            cause: error,
-                        })
-                    );
-                } else {
-                    reject(error);
+export async function runCopilotCli(
+    cli: CopilotCli,
+    args: readonly string[],
+    token: CancellationToken
+): Promise<string> {
+    const controller = new AbortController();
+    const cancellation = token.onCancellationRequested(() => controller.abort());
+    try {
+        if (token.isCancellationRequested) {
+            controller.abort();
+        }
+        controller.signal.throwIfAborted();
+        return await new Promise<string>((resolve, reject) => {
+            const child = execFile(
+                cli.command,
+                [...args],
+                {
+                    windowsHide: true,
+                    shell: cli.source === 'standalone',
+                    cwd: os.homedir(),
+                    env: process.env,
+                    signal: controller.signal,
+                },
+                (error, stdout, stderr) => {
+                    if (!error) {
+                        resolve(stdout);
+                    } else if (controller.signal.aborted) {
+                        reject(controller.signal.reason);
+                    } else if (typeof error.code === 'number' || error.signal) {
+                        reject(
+                            new Error(`Copilot CLI exited with code ${error.code}, signal ${error.signal}: ${stderr}`, {
+                                cause: error,
+                            })
+                        );
+                    } else {
+                        reject(error);
+                    }
                 }
-            }
-        );
-        child.stdin?.end();
-    });
+            );
+            child.stdin?.end();
+        });
+    } finally {
+        cancellation.dispose();
+    }
 }
 
 const sections: [RegExp, CopilotPlugin['kind']][] = [
