@@ -5,7 +5,6 @@
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { ChildProcess, execFile, ExecFileException, ExecFileOptionsWithStringEncoding } from 'child_process';
-import { EventEmitter } from 'events';
 import { existsSync, promises as fs, PathLike } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -43,6 +42,7 @@ const local = `${home}\\AppData\\Local`;
 const roaming = `${home}\\AppData\\Roaming`;
 const runtime: CopilotCli = { command: 'copilot', source: 'standalone' };
 const appRuntime: CopilotCli = { command: 'C:\\Tools\\copilot.exe', source: 'app' };
+let stdin: PassThrough;
 
 class TestCancellationTokenSource {
     private cancelled = false;
@@ -73,10 +73,6 @@ class TestCancellationTokenSource {
 
 const token = () => new TestCancellationTokenSource().token;
 
-function missing(file: string): Error {
-    return Object.assign(new Error(`Missing fixture: ${file}`), { code: 'ENOENT' });
-}
-
 function addFile(file: string, content = ''): void {
     files.set(file, content);
 }
@@ -86,7 +82,8 @@ function setPlatform(platform: NodeJS.Platform): void {
     jest.mocked(os.homedir).mockReturnValue(platform === 'win32' ? home : '/home/fixture');
 }
 
-function appFixture(platform: NodeJS.Platform, version = '1.0.83'): string {
+function appFixture(platform: NodeJS.Platform): string {
+    const version = '1.0.83';
     setPlatform(platform);
     const p = platform === 'win32' ? path.win32 : path.posix;
     const root =
@@ -119,28 +116,8 @@ function appFixture(platform: NodeJS.Platform, version = '1.0.83'): string {
     return command;
 }
 
-function childFixture(): ChildProcess {
-    return Object.assign(new EventEmitter(), {
-        stdin: new PassThrough(),
-    }) as unknown as ChildProcess;
-}
-
-function executionFixture(): { child: ChildProcess; callback: () => ExecFileCallback } {
-    const child = childFixture();
-    let callback: ExecFileCallback | undefined;
-    execFileMock.mockImplementationOnce((_command, _args, _options, value) => {
-        callback = value;
-        return child;
-    });
-    return {
-        child,
-        callback: () => {
-            if (!callback) {
-                throw new Error('Copilot CLI was not executed');
-            }
-            return callback;
-        },
-    };
+function completeExecution(error: ExecFileException | null, stdout = '', stderr = ''): void {
+    execFileMock.mock.calls[0][3](error, stdout, stderr);
 }
 
 beforeEach(() => {
@@ -156,14 +133,9 @@ beforeEach(() => {
     setPlatform('win32');
     files.clear();
     exists.mockImplementation((file) => files.has(String(file)));
-    readFile.mockImplementation(async (file) => {
-        const name = String(file);
-        const content = files.get(name);
-        if (content === undefined) {
-            throw missing(name);
-        }
-        return content;
-    });
+    readFile.mockImplementation(async (file) => files.get(String(file))!);
+    stdin = new PassThrough();
+    execFileMock.mockReturnValue({ stdin } as unknown as ChildProcess);
 });
 
 afterEach(() => {
@@ -239,7 +211,6 @@ describe('Copilot CLI filesystem discovery', () => {
 
 describe('Copilot CLI process execution', () => {
     test('uses the shell for a standalone CLI with an argument array and closed stdin', async () => {
-        const fixture = executionFixture();
         const args = ['plugin', 'install', 'dotnet@dotnet-agent-skills'];
         const promise = runCopilotCli(runtime, args, token());
         expect(execFileMock).toHaveBeenCalledWith(
@@ -254,14 +225,13 @@ describe('Copilot CLI process execution', () => {
             },
             expect.any(Function)
         );
-        expect(fixture.child.stdin?.writableEnded).toBe(true);
-        fixture.callback()(null, 'installed\n', 'diagnostic');
+        expect(stdin.writableEnded).toBe(true);
+        completeExecution(null, 'installed\n', 'diagnostic');
         await expect(promise).resolves.toBe('installed\n');
         expect(process.env.COPILOT_HOME).toBe('C:\\Copilot Home');
     });
 
     test('executes an app runtime directly', async () => {
-        const fixture = executionFixture();
         const promise = runCopilotCli(appRuntime, ['plugin', 'list'], token());
         expect(execFileMock).toHaveBeenCalledWith(
             appRuntime.command,
@@ -269,31 +239,27 @@ describe('Copilot CLI process execution', () => {
             expect.objectContaining({ shell: false }),
             expect.any(Function)
         );
-        fixture.callback()(null, '', '');
+        completeExecution(null);
         await expect(promise).resolves.toBe('');
     });
 
     test('preserves UTF-8 output', async () => {
-        const fixture = executionFixture();
         const promise = runCopilotCli(runtime, ['plugin', 'list'], token());
-        fixture.callback()(null, '  • dotnet', '');
+        completeExecution(null, '  • dotnet');
         await expect(promise).resolves.toBe('  • dotnet');
     });
 
     test('rejects a nonzero exit with useful stderr and exit details', async () => {
-        const fixture = executionFixture();
         const promise = runCopilotCli(runtime, ['plugin', 'list'], token());
-        fixture.callback()(Object.assign(new Error('failed'), { code: 7 }), '', 'permission denied');
+        completeExecution(Object.assign(new Error('failed'), { code: 7 }), '', 'permission denied');
         await expect(promise).rejects.toMatchObject({
             name: 'Error',
             message: expect.stringContaining('7, signal undefined: permission denied'),
         });
     });
-
     test('rejects termination by a signal instead of treating it as successful empty output', async () => {
-        const fixture = executionFixture();
         const promise = runCopilotCli(runtime, ['plugin', 'list'], token());
-        fixture.callback()(
+        completeExecution(
             Object.assign(new Error('terminated'), { code: null, signal: 'SIGTERM' as NodeJS.Signals }),
             '',
             ''
@@ -305,21 +271,19 @@ describe('Copilot CLI process execution', () => {
     });
 
     test('preserves a generic execution error', async () => {
-        const fixture = executionFixture();
         const error = Object.assign(new Error('execution failed'), { code: 'ENOENT' });
         const promise = runCopilotCli(runtime, [], token());
-        fixture.callback()(error, '', '');
+        completeExecution(error);
         await expect(promise).rejects.toBe(error);
     });
 
     test('cancels the process when requested', async () => {
-        const fixture = executionFixture();
         const source = new TestCancellationTokenSource();
         const promise = runCopilotCli(runtime, [], source.token);
         const operation = execFileMock.mock.calls[0][2].signal;
         source.cancel();
         expect(operation?.aborted).toBe(true);
-        fixture.callback()(Object.assign(new Error('aborted'), { code: 'ABORT_ERR' }), '', '');
+        completeExecution(Object.assign(new Error('aborted'), { code: 'ABORT_ERR' }));
         await expect(promise).rejects.toMatchObject({ name: 'AbortError' });
     });
 

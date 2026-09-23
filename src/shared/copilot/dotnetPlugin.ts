@@ -74,7 +74,7 @@ export async function registerDotnetPlugin(
         const blocked = getBlockingOutcome();
         if (blocked) {
             host.channel.trace(`Copilot .NET plugin: Automatic installation skipped (${blocked}).`);
-            report(host, TelemetryEventNames.CopilotDotnetPlugin, blocked, 'none', false);
+            report(host, blocked, 'none', false);
             return blocked;
         }
 
@@ -84,7 +84,7 @@ export async function registerDotnetPlugin(
             host.channel.trace(
                 `Copilot .NET plugin: Using cached result ${cached.outcome} from ${cached.source} source.`
             );
-            report(host, TelemetryEventNames.CopilotDotnetPlugin, cached.outcome, cached.source, true);
+            report(host, cached.outcome, cached.source, true);
             return cached.outcome;
         }
 
@@ -93,7 +93,7 @@ export async function registerDotnetPlugin(
         throwIfCancellationRequested(cancellation.token);
         if (!cli) {
             host.channel.trace('Copilot .NET plugin: No compatible Copilot CLI found.');
-            report(host, TelemetryEventNames.CopilotDotnetPlugin, 'copilotNotAvailable', 'none', false);
+            report(host, 'copilotNotAvailable', 'none', false);
             return 'copilotNotAvailable';
         }
 
@@ -102,59 +102,43 @@ export async function registerDotnetPlugin(
         stage = 'inventory';
         const plugins = parsePluginList(await runCopilotCli(cli, ['plugin', 'list'], cancellation.token));
         const existing = plugins.filter(isDotnetPlugin);
+        let outcome: CachedOutcome | 'installed';
         if (existing.length > 0) {
-            const outcome: CachedOutcome = existing.some((plugin) => plugin.enabled)
-                ? 'alreadyInstalled'
-                : 'alreadyInstalledDisabled';
+            outcome = existing.some((plugin) => plugin.enabled) ? 'alreadyInstalled' : 'alreadyInstalledDisabled';
             host.channel.trace(`Copilot .NET plugin: Existing plugin found (${outcome}).`);
-            stage = 'cache';
-            await host.context.globalState.update(dotnetPluginCacheKey, {
-                extensionVersion: host.context.extension.packageJSON.version,
-                outcome,
-                source: cli.source,
-            } satisfies Cache);
-            throwIfCancellationRequested(cancellation.token);
-            report(host, TelemetryEventNames.CopilotDotnetPlugin, outcome, source, false);
-            return outcome;
-        }
-
-        if (plugins.some(isConflictingPlugin)) {
+        } else if (plugins.some(isConflictingPlugin)) {
+            outcome = 'conflictingPlugin';
             host.channel.info('Skipping Copilot .NET plugin installation: a plugin by that name is already installed.');
-            stage = 'cache';
-            await host.context.globalState.update(dotnetPluginCacheKey, {
-                extensionVersion: host.context.extension.packageJSON.version,
-                outcome: 'conflictingPlugin',
-                source: cli.source,
-            } satisfies Cache);
-            throwIfCancellationRequested(cancellation.token);
-            report(host, TelemetryEventNames.CopilotDotnetPlugin, 'conflictingPlugin', source, false);
-            return 'conflictingPlugin';
+        } else {
+            stage = 'marketplace';
+            await ensureMarketplace(cli, cancellation.token, host);
+            stage = 'install';
+            host.channel.trace(`Copilot .NET plugin: Installing ${pluginSource} using ${source} source.`);
+            await runCopilotCli(cli, ['plugin', 'install', pluginSource], cancellation.token);
+            host.channel.trace(`Copilot .NET plugin: Installed ${pluginSource}.`);
+            outcome = 'installed';
         }
 
-        stage = 'marketplace';
-        await ensureMarketplace(cli, cancellation.token, host);
-        stage = 'install';
-        host.channel.trace(`Copilot .NET plugin: Installing ${pluginSource} using ${source} source.`);
-        await runCopilotCli(cli, ['plugin', 'install', pluginSource], cancellation.token);
-        host.channel.trace(`Copilot .NET plugin: Installed ${pluginSource}.`);
         stage = 'cache';
         await host.context.globalState.update(dotnetPluginCacheKey, {
             extensionVersion: host.context.extension.packageJSON.version,
-            outcome: 'alreadyInstalled',
+            outcome: outcome === 'installed' ? 'alreadyInstalled' : outcome,
             source: cli.source,
         } satisfies Cache);
         throwIfCancellationRequested(cancellation.token);
-        report(host, TelemetryEventNames.CopilotDotnetPlugin, 'installed', source, false);
-        void showInstalled();
-        return 'installed';
+        report(host, outcome, source, false);
+        if (outcome === 'installed') {
+            void showInstalled();
+        }
+        return outcome;
     } catch (error) {
         if (deactivated || (error instanceof vscode.CancellationError && !timedOut)) {
             return undefined;
         }
 
         const failure = timedOut ? named('TimeoutError', 'The Copilot CLI did not respond in time.') : error;
-        reportError(host, stage, 'installFailed', failure);
-        report(host, TelemetryEventNames.CopilotDotnetPlugin, 'installFailed', source, false);
+        reportError(host, stage, failure);
+        report(host, 'installFailed', source, false);
         return 'installFailed';
     } finally {
         clearTimeout(timeout);
@@ -182,49 +166,39 @@ async function ensureMarketplace(
 ): Promise<void> {
     const output = await runCopilotCli(cli, ['plugin', 'marketplace', 'list', '--json'], token);
     const inventory: unknown = JSON.parse(output);
-    if (!Array.isArray(inventory)) {
+    if (
+        !Array.isArray(inventory) ||
+        !inventory.every(
+            (marketplace): marketplace is { name: string } =>
+                typeof marketplace === 'object' &&
+                marketplace !== null &&
+                'name' in marketplace &&
+                typeof marketplace.name === 'string'
+        )
+    ) {
         throw new Error('Unrecognized Copilot marketplace inventory');
     }
 
-    const names: string[] = [];
-    for (const marketplace of inventory) {
-        if (
-            typeof marketplace !== 'object' ||
-            marketplace === null ||
-            !('name' in marketplace) ||
-            typeof marketplace.name !== 'string'
-        ) {
-            throw new Error('Unrecognized Copilot marketplace inventory');
-        }
-        names.push(marketplace.name);
-    }
-
-    if (!names.includes(marketplaceName)) {
+    if (!inventory.some((marketplace) => marketplace.name === marketplaceName)) {
         host.channel.trace(`Copilot .NET plugin: Registering ${marketplaceName} marketplace.`);
         await runCopilotCli(cli, ['plugin', 'marketplace', 'add', marketplaceSource], token);
     }
 }
 
-function report(
-    host: DotnetPluginHost,
-    event: TelemetryEventNames,
-    outcome: Outcome,
-    source: Source,
-    cached: boolean
-): void {
+function report(host: DotnetPluginHost, outcome: Outcome, source: Source, cached: boolean): void {
     host.channel.trace(`Copilot .NET plugin result: ${outcome} (source: ${source}, cached: ${cached})`);
-    host.reporter.sendTelemetryEvent(event, {
+    host.reporter.sendTelemetryEvent(TelemetryEventNames.CopilotDotnetPlugin, {
         outcome,
         source,
         cached: String(cached),
     });
 }
 
-function reportError(host: DotnetPluginHost, stage: Stage, outcome: Outcome, error: unknown): void {
+function reportError(host: DotnetPluginHost, stage: Stage, error: unknown): void {
     host.channel.error(`Copilot .NET plugin ${stage} failed`, error);
     host.reporter.sendTelemetryErrorEvent(TelemetryEventNames.CopilotDotnetPluginError, {
         stage,
-        outcome,
+        outcome: 'installFailed',
         'error.name': telemetryErrorName(error),
     });
 }
@@ -255,7 +229,7 @@ function isDotnetPlugin(plugin: CopilotPlugin): boolean {
 }
 
 function isConflictingPlugin(plugin: CopilotPlugin): boolean {
-    return (plugin.name === 'dotnet' || plugin.name.startsWith('dotnet@')) && !isDotnetPlugin(plugin);
+    return plugin.name === 'dotnet' || plugin.name.startsWith('dotnet@');
 }
 
 function telemetryErrorName(error: unknown): string {
