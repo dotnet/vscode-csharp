@@ -26,8 +26,8 @@ const documentationUrl = 'https://github.com/dotnet/vscode-csharp/blob/main/docs
 const operationTimeoutMs = 120_000;
 
 type CachedOutcome = 'alreadyInstalled' | 'alreadyInstalledDisabled' | 'conflictingPlugin' | 'conflictingMarketplace';
-type BlockingOutcome = 'autoInstallDisabled' | 'aiDisabled' | 'untrustedWorkspace';
-type Outcome = CachedOutcome | 'installed' | 'copilotNotAvailable' | BlockingOutcome | 'installFailed';
+type DisabledOutcome = 'autoInstallDisabled' | 'aiDisabled' | 'untrustedWorkspace';
+type Outcome = CachedOutcome | 'installed' | 'copilotNotAvailable' | DisabledOutcome | 'installFailed';
 type Stage = 'configuration' | 'cache' | 'discovery' | 'inventory' | 'marketplace' | 'install';
 type Source = CopilotCliSource | 'none';
 type Cache = { extensionVersion: string; outcome: CachedOutcome; source: CopilotCliSource };
@@ -71,13 +71,13 @@ export async function registerDotnetPlugin(
     }, operationTimeoutMs);
 
     try {
-        // 1. Check whether configuration, AI settings, or workspace trust block automatic installation.
+        // 1. Check whether configuration, AI settings, or workspace trust disable automatic installation.
         throwIfCancellationRequested(cancellation.token);
-        const blocked = getBlockingOutcome();
-        if (blocked) {
-            host.channel.trace(`Copilot .NET plugin: Automatic installation skipped (${blocked}).`);
-            report(host, blocked, 'none', false);
-            return blocked;
+        const disabled = getDisabledOutcome();
+        if (disabled) {
+            host.channel.trace(`Copilot .NET plugin: Automatic installation skipped (${disabled}).`);
+            report(host, disabled, 'none', false);
+            return disabled;
         }
 
         // 2. Reuse a stable result already cached for this extension version.
@@ -157,7 +157,7 @@ export async function registerDotnetPlugin(
     }
 }
 
-function getBlockingOutcome(): BlockingOutcome | undefined {
+function getDisabledOutcome(): DisabledOutcome | undefined {
     if (!vscode.workspace.getConfiguration().get(dotnetPluginAutoInstallKey, true)) {
         return 'autoInstallDisabled';
     }
