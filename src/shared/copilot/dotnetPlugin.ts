@@ -31,6 +31,11 @@ type Outcome = CachedOutcome | 'installed' | 'copilotNotAvailable' | DisabledOut
 type Stage = 'configuration' | 'cache' | 'discovery' | 'inventory' | 'marketplace' | 'install';
 type Source = CopilotCliSource | 'none';
 type Cache = { extensionVersion: string; outcome: CachedOutcome; source: CopilotCliSource };
+type InstallResult = {
+    outcome: Exclude<Outcome, 'installFailed'>;
+    source: Source;
+    cached: boolean;
+};
 
 type DotnetPluginHost = {
     context: {
@@ -71,13 +76,33 @@ export async function registerDotnetPlugin(
     }, operationTimeoutMs);
 
     try {
+        const result = await install();
+        report(host, result.outcome, result.source, result.cached);
+        if (result.outcome === 'installed') {
+            void showInstalled();
+        }
+        return result.outcome;
+    } catch (error) {
+        if (deactivated || (error instanceof vscode.CancellationError && !timedOut)) {
+            return undefined;
+        }
+
+        const failure = timedOut ? named('TimeoutError', 'The Copilot CLI did not respond in time.') : error;
+        reportError(host, stage, failure);
+        report(host, 'installFailed', source, false);
+        return 'installFailed';
+    } finally {
+        clearTimeout(timeout);
+        cancellation.dispose();
+    }
+
+    async function install(): Promise<InstallResult> {
         // 1. Check whether configuration, AI settings, or workspace trust disable automatic installation.
         throwIfCancellationRequested(cancellation.token);
         const disabled = getDisabledOutcome();
         if (disabled) {
             host.channel.trace(`Copilot .NET plugin: Automatic installation skipped (${disabled}).`);
-            report(host, disabled, 'none', false);
-            return disabled;
+            return { outcome: disabled, source: 'none', cached: false };
         }
 
         // 2. Reuse a stable result already cached for this extension version.
@@ -87,8 +112,7 @@ export async function registerDotnetPlugin(
             host.channel.trace(
                 `Copilot .NET plugin: Using cached result ${cached.outcome} from ${cached.source} source.`
             );
-            report(host, cached.outcome, cached.source, true);
-            return cached.outcome;
+            return { outcome: cached.outcome, source: cached.source, cached: true };
         }
 
         // 3. Find a compatible Copilot CLI from either the standalone install or Copilot app.
@@ -97,8 +121,7 @@ export async function registerDotnetPlugin(
         throwIfCancellationRequested(cancellation.token);
         if (!cli) {
             host.channel.trace('Copilot .NET plugin: No compatible Copilot CLI found.');
-            report(host, 'copilotNotAvailable', 'none', false);
-            return 'copilotNotAvailable';
+            return { outcome: 'copilotNotAvailable', source: 'none', cached: false };
         }
 
         source = cli.source;
@@ -129,7 +152,7 @@ export async function registerDotnetPlugin(
             }
         }
 
-        // 6. Cache the stable result, report telemetry, and notify after a new installation.
+        // 6. Cache the stable result before returning it to the caller.
         stage = 'cache';
         await host.context.globalState.update(dotnetPluginCacheKey, {
             extensionVersion: host.context.extension.packageJSON.version,
@@ -137,23 +160,7 @@ export async function registerDotnetPlugin(
             source: cli.source,
         } satisfies Cache);
         throwIfCancellationRequested(cancellation.token);
-        report(host, outcome, source, false);
-        if (outcome === 'installed') {
-            void showInstalled();
-        }
-        return outcome;
-    } catch (error) {
-        if (deactivated || (error instanceof vscode.CancellationError && !timedOut)) {
-            return undefined;
-        }
-
-        const failure = timedOut ? named('TimeoutError', 'The Copilot CLI did not respond in time.') : error;
-        reportError(host, stage, failure);
-        report(host, 'installFailed', source, false);
-        return 'installFailed';
-    } finally {
-        clearTimeout(timeout);
-        cancellation.dispose();
+        return { outcome, source, cached: false };
     }
 }
 
