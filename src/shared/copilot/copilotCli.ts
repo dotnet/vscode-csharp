@@ -28,11 +28,7 @@ function platformPath(): typeof path.win32 {
 }
 
 function absolute(value: string | undefined): value is string {
-    if (!value || !platformPath().isAbsolute(value)) {
-        return false;
-    }
-    // A Windows rooted path without a drive still depends on the current drive.
-    return os.platform() !== 'win32' || /^[a-z]:[\\/]|^[\\/]{2}[^\\/]+[\\/][^\\/]+/i.test(value);
+    return !!value && platformPath().isAbsolute(value);
 }
 
 function environmentPath(name: string): string | undefined {
@@ -49,60 +45,33 @@ function pathDirectories(): string[] {
 }
 
 // The GitHub Copilot app does not expose the CLI directly; it downloads a pinned build into its cache.
-async function appCli(directories: readonly string[]): Promise<CopilotCli | undefined> {
-    const p = platformPath();
+async function discoverAppCli(directories: readonly string[]): Promise<CopilotCli | undefined> {
+    const path = platformPath();
     const platform = os.platform();
-    const home = os.homedir();
-    const apps: { executable: string; resources: string }[] = [];
-    let cache: string | undefined;
-    if (platform === 'win32') {
-        cache = environmentPath('LOCALAPPDATA');
-        const roots = [
-            ...(cache ? [p.join(cache, 'Programs', 'GitHub Copilot')] : []),
-            ...['ProgramFiles', 'ProgramFiles(x86)']
-                .map(environmentPath)
-                .filter((root): root is string => root !== undefined)
-                .map((root) => p.join(root, 'GitHub Copilot')),
-            ...directories,
-        ];
-        for (const root of new Set(roots)) {
-            apps.push({ executable: p.join(root, 'github.exe'), resources: root });
-        }
-    } else if (platform === 'darwin') {
-        cache = p.join(home, 'Library', 'Caches');
-        for (const root of ['/Applications', p.join(home, 'Applications')]) {
-            const contents = p.join(root, 'GitHub Copilot.app', 'Contents');
-            apps.push({ executable: p.join(contents, 'MacOS', 'github'), resources: p.join(contents, 'Resources') });
-        }
-    } else if (platform === 'linux') {
-        cache = environmentPath('XDG_CACHE_HOME') ?? p.join(home, '.cache');
-        // Tauri deb/rpm resources use productName, including its spaces. An extracted
-        // AppImage's usr/bin + usr/lib layout also works when usr/bin is on PATH.
-        for (const bin of new Set(['/usr/bin', '/usr/local/bin', ...directories])) {
-            apps.push({
-                executable: p.join(bin, 'github'),
-                resources: p.join(p.dirname(bin), 'lib', 'GitHub Copilot'),
-            });
-        }
-    }
+    const { cache, apps } = getAppCliLocations();
+
     if (!absolute(cache)) {
         return undefined;
     }
+
     for (const app of apps) {
         if (!existsSync(app.executable)) {
             continue;
         }
-        const metadataPath = p.join(app.resources, 'copilot-sdk', 'cliVersion.d.ts');
+
+        const metadataPath = path.join(app.resources, 'copilot-sdk', 'cliVersion.d.ts');
         if (!existsSync(metadataPath)) {
             continue;
         }
+
         const metadata = await fs.readFile(metadataPath, 'utf8');
         // The version becomes a path segment, so only accept one that cannot escape the cache.
         const version = /const COPILOT_CLI_VERSION\s*=\s*"(\d+\.\d+\.\d+[\w.+-]*)";/.exec(metadata)?.[1];
         if (!version) {
             continue;
         }
-        const command = p.join(
+
+        const command = path.join(
             cache,
             'github-copilot-sdk',
             'cli',
@@ -113,20 +82,67 @@ async function appCli(directories: readonly string[]): Promise<CopilotCli | unde
             return { command, source: 'app' };
         }
     }
+
     return undefined;
+
+    function getAppCliLocations() {
+        const home = os.homedir();
+        const apps: { executable: string; resources: string }[] = [];
+        let cache: string | undefined;
+
+        if (platform === 'win32') {
+            cache = environmentPath('LOCALAPPDATA');
+            const roots = [
+                ...(cache ? [path.join(cache, 'Programs', 'GitHub Copilot')] : []),
+                ...['ProgramFiles', 'ProgramFiles(x86)']
+                    .map(environmentPath)
+                    .filter((root): root is string => root !== undefined)
+                    .map((root) => path.join(root, 'GitHub Copilot')),
+                ...directories,
+            ];
+
+            for (const root of new Set(roots)) {
+                apps.push({ executable: path.join(root, 'github.exe'), resources: root });
+            }
+        } else if (platform === 'darwin') {
+            cache = path.join(home, 'Library', 'Caches');
+
+            for (const root of ['/Applications', path.join(home, 'Applications')]) {
+                const contents = path.join(root, 'GitHub Copilot.app', 'Contents');
+                apps.push({
+                    executable: path.join(contents, 'MacOS', 'github'),
+                    resources: path.join(contents, 'Resources'),
+                });
+            }
+        } else if (platform === 'linux') {
+            cache = environmentPath('XDG_CACHE_HOME') ?? path.join(home, '.cache');
+            // Tauri deb/rpm resources use productName, including its spaces. An extracted
+            // AppImage's usr/bin + usr/lib layout also works when usr/bin is on PATH.
+            for (const bin of new Set(['/usr/bin', '/usr/local/bin', ...directories])) {
+                apps.push({
+                    executable: path.join(bin, 'github'),
+                    resources: path.join(path.dirname(bin), 'lib', 'GitHub Copilot'),
+                });
+            }
+        }
+
+        return { cache, apps };
+    }
 }
 
 export async function findCopilotCli(): Promise<CopilotCli | undefined> {
-    const p = platformPath();
+    const path = platformPath();
     const platform = os.platform();
     const directories = pathDirectories();
+
     for (const directory of new Set(directories)) {
         const names = platform === 'win32' ? ['copilot.exe', 'copilot.cmd', 'copilot.bat'] : ['copilot'];
-        if (names.some((name) => existsSync(p.join(directory, name)))) {
+        if (names.some((name) => existsSync(path.join(directory, name)))) {
             return { command: 'copilot', source: 'standalone' };
         }
     }
-    return await appCli(directories);
+
+    return await discoverAppCli(directories);
 }
 
 export async function runCopilotCli(
@@ -136,10 +152,12 @@ export async function runCopilotCli(
 ): Promise<string> {
     const controller = new AbortController();
     const cancellation = token.onCancellationRequested(() => controller.abort());
+
     try {
         if (token.isCancellationRequested) {
             controller.abort();
         }
+
         controller.signal.throwIfAborted();
         return await new Promise<string>((resolve, reject) => {
             const child = execFile(
@@ -185,6 +203,7 @@ export function parsePluginList(output: string): CopilotPlugin[] {
     const plugins: CopilotPlugin[] = [];
     let kind: CopilotPlugin['kind'] | undefined;
     let recognized = false;
+
     for (const line of stripVTControlCharacters(output).split(/\r?\n/)) {
         const text = line.trim();
         const heading = sections.find(([pattern]) => pattern.test(text))?.[1];
@@ -193,15 +212,18 @@ export function parsePluginList(output: string): CopilotPlugin[] {
             recognized = true;
             continue;
         }
+
         // The name is passed back to the CLI as an argument, so it must not look like a flag.
         const entry = /^• ([a-zA-Z0-9][\w.-]*(?:@[a-zA-Z0-9][\w.-]*)?)(?: \(v[\w.+-]+\))?( \[disabled\])?$/.exec(text);
         if (kind && entry) {
             plugins.push({ name: entry[1], enabled: !entry[2], kind });
         }
     }
+
     if (!recognized) {
         // Report a CLI output format change instead of silently reinstalling or skipping removal.
         throw new Error('Unrecognized Copilot plugin inventory');
     }
+
     return plugins;
 }

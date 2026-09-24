@@ -156,12 +156,16 @@ describe('Copilot CLI filesystem discovery', () => {
         expect(execFileMock).not.toHaveBeenCalled();
     });
 
-    test('ignores empty, relative, drive-relative, and current-drive PATH entries', async () => {
-        process.env.PATH = ';.;tools;C:tools;\\tools;;"C:\\Absolute Tools"';
-        addFile('C:\\Absolute Tools\\copilot.exe');
-        await expect(findCopilotCli()).resolves.toMatchObject({ command: 'copilot' });
-        expect(exists.mock.calls.map((call) => String(call[0]))).toEqual(['C:\\Absolute Tools\\copilot.exe']);
-    });
+    test.each(['C:\\Absolute Tools', '\\tools', '/tools'])(
+        'ignores empty and relative PATH entries before %s',
+        async (directory) => {
+            process.env.PATH = `;.;tools;C:tools;;"${directory}"`;
+            const cliPath = path.win32.join(directory, 'copilot.exe');
+            addFile(cliPath);
+            await expect(findCopilotCli()).resolves.toMatchObject({ command: 'copilot' });
+            expect(exists.mock.calls.map((call) => String(call[0]))).toEqual([cliPath]);
+        }
+    );
 
     test.each(['copilot.exe', 'copilot.cmd', 'copilot.bat'])('recognizes %s on PATH', async (name) => {
         process.env.PATH = 'C:\\Tools';
