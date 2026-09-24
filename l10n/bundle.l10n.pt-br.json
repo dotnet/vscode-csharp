@@ -96,7 +96,7 @@
   "Not all language features will be available.": "Nem todos os recursos de linguagem estarão disponíveis.",
   "OmniSharp Log": "OmniSharp Log",
   "OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.": "O OmniSharp requer uma instalação completa do Mono (incluindo o MSBuild) para fornecer serviços de linguagem quando “omnisharp.useModernNet” estiver desabilitado nas Configurações. Instale o Mono mais recente e reinicie.",
-  "Open C# Dev Kit": "Open C# Dev Kit",
+  "Open C# Dev Kit": "Abrir C# Dev Kit",
   "Open Folder": "Abrir Pasta",
   "Open envFile": "Abrir o envFile",
   "Open settings": "Abrir as configurações",
