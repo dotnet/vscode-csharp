@@ -2,7 +2,8 @@ trigger: none
 pr: none
 
 variables:
-# Variable group contains PAT for bot account.
+# This group supplies the Azure Storage publication settings. Its legacy PAT is
+# intentionally not consumed by this pipeline.
 - group: dotnet-vscode-insertion-variables
 
 resources:
@@ -68,7 +69,21 @@ extends:
             npm install
           displayName: 'Install tools'
 
+        - task: AzureCLI@2
+          displayName: 'Get GitHub App installation token'
+          inputs:
+            azureSubscription: 'devdiv-dotnet-vscode-csharp-publishing-githubapp'
+            scriptType: pscore
+            scriptLocation: inlineScript
+            inlineScript: |
+              & "$(Build.SourcesDirectory)/azure-pipelines/Get-GitHubAppToken.ps1" `
+                -KeyVaultName 'EngKeyVault' `
+                -AppIdSecretName 'dotnet-vscode-csharp-publishing-app-id' `
+                -AppPrivateKeySecretName 'dotnet-vscode-csharp-publishing-app-private-key' `
+                -InstallationOwner 'dotnet' `
+                -OutputVariableName 'GitHubAppInstallationToken'
+
         - pwsh: npm run publishRoslynCopilot -- --userName dotnet-maestro-bot --email dotnet-maestro-bot@microsoft.com --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
           displayName: 'Create component update PR'
           env:
-            GitHubPAT: $(BotAccount-dotnet-maestro-bot-PAT)
+            GitHubToken: $(GitHubAppInstallationToken)
