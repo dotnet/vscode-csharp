@@ -47,6 +47,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Povolí podporu zobrazení neimportovaných typů a neimportovaných metod rozšíření v seznamech dokončení. Při potvrzení se na začátek aktuálního souboru přidá příslušná direktiva použití.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Pro členy, které jste nedávno vybrali, proveďte automatické dokončování názvů objektů.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automaticky zobrazovat seznam dokončení v seznamech argumentů",
+  "configuration.dotnet.copilotDotnetPlugin.enableAutoInstall": "Automatically install the official .NET plugin for GitHub Copilot when a compatible Copilot installation is available. (Requires extension restart)",
   "configuration.dotnet.defaultSolution.description": "Cesta k výchozímu řešení, které se má otevřít v pracovním prostoru, pokud je k dispozici více řešení",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Povolením tohoto nastavení snížíte množství vizuálních rušivých prvků v editoru. Informační problémy budou hlášeny jako nápovědy a budou viditelné pouze tehdy, když je otevřeno místní okno akcí kódu. (Vyžaduje restartování rozšíření)",
   "configuration.dotnet.enableXamlTools": "Povolí nástroje XAML při použití sady C# Dev Kit. (Vyžaduje restartování rozšíření)",

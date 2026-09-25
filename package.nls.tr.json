@@ -47,6 +47,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Tamamlanma listelerinde, aktarlanmamış türleri ve aktarlanmamış uzantı yöntemlerini gösterme desteği sağlar. İşlendiğinde, uygun using yönergesi geçerli dosyanın en üstüne eklenir.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Yakın zamanda seçtiğiniz üyeler için otomatik nesne adı tamamlama gerçekleştirin.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Bağımsız değişken listelerinde tamamlama listesini otomatik olarak göster",
+  "configuration.dotnet.copilotDotnetPlugin.enableAutoInstall": "Automatically install the official .NET plugin for GitHub Copilot when a compatible Copilot installation is available. (Requires extension restart)",
   "configuration.dotnet.defaultSolution.description": "Birden çok çözüm olduğunda çalışma alanında açılacak varsayılan çözümün yolu.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Düzenleyicinizdeki görsel dikkat dağıtıcı öğeleri azaltmak için bu ayarı etkinleştirin. Bilgi sorunları ipucu olarak bildirilecek ve yalnızca kod eylemleri açılır penceresi açıkken görülebilecektir. (Uzantının yeniden başlatılması gerekir)",
   "configuration.dotnet.enableXamlTools": "C# Geliştirme Setini kullanırken XAML araçlarını etkinleştirir. (Uzantının yeniden başlatılması gerekir)",

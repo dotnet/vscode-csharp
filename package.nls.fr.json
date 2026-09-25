@@ -47,6 +47,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Active la prise en charge de l’affichage des types non pris en charge et des méthodes d’extension non prises en charge dans les listes de saisie semi-automatique. Une fois validée, la directive using appropriée est ajoutée en haut du fichier actif.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Effectuez la complétion automatique du nom d’objet pour les membres que vous avez récemment sélectionnés.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Afficher automatiquement la liste de complétion dans les listes d'arguments",
+  "configuration.dotnet.copilotDotnetPlugin.enableAutoInstall": "Automatically install the official .NET plugin for GitHub Copilot when a compatible Copilot installation is available. (Requires extension restart)",
   "configuration.dotnet.defaultSolution.description": "Chemin d’accès de la solution par défaut à ouvrir dans l’espace de travail lorsque plusieurs solutions sont disponibles.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Activez ce paramètre pour réduire les distractions visuelles dans votre éditeur. Les problèmes d’information seront signalés sous forme de suggestions et seront visibles uniquement lorsque la fenêtre contextuelle des actions de code est ouverte. (Nécessite le redémarrage de l’extension)",
   "configuration.dotnet.enableXamlTools": "Active les outils XAML lors de l’utilisation du Kit de développement C#. (Nécessite le redémarrage de l’extension)",

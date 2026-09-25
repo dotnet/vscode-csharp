@@ -47,6 +47,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "완성 목록에 중요하지 않은 형식 및 중요하지 않은 확장 메서드를 표시하도록 지원합니다. 커밋되면 적절한 using 지시문이 현재 파일의 맨 위에 추가됩니다.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "최근에 선택한 멤버에 대해 자동 개체 이름 완성을 수행합니다.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "인수 목록에 자동으로 완성 목록 표시",
+  "configuration.dotnet.copilotDotnetPlugin.enableAutoInstall": "Automatically install the official .NET plugin for GitHub Copilot when a compatible Copilot installation is available. (Requires extension restart)",
   "configuration.dotnet.defaultSolution.description": "여러 솔루션을 사용할 수 있는 경우 작업 영역에서 열 기본 솔루션의 경로입니다.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "이 설정을 활성화하면 편집기에서 시각적 방해 요소를 줄일 수 있습니다. 정보 문제는 힌트로 보고되며 코드 작업 팝업이 열려 있을 때만 표시됩니다. (확장을 다시 시작해야 함)",
   "configuration.dotnet.enableXamlTools": "C# 개발자 키트를 사용할 때 XAML 도구를 사용합니다. (확장을 다시 시작해야 함)",
