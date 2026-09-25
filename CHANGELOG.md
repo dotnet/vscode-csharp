@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.1.x
-* Update Roslyn to 5.12.0-1.26474.9 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.12.0-1.26474.9 (PR: [#9810](https://github.com/dotnet/vscode-csharp/pull/9810))
   * Fix inline declaration scope for expression-bodied local functions (PR: [#85775](https://github.com/dotnet/roslyn/pull/85775))
 * Update Roslyn to 5.12.0-1.26473.2 (PR: [#9805](https://github.com/dotnet/vscode-csharp/pull/9805))
 * Update Roslyn to 5.12.0-1.26471.3 (PR: [#9795](https://github.com/dotnet/vscode-csharp/pull/9795))
