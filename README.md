@@ -20,6 +20,7 @@ Learn more about the rich features of the C# extension:
   * [Navigation](https://code.visualstudio.com/docs/csharp/navigate-edit): Explore and navigate your code with features like Go To Definition and Find All References
   * [IntelliSense](https://code.visualstudio.com/docs/csharp/navigate-edit): Write code with auto-completion
   * [Formatting and Linting](https://code.visualstudio.com/docs/csharp/formatting-linting): Format and lint your code
+  * [GitHub Copilot C# LSP .NET plugin](docs/Copilot-Dotnet-Plugin.md): Automatic installation of .NET skills and C# language intelligence for Copilot, and how to uninstall
 
 For more information you can:
 

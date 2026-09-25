@@ -4,6 +4,7 @@
 * [Contributor guide](../CONTRIBUTING.md)
 * [How to get support](../SUPPORT.md)
 * [Installing without internet connectivity](./Installing-without-Internet-connectivity.md)
+* [Copilot C# LSP .NET plugin: installation and removal](./Copilot-Dotnet-Plugin.md)
 * [How to run and debug unit tests](./How-to-run-and-debug-unit-tests.md)
 * [Troubleshooting: 'The .NET Core SDK cannot be located.' errors](./Troubleshooting-'The-.NET-Core-SDK-cannot-be-located.'-errors.md)
 
