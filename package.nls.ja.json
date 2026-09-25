@@ -47,6 +47,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "インポートされていない型とインポートされていない拡張メソッドを入力候補一覧に表示するサポートを有効にします。コミットすると、適切な using ディレクティブが現在のファイルの先頭に追加されます。",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "最近選択したメンバーの自動オブジェクト名の完了を実行します。",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "引数リストに入力候補一覧を自動的に表示する",
+  "configuration.dotnet.copilotDotnetPlugin.enableAutoInstall": "Automatically install the official .NET plugin for GitHub Copilot when a compatible Copilot installation is available. (Requires extension restart)",
   "configuration.dotnet.defaultSolution.description": "複数のソリューションが使用可能な場合にワークスペースで開く既定のソリューションのパス。",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "この設定を有効にすると、エディター内の視覚的な注意がそがれるものを減らすことができます。情報の問題はヒントとして報告され、コード アクション ポップアップが開いているときにのみ表示されます。(拡張機能の再起動が必要)",
   "configuration.dotnet.enableXamlTools": "C# 開発キットを使用するときに XAML ツールを有効にします。(拡張機能の再起動が必要)",

@@ -47,6 +47,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Umożliwia wyświetlanie niezaimportowanych typów i niezaimportowanych metod rozszerzeń na listach uzupełniania. Po zadeklarowaniu odpowiednia dyrektywa using zostanie dodana w górnej części bieżącego pliku.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Wykonaj automatyczne uzupełnianie nazw obiektów dla elementów członkowskich, które zostały ostatnio wybrane.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatycznie pokaż listę uzupełniania na listach argumentów",
+  "configuration.dotnet.copilotDotnetPlugin.enableAutoInstall": "Automatically install the official .NET plugin for GitHub Copilot when a compatible Copilot installation is available. (Requires extension restart)",
   "configuration.dotnet.defaultSolution.description": "Ścieżka domyślnego rozwiązania, które zostanie otwarte w obszarze roboczym, gdy dostępnych jest kilka rozwiązań.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Włącz to ustawienie, aby ograniczyć wizualne elementy rozpraszające uwagę w edytorze. Problemy z informacjami będą zgłaszane jako wskazówki i będą widoczne tylko wtedy, gdy jest otwarte wyskakujące okno akcji dotyczących kodu. (Wymaga ponownego uruchomienia rozszerzenia)",
   "configuration.dotnet.enableXamlTools": "Włącza narzędzia XAML podczas korzystania z zestawu deweloperskiego języka C#. (Wymaga ponownego uruchomienia rozszerzenia)",

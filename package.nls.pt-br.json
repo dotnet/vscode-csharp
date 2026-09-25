@@ -47,6 +47,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Habilita o suporte para mostrar tipos não importados e métodos de extensão não importados em listas de conclusão. Quando confirmada, a diretiva using apropriada será adicionada no topo do arquivo atual.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Execute a conclusão automática do nome do objeto para os membros que você selecionou recentemente.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Mostrar automaticamente a lista de conclusão nas listas de argumentos",
+  "configuration.dotnet.copilotDotnetPlugin.enableAutoInstall": "Automatically install the official .NET plugin for GitHub Copilot when a compatible Copilot installation is available. (Requires extension restart)",
   "configuration.dotnet.defaultSolution.description": "O caminho da solução padrão a ser aberta no espaço de trabalho quando várias soluções estiverem disponíveis.",
   "configuration.dotnet.diagnostics.reportInformationAsHint": "Habilite essa configuração para reduzir as distrações visuais no seu editor. Problemas de informações serão relatados como dicas e só ficarão visíveis quando o pop-up de ações de código estiver aberto. (Requer reinicialização da extensão)",
   "configuration.dotnet.enableXamlTools": "Habilita as ferramentas XAML ao usar o Kit de Desenvolvimento C#. (Requer reinicialização da extensão)",
