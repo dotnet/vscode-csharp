@@ -11,6 +11,8 @@
     - [Finding the `settings.json` file for your workspace](#finding-the-settingsjson-file-for-your-workspace)
     - [Configuring Roslyn Language Server](#configuring-roslyn-language-server)
     - [Configuring Razor Language Server](#configuring-razor-language-server)
+  - [Reproducing Extension and Server Issues](#reproducing-extension-and-server-issues)
+    - [Checking Debugging and Save Behavior](#checking-debugging-and-save-behavior)
 - [Creating VSIX Packages for the Extension](#creating-vsix-packages-for-the-extension)
 - [Updating the `Roslyn` Language Server Version](#updating-the-roslyn-language-server-version)
 - [Snapping for releases](#snapping-for-releases)
@@ -141,6 +143,16 @@ Or, in VSCode settings (`Ctrl+,`):
 3. Enable `dotnet.server.waitForDebugger`.
 4. (Optional) - add the component to `dotnet.server.componentPaths` (see above).
 
+Use these existing overrides to load a candidate server; do not change extension source or replace installed binaries just to select a build. [Server selection](src/lsptoolshost/activate.ts) uses the first nonempty value in this order:
+
+1. `DOTNET_ROSLYN_SERVER_PATH` in the extension host's environment.
+2. `dotnet.server.path` (read through [the shared options](src/shared/options.ts), including legacy option fallbacks).
+3. The active extension's bundled `.roslyn/Microsoft.CodeAnalysis.LanguageServer` executable (`.exe` on Windows), falling back to the `.dll` for a platform-neutral package.
+
+A missing selected path fails activation; it does not fall back to another build. Keep the complete server build output together, including dependencies, runtime configuration and `Targets`, rather than copying only the server DLL. Use matching component outputs for the candidate, including the Roslyn DevKit override above when loading C# Dev Kit. [Component overrides](src/lsptoolshost/extensions/builtInComponents.ts) select folders, not individual DLLs.
+
+Reload the window after changing settings. For environment changes, restart the development host from the intended environment. Remove overrides when returning to bundled components, including the environment variable: installing a different extension does not clear it. Leave `dotnet.server.waitForDebugger` disabled for ordinary behavior checks unless you intend to attach a server debugger.
+
 #### Configuring Razor Language Server
 
 Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with the actual path to your Razor repository.
@@ -150,6 +162,29 @@ Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with 
     "razorExtension": "<razorRepoRoot>/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net10.0"
 },
 ```
+
+### Reproducing Extension and Server Issues
+
+Choose the public release or pre-release channel for a channel comparison, or an exact extension version/VSIX for a pinned-build comparison. A channel name is not a reproducible build identifier. Use VS Code's existing [Install Another Version, Install from VSIX and per-extension Auto Update controls](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace); record the selected version and update policy. Check the candidate manifest's [`engines.vscode` compatibility requirement](https://code.visualstudio.com/api/references/extension-manifest) against the VS Code build being used.
+
+Keep experiments separate from daily settings and extensions using an empty profile, or dedicated `--user-data-dir` and `--extensions-dir` directories for stronger isolation; see the [VS Code CLI documentation](https://code.visualstudio.com/docs/configure/command-line). Use the same profile/directories when installing, listing and launching. Isolation does not remove workspace settings or inherited environment overrides; check those too, and avoid syncing experimental settings into a daily profile.
+
+Distinguish **requested**, **installed**, and **activated** versions. `--list-extensions --show-versions` inventories installed extensions, not the running server. The repository's [Launch Extension configuration](.vscode/launch.json) uses `--extensionDevelopmentPath`, so a development checkout can be active instead of the installed extension. Capture the active extension location and manifest version, not just the Marketplace selection.
+
+In the C# Output channel, enable Debug logging and reload to capture `Starting server at` and `Server arguments` from [server startup](src/lsptoolshost/server/roslynLanguageServer.ts). For a DLL launch, the command is the .NET host and the server DLL is in the arguments. Check the resolved server and component paths, and whether activation reports C# standalone or C# + C# Dev Kit.
+
+Include a compact reproduction receipt with an [issue report](docs/Reporting-Issues.md):
+
+* VS Code version/commit, OS and architecture, .NET SDK/runtime, and the target project's framework.
+* Requested channel/build; installed and activated C# and C# Dev Kit versions/locations; public source commit and build configuration for local outputs.
+* Actual server path/version and component paths/builds, relevant overrides, profile/isolation and auto-update choices, plus the launch configuration and debugger type.
+* Minimal steps, expected and actual results, and relevant activation/behavior log excerpts. Redact credentials, private URLs and personal path segments before sharing; retain enough path structure to distinguish the selected artifacts.
+
+#### Checking Debugging and Save Behavior
+
+Successful server startup/composition establishes that components load together, not that the reported behavior works. For an edit-and-continue or save regression, follow the supported [C# debugging workflow](https://code.visualstudio.com/docs/csharp/debugging) for the installed extension combination. Do not assume release and pre-release builds, or standalone C# and C# Dev Kit, expose identical debugger types or Hot Reload support.
+
+Use ordinary F5 in the target application (not just F5 to launch the extension development host). Record the debug configuration/type and applicable Hot Reload/save settings. Where supported, make a small supported edit, actually save it, execute the changed code and observe the result; an accepted edit or successful startup alone is not acceptance. Stop and start debugging again and repeat, recording any stale state or failure. Compare baseline and candidate using the same application and steps. Capture [debugger logs](docs/debugger/Enabling-C%23-debugger-logging.md) separately from server activation logs when needed; a language-server override does not replace the debugger or establish support for an application platform.
 
 ### Updating NPM packages
 We use the .NET eng AzDo artifacts feed https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet-public-npm/npm/registry/ with upstreams to the public npm registry.
