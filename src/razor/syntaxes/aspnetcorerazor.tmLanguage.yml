@@ -164,8 +164,16 @@ repository:
 
   wellformed-html:
     patterns:
+      # The HTML grammar owns these full elements so it can activate their embedded languages.
+      - include: '#html-embedded-content-tag'
       - include: '#void-tag'
       - include: '#non-void-tag'
+
+  html-embedded-content-tag:
+    begin: '(?i)(?=<(?:script|style)\b(?!-))'
+    end: '(?!\G)'
+    patterns:
+      - include: 'text.html.basic'
 
   # Void tags are well-known tags that do not have an end tag *and* are not required to be self-closing.
   # https://html.spec.whatwg.org/multipage/syntax.html#void-elements

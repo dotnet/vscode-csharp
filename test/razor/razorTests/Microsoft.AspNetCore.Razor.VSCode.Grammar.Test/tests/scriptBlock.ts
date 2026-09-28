@@ -28,6 +28,46 @@ export function RunScriptBlockSuite() {
             );
         });
 
+        it('script block with type and data attributes', async () => {
+            await assertMatchesSnapshot(
+                `<script type="text/javascript" data-origin="carousel-home-slider">
+    $(function () {
+        // a comment
+    });
+</script>`
+            );
+        });
+
+        it('script block with type and data attributes inside if statement', async () => {
+            await assertMatchesSnapshot(
+                `@if (true) {
+    <script type="text/javascript" data-origin="carousel-home-slider">
+        $(function () {
+            // a comment
+        });
+    </script>
+}`
+            );
+        });
+
+        it('script block with Razor attribute inside if statement', async () => {
+            await assertMatchesSnapshot(
+                `@if (true) {
+    <script nonce="@nonce">
+        const carousel = true;
+    </script>
+}`
+            );
+        });
+
+        it('similarly named custom element inside if statement', async () => {
+            await assertMatchesSnapshot(
+                `@if (true) {
+    <script-widget>@Model.Content</script-widget>
+}`
+            );
+        });
+
         it('script block import', async () => {
             await assertMatchesSnapshot(
                 `<script>

@@ -41,11 +41,11 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.12.0-1.26452.1",
+    "roslyn": "5.12.0-1.26475.2",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.10.12014.341",
-    "testDiscovery": "9.9.434-g84ca4d"
+    "testDiscovery": "11.0.59-g6f54c5"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -738,6 +738,12 @@
         "id": "ms-dotnettools.csharp.project",
         "order": 0,
         "properties": {
+          "dotnet.copilotDotnetPlugin.enableAutoInstall": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.copilotDotnetPlugin.enableAutoInstall%",
+            "scope": "machine"
+          },
           "dotnet.defaultSolution": {
             "type": "string",
             "description": "%configuration.dotnet.defaultSolution.description%",
@@ -797,6 +803,11 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
+          },
+          "dotnet.testing.useSemanticTestDiscovery": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.testing.useSemanticTestDiscovery%"
           },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
