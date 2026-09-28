@@ -53,6 +53,7 @@ import { getProfilingEnvVars } from '../logging/profiling';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
 import { ProjectContextFeature } from '../projectContext/projectContextFeature';
+import { ResolvedWorkspaceDotnet, resolveWorkspaceDotnet } from '../dotnetRuntime/workspaceDotnetResolver';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -94,7 +95,8 @@ export class RoslynLanguageServer {
         private _telemetryReporter: TelemetryReporter,
         private _languageServerEvents: RoslynLanguageServerEvents,
         private _channel: vscode.LogOutputChannel,
-        private _traceChannel: vscode.LogOutputChannel
+        private _traceChannel: vscode.LogOutputChannel,
+        private _workspaceDotnetInfo?: DotnetInfo
     ) {
         this.registerOutputChannelsChangeHandlers();
         this.registerSendOpenSolution();
@@ -241,7 +243,7 @@ export class RoslynLanguageServer {
 
     private registerReportProjectConfiguration() {
         // Store the dotnet info outside of the notification so we're not running dotnet --info every time the project changes.
-        let dotnetInfo: DotnetInfo | undefined = undefined;
+        let dotnetInfo = this._workspaceDotnetInfo;
         this._languageClient.onNotification(RoslynProtocol.ProjectConfigurationNotification.type, async (params) => {
             if (!dotnetInfo) {
                 dotnetInfo = await getDotnetInfo([]);
@@ -276,6 +278,7 @@ export class RoslynLanguageServer {
         if (devKit) {
             devKitExports = await devKit.activate();
         }
+        const workspaceDotnet = await resolveWorkspaceDotnet(devKitExports?.workspaceDotnet);
 
         const serverOptions = await this.getServerExecutableOptions(
             platformInfo,
@@ -284,7 +287,8 @@ export class RoslynLanguageServer {
             telemetryReporter,
             additionalExtensionPaths,
             channel,
-            devKitExports
+            devKitExports,
+            workspaceDotnet
         );
 
         const documentSelector = languageServerOptions.documentSelector;
@@ -342,7 +346,8 @@ export class RoslynLanguageServer {
             telemetryReporter,
             languageServerEvents,
             channel,
-            traceChannel
+            traceChannel,
+            workspaceDotnet?.dotnetInfo
         );
 
         client.registerFeature(server._onAutoInsertFeature);
@@ -644,11 +649,12 @@ export class RoslynLanguageServer {
         telemetryReporter: TelemetryReporter,
         additionalExtensionPaths: string[],
         channel: vscode.LogOutputChannel,
-        csharpDevKitExtensionExports?: CSharpDevKitExports
+        csharpDevKitExtensionExports?: CSharpDevKitExports,
+        workspaceDotnet?: ResolvedWorkspaceDotnet
     ): Promise<Executable> {
         const serverPath = getServerPath(platformInfo);
 
-        const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
+        const dotnetInfo = workspaceDotnet?.host ?? (await hostExecutableResolver.getHostExecutableInfo());
         const dotnetExecutablePath = dotnetInfo.path;
         channel.info('Dotnet path: ' + dotnetExecutablePath);
 
