@@ -19,7 +19,7 @@ interface CreateTagsOptions {
     releaseVersion: string;
     releaseCommit: string;
     dryRun: string;
-    githubPAT?: string;
+    githubToken?: string;
     prerelease: string;
 }
 
@@ -35,7 +35,7 @@ async function createTagsRoslyn(): Promise<void> {
         options,
         'dotnet',
         'roslyn',
-        async (releaseCommit: string, _githubPAT: string) =>
+        async (releaseCommit: string, _githubToken: string) =>
             getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
@@ -54,7 +54,7 @@ async function createTagsVSCodeCSharp(): Promise<void> {
         options,
         'dotnet',
         'vscode-csharp',
-        async (releaseCommit: string, _githubPAT: string) => releaseCommit,
+        async (releaseCommit: string, _githubToken: string) => releaseCommit,
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
@@ -68,7 +68,7 @@ function getOptions(): CreateTagsOptions {
             releaseVersion: { type: 'string' },
             releaseCommit: { type: 'string' },
             dryRun: { type: 'string' },
-            githubPAT: { type: 'string' },
+            githubToken: { type: 'string' },
             prerelease: { type: 'string' },
         },
     });
@@ -77,7 +77,7 @@ function getOptions(): CreateTagsOptions {
         releaseVersion: requireArgument('releaseVersion', values.releaseVersion),
         releaseCommit: requireArgument('releaseCommit', values.releaseCommit),
         dryRun: requireArgument('dryRun', values.dryRun),
-        githubPAT: values.githubPAT,
+        githubToken: values.githubToken,
         prerelease: requireArgument('prerelease', values.prerelease),
     };
 }
@@ -93,7 +93,7 @@ async function createTagsAsync(
     options: CreateTagsOptions,
     owner: string,
     repo: string,
-    getComponentCommit: (releaseCommit: string, githubPAT: string) => Promise<string | null>,
+    getComponentCommit: (releaseCommit: string, githubToken: string) => Promise<string | null>,
     getTagAndMessage: (releaseVersion: string, isPrerelease: boolean) => [string, string]
 ): Promise<void> {
     console.log(`releaseVersion: ${options.releaseVersion}`);
@@ -104,8 +104,8 @@ async function createTagsAsync(
     const prerelease = getFlag('prerelease', options);
     console.log(`prerelease: ${prerelease}`);
 
-    const githubPAT = getGitHubPAT(options);
-    const commit = await getComponentCommit(options.releaseCommit, githubPAT);
+    const githubToken = getGitHubToken(options);
+    const commit = await getComponentCommit(options.releaseCommit, githubToken);
     if (!commit) {
         logError('Failed to find commit.');
         return;
@@ -120,7 +120,7 @@ async function createTagsAsync(
         console.log('Tagging is skipped in dry run mode.');
         return;
     } else {
-        const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message, githubPAT);
+        const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message, githubToken);
 
         if (!tagCreated) {
             logError(`Failed to tag '${owner}/${repo}'`);
@@ -137,10 +137,10 @@ async function tagRepoAsync(
     commit: string,
     releaseTag: string,
     tagMessage: string,
-    githubPAT: string
+    githubToken: string
 ): Promise<boolean> {
     console.log(`Start to tag ${owner}/${repo}. Commit: ${commit}, tag: ${releaseTag}, message: ${tagMessage}`);
-    const octokit = new Octokit({ auth: githubPAT });
+    const octokit = new Octokit({ auth: githubToken });
     await octokit.auth();
     const createTagResponse = await octokit.request(`POST /repos/${owner}/${repo}/git/tags`, {
         owner: owner,
@@ -183,12 +183,12 @@ async function tagRepoAsync(
 
 // --- Helper functions ---
 
-function getGitHubPAT(options: { githubPAT?: string | null }): string {
-    const pat = options.githubPAT ?? process.env['GitHubPAT'];
-    if (!pat) {
-        throw 'No GitHub Pat found. Specify with --githubPAT or set GitHubPAT environment variable.';
+function getGitHubToken(options: { githubToken?: string | null }): string {
+    const token = options.githubToken ?? process.env['GitHubToken'];
+    if (!token) {
+        throw 'No GitHub token found. Specify with --githubToken or set GitHubToken environment variable.';
     }
-    return pat;
+    return token;
 }
 
 function getFlag<T extends CreateTagsOptions>(option: keyof T, options: T): boolean {
