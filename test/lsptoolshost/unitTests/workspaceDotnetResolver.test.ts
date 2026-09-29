@@ -6,7 +6,10 @@
 import { describe, expect, jest, test } from '@jest/globals';
 import * as vscode from 'vscode';
 import { WorkspaceDotnetStateServiceV1, WorkspaceDotnetStateV1 } from '../../../src/csharpDevKitExports';
-import { resolveWorkspaceDotnet } from '../../../src/lsptoolshost/dotnetRuntime/workspaceDotnetResolver';
+import {
+    resolveWorkspaceDotnet,
+    WorkspaceDotnetResolutionError,
+} from '../../../src/lsptoolshost/dotnetRuntime/workspaceDotnetResolver';
 
 describe('workspace .NET resolver', () => {
     test('uses standalone resolution when the service is absent or unsupported', async () => {
@@ -16,56 +19,38 @@ describe('workspace .NET resolver', () => {
         ).resolves.toBeUndefined();
     });
 
-    test('uses exact ready metadata and applies the environment overlay', async () => {
-        const originalDotnetRoot = process.env.DOTNET_ROOT;
-        const originalPreservedValue = process.env.WORKSPACE_DOTNET_TEST_PRESERVED;
-        process.env.DOTNET_ROOT = '/user/dotnet';
-        process.env.WORKSPACE_DOTNET_TEST_PRESERVED = 'preserved';
+    test('uses exact ready metadata', async () => {
+        const service = createService({
+            kind: 'ready',
+            revision: 4,
+            host: {
+                executablePath: '/workspace/dotnet',
+                architecture: 'arm64',
+                environment: {
+                    DOTNET_ROOT: null,
+                    WORKSPACE_DOTNET_TEST_ADDED: 'added',
+                },
+            },
+            sdk: {
+                path: '/workspace/sdk/10.0.100',
+                version: '10.0.100',
+            },
+        });
 
-        try {
-            const service = createService({
-                kind: 'ready',
-                revision: 4,
-                host: {
-                    executablePath: '/workspace/dotnet',
-                    architecture: 'arm64',
-                    environment: {
-                        DOTNET_ROOT: null,
-                        WORKSPACE_DOTNET_TEST_ADDED: 'added',
-                    },
-                },
-                sdk: {
-                    path: '/workspace/sdk/10.0.100',
-                    version: '10.0.100',
-                },
-            });
+        const result = await resolveWorkspaceDotnet(service);
 
-            const result = await resolveWorkspaceDotnet(service);
-
-            expect(result).toMatchObject({
-                host: {
-                    path: '/workspace/dotnet',
-                    version: '10.0.100',
-                },
-                dotnetInfo: {
-                    CliPath: '/workspace/dotnet',
-                    Version: '10.0.100',
-                    Architecture: 'arm64',
-                },
-                sdk: {
-                    path: '/workspace/sdk/10.0.100',
-                    version: '10.0.100',
-                },
-            });
-            expect(result?.host.env.DOTNET_ROOT).toBeUndefined();
-            expect(result?.host.env.WORKSPACE_DOTNET_TEST_ADDED).toBe('added');
-            expect(result?.host.env.WORKSPACE_DOTNET_TEST_PRESERVED).toBe('preserved');
-            expect(service.disposed).toBe(true);
-        } finally {
-            setOrDeleteEnvironmentVariable('DOTNET_ROOT', originalDotnetRoot);
-            setOrDeleteEnvironmentVariable('WORKSPACE_DOTNET_TEST_PRESERVED', originalPreservedValue);
-            delete process.env.WORKSPACE_DOTNET_TEST_ADDED;
-        }
+        expect(result).toEqual({
+            architecture: 'arm64',
+            environment: {
+                DOTNET_ROOT: null,
+                WORKSPACE_DOTNET_TEST_ADDED: 'added',
+            },
+            sdk: {
+                path: '/workspace/sdk/10.0.100',
+                version: '10.0.100',
+            },
+        });
+        expect(service.disposed).toBe(true);
     });
 
     test('subscribes before reading and waits for a newer ready state', async () => {
@@ -129,10 +114,43 @@ describe('workspace .NET resolver', () => {
             'Timed out'
         );
     });
+
+    test.each(['subscribe', 'read', 'dispose'] as const)(
+        'normalizes producer errors thrown during %s',
+        async (failurePoint) => {
+            const service = createService({
+                kind: 'ready',
+                revision: 1,
+                host: {
+                    executablePath: '/workspace/dotnet',
+                    architecture: 'x64',
+                    environment: {},
+                },
+                sdk: {
+                    path: '/workspace/sdk/10.0.100',
+                    version: '10.0.100',
+                },
+            });
+            if (failurePoint === 'subscribe') {
+                service.onDidChangeState = (() => {
+                    throw new Error('subscribe failed');
+                }) as vscode.Event<WorkspaceDotnetStateV1>;
+            } else if (failurePoint === 'read') {
+                service.getState = () => {
+                    throw new Error('read failed');
+                };
+            } else {
+                service.disposeWithError = true;
+            }
+
+            await expect(resolveWorkspaceDotnet(service)).rejects.toBeInstanceOf(WorkspaceDotnetResolutionError);
+        }
+    );
 });
 
 interface TestWorkspaceDotnetService extends WorkspaceDotnetStateServiceV1 {
     disposed: boolean;
+    disposeWithError: boolean;
     subscribed: boolean;
     emit(state: WorkspaceDotnetStateV1): void;
 }
@@ -142,6 +160,7 @@ function createService(initialState: WorkspaceDotnetStateV1): TestWorkspaceDotne
     const service: TestWorkspaceDotnetService = {
         version: '1.0',
         disposed: false,
+        disposeWithError: false,
         subscribed: false,
         getState: jest.fn(() => initialState),
         onDidChangeState: ((newListener: (state: WorkspaceDotnetStateV1) => unknown) => {
@@ -151,18 +170,13 @@ function createService(initialState: WorkspaceDotnetStateV1): TestWorkspaceDotne
                 dispose: () => {
                     service.disposed = true;
                     listener = undefined;
+                    if (service.disposeWithError) {
+                        throw new Error('dispose failed');
+                    }
                 },
             };
         }) as vscode.Event<WorkspaceDotnetStateV1>,
         emit: (state) => listener?.(state),
     };
     return service;
-}
-
-function setOrDeleteEnvironmentVariable(name: string, value: string | undefined): void {
-    if (value === undefined) {
-        delete process.env[name];
-    } else {
-        process.env[name] = value;
-    }
 }

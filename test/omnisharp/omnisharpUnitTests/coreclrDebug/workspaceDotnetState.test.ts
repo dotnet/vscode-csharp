@@ -115,6 +115,7 @@ describe('completeDebuggerInstall workspace .NET state', () => {
             } as unknown as vscode.Extension<CSharpDevKitExports>,
         ],
         ['contract failure', createInvalidProvider()],
+        ['state read failure', createThrowingProvider()],
     ])('fails closed without ambient probing or SDK remediation for %s', async (_name, extension) => {
         const debugUtil = new CoreClrDebugUtil('/extension');
         const checkDotNetCli = jest.spyOn(debugUtil, 'checkDotNetCli').mockResolvedValue();
@@ -348,6 +349,21 @@ function createInvalidProvider(): vscode.Extension<CSharpDevKitExports> {
                 workspaceDotnet: {
                     version: '1.0',
                     getState: () => ({ kind: 'ready', revision: 1 }),
+                    onDidChangeState: () => ({ dispose: () => {} }),
+                },
+            }) as unknown as CSharpDevKitExports,
+    } as unknown as vscode.Extension<CSharpDevKitExports>;
+}
+
+function createThrowingProvider(): vscode.Extension<CSharpDevKitExports> {
+    return {
+        activate: async () =>
+            ({
+                workspaceDotnet: {
+                    version: '1.0',
+                    getState: () => {
+                        throw new Error('state read failed');
+                    },
                     onDidChangeState: () => ({ dispose: () => {} }),
                 },
             }) as unknown as CSharpDevKitExports,

@@ -225,7 +225,7 @@ export async function completeDebuggerInstall(
 }
 
 async function resolveDebuggerWorkspaceDotnet(): Promise<ResolvedWorkspaceDotnet | undefined> {
-    return (await activateAndResolveWorkspaceDotnet(getCSharpDevKit())).workspaceDotnet;
+    return await activateAndResolveWorkspaceDotnet(getCSharpDevKit());
 }
 
 function showInstallErrorMessage(eventStream: EventStream) {

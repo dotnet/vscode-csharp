@@ -10,24 +10,15 @@ import {
     WorkspaceDotnetHostV1,
     WorkspaceDotnetSdkV1,
 } from '../../csharpDevKitExports';
-import { HostExecutableInformation } from '../../shared/constants/hostExecutableInformation';
-import { DotnetInfo } from '../../shared/utils/dotnetInfo';
 import * as vscode from 'vscode';
 import * as semver from 'semver';
 
 export const workspaceDotnetResolutionTimeoutMs = 90_000;
 
 export interface ResolvedWorkspaceDotnet {
-    host: HostExecutableInformation;
-    dotnetInfo: DotnetInfo;
     architecture: string;
     environment: Readonly<Record<string, string | null>>;
     sdk: WorkspaceDotnetSdkV1;
-}
-
-export interface ActivatedWorkspaceDotnet {
-    devKitExports?: CSharpDevKitExports;
-    workspaceDotnet?: ResolvedWorkspaceDotnet;
 }
 
 export class WorkspaceDotnetResolutionError extends Error {
@@ -40,9 +31,9 @@ export class WorkspaceDotnetResolutionError extends Error {
 export async function activateAndResolveWorkspaceDotnet(
     devKit: vscode.Extension<CSharpDevKitExports> | undefined,
     timeoutMs = workspaceDotnetResolutionTimeoutMs
-): Promise<ActivatedWorkspaceDotnet> {
+): Promise<ResolvedWorkspaceDotnet | undefined> {
     if (!devKit) {
-        return {};
+        return undefined;
     }
 
     let devKitExports: CSharpDevKitExports;
@@ -54,10 +45,7 @@ export async function activateAndResolveWorkspaceDotnet(
         });
     }
 
-    return {
-        devKitExports,
-        workspaceDotnet: await resolveWorkspaceDotnet(devKitExports?.workspaceDotnet, timeoutMs),
-    };
+    return await resolveWorkspaceDotnet(devKitExports?.workspaceDotnet, timeoutMs);
 }
 
 export async function resolveWorkspaceDotnet(
@@ -68,6 +56,21 @@ export async function resolveWorkspaceDotnet(
         return undefined;
     }
 
+    try {
+        return await resolveSupportedWorkspaceDotnet(service, timeoutMs);
+    } catch (error) {
+        if (error instanceof WorkspaceDotnetResolutionError) {
+            throw error;
+        }
+
+        throw new WorkspaceDotnetResolutionError('C# Dev Kit workspace .NET provider failed.', { cause: error });
+    }
+}
+
+async function resolveSupportedWorkspaceDotnet(
+    service: WorkspaceDotnetStateServiceV1,
+    timeoutMs: number
+): Promise<ResolvedWorkspaceDotnet | undefined> {
     if (typeof service.getState !== 'function' || typeof service.onDidChangeState !== 'function') {
         throw new WorkspaceDotnetResolutionError(
             'C# Dev Kit workspace .NET service version 1.0 has an invalid contract.'
@@ -76,18 +79,19 @@ export async function resolveWorkspaceDotnet(
 
     const pendingStates: WorkspaceDotnetStateV1[] = [];
     let notifyStateChanged: (() => void) | undefined;
-    const listener = service.onDidChangeState((state) => {
-        pendingStates.push(state);
-        notifyStateChanged?.();
-    });
-    if (!listener || typeof listener.dispose !== 'function') {
-        throw new WorkspaceDotnetResolutionError(
-            'C# Dev Kit workspace .NET service version 1.0 has an invalid event contract.'
-        );
-    }
-
+    let listener: vscode.Disposable | undefined;
     const deadline = Date.now() + timeoutMs;
     try {
+        listener = service.onDidChangeState((state) => {
+            pendingStates.push(state);
+            notifyStateChanged?.();
+        });
+        if (!listener || typeof listener.dispose !== 'function') {
+            throw new WorkspaceDotnetResolutionError(
+                'C# Dev Kit workspace .NET service version 1.0 has an invalid event contract.'
+            );
+        }
+
         let state = validateState(service.getState());
         state = applyPendingStates(state, pendingStates);
 
@@ -132,25 +136,13 @@ export async function resolveWorkspaceDotnet(
         }
 
         return {
-            host: {
-                path: state.host.executablePath,
-                version: state.sdk.version,
-                env: applyEnvironmentOverlay(state.host.environment),
-            },
-            dotnetInfo: {
-                CliPath: state.host.executablePath,
-                FullInfo: '',
-                Version: state.sdk.version,
-                Architecture: state.host.architecture,
-                Runtimes: {},
-            },
             architecture: state.host.architecture,
             environment: state.host.environment,
             sdk: state.sdk,
         };
     } finally {
         notifyStateChanged = undefined;
-        listener.dispose();
+        listener?.dispose();
     }
 }
 
@@ -215,27 +207,4 @@ function validateReadyState(host: WorkspaceDotnetHostV1, sdk: WorkspaceDotnetSdk
             );
         }
     }
-}
-
-function applyEnvironmentOverlay(overlay: Readonly<Record<string, string | null>>): NodeJS.ProcessEnv {
-    const environment: NodeJS.ProcessEnv = { ...process.env };
-    for (const [name, value] of Object.entries(overlay)) {
-        for (const existingName of Object.keys(environment)) {
-            if (environmentVariableNamesEqual(existingName, name)) {
-                delete environment[existingName];
-            }
-        }
-
-        if (value === null) {
-            continue;
-        } else {
-            environment[name] = value;
-        }
-    }
-
-    return environment;
-}
-
-function environmentVariableNamesEqual(left: string, right: string): boolean {
-    return process.platform === 'win32' ? left.toUpperCase() === right.toUpperCase() : left === right;
 }
