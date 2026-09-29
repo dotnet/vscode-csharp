@@ -53,7 +53,7 @@ import { getProfilingEnvVars } from '../logging/profiling';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
 import { ProjectContextFeature } from '../projectContext/projectContextFeature';
-import { ResolvedWorkspaceDotnet, resolveWorkspaceDotnet } from '../dotnetRuntime/workspaceDotnetResolver';
+import { ResolvedWorkspaceDotnet, activateAndResolveWorkspaceDotnet } from '../dotnetRuntime/workspaceDotnetResolver';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -274,11 +274,7 @@ export class RoslynLanguageServer {
         traceChannel: vscode.LogOutputChannel
     ): Promise<RoslynLanguageServer> {
         const devKit = getCSharpDevKit();
-        let devKitExports: CSharpDevKitExports | undefined = undefined;
-        if (devKit) {
-            devKitExports = await devKit.activate();
-        }
-        const workspaceDotnet = await resolveWorkspaceDotnet(devKitExports?.workspaceDotnet);
+        const { devKitExports, workspaceDotnet } = await activateAndResolveWorkspaceDotnet(devKit);
 
         const serverOptions = await this.getServerExecutableOptions(
             platformInfo,

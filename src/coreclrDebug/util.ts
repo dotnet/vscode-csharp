@@ -68,14 +68,7 @@ export class CoreClrDebugUtil {
     public async checkDotNetCli(dotNetCliPaths: string[]): Promise<void> {
         try {
             const dotnetInfo = await getDotnetInfo(dotNetCliPaths);
-            if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
-                throw new Error(
-                    vscode.l10n.t(
-                        `The .NET SDK located on the path is too old. .NET debugging will not be enabled. The minimum supported version is {0}.`,
-                        MINIMUM_SUPPORTED_DOTNET_CLI
-                    )
-                );
-            }
+            this.checkDotNetSdkVersion(dotnetInfo.Version);
         } catch (error) {
             const message = error instanceof Error ? error.message : `${error}`;
             throw new Error(
@@ -84,6 +77,17 @@ export class CoreClrDebugUtil {
                     message
                 ),
                 { cause: error }
+            );
+        }
+    }
+
+    public checkDotNetSdkVersion(version: string): void {
+        if (semver.lt(version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
+            throw new Error(
+                vscode.l10n.t(
+                    `The .NET SDK located on the path is too old. .NET debugging will not be enabled. The minimum supported version is {0}.`,
+                    MINIMUM_SUPPORTED_DOTNET_CLI
+                )
             );
         }
     }
@@ -131,15 +135,7 @@ export function getTargetArchitecture(
 
     // 'targetArchitecture' is specified in launch.json configuration, use that.
     if (launchJsonTargetArchitecture) {
-        if (launchJsonTargetArchitecture !== 'x86_64' && launchJsonTargetArchitecture !== 'arm64') {
-            throw new Error(
-                vscode.l10n.t(
-                    `The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`,
-                    launchJsonTargetArchitecture
-                )
-            );
-        }
-        return launchJsonTargetArchitecture;
+        return validateTargetArchitecture(launchJsonTargetArchitecture);
     }
 
     // If we are lower than .NET 6, use 'x86_64' since 'arm64' was not supported until .NET 6.
@@ -163,4 +159,46 @@ export function getTargetArchitecture(
     }
 
     throw new Error(vscode.l10n.t("Unexpected RuntimeId '{0}'.", dotnetInfo.RuntimeId));
+}
+
+export function getTargetArchitectureFromHost(
+    platformInfo: PlatformInformation,
+    launchJsonTargetArchitecture: string | undefined,
+    sdkVersion: string,
+    hostArchitecture: string
+): string {
+    if (!platformInfo.isMacOS() && !platformInfo.isWindows()) {
+        return '';
+    }
+
+    if (launchJsonTargetArchitecture) {
+        return validateTargetArchitecture(launchJsonTargetArchitecture);
+    }
+
+    if (semver.lt(sdkVersion, MINIMUM_SUPPORTED_ARM64_DOTNET_CLI)) {
+        return 'x86_64';
+    }
+
+    switch (hostArchitecture.toLowerCase()) {
+        case 'arm64':
+            return 'arm64';
+        case 'x64':
+        case 'x86_64':
+            return 'x86_64';
+        default:
+            throw new Error(vscode.l10n.t("Unexpected .NET host architecture '{0}'.", hostArchitecture));
+    }
+}
+
+function validateTargetArchitecture(targetArchitecture: string): string {
+    if (targetArchitecture !== 'x86_64' && targetArchitecture !== 'arm64') {
+        throw new Error(
+            vscode.l10n.t(
+                `The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`,
+                targetArchitecture
+            )
+        );
+    }
+
+    return targetArchitecture;
 }

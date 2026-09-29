@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
+    CSharpDevKitExports,
     WorkspaceDotnetStateServiceV1,
     WorkspaceDotnetStateV1,
     WorkspaceDotnetHostV1,
@@ -11,13 +12,52 @@ import {
 } from '../../csharpDevKitExports';
 import { HostExecutableInformation } from '../../shared/constants/hostExecutableInformation';
 import { DotnetInfo } from '../../shared/utils/dotnetInfo';
+import * as vscode from 'vscode';
+import * as semver from 'semver';
 
 export const workspaceDotnetResolutionTimeoutMs = 90_000;
 
 export interface ResolvedWorkspaceDotnet {
     host: HostExecutableInformation;
     dotnetInfo: DotnetInfo;
+    architecture: string;
+    environment: Readonly<Record<string, string | null>>;
     sdk: WorkspaceDotnetSdkV1;
+}
+
+export interface ActivatedWorkspaceDotnet {
+    devKitExports?: CSharpDevKitExports;
+    workspaceDotnet?: ResolvedWorkspaceDotnet;
+}
+
+export class WorkspaceDotnetResolutionError extends Error {
+    constructor(message: string, options?: ErrorOptions) {
+        super(message, options);
+        this.name = 'WorkspaceDotnetResolutionError';
+    }
+}
+
+export async function activateAndResolveWorkspaceDotnet(
+    devKit: vscode.Extension<CSharpDevKitExports> | undefined,
+    timeoutMs = workspaceDotnetResolutionTimeoutMs
+): Promise<ActivatedWorkspaceDotnet> {
+    if (!devKit) {
+        return {};
+    }
+
+    let devKitExports: CSharpDevKitExports;
+    try {
+        devKitExports = await devKit.activate();
+    } catch (error) {
+        throw new WorkspaceDotnetResolutionError('Failed to activate C# Dev Kit workspace .NET provider.', {
+            cause: error,
+        });
+    }
+
+    return {
+        devKitExports,
+        workspaceDotnet: await resolveWorkspaceDotnet(devKitExports?.workspaceDotnet, timeoutMs),
+    };
 }
 
 export async function resolveWorkspaceDotnet(
@@ -29,7 +69,9 @@ export async function resolveWorkspaceDotnet(
     }
 
     if (typeof service.getState !== 'function' || typeof service.onDidChangeState !== 'function') {
-        throw new Error('C# Dev Kit workspace .NET service version 1.0 has an invalid contract.');
+        throw new WorkspaceDotnetResolutionError(
+            'C# Dev Kit workspace .NET service version 1.0 has an invalid contract.'
+        );
     }
 
     const pendingStates: WorkspaceDotnetStateV1[] = [];
@@ -39,7 +81,9 @@ export async function resolveWorkspaceDotnet(
         notifyStateChanged?.();
     });
     if (!listener || typeof listener.dispose !== 'function') {
-        throw new Error('C# Dev Kit workspace .NET service version 1.0 has an invalid event contract.');
+        throw new WorkspaceDotnetResolutionError(
+            'C# Dev Kit workspace .NET service version 1.0 has an invalid event contract.'
+        );
     }
 
     const deadline = Date.now() + timeoutMs;
@@ -50,12 +94,19 @@ export async function resolveWorkspaceDotnet(
         while (state.kind === 'resolving') {
             const remainingTime = deadline - Date.now();
             if (remainingTime <= 0) {
-                throw new Error('Timed out waiting for C# Dev Kit to resolve the workspace .NET SDK.');
+                throw new WorkspaceDotnetResolutionError(
+                    'Timed out waiting for C# Dev Kit to resolve the workspace .NET SDK.'
+                );
             }
 
             await new Promise<void>((resolve, reject) => {
                 const timeout = setTimeout(
-                    () => reject(new Error('Timed out waiting for C# Dev Kit to resolve the workspace .NET SDK.')),
+                    () =>
+                        reject(
+                            new WorkspaceDotnetResolutionError(
+                                'Timed out waiting for C# Dev Kit to resolve the workspace .NET SDK.'
+                            )
+                        ),
                     remainingTime
                 );
                 notifyStateChanged = () => {
@@ -77,7 +128,7 @@ export async function resolveWorkspaceDotnet(
         }
 
         if (state.kind === 'blocked') {
-            throw new Error('C# Dev Kit blocked workspace .NET SDK resolution.');
+            throw new WorkspaceDotnetResolutionError('C# Dev Kit blocked workspace .NET SDK resolution.');
         }
 
         return {
@@ -93,6 +144,8 @@ export async function resolveWorkspaceDotnet(
                 Architecture: state.host.architecture,
                 Runtimes: {},
             },
+            architecture: state.host.architecture,
+            environment: state.host.environment,
             sdk: state.sdk,
         };
     } finally {
@@ -123,7 +176,9 @@ function validateState(state: WorkspaceDotnetStateV1): WorkspaceDotnetStateV1 {
         state.revision < 0 ||
         !['resolving', 'ready', 'blocked', 'notApplicable'].includes(state.kind)
     ) {
-        throw new Error('C# Dev Kit workspace .NET service version 1.0 returned an invalid state.');
+        throw new WorkspaceDotnetResolutionError(
+            'C# Dev Kit workspace .NET service version 1.0 returned an invalid state.'
+        );
     }
 
     if (state.kind === 'ready') {
@@ -146,14 +201,18 @@ function validateReadyState(host: WorkspaceDotnetHostV1, sdk: WorkspaceDotnetSdk
         typeof sdk.path !== 'string' ||
         sdk.path.length === 0 ||
         typeof sdk.version !== 'string' ||
-        sdk.version.length === 0
+        !semver.valid(sdk.version)
     ) {
-        throw new Error('C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.');
+        throw new WorkspaceDotnetResolutionError(
+            'C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.'
+        );
     }
 
     for (const value of Object.values(host.environment)) {
         if (value !== null && typeof value !== 'string') {
-            throw new Error('C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.');
+            throw new WorkspaceDotnetResolutionError(
+                'C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.'
+            );
         }
     }
 }
@@ -161,12 +220,22 @@ function validateReadyState(host: WorkspaceDotnetHostV1, sdk: WorkspaceDotnetSdk
 function applyEnvironmentOverlay(overlay: Readonly<Record<string, string | null>>): NodeJS.ProcessEnv {
     const environment: NodeJS.ProcessEnv = { ...process.env };
     for (const [name, value] of Object.entries(overlay)) {
+        for (const existingName of Object.keys(environment)) {
+            if (environmentVariableNamesEqual(existingName, name)) {
+                delete environment[existingName];
+            }
+        }
+
         if (value === null) {
-            delete environment[name];
+            continue;
         } else {
             environment[name] = value;
         }
     }
 
     return environment;
+}
+
+function environmentVariableNamesEqual(left: string, right: string): boolean {
+    return process.platform === 'win32' ? left.toUpperCase() === right.toUpperCase() : left === right;
 }
