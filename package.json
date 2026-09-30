@@ -87,7 +87,7 @@
     "profiling": "npm run package && npx ts-node tasks/profiling/profiling.ts",
     "publishLocalizationContent": "npx ts-node tasks/localization/publishLocalizationContent.ts",
     "publishRoslynCopilot": "npx ts-node tasks/components/publishRoslynCopilot.ts",
-    "repairSigningPython": "python3 tasks/signing/repairSigningPython.py",
+    "repairSigningPython": "npx ts-node tasks/signing/repairSigningPython.ts",
     "signJs": "npx ts-node tasks/signing/signJs.ts",
     "signVsix": "npx ts-node tasks/signing/signVsix.ts",
     "test": "npm run test:unit && npm run test:artifacts",

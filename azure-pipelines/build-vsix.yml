@@ -85,7 +85,7 @@ stages:
           TeamName: $(teamName)
 
       # XSign's pip install can retain system pyOpenSSL with incompatible user-site cryptography.
-      - script: python3 tasks/signing/repairSigningPython.py
+      - script: npm run repairSigningPython
         displayName: 'Repair MicroBuild signing Python dependencies'
         condition: and(succeeded(), eq(variables['signType'], 'real'), eq(variables['Agent.OS'], 'Linux'))
 
