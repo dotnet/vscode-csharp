@@ -164,6 +164,10 @@ To add new packages, you must authenticate by running:
 
 To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the command `npm run vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
 
+Official Linux real-signing builds run `tasks/signing/repairSigningPython.py` after the MicroBuild signing plugin is installed and before packaging/signing. XSign's dependency installation can leave Ubuntu's pyOpenSSL 21 alongside newer user-site cryptography, causing `X509_V_FLAG_NOTIFY_POLICY` import errors. The repair resolves the Python interpreter from the `az` launcher on `PATH` (the CLI MicroBuild invokes), upgrades only user-site pyOpenSSL within the 26.x series, and constrains cryptography to the version already installed by the plugin. If no compatible version can be resolved, installation fails rather than downgrading cryptography.
+
+The step checks OpenSSL/Azure CLI imports and `az xsign --help` without changing Azure CLI configuration, authentication, or service connections. Unsupported launchers, disabled user-site packages, installation failures, and import failures stop the build. Public and test-signing builds skip this repair. Do not run it against your personal Python environment; real-signing validation requires the official Linux agent and MicroBuild service connection. Focused helper tests can be run with `python3 -m unittest discover -s test/tasks -p '*SigningPython_test.py'`.
+
 ## Updating the `Roslyn` Language Server Version
 
 In order to pull in new packages from upstreams into the msft_consumption feed we use for restoring, you will need to be a member of the 'CSharp VS Code Extension contributors' group in the [Azure Devops instance](https://dev.azure.com/azure-public/vside/_settings/teams).
