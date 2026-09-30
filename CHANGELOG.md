@@ -5,7 +5,7 @@
 
 # 2.152.x
 
-* Update Roslyn to 5.13.0-1.26479.11 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.13.0-1.26479.11 (PR: [#9824](https://github.com/dotnet/vscode-csharp/pull/9824))
   * Support per-client project autoload initialization options (PR: [#85814](https://github.com/dotnet/roslyn/pull/85814))
   * FileBasedProgramsEntryPointDiscovery: Use File.Move instead of File.Replace for cache file (PR: [#85763](https://github.com/dotnet/roslyn/pull/85763))
   * Support MTP in language server test runs (PR: [#85271](https://github.com/dotnet/roslyn/pull/85271))
