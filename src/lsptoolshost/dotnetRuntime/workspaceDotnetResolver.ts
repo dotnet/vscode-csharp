@@ -12,6 +12,7 @@ import {
 } from '../../csharpDevKitExports';
 import * as vscode from 'vscode';
 import * as semver from 'semver';
+import { isDeepStrictEqual } from 'util';
 
 export const workspaceDotnetResolutionTimeoutMs = 90_000;
 
@@ -82,6 +83,8 @@ async function resolveSupportedWorkspaceDotnet(
     let listener: vscode.Disposable | undefined;
     const deadline = Date.now() + timeoutMs;
     try {
+        // Subscribe before reading so a transition between registration and getState cannot be missed.
+        // Revisions reconcile any event queued during that read; equal revisions must describe the same snapshot.
         listener = service.onDidChangeState((state) => {
             pendingStates.push(state);
             notifyStateChanged?.();
@@ -153,7 +156,17 @@ function applyPendingStates(
     let latestState = currentState;
     for (const pendingState of pendingStates.splice(0)) {
         const validatedState = validateState(pendingState);
-        if (validatedState.revision >= latestState.revision) {
+        if (validatedState.revision < latestState.revision) {
+            continue;
+        }
+
+        if (validatedState.revision === latestState.revision) {
+            if (!isDeepStrictEqual(validatedState, latestState)) {
+                throw new WorkspaceDotnetResolutionError(
+                    'C# Dev Kit workspace .NET service version 1.0 returned conflicting states for the same revision.'
+                );
+            }
+        } else {
             latestState = validatedState;
         }
     }

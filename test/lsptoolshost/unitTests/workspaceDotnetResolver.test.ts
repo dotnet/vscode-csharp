@@ -82,6 +82,47 @@ describe('workspace .NET resolver', () => {
         expect(service.disposed).toBe(true);
     });
 
+    test('deduplicates an identical event and snapshot with the same revision', async () => {
+        const readyState: WorkspaceDotnetStateV1 = {
+            kind: 'ready',
+            revision: 3,
+            host: {
+                executablePath: '/workspace/dotnet',
+                architecture: 'x64',
+                environment: {},
+            },
+            sdk: {
+                path: '/workspace/sdk/10.0.100',
+                version: '10.0.100',
+            },
+        };
+        const service = createService(readyState);
+        service.getState = () => {
+            service.emit({
+                ...readyState,
+                host: { ...readyState.host, environment: {} },
+                sdk: { ...readyState.sdk },
+            });
+            return readyState;
+        };
+
+        await expect(resolveWorkspaceDotnet(service)).resolves.toMatchObject({
+            architecture: 'x64',
+            sdk: { version: '10.0.100' },
+        });
+    });
+
+    test('fails closed for conflicting states with the same revision', async () => {
+        const service = createService({ kind: 'resolving', revision: 2 });
+        service.getState = () => {
+            service.emit({ kind: 'blocked', revision: 2 });
+            return { kind: 'resolving', revision: 2 };
+        };
+
+        await expect(resolveWorkspaceDotnet(service)).rejects.toThrow('conflicting states for the same revision');
+        expect(service.disposed).toBe(true);
+    });
+
     test('falls back only for notApplicable', async () => {
         const service = createService({ kind: 'notApplicable', revision: 1 });
 
