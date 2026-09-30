@@ -5,6 +5,16 @@
 
 # 2.152.x
 
+* Update Roslyn to 5.13.0-1.26479.11 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Support per-client project autoload initialization options (PR: [#85814](https://github.com/dotnet/roslyn/pull/85814))
+  * FileBasedProgramsEntryPointDiscovery: Use File.Move instead of File.Replace for cache file (PR: [#85763](https://github.com/dotnet/roslyn/pull/85763))
+  * Support MTP in language server test runs (PR: [#85271](https://github.com/dotnet/roslyn/pull/85271))
+  * Update dependencies for C# extension test discovery compatibility (PR: [#85747](https://github.com/dotnet/roslyn/pull/85747))
+  * Fix inline declaration scope for expression-bodied local functions (PR: [#85775](https://github.com/dotnet/roslyn/pull/85775))
+  * Handle empty diagnostic help links (PR: [#85734](https://github.com/dotnet/roslyn/pull/85734))
+  * Fix Razor crash for incomplete render modes (PR: [#85693](https://github.com/dotnet/roslyn/pull/85693))
+  * Defer LSP semantic tokens until projects finish loading (PR: [#85688](https://github.com/dotnet/roslyn/pull/85688))
+  * Support public pull diagnostics alongside legacy endpoints (PR: [#85208](https://github.com/dotnet/roslyn/pull/85208))
 * Update Roslyn to 5.12.0-1.26465.4 (PR: [#9772](https://github.com/dotnet/vscode-csharp/pull/9772))
   * Avoid cache misses due to cancellation in deprioritized analyzer cache (PR: [#85222](https://github.com/dotnet/roslyn/pull/85222))
   * Move the LanguageServerProjectLoader over to our priority queue (PR: [#85272](https://github.com/dotnet/roslyn/pull/85272))
