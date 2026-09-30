@@ -30,3 +30,7 @@ copilot plugin install dotnet@dotnet-agent-skills
 Open **View > Output** and select **C#**. Discovery, inventory, and installation failures are logged without affecting normal C# features. Each installation operation has an overall two-minute timeout.
 
 If installation is skipped, make sure the Copilot CLI is available on PATH on the extension host. For the GitHub Copilot app, use the app once so its CLI can be extracted, then restart VS Code. An incompatible CLI listing format, unavailable Git/network access, permissions, or organization policy can prevent installation.
+
+Automatic installation requires Copilot CLI **1.0.84-4 or newer** (stable **1.0.85 or newer**) for marketplace JSON support. When installation is needed, the extension checks `copilot --version` before accessing the marketplace. Older versions are skipped with an `incompatibleCli` telemetry outcome and update guidance in the C# output. Update the standalone CLI or the GitHub Copilot app, then restart the C# extension to retry; incompatible results are not cached. A standalone CLI on PATH takes precedence over the app's CLI.
+
+When enabled, error telemetry includes the failing operation, CLI source, and an allowlisted process error code (or `other`) or numeric exit code when available; no error text or output is sent. Detailed errors remain in the local C# output.
