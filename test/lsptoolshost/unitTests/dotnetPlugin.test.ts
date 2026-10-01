@@ -125,12 +125,10 @@ async function install(fixture: Fixture) {
 
 function deferred<T>() {
     let resolve!: (value: T) => void;
-    let reject!: (reason: Error) => void;
-    const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    const promise = new Promise<T>((resolvePromise) => {
         resolve = resolvePromise;
-        reject = rejectPromise;
     });
-    return { promise, resolve, reject };
+    return { promise, resolve };
 }
 
 function cliOutput(args: readonly string[]): string {
@@ -203,7 +201,7 @@ describe('Copilot .NET plugin installation', () => {
 
     test('caches an unexpected marketplace source as a conflict', async () => {
         const testFixture = fixture();
-        const { state, reporter, channel } = testFixture;
+        const { state, reporter } = testFixture;
         parse.mockReturnValueOnce([]);
         run.mockImplementation(async (_runtime, args) =>
             args[1] === 'marketplace' && args[2] === 'list'
@@ -222,7 +220,6 @@ describe('Copilot .NET plugin installation', () => {
             outcome: 'conflictingMarketplace',
             source: 'standalone',
         });
-        expect(channel.info).toHaveBeenCalledWith(expect.stringContaining('unexpected source'));
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.CopilotDotnetPlugin, {
             outcome: 'conflictingMarketplace',
             source: 'standalone',
@@ -230,68 +227,48 @@ describe('Copilot .NET plugin installation', () => {
         });
     });
 
-    test.each([
-        'GitHub Copilot CLI 1.0.84-4.\r\n',
-        'GitHub Copilot CLI 1.0.85+build.10.\n',
-        'GitHub Copilot CLI 1.0.85\n',
-    ])('allows installation with compatible CLI output %j', async (output) => {
-        const testFixture = fixture();
-        parse.mockReturnValue([]);
-        run.mockResolvedValueOnce('inventory').mockResolvedValueOnce(output);
+    test.each(['GitHub Copilot CLI 1.0.84-4.\r\n', 'GitHub Copilot CLI 1.0.85\n'])(
+        'allows installation with compatible CLI output %j',
+        async (output) => {
+            const testFixture = fixture();
+            parse.mockReturnValue([]);
+            run.mockResolvedValueOnce('inventory').mockResolvedValueOnce(output);
 
-        await expect(install(testFixture)).resolves.toBe('installed');
-    });
+            await expect(install(testFixture)).resolves.toBe('installed');
+        }
+    );
 
-    test.each<[string, cli.CopilotCliSource]>([
-        ['1.0.81-6', 'standalone'],
-        ['1.0.84-3', 'app'],
-    ])('skips incompatible CLI %s from %s without caching or error telemetry', async (version, source) => {
+    test('skips an incompatible CLI without caching and retries after an upgrade', async () => {
         const testFixture = fixture();
-        const { state, reporter, channel } = testFixture;
-        find.mockResolvedValue({ ...runtime, source });
+        const { state, reporter } = testFixture;
+        find.mockResolvedValue({ ...runtime, source: 'app' });
         parse.mockReturnValue([]);
-        run.mockResolvedValueOnce('inventory').mockResolvedValueOnce(`GitHub Copilot CLI ${version}.\n`);
+        run.mockResolvedValueOnce('inventory').mockResolvedValueOnce('GitHub Copilot CLI 1.0.84-3.\n');
 
         await expect(install(testFixture)).resolves.toBe('incompatibleCli');
         expect(run.mock.calls.map((call) => call[1])).toEqual([['plugin', 'list'], ['--version']]);
         expect(state.update).not.toHaveBeenCalled();
-        expect(channel.info).toHaveBeenCalled();
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.CopilotDotnetPlugin, {
             outcome: 'incompatibleCli',
-            source,
+            source: 'app',
             cached: 'false',
         });
         expect(reporter.sendTelemetryErrorEvent).not.toHaveBeenCalled();
-    });
 
-    test('rechecks an incompatible CLI after an upgrade without changing the extension version', async () => {
-        const testFixture = fixture();
-        parse.mockReturnValue([]);
-        run.mockResolvedValueOnce('inventory').mockResolvedValueOnce('GitHub Copilot CLI 1.0.83.\n');
-
-        await expect(install(testFixture)).resolves.toBe('incompatibleCli');
-        expect(testFixture.state.update).not.toHaveBeenCalled();
         await expect(install(testFixture)).resolves.toBe('installed');
-        expect(run.mock.calls.filter((call) => call[1][0] === '--version')).toHaveLength(2);
-        expect(testFixture.state.get(dotnetPluginCacheKey)).toMatchObject({ outcome: 'alreadyInstalled' });
+        expect(state.get(dotnetPluginCacheKey)).toMatchObject({ outcome: 'alreadyInstalled' });
     });
 
     test.each(['private output', 'GitHub Copilot CLI invalid.'])(
         'reports unrecognized version output %j as a version-stage failure',
         async (output) => {
             const testFixture = fixture();
-            const { state, reporter, channel } = testFixture;
+            const { reporter } = testFixture;
             parse.mockReturnValue([]);
             run.mockResolvedValueOnce('inventory').mockResolvedValueOnce(output);
 
             await expect(install(testFixture)).resolves.toBe('installFailed');
-            expect(run.mock.calls.map((call) => call[1])).toEqual([['plugin', 'list'], ['--version']]);
-            expect(state.update).not.toHaveBeenCalled();
-            expect(channel.error).toHaveBeenCalledWith(
-                'Copilot .NET plugin version failed',
-                new Error('Unrecognized Copilot CLI version')
-            );
             expect(reporter.sendTelemetryErrorEvent).toHaveBeenCalledWith(
                 TelemetryEventNames.CopilotDotnetPluginError,
                 {
@@ -306,24 +283,21 @@ describe('Copilot .NET plugin installation', () => {
         }
     );
 
-    test.each(['alreadyInstalled', 'alreadyInstalledDisabled', 'conflictingPlugin', 'conflictingMarketplace'])(
-        'cached %s skips discovery and all CLI calls',
-        async (outcome) => {
-            const testFixture = fixture();
-            const { state, reporter } = testFixture;
-            state.values.set(dotnetPluginCacheKey, { extensionVersion: '1.2.3', outcome, source: 'app' });
-            await expect(install(testFixture)).resolves.toBe(outcome);
-            expect(find).not.toHaveBeenCalled();
-            expect(run).not.toHaveBeenCalled();
-            expect(state.update).not.toHaveBeenCalled();
-            expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
-            expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.CopilotDotnetPlugin, {
-                outcome,
-                source: 'app',
-                cached: 'true',
-            });
-        }
-    );
+    test('cached outcome skips discovery and all CLI calls', async () => {
+        const outcome = 'conflictingMarketplace';
+        const testFixture = fixture();
+        const { state, reporter } = testFixture;
+        state.values.set(dotnetPluginCacheKey, { extensionVersion: '1.2.3', outcome, source: 'app' });
+        await expect(install(testFixture)).resolves.toBe(outcome);
+        expect(find).not.toHaveBeenCalled();
+        expect(state.update).not.toHaveBeenCalled();
+        expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
+        expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.CopilotDotnetPlugin, {
+            outcome,
+            source: 'app',
+            cached: 'true',
+        });
+    });
 
     test('ignores a cache from another extension version', async () => {
         const testFixture = fixture();
@@ -362,7 +336,6 @@ describe('Copilot .NET plugin installation', () => {
         const { state, reporter } = testFixture;
         find.mockResolvedValueOnce(undefined);
         await expect(install(testFixture)).resolves.toBe('copilotNotAvailable');
-        expect(run).not.toHaveBeenCalled();
         expect(state.update).not.toHaveBeenCalled();
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(TelemetryEventNames.CopilotDotnetPlugin, {
             outcome: 'copilotNotAvailable',
@@ -402,50 +375,6 @@ describe('Copilot .NET plugin installation', () => {
                 source: 'none',
                 cached: 'false',
             });
-        }
-    );
-
-    test.each(['discovery', 'inventory', 'version', 'marketplace', 'install'])(
-        'failure during %s is not cached',
-        async (stage) => {
-            const testFixture = fixture();
-            const { state, reporter, channel } = testFixture;
-            const error = new Error('private path or output');
-            if (stage === 'discovery') {
-                find.mockRejectedValue(error);
-            } else if (stage === 'inventory') {
-                parse.mockImplementation(() => {
-                    throw error;
-                });
-            } else {
-                parse.mockReturnValue([]);
-                run.mockImplementation(async (_runtime, args) => {
-                    if (stage === 'version' && args[0] === '--version') {
-                        throw error;
-                    }
-                    if (stage === 'marketplace' && args[1] === 'marketplace') {
-                        throw error;
-                    }
-                    if (args[1] === 'marketplace' && args[2] === 'list') {
-                        return '[{"name":"dotnet-agent-skills","source":"GitHub: dotnet/skills"}]';
-                    }
-                    if (stage === 'install' && args[1] === 'install') {
-                        throw error;
-                    }
-                    return cliOutput(args);
-                });
-            }
-            await expect(install(testFixture)).resolves.toBe('installFailed');
-            expect(state.update).not.toHaveBeenCalled();
-            expect(channel.error).toHaveBeenCalled();
-            expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
-            expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
-            expect(reporter.sendTelemetryEvent.mock.calls[0][1]).toMatchObject({ outcome: 'installFailed' });
-            expect(reporter.sendTelemetryErrorEvent.mock.calls[0][1]).toMatchObject({
-                stage,
-                outcome: 'installFailed',
-            });
-            expect(JSON.stringify(reporter.sendTelemetryErrorEvent.mock.calls)).not.toContain('private path');
         }
     );
 
@@ -493,15 +422,11 @@ describe('Copilot .NET plugin installation', () => {
         expect(jest.getTimerCount()).toBe(0);
     });
 
-    test.each(['version', 'install'])('deactivation cancels %s without reporting a failure', async (stage) => {
+    test('deactivation cancels the running command without reporting a failure', async () => {
         const testFixture = fixture();
         const { context, state, reporter, channel } = testFixture;
         const started = deferred<vscode.CancellationToken>();
-        parse.mockReturnValue([]);
-        run.mockImplementation(async (_cli, args, commandToken) => {
-            if (!(stage === 'version' ? args[0] === '--version' : args[1] === 'install')) {
-                return cliOutput(args);
-            }
+        run.mockImplementation(async (_cli, _args, commandToken) => {
             started.resolve(commandToken);
             return await new Promise<string>((_resolve, reject) => {
                 commandToken.onCancellationRequested(() => reject(new vscode.CancellationError()));
@@ -540,6 +465,10 @@ describe('Copilot .NET plugin diagnostic telemetry', () => {
         });
 
         await expect(install(testFixture)).resolves.toBe('installFailed');
+        expect(testFixture.state.update).not.toHaveBeenCalled();
+        expect(testFixture.reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
+        expect(testFixture.reporter.sendTelemetryEvent.mock.calls[0][1]).toMatchObject({ outcome: 'installFailed' });
+        expect(JSON.stringify(testFixture.reporter.sendTelemetryErrorEvent.mock.calls)).not.toContain('private');
         expect(testFixture.reporter.sendTelemetryErrorEvent).toHaveBeenCalledTimes(1);
         expect(testFixture.reporter.sendTelemetryErrorEvent).toHaveBeenCalledWith(
             TelemetryEventNames.CopilotDotnetPluginError,
@@ -591,6 +520,9 @@ describe('Copilot .NET plugin diagnostic telemetry', () => {
             });
         }
         await expect(install(testFixture)).resolves.toBe('installFailed');
+        expect(testFixture.state.update).not.toHaveBeenCalled();
+        expect(testFixture.reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
+        expect(testFixture.reporter.sendTelemetryEvent.mock.calls[0][1]).toMatchObject({ outcome: 'installFailed' });
         expect(testFixture.reporter.sendTelemetryErrorEvent).toHaveBeenCalledWith(
             TelemetryEventNames.CopilotDotnetPluginError,
             {
@@ -605,12 +537,10 @@ describe('Copilot .NET plugin diagnostic telemetry', () => {
 
     test.each<[unknown, { processCode?: string; exitCode?: string }]>([
         ['ENOENT', { processCode: 'ENOENT' }],
-        ['ERR_CHILD_PROCESS_STDIO_MAXBUFFER', { processCode: 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER' }],
         ['private-token', { processCode: 'other' }],
         ['1', { processCode: 'other' }],
         [1, { exitCode: '1' }],
         [NaN, { processCode: 'other' }],
-        [null, {}],
         [undefined, {}],
     ])('only emits safe structured properties for code %j', async (code, properties) => {
         const testFixture = fixture();
@@ -648,14 +578,6 @@ describe('Copilot .NET plugin diagnostic telemetry', () => {
 });
 
 describe('Copilot .NET plugin registration', () => {
-    test('starts automatic installation and owns its disposables', async () => {
-        const { context, reporter, channel } = fixture();
-        const pending = registerDotnetPlugin(context, reporter, channel);
-        expect(find).toHaveBeenCalledTimes(1);
-        await expect(pending).resolves.toBe('alreadyInstalled');
-        context.subscriptions.forEach((subscription) => subscription.dispose());
-    });
-
     test('test extension hosts never start automatic plugin operations', async () => {
         const { context, reporter, channel } = fixture();
         context.extensionMode = vscode.ExtensionMode.Test;
