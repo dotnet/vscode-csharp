@@ -103,7 +103,7 @@ describe('completeDebuggerInstall workspace .NET state', () => {
             expect(checkDotNetCli).not.toHaveBeenCalled();
             expect(getDotnetInfoMock).not.toHaveBeenCalled();
             expect(writeEmptyFile).toHaveBeenCalledWith(debugUtil.installCompleteFilePath());
-            expect(provider.disposed()).toBe(true);
+            expect(provider.disposed()).toBe(false);
         } finally {
             checkDotNetCli.mockRestore();
             checkDotNetSdkVersion.mockRestore();
@@ -185,8 +185,7 @@ describe('completeDebuggerInstall workspace .NET state', () => {
         }
     });
 
-    test('fails closed without remediation when provider resolution times out', async () => {
-        jest.useFakeTimers();
+    test('fails closed immediately without remediation while provider resolution is in progress', async () => {
         const debugUtil = new CoreClrDebugUtil('/extension');
         const checkDotNetCli = jest.spyOn(debugUtil, 'checkDotNetCli').mockResolvedValue();
         const writeEmptyFile = jest.spyOn(CoreClrDebugUtil, 'writeEmptyFile').mockResolvedValue();
@@ -195,19 +194,13 @@ describe('completeDebuggerInstall workspace .NET state', () => {
         getCSharpDevKitMock.mockReturnValue(createProvider({ kind: 'resolving', revision: 1 }).extension);
 
         try {
-            const result = completeDebuggerInstall(
-                debugUtil,
-                new PlatformInformation('linux', 'x64'),
-                new EventStream()
-            );
-            await jest.advanceTimersByTimeAsync(90_000);
-
-            await expect(result).resolves.toBe(false);
+            await expect(
+                completeDebuggerInstall(debugUtil, new PlatformInformation('linux', 'x64'), new EventStream())
+            ).resolves.toBe(false);
             expect(checkDotNetCli).not.toHaveBeenCalled();
             expect(writeEmptyFile).not.toHaveBeenCalled();
             expect(showErrorMessage).not.toHaveBeenCalled();
         } finally {
-            jest.useRealTimers();
             checkDotNetCli.mockRestore();
             writeEmptyFile.mockRestore();
             showErrorMessage.mockRestore();

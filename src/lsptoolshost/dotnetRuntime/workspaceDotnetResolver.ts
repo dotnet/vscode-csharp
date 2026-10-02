@@ -5,16 +5,12 @@
 
 import {
     CSharpDevKitExports,
-    WorkspaceDotnetStateServiceV1,
-    WorkspaceDotnetStateV1,
     WorkspaceDotnetHostV1,
     WorkspaceDotnetSdkV1,
+    WorkspaceDotnetStateServiceV1,
+    WorkspaceDotnetStateV1,
 } from '../../csharpDevKitExports';
-import * as vscode from 'vscode';
 import * as semver from 'semver';
-import { isDeepStrictEqual } from 'util';
-
-export const workspaceDotnetResolutionTimeoutMs = 90_000;
 
 export interface ResolvedWorkspaceDotnet {
     architecture: string;
@@ -30,8 +26,7 @@ export class WorkspaceDotnetResolutionError extends Error {
 }
 
 export async function activateAndResolveWorkspaceDotnet(
-    devKitExportsPromise: PromiseLike<CSharpDevKitExports | undefined>,
-    timeoutMs = workspaceDotnetResolutionTimeoutMs
+    devKitExportsPromise: PromiseLike<CSharpDevKitExports | undefined>
 ): Promise<ResolvedWorkspaceDotnet | undefined> {
     let devKitExports: CSharpDevKitExports;
     try {
@@ -46,19 +41,18 @@ export async function activateAndResolveWorkspaceDotnet(
         });
     }
 
-    return await resolveWorkspaceDotnet(devKitExports?.workspaceDotnet, timeoutMs);
+    return resolveWorkspaceDotnet(devKitExports.workspaceDotnet);
 }
 
-export async function resolveWorkspaceDotnet(
-    service: WorkspaceDotnetStateServiceV1 | undefined,
-    timeoutMs = workspaceDotnetResolutionTimeoutMs
-): Promise<ResolvedWorkspaceDotnet | undefined> {
+export function resolveWorkspaceDotnet(
+    service: WorkspaceDotnetStateServiceV1 | undefined
+): ResolvedWorkspaceDotnet | undefined {
     if (!service || service.version !== '1.0') {
         return undefined;
     }
 
     try {
-        return await resolveSupportedWorkspaceDotnet(service, timeoutMs);
+        return resolveSupportedWorkspaceDotnet(service);
     } catch (error) {
         if (error instanceof WorkspaceDotnetResolutionError) {
             throw error;
@@ -68,119 +62,31 @@ export async function resolveWorkspaceDotnet(
     }
 }
 
-async function resolveSupportedWorkspaceDotnet(
-    service: WorkspaceDotnetStateServiceV1,
-    timeoutMs: number
-): Promise<ResolvedWorkspaceDotnet | undefined> {
-    if (typeof service.getState !== 'function' || typeof service.onDidChangeState !== 'function') {
+function resolveSupportedWorkspaceDotnet(service: WorkspaceDotnetStateServiceV1): ResolvedWorkspaceDotnet | undefined {
+    if (typeof service.getState !== 'function') {
         throw new WorkspaceDotnetResolutionError(
             'C# Dev Kit workspace .NET service version 1.0 has an invalid contract.'
         );
     }
 
-    const pendingStates: WorkspaceDotnetStateV1[] = [];
-    const observedStates = new Map<number, WorkspaceDotnetStateV1>();
-    let notifyStateChanged: (() => void) | undefined;
-    let listener: vscode.Disposable | undefined;
-    const deadline = Date.now() + timeoutMs;
-    try {
-        // Subscribe before reading so a transition between registration and getState cannot be missed.
-        // Revisions reconcile any event queued during that read; equal revisions must describe the same snapshot.
-        listener = service.onDidChangeState((state) => {
-            pendingStates.push(state);
-            notifyStateChanged?.();
-        });
-        if (!listener || typeof listener.dispose !== 'function') {
-            throw new WorkspaceDotnetResolutionError(
-                'C# Dev Kit workspace .NET service version 1.0 has an invalid event contract.'
-            );
-        }
-
-        let state = validateState(service.getState());
-        state = applyPendingStates(state, pendingStates, observedStates);
-
-        while (state.kind === 'resolving') {
-            const remainingTime = deadline - Date.now();
-            if (remainingTime <= 0) {
-                throw new WorkspaceDotnetResolutionError(
-                    'Timed out waiting for C# Dev Kit to resolve the workspace .NET SDK.'
-                );
-            }
-
-            await new Promise<void>((resolve, reject) => {
-                const timeout = setTimeout(
-                    () =>
-                        reject(
-                            new WorkspaceDotnetResolutionError(
-                                'Timed out waiting for C# Dev Kit to resolve the workspace .NET SDK.'
-                            )
-                        ),
-                    remainingTime
-                );
-                notifyStateChanged = () => {
-                    clearTimeout(timeout);
-                    notifyStateChanged = undefined;
-                    resolve();
-                };
-
-                if (pendingStates.length > 0) {
-                    notifyStateChanged();
-                }
-            });
-
-            state = applyPendingStates(state, pendingStates, observedStates);
-        }
-
-        if (state.kind === 'notApplicable') {
-            return undefined;
-        }
-
-        if (state.kind === 'blocked') {
-            throw new WorkspaceDotnetResolutionError('C# Dev Kit blocked workspace .NET SDK resolution.');
-        }
-
-        return {
-            architecture: state.host.architecture,
-            environment: state.host.environment,
-            sdk: state.sdk,
-        };
-    } finally {
-        notifyStateChanged = undefined;
-        listener?.dispose();
-    }
-}
-
-function applyPendingStates(
-    currentState: WorkspaceDotnetStateV1,
-    pendingStates: WorkspaceDotnetStateV1[],
-    observedStates: Map<number, WorkspaceDotnetStateV1>
-): WorkspaceDotnetStateV1 {
-    recordObservedState(currentState, observedStates);
-    let latestState = currentState;
-    for (const pendingState of pendingStates.splice(0)) {
-        const validatedState = validateState(pendingState);
-        recordObservedState(validatedState, observedStates);
-        if (validatedState.revision < latestState.revision) {
-            continue;
-        }
-
-        if (validatedState.revision > latestState.revision) {
-            latestState = validatedState;
-        }
+    const state = validateState(service.getState());
+    if (state.kind === 'notApplicable') {
+        return undefined;
     }
 
-    return latestState;
-}
-
-function recordObservedState(state: WorkspaceDotnetStateV1, observedStates: Map<number, WorkspaceDotnetStateV1>): void {
-    const observedState = observedStates.get(state.revision);
-    if (observedState && !isDeepStrictEqual(observedState, state)) {
-        throw new WorkspaceDotnetResolutionError(
-            'C# Dev Kit workspace .NET service version 1.0 returned conflicting states for the same revision.'
-        );
+    if (state.kind === 'resolving') {
+        throw new WorkspaceDotnetResolutionError('C# Dev Kit is still resolving the workspace .NET SDK.');
     }
 
-    observedStates.set(state.revision, state);
+    if (state.kind === 'blocked') {
+        throw new WorkspaceDotnetResolutionError('C# Dev Kit blocked workspace .NET SDK resolution.');
+    }
+
+    return {
+        architecture: state.host.architecture,
+        environment: state.host.environment,
+        sdk: state.sdk,
+    };
 }
 
 function validateState(state: WorkspaceDotnetStateV1): WorkspaceDotnetStateV1 {
