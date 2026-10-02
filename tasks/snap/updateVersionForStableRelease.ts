@@ -11,13 +11,13 @@ runTask(updateVersionForStableRelease);
 /**
  * Update version.json to the next stable release version.
  * This task is used when snapping from prerelease to release.
- * It updates the version to round up to the next tens version (e.g., 2.74 -> 2.80).
+ * It updates the version to the next even minor version (e.g., 11.3 -> 11.4).
  */
 async function updateVersionForStableRelease(): Promise<void> {
     // Get the current version from version.json
     const versionJson = readVersionJson();
 
-    const currentVersion = versionJson.version as string;
+    const currentVersion = versionJson.version;
     const releaseVersion = getNextReleaseVersion(currentVersion);
 
     console.log(`Updating version from ${currentVersion} to stable release version ${releaseVersion}`);
