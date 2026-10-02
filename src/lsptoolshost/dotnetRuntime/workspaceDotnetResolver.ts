@@ -30,16 +30,16 @@ export class WorkspaceDotnetResolutionError extends Error {
 }
 
 export async function activateAndResolveWorkspaceDotnet(
-    devKit: vscode.Extension<CSharpDevKitExports> | undefined,
+    devKitExportsPromise: PromiseLike<CSharpDevKitExports | undefined>,
     timeoutMs = workspaceDotnetResolutionTimeoutMs
 ): Promise<ResolvedWorkspaceDotnet | undefined> {
-    if (!devKit) {
-        return undefined;
-    }
-
     let devKitExports: CSharpDevKitExports;
     try {
-        devKitExports = await devKit.activate();
+        const exports = await devKitExportsPromise;
+        if (!exports) {
+            return undefined;
+        }
+        devKitExports = exports;
     } catch (error) {
         throw new WorkspaceDotnetResolutionError('Failed to activate C# Dev Kit workspace .NET provider.', {
             cause: error,
@@ -79,6 +79,7 @@ async function resolveSupportedWorkspaceDotnet(
     }
 
     const pendingStates: WorkspaceDotnetStateV1[] = [];
+    const observedStates = new Map<number, WorkspaceDotnetStateV1>();
     let notifyStateChanged: (() => void) | undefined;
     let listener: vscode.Disposable | undefined;
     const deadline = Date.now() + timeoutMs;
@@ -96,7 +97,7 @@ async function resolveSupportedWorkspaceDotnet(
         }
 
         let state = validateState(service.getState());
-        state = applyPendingStates(state, pendingStates);
+        state = applyPendingStates(state, pendingStates, observedStates);
 
         while (state.kind === 'resolving') {
             const remainingTime = deadline - Date.now();
@@ -127,7 +128,7 @@ async function resolveSupportedWorkspaceDotnet(
                 }
             });
 
-            state = applyPendingStates(state, pendingStates);
+            state = applyPendingStates(state, pendingStates, observedStates);
         }
 
         if (state.kind === 'notApplicable') {
@@ -151,27 +152,35 @@ async function resolveSupportedWorkspaceDotnet(
 
 function applyPendingStates(
     currentState: WorkspaceDotnetStateV1,
-    pendingStates: WorkspaceDotnetStateV1[]
+    pendingStates: WorkspaceDotnetStateV1[],
+    observedStates: Map<number, WorkspaceDotnetStateV1>
 ): WorkspaceDotnetStateV1 {
+    recordObservedState(currentState, observedStates);
     let latestState = currentState;
     for (const pendingState of pendingStates.splice(0)) {
         const validatedState = validateState(pendingState);
+        recordObservedState(validatedState, observedStates);
         if (validatedState.revision < latestState.revision) {
             continue;
         }
 
-        if (validatedState.revision === latestState.revision) {
-            if (!isDeepStrictEqual(validatedState, latestState)) {
-                throw new WorkspaceDotnetResolutionError(
-                    'C# Dev Kit workspace .NET service version 1.0 returned conflicting states for the same revision.'
-                );
-            }
-        } else {
+        if (validatedState.revision > latestState.revision) {
             latestState = validatedState;
         }
     }
 
     return latestState;
+}
+
+function recordObservedState(state: WorkspaceDotnetStateV1, observedStates: Map<number, WorkspaceDotnetStateV1>): void {
+    const observedState = observedStates.get(state.revision);
+    if (observedState && !isDeepStrictEqual(observedState, state)) {
+        throw new WorkspaceDotnetResolutionError(
+            'C# Dev Kit workspace .NET service version 1.0 returned conflicting states for the same revision.'
+        );
+    }
+
+    observedStates.set(state.revision, state);
 }
 
 function validateState(state: WorkspaceDotnetStateV1): WorkspaceDotnetStateV1 {

@@ -32,6 +32,7 @@ import {
     ResolvedWorkspaceDotnet,
     WorkspaceDotnetResolutionError,
 } from '../lsptoolshost/dotnetRuntime/workspaceDotnetResolver';
+import { CSharpDevKitExports } from '../csharpDevKitExports';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -39,7 +40,8 @@ export async function activate(
     platformInformation: PlatformInformation,
     eventStream: EventStream,
     csharpOutputChannel: vscode.OutputChannel,
-    languageServerStartedPromise: Promise<any> | undefined
+    languageServerStartedPromise: Promise<any> | undefined,
+    csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined>
 ) {
     const disposables = new CompositeDisposable();
 
@@ -58,7 +60,9 @@ export async function activate(
             showInstallErrorMessage(eventStream);
         }
     } else if (!CoreClrDebugUtil.existsSync(debugUtil.installCompleteFilePath())) {
-        await completeDebuggerInstall(debugUtil, platformInformation, eventStream);
+        // C# Dev Kit waits for C# activation, so prerequisite completion must not await its exports
+        // on this activation stack. The deferred task still fails closed once the exports settle.
+        void completeDebuggerInstall(debugUtil, platformInformation, eventStream, csharpDevKitExportsPromise);
     }
 
     // register process picker for attach for legacy configurations.
@@ -111,7 +115,8 @@ export async function activate(
         platformInformation,
         eventStream,
         thisExtension.packageJSON,
-        thisExtension.extensionPath
+        thisExtension.extensionPath,
+        csharpDevKitExportsPromise
     );
     /** 'clr' type does not have a intial configuration provider, but we need to register it to support the common debugger features listed in {@link BaseVsDbgConfigurationProvider} */
     context.subscriptions.push(
@@ -187,10 +192,11 @@ async function checkIsValidArchitecture(
 export async function completeDebuggerInstall(
     debugUtil: CoreClrDebugUtil,
     platformInformation: PlatformInformation,
-    eventStream: EventStream
+    eventStream: EventStream,
+    csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined> = getCSharpDevKitExports()
 ): Promise<boolean> {
     try {
-        const workspaceDotnet = await resolveDebuggerWorkspaceDotnet();
+        const workspaceDotnet = await resolveDebuggerWorkspaceDotnet(csharpDevKitExportsPromise);
         if (workspaceDotnet) {
             debugUtil.checkDotNetSdkVersion(workspaceDotnet.sdk.version);
         } else {
@@ -224,8 +230,15 @@ export async function completeDebuggerInstall(
     }
 }
 
-async function resolveDebuggerWorkspaceDotnet(): Promise<ResolvedWorkspaceDotnet | undefined> {
-    return await activateAndResolveWorkspaceDotnet(getCSharpDevKit());
+async function resolveDebuggerWorkspaceDotnet(
+    csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined>
+): Promise<ResolvedWorkspaceDotnet | undefined> {
+    return await activateAndResolveWorkspaceDotnet(csharpDevKitExportsPromise);
+}
+
+async function getCSharpDevKitExports(): Promise<CSharpDevKitExports | undefined> {
+    const devKit = getCSharpDevKit();
+    return devKit ? devKit.activate() : Promise.resolve(undefined);
 }
 
 function showInstallErrorMessage(eventStream: EventStream) {
@@ -281,7 +294,8 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         private readonly platformInfo: PlatformInformation,
         private readonly eventStream: EventStream,
         private readonly packageJSON: any,
-        private readonly extensionPath: string
+        private readonly extensionPath: string,
+        private readonly csharpDevKitExportsPromise?: Promise<CSharpDevKitExports | undefined>
     ) {}
 
     async createDebugAdapterDescriptor(
@@ -321,7 +335,12 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             }
             // install.complete does not exist, check dotnetCLI to see if we can complete.
             else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-                const success = await completeDebuggerInstall(this.debugUtil, this.platformInfo, this.eventStream);
+                const success = await completeDebuggerInstall(
+                    this.debugUtil,
+                    this.platformInfo,
+                    this.eventStream,
+                    this.csharpDevKitExportsPromise ?? getCSharpDevKitExports()
+                );
                 if (!success) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());
                     throw new Error(
@@ -341,7 +360,9 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             let options: vscode.DebugAdapterExecutableOptions | undefined;
             let workspaceDotnet: ResolvedWorkspaceDotnet | undefined;
             try {
-                workspaceDotnet = await resolveDebuggerWorkspaceDotnet();
+                workspaceDotnet = await resolveDebuggerWorkspaceDotnet(
+                    this.csharpDevKitExportsPromise ?? getCSharpDevKitExports()
+                );
             } catch (error) {
                 if (error instanceof WorkspaceDotnetResolutionError) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());

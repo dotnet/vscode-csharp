@@ -11,7 +11,11 @@ import {
     WorkspaceDotnetStateServiceV1,
     WorkspaceDotnetStateV1,
 } from '../../../../src/csharpDevKitExports';
-import { completeDebuggerInstall, DebugAdapterExecutableFactory } from '../../../../src/coreclrDebug/activate';
+import {
+    activate,
+    completeDebuggerInstall,
+    DebugAdapterExecutableFactory,
+} from '../../../../src/coreclrDebug/activate';
 import { CoreClrDebugUtil } from '../../../../src/coreclrDebug/util';
 import { EventStream } from '../../../../src/eventStream';
 import { omnisharpOptions } from '../../../../src/shared/options';
@@ -23,6 +27,14 @@ jest.mock('vscode', () => {
     const vscode = jest.requireActual<typeof import('vscode')>('../../../../__mocks__/vscode');
     return {
         ...vscode,
+        commands: {
+            ...vscode.commands,
+            registerCommand: jest.fn(() => ({ dispose: () => {} })),
+        },
+        debug: {
+            registerDebugConfigurationProvider: jest.fn(() => ({ dispose: () => {} })),
+            registerDebugAdapterDescriptorFactory: jest.fn(() => ({ dispose: () => {} })),
+        },
         DebugAdapterExecutable: class {
             constructor(
                 public readonly command: string,
@@ -41,6 +53,38 @@ jest.mock('../../../../src/utils/getCSharpDevKit', () => ({
 
 const getDotnetInfoMock = jest.mocked(getDotnetInfo);
 const getCSharpDevKitMock = jest.mocked(getCSharpDevKit);
+
+describe('debugger activation with C# Dev Kit', () => {
+    test('does not wait for C# Dev Kit exports before completing C# activation', async () => {
+        const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockImplementation((filePath) => {
+            return !filePath.endsWith('install.complete');
+        });
+        const checkDotNetCli = jest.spyOn(CoreClrDebugUtil.prototype, 'checkDotNetCli').mockResolvedValue();
+        const devKitExports = new Promise<CSharpDevKitExports | undefined>(() => {});
+        const context = {
+            extensionPath: '/extension',
+            subscriptions: [],
+        } as unknown as vscode.ExtensionContext;
+
+        try {
+            await expect(
+                activate(
+                    { packageJSON: {}, extensionPath: '/extension' } as vscode.Extension<unknown>,
+                    context,
+                    new PlatformInformation('linux', 'x64'),
+                    new EventStream(),
+                    {} as vscode.OutputChannel,
+                    undefined,
+                    devKitExports
+                )
+            ).resolves.toBeUndefined();
+            expect(checkDotNetCli).not.toHaveBeenCalled();
+        } finally {
+            existsSync.mockRestore();
+            checkDotNetCli.mockRestore();
+        }
+    });
+});
 
 describe('completeDebuggerInstall workspace .NET state', () => {
     test('validates provider SDK metadata without probing and completes installation', async () => {
