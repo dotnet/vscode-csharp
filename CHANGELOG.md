@@ -6,7 +6,7 @@
 # 11.3.x
 
 # 11.2.x
-* Update Roslyn to 5.13.0-1.26502.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.13.0-1.26502.3 (PR: [#9842](https://github.com/dotnet/vscode-csharp/pull/9842))
   * Handle cref type parameters in symbol lookup (PR: [#85840](https://github.com/dotnet/roslyn/pull/85840))
   * Fix Razor test EOF bug and immutability violation (PR: [#85827](https://github.com/dotnet/roslyn/pull/85827))
   * Support per-client project autoload initialization options (PR: [#85814](https://github.com/dotnet/roslyn/pull/85814))
