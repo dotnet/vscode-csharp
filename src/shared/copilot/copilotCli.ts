@@ -176,11 +176,10 @@ export async function runCopilotCli(
                     } else if (controller.signal.aborted) {
                         reject(controller.signal.reason);
                     } else if (typeof error.code === 'number' || error.signal) {
-                        reject(
-                            new Error(`Copilot CLI exited with code ${error.code}, signal ${error.signal}: ${stderr}`, {
-                                cause: error,
-                            })
-                        );
+                        const message = `Copilot CLI exited with code ${error.code}, signal ${error.signal}: ${stderr}`;
+                        // Preserve the structured code because telemetry deliberately does not inspect error causes.
+                        const failure = Object.assign(new Error(message, { cause: error }), { code: error.code });
+                        reject(failure);
                     } else {
                         reject(error);
                     }

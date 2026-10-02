@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 11.2.x
+
 # 11.1.x
 * Update Roslyn to 5.12.0-1.26473.2 (PR: [#9805](https://github.com/dotnet/vscode-csharp/pull/9805))
 * Update Roslyn to 5.12.0-1.26471.3 (PR: [#9795](https://github.com/dotnet/vscode-csharp/pull/9795))

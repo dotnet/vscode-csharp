@@ -253,12 +253,16 @@ describe('Copilot CLI process execution', () => {
         await expect(promise).resolves.toBe('  • dotnet');
     });
 
-    test('rejects a nonzero exit with useful stderr and exit details', async () => {
+    test('preserves a numeric exit code alongside local error details', async () => {
+        const code = 7;
         const promise = runCopilotCli(runtime, ['plugin', 'list'], token());
-        completeExecution(Object.assign(new Error('failed'), { code: 7 }), '', 'permission denied');
+        const error = Object.assign(new Error('failed'), { code });
+        completeExecution(error, 'private stdout', 'private stderr');
         await expect(promise).rejects.toMatchObject({
             name: 'Error',
-            message: expect.stringContaining('7, signal undefined: permission denied'),
+            code,
+            cause: error,
+            message: expect.stringContaining(`${code}, signal undefined: private stderr`),
         });
     });
     test('rejects termination by a signal instead of treating it as successful empty output', async () => {
@@ -270,6 +274,7 @@ describe('Copilot CLI process execution', () => {
         );
         await expect(promise).rejects.toMatchObject({
             name: 'Error',
+            code: null,
             message: expect.stringContaining('SIGTERM'),
         });
     });
