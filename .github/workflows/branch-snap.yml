@@ -1,12 +1,6 @@
 name: Branch snap
 on:
   workflow_dispatch:
-    inputs:
-      releaseCandidate:
-        description: 'Is this a release candidate snap from main? (Will increment main version to be higher than next stable release)'
-        required: false
-        default: 'false'
-        type: boolean
 
 permissions:
   contents: write
@@ -32,12 +26,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Update version.json
-        run: |
-          if [ "${{ github.event.inputs.releaseCandidate }}" = "true" ]; then
-            npm run incrementVersion -- --releaseCandidate
-          else
-            npm run incrementVersion
-          fi
+        run: npm run incrementVersion
       - name: Create version update PR
         uses: peter-evans/create-pull-request@v4
         with:
