@@ -241,11 +241,11 @@ describe('DebugAdapterExecutableFactory workspace .NET state', () => {
             expect(executable.command).toContain(`${pathSeparator()}arm64${pathSeparator()}vsdbg-ui`);
             expect(getDotnetInfoMock).not.toHaveBeenCalled();
             expect(executable.options?.env).toMatchObject({
-                DOTNET_ROOT: undefined,
+                DOTNET_ROOT: '',
                 DOTNET_ROOT_X64: 'C:\\selected-x64',
                 dotnet_root_x64: 'C:\\selected-x64',
-                'DOTNET_ROOT(X86)': undefined,
-                'dotnet_root(x86)': undefined,
+                'DOTNET_ROOT(X86)': '',
+                'dotnet_root(x86)': '',
                 DOTNET_HOST_PATH: 'C:\\selected\\dotnet.exe',
                 SELECTED_ONLY: 'selected',
             });

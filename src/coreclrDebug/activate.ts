@@ -391,10 +391,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                     workspaceDotnet.architecture
                 );
                 options = {
-                    env: createDebugAdapterEnvironment(
-                        workspaceDotnet.environment,
-                        this.platformInfo.isWindows()
-                    ) as vscode.DebugAdapterExecutableOptions['env'],
+                    env: createDebugAdapterEnvironment(workspaceDotnet.environment, this.platformInfo.isWindows()),
                 };
             } else {
                 const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
@@ -433,14 +430,16 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 function createDebugAdapterEnvironment(
     contribution: Readonly<Record<string, string | null>>,
     isWindows: boolean
-): NodeJS.ProcessEnv {
+): { [key: string]: string } {
     const knownKeys = new Set([...Object.keys(process.env), ...Object.keys(contribution)]);
-    const environment: NodeJS.ProcessEnv = {};
+    const environment: { [key: string]: string } = {};
 
     for (const [key, value] of Object.entries(contribution)) {
         for (const knownKey of knownKeys) {
             if (environmentVariableNamesEqual(knownKey, key, isWindows)) {
-                environment[knownKey] = value ?? undefined;
+                // DebugAdapterExecutableOptions is serialized across the extension-host boundary, which drops
+                // undefined properties. Empty strings survive that boundary and neutralize inherited values.
+                environment[knownKey] = value ?? '';
             }
         }
     }

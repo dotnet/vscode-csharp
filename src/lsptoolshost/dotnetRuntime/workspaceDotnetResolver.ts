@@ -88,13 +88,6 @@ export function resolveWorkspaceDotnet(
 }
 
 function resolveSupportedWorkspaceDotnet(service: WorkspaceDotnetStateServiceV1): ResolvedWorkspaceDotnet | undefined {
-    if (typeof service.getState !== 'function') {
-        throw new WorkspaceDotnetResolutionError(
-            'The C# Dev Kit workspace .NET service version 1.0 has an invalid contract.',
-            WorkspaceDotnetFailureReason.InvalidContract
-        );
-    }
-
     const state = validateState(service.getState());
     if (state.kind === 'notApplicable') {
         return undefined;
