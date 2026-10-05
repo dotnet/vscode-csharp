@@ -211,14 +211,8 @@
   "Recording trace... Click Cancel to stop and save.": "Recording trace... Click Cancel to stop and save.",
   "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
   "Collecting C# Logs": "Collecting C# Logs",
-  "Failed to activate the C# Dev Kit workspace .NET provider.": "Failed to activate the C# Dev Kit workspace .NET provider.",
-  "The C# Dev Kit workspace .NET provider failed.": "The C# Dev Kit workspace .NET provider failed.",
-  "The C# Dev Kit workspace .NET service version 1.0 has an invalid contract.": "The C# Dev Kit workspace .NET service version 1.0 has an invalid contract.",
   "C# Dev Kit is still resolving the workspace .NET SDK.": "C# Dev Kit is still resolving the workspace .NET SDK.",
   "C# Dev Kit blocked workspace .NET SDK resolution.": "C# Dev Kit blocked workspace .NET SDK resolution.",
-  "The C# Dev Kit workspace .NET service version 1.0 returned an invalid state.": "The C# Dev Kit workspace .NET service version 1.0 returned an invalid state.",
-  "The C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.": "The C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.",
-  "The C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.": "The C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.",
   "Nested Code Action": "Nested Code Action",
   "Fix All: ": "Fix All: ",
   "Pick a fix all scope": "Pick a fix all scope",
@@ -236,7 +230,7 @@
   "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.": "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.",
   "Unexpected RuntimeId '{0}'.": "Unexpected RuntimeId '{0}'.",
   "Unexpected .NET host architecture '{0}'.": "Unexpected .NET host architecture '{0}'.",
-  "The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.": "The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.",
+  "The value '{0}' for 'targetArchitecture' in launch configuration is invalid. Expected 'x86_64' or 'arm64'.": "The value '{0}' for 'targetArchitecture' in launch configuration is invalid. Expected 'x86_64' or 'arm64'.",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "Ignoring non-parseable lines in envFile {0}: {1}.",
   "Unexpected message received from debugger.": "Unexpected message received from debugger.",
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERROR]: C# Extension failed to install the debugger package.",
@@ -251,5 +245,6 @@
   "Get the SDK": "Get the SDK",
   "Disable message in settings": "Disable message in settings",
   "Help": "Help",
-  "The C# extension is still downloading packages. Please see progress in the output window below.": "The C# extension is still downloading packages. Please see progress in the output window below."
+  "The C# extension is still downloading packages. Please see progress in the output window below.": "The C# extension is still downloading packages. Please see progress in the output window below.",
+  "Unable to start the debugger because the workspace .NET SDK could not be resolved.": "Unable to start the debugger because the workspace .NET SDK could not be resolved."
 }

@@ -194,7 +194,7 @@ function validateTargetArchitecture(targetArchitecture: string): string {
     if (targetArchitecture !== 'x86_64' && targetArchitecture !== 'arm64') {
         throw new Error(
             vscode.l10n.t(
-                `The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`,
+                `The value '{0}' for 'targetArchitecture' in launch configuration is invalid. Expected 'x86_64' or 'arm64'.`,
                 targetArchitecture
             )
         );

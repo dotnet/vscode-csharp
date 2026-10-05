@@ -30,6 +30,7 @@ import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import {
     activateAndResolveWorkspaceDotnet,
     ResolvedWorkspaceDotnet,
+    WorkspaceDotnetFailureReason,
     WorkspaceDotnetResolutionError,
 } from '../lsptoolshost/dotnetRuntime/workspaceDotnetResolver';
 import { CSharpDevKitExports } from '../csharpDevKitExports';
@@ -226,6 +227,7 @@ export async function completeDebuggerInstall(
             showDotnetToolsWarning(error.message);
         }
         eventStream.post(new DebuggerPrerequisiteWarning(error.message));
+        // TODO: log telemetry?
         return false;
     }
 }
@@ -366,6 +368,18 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             } catch (error) {
                 if (error instanceof WorkspaceDotnetResolutionError) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());
+                    this.eventStream.post(new DebuggerPrerequisiteWarning(error.message));
+                    if (
+                        error.reason !== WorkspaceDotnetFailureReason.Resolving &&
+                        error.reason !== WorkspaceDotnetFailureReason.Blocked
+                    ) {
+                        throw new Error(
+                            vscode.l10n.t(
+                                'Unable to start the debugger because the workspace .NET SDK could not be resolved.'
+                            ),
+                            { cause: error }
+                        );
+                    }
                 }
                 throw error;
             }
