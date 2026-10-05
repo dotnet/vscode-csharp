@@ -4,14 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.3.x
-
-# 11.2.x
 * Update Roslyn to 5.13.0-1.26502.3 (PR: [#9842](https://github.com/dotnet/vscode-csharp/pull/9842))
   * Handle cref type parameters in symbol lookup (PR: [#85840](https://github.com/dotnet/roslyn/pull/85840))
-  * Fix Razor test EOF bug and immutability violation (PR: [#85827](https://github.com/dotnet/roslyn/pull/85827))
+  * Restore Razor HTML snippets at EOF and isolate completion requests (PR: [#85827](https://github.com/dotnet/roslyn/pull/85827))
   * Support per-client project autoload initialization options (PR: [#85814](https://github.com/dotnet/roslyn/pull/85814))
-  * Reduce Roslyn editor exception overhead (PR: [#85240](https://github.com/dotnet/roslyn/pull/85240))
-  * FileBasedProgramsEntryPointDiscovery: Use File.Move instead of File.Replace for cache file (PR: [#85763](https://github.com/dotnet/roslyn/pull/85763))
+  * Fix program discovery cache initialization failure on Linux (PR: [#85763](https://github.com/dotnet/roslyn/pull/85763))
   * Support MTP in language server test runs (PR: [#85271](https://github.com/dotnet/roslyn/pull/85271))
 
 # 11.1.x
