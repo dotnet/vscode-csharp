@@ -11,6 +11,7 @@ import {
     WorkspaceDotnetStateV1,
 } from '../../csharpDevKitExports';
 import * as semver from 'semver';
+import * as vscode from 'vscode';
 
 export interface ResolvedWorkspaceDotnet {
     architecture: string;
@@ -36,9 +37,10 @@ export async function activateAndResolveWorkspaceDotnet(
         }
         devKitExports = exports;
     } catch (error) {
-        throw new WorkspaceDotnetResolutionError('Failed to activate C# Dev Kit workspace .NET provider.', {
-            cause: error,
-        });
+        throw new WorkspaceDotnetResolutionError(
+            vscode.l10n.t('Failed to activate the C# Dev Kit workspace .NET provider.'),
+            { cause: error }
+        );
     }
 
     return resolveWorkspaceDotnet(devKitExports.workspaceDotnet);
@@ -58,14 +60,16 @@ export function resolveWorkspaceDotnet(
             throw error;
         }
 
-        throw new WorkspaceDotnetResolutionError('C# Dev Kit workspace .NET provider failed.', { cause: error });
+        throw new WorkspaceDotnetResolutionError(vscode.l10n.t('The C# Dev Kit workspace .NET provider failed.'), {
+            cause: error,
+        });
     }
 }
 
 function resolveSupportedWorkspaceDotnet(service: WorkspaceDotnetStateServiceV1): ResolvedWorkspaceDotnet | undefined {
     if (typeof service.getState !== 'function') {
         throw new WorkspaceDotnetResolutionError(
-            'C# Dev Kit workspace .NET service version 1.0 has an invalid contract.'
+            vscode.l10n.t('The C# Dev Kit workspace .NET service version 1.0 has an invalid contract.')
         );
     }
 
@@ -75,11 +79,13 @@ function resolveSupportedWorkspaceDotnet(service: WorkspaceDotnetStateServiceV1)
     }
 
     if (state.kind === 'resolving') {
-        throw new WorkspaceDotnetResolutionError('C# Dev Kit is still resolving the workspace .NET SDK.');
+        throw new WorkspaceDotnetResolutionError(
+            vscode.l10n.t('C# Dev Kit is still resolving the workspace .NET SDK.')
+        );
     }
 
     if (state.kind === 'blocked') {
-        throw new WorkspaceDotnetResolutionError('C# Dev Kit blocked workspace .NET SDK resolution.');
+        throw new WorkspaceDotnetResolutionError(vscode.l10n.t('C# Dev Kit blocked workspace .NET SDK resolution.'));
     }
 
     return {
@@ -97,7 +103,7 @@ function validateState(state: WorkspaceDotnetStateV1): WorkspaceDotnetStateV1 {
         !['resolving', 'ready', 'blocked', 'notApplicable'].includes(state.kind)
     ) {
         throw new WorkspaceDotnetResolutionError(
-            'C# Dev Kit workspace .NET service version 1.0 returned an invalid state.'
+            vscode.l10n.t('The C# Dev Kit workspace .NET service version 1.0 returned an invalid state.')
         );
     }
 
@@ -124,14 +130,16 @@ function validateReadyState(host: WorkspaceDotnetHostV1, sdk: WorkspaceDotnetSdk
         !semver.valid(sdk.version)
     ) {
         throw new WorkspaceDotnetResolutionError(
-            'C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.'
+            vscode.l10n.t('The C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.')
         );
     }
 
     for (const value of Object.values(host.environment)) {
         if (value !== null && typeof value !== 'string') {
             throw new WorkspaceDotnetResolutionError(
-                'C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.'
+                vscode.l10n.t(
+                    'The C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.'
+                )
             );
         }
     }

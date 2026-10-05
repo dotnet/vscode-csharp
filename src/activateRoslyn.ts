@@ -26,6 +26,7 @@ import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultRe
 import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
 import { ObservableLogOutputChannel } from './lsptoolshost/logging/observableLogOutputChannel';
 import { ActiveDocumentLanguageSupportService } from './lsptoolshost/projectContext/activeDocumentLanguageSupportService';
+import { activateCSharpDevKit } from './utils/activateCSharpDevKit';
 
 export function activateRoslyn(
     context: vscode.ExtensionContext,
@@ -113,7 +114,9 @@ export function activateRoslyn(
  * This method will try to get the CSharpDevKitExports through a thenable promise,
  * awaiting `activate` will cause this extension's activation to hang.
  */
-async function tryGetCSharpDevKitExtensionExports(
+// The exact activation promise is shared with debugger setup; an async wrapper could reject unobserved.
+// eslint-disable-next-line @typescript-eslint/promise-function-async
+function tryGetCSharpDevKitExtensionExports(
     csharpDevKit: vscode.Extension<CSharpDevKitExports> | undefined,
     csharpChannel: vscode.LogOutputChannel
 ): Promise<CSharpDevKitExports | undefined> {
@@ -121,9 +124,9 @@ async function tryGetCSharpDevKitExtensionExports(
         return Promise.resolve(undefined);
     }
 
-    const activation = csharpDevKit.activate();
-    activation.then(
-        async (exports: CSharpDevKitExports) => {
+    const activation = activateCSharpDevKit(csharpDevKit);
+    void activation
+        .then(async (exports: CSharpDevKitExports) => {
             if (exports && exports.serviceBroker) {
                 // When proffering this IServiceBroker into our own container,
                 // we list the monikers of the brokered services we expect to find there.
@@ -142,11 +145,10 @@ async function tryGetCSharpDevKitExtensionExports(
             } else {
                 csharpChannel.error(`'${csharpDevkitExtensionId}' activated but did not return expected Exports.`);
             }
-        },
-        () => {
+        })
+        .catch(() => {
             csharpChannel.error(`Failed to activate '${csharpDevkitExtensionId}'`);
-        }
-    );
+        });
     return activation;
 }
 
