@@ -26,7 +26,6 @@ import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultRe
 import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
 import { ObservableLogOutputChannel } from './lsptoolshost/logging/observableLogOutputChannel';
 import { ActiveDocumentLanguageSupportService } from './lsptoolshost/projectContext/activeDocumentLanguageSupportService';
-import { activateCSharpDevKit } from './utils/activateCSharpDevKit';
 
 export function activateRoslyn(
     context: vscode.ExtensionContext,
@@ -124,7 +123,7 @@ function tryGetCSharpDevKitExtensionExports(
         return Promise.resolve(undefined);
     }
 
-    const activation = activateCSharpDevKit(csharpDevKit);
+    const activation = Promise.resolve(csharpDevKit.activate());
     void activation
         .then(async (exports: CSharpDevKitExports) => {
             if (exports && exports.serviceBroker) {
