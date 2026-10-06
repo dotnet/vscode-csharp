@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.3.x
-* Update Roslyn to 5.13.0-1.26506.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.13.0-1.26506.2 (PR: [#9847](https://github.com/dotnet/vscode-csharp/pull/9847))
   * Prevent odd document Uris from causing inadvertent syntax errors (PR: [#85886](https://github.com/dotnet/roslyn/pull/85886))
   * Add code actions for documentation diagnostics (PR: [#85728](https://github.com/dotnet/roslyn/pull/85728))
   * Add folding ranges for documentation directives (PR: [#85725](https://github.com/dotnet/roslyn/pull/85725))
