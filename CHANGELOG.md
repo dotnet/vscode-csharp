@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.3.x
+* Update Roslyn to 5.13.0-1.26507.4 (PR: [#9851](https://github.com/dotnet/vscode-csharp/pull/9851))
+  * Fix close tag completion replacement ranges (PR: [#85710](https://github.com/dotnet/roslyn/pull/85710))
+  * Prevent odd document Uris from causing inadvertent syntax errors (PR: [#85886](https://github.com/dotnet/roslyn/pull/85886))
+  * Add code actions for documentation diagnostics (PR: [#85728](https://github.com/dotnet/roslyn/pull/85728))
+  * Add folding ranges for documentation directives (PR: [#85725](https://github.com/dotnet/roslyn/pull/85725))
+  * Add semantic-token support for documentation directives (PR: [#85724](https://github.com/dotnet/roslyn/pull/85724))
+  * Add documentation formatting, completion and snippets (PR: [#85727](https://github.com/dotnet/roslyn/pull/85727))
 * Update Roslyn to 5.13.0-1.26502.3 (PR: [#9842](https://github.com/dotnet/vscode-csharp/pull/9842))
   * Handle cref type parameters in symbol lookup (PR: [#85840](https://github.com/dotnet/roslyn/pull/85840))
   * Restore Razor HTML snippets at EOF and isolate completion requests (PR: [#85827](https://github.com/dotnet/roslyn/pull/85827))
