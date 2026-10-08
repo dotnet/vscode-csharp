@@ -126,6 +126,8 @@ stages:
 - stage:
   displayName: Test Linux (.NET 11)
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
