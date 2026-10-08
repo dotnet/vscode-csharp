@@ -6,10 +6,6 @@ parameters:
     type: boolean
     default: false
 
-variables:
-# This is expected to provide pat to tag release.
-- group: DncEng-Partners-Tokens
-
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
