@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 11.5.x
+
 # 11.3.x
 * Update Roslyn to 5.13.0-1.26507.4 (PR: [#9851](https://github.com/dotnet/vscode-csharp/pull/9851))
   * Fix close tag completion replacement ranges (PR: [#85710](https://github.com/dotnet/roslyn/pull/85710))
