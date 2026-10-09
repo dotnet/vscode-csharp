@@ -3,32 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { parseArgs } from 'util';
-import { addChangelogSection, getNextReleaseVersion, readVersionJson, writeVersionJson } from './snapTasks';
+import { addChangelogSection, getNextPrereleaseVersion, readVersionJson, writeVersionJson } from './snapTasks';
 import { runTask } from '../runTask';
 
 runTask(incrementVersion);
 
 async function incrementVersion(): Promise<void> {
-    const { values } = parseArgs({
-        options: {
-            releaseCandidate: { type: 'boolean' },
-        },
-    });
-    const isReleaseCandidate = values.releaseCandidate ?? false;
-
     // Get the current version from version.json
     const versionJson = readVersionJson();
 
-    // Calculate new version
-    let version = versionJson.version as string;
-    if (isReleaseCandidate) {
-        version = getNextReleaseVersion(version);
-        console.log(`Release candidate, using base version of ${version}`);
-    }
-
-    const split = version.split('.');
-    const newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
+    const newVersion = getNextPrereleaseVersion(versionJson.version);
     console.log(`Updating ${versionJson.version} to ${newVersion}`);
 
     // Write the new version back to version.json
