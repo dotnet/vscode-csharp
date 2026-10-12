@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.5.x
+* Update Roslyn to 5.13.0-1.26509.1 (PR: [#9863](https://github.com/dotnet/vscode-csharp/pull/9863))
+  * Fix race between FBP loader and LSP both opening a document (PR: [#85942](https://github.com/dotnet/roslyn/pull/85942))
+  * Reuse our existing file watching consolidation logic for LSP (PR: [#85951](https://github.com/dotnet/roslyn/pull/85951))
+  * Correct diagnostic inter-file dependency metadata (PR: [#85953](https://github.com/dotnet/roslyn/pull/85953))
+  * Show event-accessor local functions in Solution Explorer and Document Outline (PR: [#85957](https://github.com/dotnet/roslyn/pull/85957))
 
 # 11.3.x
 * Update Roslyn to 5.13.0-1.26507.4 (PR: [#9851](https://github.com/dotnet/vscode-csharp/pull/9851))
