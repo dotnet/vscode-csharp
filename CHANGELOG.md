@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.5.x
-* Update Roslyn to 5.13.0-1.26513.11 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.13.0-1.26513.11 (PR: [#9872](https://github.com/dotnet/vscode-csharp/pull/9872))
   * Don't copy generated file banners to new documents (PR: [#85682](https://github.com/dotnet/roslyn/pull/85682))
   * [Add options to] skip formatting in script and style blocks with complex Razor expressions (PR: [#85142](https://github.com/dotnet/roslyn/pull/85142))
   * Fix Razor multiline attribute directive formatting (PR: [#86028](https://github.com/dotnet/roslyn/pull/86028))
