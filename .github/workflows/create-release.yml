@@ -2,7 +2,7 @@ name: Create GitHub Release
 on:
   push:
     tags:
-      - 'v2.*'
+      - 'v[0-9]+.*'
 
 permissions:
   contents: write

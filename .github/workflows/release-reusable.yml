@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       tag:
-        description: Tag name to create a release for (e.g. v2.88.0 or v2.88.0-prerelease)
+        description: Tag name with any numeric major version (e.g. v11.4.0 or v11.5.0-prerelease)
         required: true
         type: string
 
@@ -32,8 +32,8 @@ jobs:
             const tag = process.env.TAG;
             core.info(`Creating release for tag: ${tag}`);
 
-            if (!tag || !tag.startsWith('v2.')) {
-              core.setFailed('Invalid tag name. Tag name must start with "v2."');
+            if (!tag || !/^v[0-9]+\./.test(tag)) {
+              core.setFailed('Invalid tag name. Tag name must start with "v" followed by a numeric major version and a dot.');
               return;
             }
 
