@@ -1619,6 +1619,12 @@
             ],
             "description": "%configuration.razor.razor.format.attributeIndentStyle%"
           },
+          "razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": {
+            "type": "boolean",
+            "scope": "window",
+            "default": true,
+            "description": "%configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor%"
+          },
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
             "scope": "window",
