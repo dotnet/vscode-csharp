@@ -131,7 +131,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
         }
 
         const normalizePath = (value: string) => {
-            const fullPath = path.resolve(folder.uri.fsPath, value);
+            const fullPath = path.resolve(folder.uri.fsPath, value.replace(/[\\/]/g, path.sep));
             return process.platform === 'win32' ? fullPath.toLowerCase() : fullPath;
         };
         const normalizedProjectPath = projectPath && normalizePath(projectPath);
