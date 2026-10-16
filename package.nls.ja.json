@@ -138,7 +138,7 @@
   "configuration.razor.razor.completion.commitElementsWithSpace": "タグ ヘルパーとコンポーネント要素をスペースでコミットするかどうかを指定します。",
   "configuration.razor.razor.format.attributeIndentStyle": "Razor ファイルの HTML およびコンポーネント タグ属性のインデント スタイルを指定します。",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "@code または @functions ディレクティブの後の始め中かっこを強制的に次の行にします。",
-  "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "If true, preserves source indentation inside script and style blocks that contain Razor statements, blocks, directives, comments, templates, or standalone expressions.",
+  "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "true の場合、Razor ステートメント、ブロック、ディレクティブ、コメント、テンプレート、スタンドアロンの式を含むスクリプトブロックとスタイル ブロック内で、ソースのインデントが保持されます。",
   "debuggers.coreclr.configurationSnippets.description.attach": "実行中のプロセスに .NET デバッガー (coreclr) をアタッチします。これは、'.NET 5 以降または .NET Core プロセスにアタッチする' コマンドを使用して行うこともできます。",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "このスニペットは、起動する実行可能ファイルへのパスを指定して、Blazor WebAssembly デバッガー (blazorwasm) で新しいプロセスを起動するために使用されます。ほとんどの場合、\".NET: Launch C# プロジェクト\" スニペットの方が適切ですが、このスニペットを使用すると、すべての起動オプションを完全に制御できます。このスニペットは、ホストされている Blazor プロジェクト用です。これは、ファイルを提供するバックエンド ASP.NET Core アプリを持つプロジェクトです。",
   "debuggers.coreclr.configurationSnippets.description.blazor-standalone": "このスニペットは、Blazor WebAssembly デバッガー (blazorwasm) で新しいプロセスを起動するために使用されます。ほとんどの場合、\".NET: Launch C# プロジェクト\" スニペットの方が適切ですが、このスニペットを使用すると、すべての起動オプションを完全に制御できます。このスニペットは、スタンドアロン Blazor プロジェクト用です。これは、ファイルを提供するバックエンド ASP.NET Core アプリを持たないプロジェクトです。",
