@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.5.x
+* Allow manual release creation for existing tags (PR: [#9878](https://github.com/dotnet/vscode-csharp/pull/9878))
+* Re-enable Source Link integration tests with C# Dev Kit 11.3.30 (PR: [#9855](https://github.com/dotnet/vscode-csharp/pull/9855))
+* Allow any numeric major version in release tags (PR: [#9875](https://github.com/dotnet/vscode-csharp/pull/9875))
+* Add Razor script and style indentation setting (PR: [#9873](https://github.com/dotnet/vscode-csharp/pull/9873))
+* Bump source-map-js from 1.2.1 to 1.2.2 (PR: [#9852](https://github.com/dotnet/vscode-csharp/pull/9852))
 * Update Roslyn to 5.13.0-1.26513.11 (PR: [#9872](https://github.com/dotnet/vscode-csharp/pull/9872))
   * Don't copy generated file banners to new documents (PR: [#85682](https://github.com/dotnet/roslyn/pull/85682))
   * [Add options to] skip formatting in script and style blocks with complex Razor expressions (PR: [#85142](https://github.com/dotnet/roslyn/pull/85142))
