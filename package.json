@@ -4666,7 +4666,7 @@
               },
               "projectPath": {
                 "type": "string",
-                "description": "The path to the Blazor WebAssembly .csproj file. Used to determine target framework and managed WebAssembly debugging support."
+                "description": "The Blazor WebAssembly .csproj path used to determine the target framework and resolve the managed debugger program and assets."
               },
               "url": {
                 "type": "string",
@@ -4816,7 +4816,7 @@
             "properties": {
               "projectPath": {
                 "type": "string",
-                "description": "The path to the Blazor WebAssembly .csproj file. Used to determine target framework and managed WebAssembly debugging support."
+                "description": "The Blazor WebAssembly .csproj path used to determine the target framework and resolve the managed debugger program and assets."
               },
               "url": {
                 "type": "string",
