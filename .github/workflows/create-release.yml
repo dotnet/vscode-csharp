@@ -2,7 +2,13 @@ name: Create GitHub Release
 on:
   push:
     tags:
-      - 'v2.*'
+      - 'v[0-9]+.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to create a release for (e.g. v11.4.0)
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -14,5 +20,5 @@ jobs:
   create-release:
     uses: dotnet/vscode-csharp/.github/workflows/release-reusable.yml@main
     with:
-      tag: ${{ github.ref_name }}
+      tag: ${{ inputs.tag || github.ref_name }}
     secrets: inherit

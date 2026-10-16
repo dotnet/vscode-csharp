@@ -41,7 +41,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.13.0-1.26507.4",
+    "roslyn": "5.13.0-1.26513.11",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.10.12014.341",
@@ -1618,6 +1618,12 @@
               "indentByTwo"
             ],
             "description": "%configuration.razor.razor.format.attributeIndentStyle%"
+          },
+          "razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": {
+            "type": "boolean",
+            "scope": "window",
+            "default": true,
+            "description": "%configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor%"
           },
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",

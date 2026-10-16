@@ -3,6 +3,20 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 11.5.x
+* Update Roslyn to 5.13.0-1.26513.11 (PR: [#9872](https://github.com/dotnet/vscode-csharp/pull/9872))
+  * Don't copy generated file banners to new documents (PR: [#85682](https://github.com/dotnet/roslyn/pull/85682))
+  * [Add options to] skip formatting in script and style blocks with complex Razor expressions (PR: [#85142](https://github.com/dotnet/roslyn/pull/85142))
+  * Fix Razor multiline attribute directive formatting (PR: [#86028](https://github.com/dotnet/roslyn/pull/86028))
+  * Support custom snippet fields in Razor (and fix bug) (PR: [#86007](https://github.com/dotnet/roslyn/pull/86007))
+  * Avoid ambiguous tag names in Razor component drag/drop (PR: [#86032](https://github.com/dotnet/roslyn/pull/86032))
+  * Do not force a newline between } and , in switch expressions (PR: [#85992](https://github.com/dotnet/roslyn/pull/85992))
+* Update Roslyn to 5.13.0-1.26509.1 (PR: [#9863](https://github.com/dotnet/vscode-csharp/pull/9863))
+  * Fix race between FBP loader and LSP both opening a document (PR: [#85942](https://github.com/dotnet/roslyn/pull/85942))
+  * Reuse our existing file watching consolidation logic for LSP (PR: [#85951](https://github.com/dotnet/roslyn/pull/85951))
+  * Correct diagnostic inter-file dependency metadata (PR: [#85953](https://github.com/dotnet/roslyn/pull/85953))
+  * Show event-accessor local functions in Solution Explorer and Document Outline (PR: [#85957](https://github.com/dotnet/roslyn/pull/85957))
+
 # 11.3.x
 * Update Roslyn to 5.13.0-1.26507.4 (PR: [#9851](https://github.com/dotnet/vscode-csharp/pull/9851))
   * Fix close tag completion replacement ranges (PR: [#85710](https://github.com/dotnet/roslyn/pull/85710))
