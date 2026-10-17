@@ -177,14 +177,16 @@ To update the version of the roslyn server used by the extension do the followin
 
 ## Updating the `Roslyn` Copilot Language Server version
 
-In order to pull in the latest version of Roslyn Copilot bits from the VS Conversations repo, follow these steps:
-1. Trigger [this pipeline](https://devdiv.visualstudio.com/DevDiv/_build?definitionId=27222) which should automatically publish bits to the storage account and then create an insertion PR like [this](https://github.com/dotnet/vscode-csharp/pull/8597)
-2. Build and test the change to ensure the roslyn copilot language server bits are downloaded correctly. You'll see log entries like the below in the Output->C# pane:
+In order to pull in Roslyn Copilot bits from the VS repo, follow these steps:
+1. Find the version of the `Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer` NuGet package published to the `vs-impl` feed that you want to use.
+2. Run the [publishing pipeline](https://devdiv.visualstudio.com/DevDiv/_build?definitionId=27222) and set **Roslyn Copilot NuGet package version** to that version. The pipeline creates the .zip and publishes it.
+3. Update the `RoslynCopilot` runtime dependency in `package.json` to use the published zip, including its version and integrity hash.
+4. Build and test the change, then submit a PR. Ensure the roslyn copilot language server bits are downloaded correctly. You'll see log entries like the below in the Output->C# pane:
 ```
 [info] Installing package 'Language server for Roslyn Copilot integration'
 [info] Finished
 ```
-More details for this are [here] (https://devdiv.visualstudio.com/DevDiv/_git/VisualStudio.Conversations?path=/src/Copilot.Roslyn.LanguageServer/README.md)
+More details are in the [Roslyn Copilot component README](https://devdiv.visualstudio.com/DevDiv/_git/VS?path=/src/Copilot/src/Copilot.Roslyn.LanguageServer/README.md).
 
 ## Snapping for releases
 Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.

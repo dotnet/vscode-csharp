@@ -29,7 +29,6 @@ pr:
     - azure-pipelines/loc.yml
     - azure-pipelines/release.yml
     - azure-pipelines/profiling.yml
-    - azure-pipelines/publish-roslyn-copilot.yml
     # Changes to documentation are not functional changes.
     - docs/*
     - images/*
