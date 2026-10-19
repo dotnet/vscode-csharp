@@ -5,7 +5,7 @@
 
 # 11.7.x
 
-* Update Roslyn to 5.13.0-1.26519.5 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.13.0-1.26519.5 (PR: [#9892](https://github.com/dotnet/vscode-csharp/pull/9892))
   * keep #! together when formatting a file based app with tabs (PR: [#86085](https://github.com/dotnet/roslyn/pull/86085))
   * Fix IDE0330 not reported when type contains multi-declarator fields (PR: [#86077](https://github.com/dotnet/roslyn/pull/86077))
   * Allow Go To Def from a file path in Razor in more places (PR: [#86072](https://github.com/dotnet/roslyn/pull/86072))
