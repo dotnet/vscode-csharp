@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Gather participants
         id: participants
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             console.log("=== WORKFLOW START ===");
@@ -125,7 +125,7 @@ jobs:
           result-encoding: string
 
       - name: Add label comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             console.log("=== STEP 2: ADD COMMENT ===");
