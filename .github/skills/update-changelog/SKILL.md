@@ -38,9 +38,10 @@ for user impact, and create a pull request containing only `CHANGELOG.md`.
    dotnet tool install -g Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
    ```
 
-4. Check `git status --short`. Do not overwrite unrelated work. In particular,
-   stop and ask the user before continuing if `CHANGELOG.md` already has
-   uncommitted changes.
+4. Run `git status --short --untracked-files=all`. Require a clean worktree and
+   index before switching branches or generating entries. If there are any
+   changes, stop and ask the user to commit, stash, or move that work rather
+   than carrying it onto the changelog branch.
 
 ## Generate candidate entries
 
@@ -66,13 +67,38 @@ for user impact, and create a pull request containing only `CHANGELOG.md`.
    git fetch <canonical-remote> <target-branch> --tags
    ```
 
-3. Install the repository dependencies exactly as CI does:
+3. Before installing dependencies or running the generator, switch to the
+   dedicated changelog branch based on the fetched target revision:
+
+   ```shell
+   git switch -c merge/update-<target-branch>-changelog FETCH_HEAD
+   ```
+
+   If that branch already exists, switch to it and rebase it onto the fetched
+   target revision instead of recreating or resetting it:
+
+   ```shell
+   git switch merge/update-<target-branch>-changelog
+   git rebase FETCH_HEAD
+   ```
+
+   Stop if the existing branch contains unrelated work or the rebase conflicts.
+   Do not run the generator until this check succeeds:
+
+   ```shell
+   git merge-base --is-ancestor FETCH_HEAD HEAD
+   ```
+
+   This ensures that both the checked-out `CHANGELOG.md` and the generator's
+   `HEAD` range reflect the requested target branch.
+
+4. Install the repository dependencies exactly as CI does:
 
    ```shell
    npm ci
    ```
 
-4. Run the existing generator:
+5. Run the existing generator:
 
    ```shell
    npm run updateChangelog
@@ -131,15 +157,14 @@ Before committing:
 
 ## Create the pull request
 
-Use a dedicated branch based on the target branch. If the current branch is
-already dedicated to this update and based on the target branch, keep using it;
-otherwise create a branch named `merge/update-<target-branch>-changelog`.
+Remain on the dedicated `merge/update-<target-branch>-changelog` branch
+prepared before generation.
 
 Commit only `CHANGELOG.md`:
 
 ```shell
 git add CHANGELOG.md
-git commit -m "Update <target-branch> CHANGELOG"
+git commit --only --message "Update <target-branch> CHANGELOG" -- CHANGELOG.md
 git push -u <push-remote> <work-branch>
 ```
 
