@@ -21,7 +21,17 @@ for user impact, and create a pull request containing only `CHANGELOG.md`.
    gh auth status
    ```
 
-2. Use Node.js 24, matching the former changelog workflow.
+2. Check the Node.js version:
+
+   ```shell
+   node --version
+   ```
+
+   Prefer Node.js 24 for parity with repository CI. The current dependencies
+   also support Node.js 22.13 or newer, so a compatible Node.js 22 installation
+   is not a reason to stop. If `npm ci` reports an engine incompatibility,
+   switch to Node.js 24 with an installed version manager such as `nvm`, `fnm`,
+   or Volta.
 3. Ensure `roslyn-tools` is available. If it is not installed, run:
 
    ```shell
@@ -34,20 +44,35 @@ for user impact, and create a pull request containing only `CHANGELOG.md`.
 
 ## Generate candidate entries
 
-1. Fetch the target branch and all release tags. The generator uses the newest
-   tag matching the previous changelog version:
+1. Identify the remote for the canonical `dotnet/vscode-csharp` repository.
+   Do not assume `origin` is canonical because contributor checkouts commonly
+   use `origin` for a fork. Inspect the configured remotes:
 
    ```shell
-   git fetch origin <target-branch> --tags
+   git remote -v
    ```
 
-2. Install the repository dependencies exactly as CI does:
+   Prefer an existing remote such as `upstream` whose URL points to
+   `dotnet/vscode-csharp`. If none exists, add one:
+
+   ```shell
+   git remote add upstream https://github.com/dotnet/vscode-csharp.git
+   ```
+
+2. Fetch the target branch and all release tags from that canonical remote. The
+   generator uses the newest tag matching the previous changelog version:
+
+   ```shell
+   git fetch <canonical-remote> <target-branch> --tags
+   ```
+
+3. Install the repository dependencies exactly as CI does:
 
    ```shell
    npm ci
    ```
 
-3. Run the existing generator:
+4. Run the existing generator:
 
    ```shell
    npm run updateChangelog
