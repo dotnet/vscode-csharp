@@ -6,13 +6,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { rootPath } from '../projectPaths';
 import { findTagsByVersion } from '../gitTasks';
 import { runTask } from '../runTask';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/;
 
 runTask(updateChangelog);
@@ -107,9 +107,12 @@ function getPrIdsBetweenHeaders(changelogLines: string[], startLine: number, end
 
 async function generatePRList(startSHA: string, endSHA: string): Promise<string[]> {
     try {
-        console.log(`Executing: roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format o#`);
-        let { stdout } = await execAsync(
-            `roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format o#`,
+        console.log(
+            `Executing: roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format o# --repo "${rootPath}"`
+        );
+        let { stdout } = await execFileAsync(
+            'roslyn-tools',
+            ['pr-finder', '-s', startSHA, '-e', endSHA, '--format', 'o#', '--repo', rootPath],
             { maxBuffer: 10 * 1024 * 1024 } // 10MB buffer
         );
 

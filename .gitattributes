@@ -6,7 +6,3 @@ scripts/remoteProcessPickerScript text eol=lf
 
 # This is a generated file. Set it to 'lf' so we don't get git errors when it is generated on Windows.
 src/razor/syntaxes/aspnetcorerazor.tmLanguage.json eol=lf
-
-# Agentic workflow lock files are generated; keep LF when compiling on Windows.
-.github/workflows/*.lock.yml linguist-generated=true
-.github/workflows/*.lock.yml text eol=lf
