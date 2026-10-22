@@ -162,7 +162,7 @@
   "There are unresolved dependencies. Please execute the restore command to continue.": "확인되지 않은 종속성이 있습니다. 계속하려면 복원 명령을 실행하세요.",
   "Transport attach could not obtain processes list.": "전송 연결이 프로세스 목록을 가져올 수 없습니다.",
   "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.": "RuntimeId를 확인할 수 없습니다. launch.json 구성에서 'targetArchitecture'를 설정하세요.",
-  "Unable to determine WebAssembly debug settings for project '{0}'.": "Unable to determine WebAssembly debug settings for project '{0}'.",
+  "Unable to determine WebAssembly debug settings for project '{0}'.": "프로젝트 '{0}'에 대한 WebAssembly 디버그 설정을 확인할 수 없습니다.",
   "Unable to determine a configuration for '{0}'. Please generate C# debug assets instead.": "'{0}'의 구성을 확인할 수 없습니다. 대신 C# 디버그 자산을 생성하세요.",
   "Unable to determine debug settings for project '{0}'": "프로젝트 '{0}'에 대한 디버그 설정을 결정할 수 없습니다.",
   "Unable to generate assets to build and debug. {0}.": "빌드 및 디버그할 자산을 생성할 수 없습니다. {0}.",

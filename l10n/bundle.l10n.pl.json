@@ -162,7 +162,7 @@
   "There are unresolved dependencies. Please execute the restore command to continue.": "Istnieją nierozwiązane zależności. Wykonaj polecenie przywracania, aby kontynuować.",
   "Transport attach could not obtain processes list.": "Dołączanie transportu nie mogło uzyskać listy procesów.",
   "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.": "Nie można określić elementu RuntimeId. Ustaw element „targetArchitecture” w konfiguracji launch.json.",
-  "Unable to determine WebAssembly debug settings for project '{0}'.": "Unable to determine WebAssembly debug settings for project '{0}'.",
+  "Unable to determine WebAssembly debug settings for project '{0}'.": "Nie można określić ustawień debugowania zestawu WebAssembly dla projektu „{0}”.",
   "Unable to determine a configuration for '{0}'. Please generate C# debug assets instead.": "Nie można określić konfiguracji dla „{0}”. Zamiast tego wygeneruj zasoby debugowania w języku C#.",
   "Unable to determine debug settings for project '{0}'": "Nie można określić ustawień debugowania dla projektu „{0}”",
   "Unable to generate assets to build and debug. {0}.": "Nie można wygenerować zasobów do skompilowania i debugowania. {0}.",
