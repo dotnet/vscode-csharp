@@ -3,7 +3,21 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 11.7.x
+
+* Update Roslyn to 5.13.0-1.26519.8 (PR: [#9898](https://github.com/dotnet/vscode-csharp/pull/9898))
+* Update Roslyn to 5.13.0-1.26519.5 (PR: [#9892](https://github.com/dotnet/vscode-csharp/pull/9892))
+  * keep #! together when formatting a file based app with tabs (PR: [#86085](https://github.com/dotnet/roslyn/pull/86085))
+  * Fix IDE0330 not reported when type contains multi-declarator fields (PR: [#86077](https://github.com/dotnet/roslyn/pull/86077))
+  * Allow Go To Def from a file path in Razor in more places (PR: [#86072](https://github.com/dotnet/roslyn/pull/86072))
+  * Fix symbol-completion publication races (PR: [#85972](https://github.com/dotnet/roslyn/pull/85972))
+  * Don't track const locals in unused value analysis (PR: [#85994](https://github.com/dotnet/roslyn/pull/85994))
+  * Don't offer 'use pattern matching' when a local function writes the 'as' operand (PR: [#85991](https://github.com/dotnet/roslyn/pull/85991))
+  * Fix Find References for partial members seen through a retargeting assembly (PR: [#85844](https://github.com/dotnet/roslyn/pull/85844))
+  * Fix Go to Definition for XAML classes (PR: [#86041](https://github.com/dotnet/roslyn/pull/86041))
+
 # 11.5.x
+* Fix Blazor WASM project resolution and preserve explicit debugger program overrides (Issue: [#9864](https://github.com/dotnet/vscode-csharp/issues/9864))
 * Update Roslyn to 5.13.0-1.26513.11 (PR: [#9872](https://github.com/dotnet/vscode-csharp/pull/9872))
   * Don't copy generated file banners to new documents (PR: [#85682](https://github.com/dotnet/roslyn/pull/85682))
   * [Add options to] skip formatting in script and style blocks with complex Razor expressions (PR: [#85142](https://github.com/dotnet/roslyn/pull/85142))

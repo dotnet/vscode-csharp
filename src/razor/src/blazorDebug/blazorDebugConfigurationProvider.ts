@@ -482,6 +482,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             name: MANAGED_DEBUG_NAME,
             type: 'monovsdbg_wasm',
             request: 'launch',
+            projectPath: configuration.projectPath,
             args,
             cwd,
             cascadeTerminateToConfigurations: [ONLY_JS_DEBUG_NAME, SERVER_APP_NAME, JS_DEBUG_NAME],
