@@ -5,6 +5,15 @@
 
 # 11.9.x
 
+* Update Roslyn to 5.13.0-1.26526.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Don't report CA1704 for numeric type parameter names (T1, T2, …) (PR: [#85162](https://github.com/dotnet/roslyn/pull/85162))
+  * Fix lscache loading issues (PR: [#86148](https://github.com/dotnet/roslyn/pull/86148))
+  * Suppress shebang directive errors in disabled regions (PR: [#86119](https://github.com/dotnet/roslyn/pull/86119))
+  * don't throw when a conflicting linked file change ends inside a line break (PR: [#86084](https://github.com/dotnet/roslyn/pull/86084))
+  * Preserve necessary union conversions when simplifying casts (PR: [#86145](https://github.com/dotnet/roslyn/pull/86145))
+  * Fix missing project information for Razor task list items (PR: [#86105](https://github.com/dotnet/roslyn/pull/86105))
+  * Do not create LSP telemetry sessions when telemetry is off (PR: [#86130](https://github.com/dotnet/roslyn/pull/86130))
+
 # 11.7.x
 
 * Update Roslyn to 5.13.0-1.26519.8 (PR: [#9898](https://github.com/dotnet/vscode-csharp/pull/9898))
