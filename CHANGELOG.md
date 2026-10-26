@@ -4,9 +4,18 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
+* Add on-demand project loading setting (PR: [#9758](https://github.com/dotnet/vscode-csharp/pull/9758))
+* Update Roslyn to 5.13.0-1.26526.5 (PR: [#9758](https://github.com/dotnet/vscode-csharp/pull/9758))
+  * Implement on-demand project loading (PR: [#85805](https://github.com/dotnet/roslyn/pull/85805))
+  * Honor cancellation while processing Razor document symbols (PR: [#86207](https://github.com/dotnet/roslyn/pull/86207))
+  * Fix a crash when removing an unused variable assigned under an unbraced `if` (PR: [#86087](https://github.com/dotnet/roslyn/pull/86087))
+  * Fix missing metadata references and document folders when loading cached projects (PR: [#86148](https://github.com/dotnet/roslyn/pull/86148))
+  * Avoid repeated word separators in generated names (PR: [#86083](https://github.com/dotnet/roslyn/pull/86083))
+  * Fix a crash when conflicting linked-file changes end inside a line break (PR: [#86084](https://github.com/dotnet/roslyn/pull/86084))
+  * Preserve necessary union conversions when simplifying casts (PR: [#86145](https://github.com/dotnet/roslyn/pull/86145))
+  * Avoid creating language server telemetry sessions when telemetry is disabled (PR: [#86130](https://github.com/dotnet/roslyn/pull/86130))
 
 # 11.7.x
-
 * Update Roslyn to 5.13.0-1.26519.8 (PR: [#9898](https://github.com/dotnet/vscode-csharp/pull/9898))
 * Update Roslyn to 5.13.0-1.26519.5 (PR: [#9892](https://github.com/dotnet/vscode-csharp/pull/9892))
   * keep #! together when formatting a file based app with tabs (PR: [#86085](https://github.com/dotnet/roslyn/pull/86085))
@@ -322,7 +331,7 @@
   * Fix SslStream disposal crash (Issues: [9146](https://github.com/dotnet/vscode-csharp/issues/9146), [9183](https://github.com/dotnet/vscode-csharp/issues/9183), [9175](https://github.com/dotnet/vscode-csharp/issues/9175), PR: AzDO#728722)
   * Fix XAML Hot Reload error reporting when exceptions originate from indirectly-loaded views (PR: AzDO#729745)
   * XAML C# Expressions (XEXPR) limited support (PR: AzDO#721767)
- 
+
 
 # 2.135.x
 * Bump lodash from 4.17.23 to 4.18.1 (PR: [#9152](https://github.com/dotnet/vscode-csharp/pull/9152))

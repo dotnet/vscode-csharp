@@ -4,7 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import path from 'path';
-import { integrationTestProjects, runDevKitIntegrationTests, runIntegrationTest, runJestTest } from './testHelpers';
+import {
+    basicSlnTestProject,
+    integrationTestProjects,
+    runDevKitIntegrationTests,
+    runIntegrationTest,
+    runJestTest,
+} from './testHelpers';
+import { rootPath } from '../projectPaths';
 import { jestArtifactTestsProjectName } from '../../test/lsptoolshost/artifactTests/jest.config';
 import { jestUnitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config';
 import { razorTestProjectName } from '../../test/razor/razorTests/jest.config';
@@ -20,6 +27,13 @@ export async function testIntegrationCSharp(): Promise<void> {
     for (const projectName of integrationTestProjects) {
         await runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `CSharp-${projectName}`);
     }
+    await runIntegrationTest(
+        basicSlnTestProject,
+        path.join('lsptoolshost', 'integrationTests'),
+        'CSharp-OnDemandLoad',
+        'onDemandLoad.code-workspace',
+        path.join(rootPath, 'test', 'lsptoolshost', 'integrationTests', 'onDemandLoad.integration.test.ts')
+    );
 }
 
 export async function testIntegrationDevkit(): Promise<void> {

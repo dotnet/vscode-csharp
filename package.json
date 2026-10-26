@@ -41,7 +41,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.13.0-1.26519.8",
+    "roslyn": "5.13.0-1.26526.5",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.10.12014.341",
@@ -1573,7 +1573,7 @@
           },
           "dotnet.projects.loadOnDemand": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "description": "%configuration.dotnet.projects.loadOnDemand%"
           },
           "dotnet.projects.enableFileBasedPrograms": {
@@ -5800,5 +5800,11 @@
         "*.xaml": "${capture}.xaml.cs"
       }
     }
+  },
+  "allowScripts": {
+    "@vscode/vsce-sign@2.0.4": true,
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.2": true,
+    "keytar@7.9.0": true
   }
 }

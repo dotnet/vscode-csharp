@@ -47,7 +47,12 @@ export async function activateCSharpExtension(): Promise<CSharpExtensionExports>
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
     await csharpExtension.activate();
-    await csharpExtension.exports.initializationFinished();
+    if (vscode.workspace.getConfiguration('dotnet').get<string>('defaultSolution') === 'disable') {
+        // initializationFinished waits for a solution/project load that won't occur when automatic loading is disabled.
+        await waitForAllAsyncOperationsAsync(csharpExtension.exports);
+    } else {
+        await csharpExtension.exports.initializationFinished();
+    }
     console.log('ms-dotnettools.csharp activated');
     console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
 
@@ -97,9 +102,14 @@ export async function restartLanguageServer(): Promise<void> {
     }
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     // Register to wait for initialization events and restart the server.
+    const expectedState =
+        vscode.workspace.getConfiguration('dotnet').get<string>('defaultSolution') === 'disable'
+            ? ServerState.Started
+            : ServerState.ProjectInitializationComplete;
     const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
-        csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (e) => {
-            if (e.state === ServerState.ProjectInitializationComplete) {
+        const subscription = csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange((e) => {
+            if (e.state === expectedState) {
+                subscription.dispose();
                 resolve();
             }
         });

@@ -1,0 +1,13 @@
+{
+    "folders": [
+        {
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "dotnet.defaultSolution": "disable",
+        "dotnet.server.useOmnisharp": false,
+        "dotnet.preferCSharpExtension": true,
+        "dotnet.projects.loadOnDemand": false
+    }
+}
