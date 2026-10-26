@@ -65,7 +65,7 @@ Read the log and extract the NuGet package version:
 
 ```shell
 VERSION=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$LOG_URL" \
-	| jq -Rse 'capture("Microsoft\\.CodeAnalysis\\.(?<version>[0-9]+\\.[0-9]+\\.[0-9]+-[A-Za-z0-9_.]+)\\.nupkg").version')
+	| jq -Rser 'capture("Microsoft\\.CodeAnalysis\\.(?<version>[0-9]+\\.[0-9]+\\.[0-9]+-[A-Za-z0-9_.]+)\\.nupkg").version')
 echo "Discovered version: $VERSION"
 ```
 
