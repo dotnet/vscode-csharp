@@ -14,8 +14,8 @@ Locate a local clone of `dotnet/roslyn`. Check `C:\Users\<username>\source\repos
 Check that `dnx` and the GitHub CLI are available:
 
 ```powershell
-	dnx --help
-	gh auth status
+dnx --help
+gh auth status
 ```
 
 `dnx` requires the .NET 10 SDK or later. Authenticate the GitHub CLI before you run Roslyn Tools.
@@ -35,38 +35,38 @@ Install the [Azure Developer CLI](https://learn.microsoft.com/azure/developer/az
 Run the discovery commands in Bash with `curl` and `jq` available. Authenticate:
 
 ```shell
-	azd auth login
+azd auth login
 ```
 
 Get an Azure DevOps token without printing it:
 
 ```shell
-	set -euo pipefail
-	TOKEN=$(azd auth token --scope "499b84ac-1321-427f-aa17-267ca6975798/.default" --output json | jq -er '.token')
+set -euo pipefail
+TOKEN=$(azd auth token --scope "499b84ac-1321-427f-aa17-267ca6975798/.default" --output json | jq -er '.token')
 ```
 
 Find the latest successful build of pipeline definition `327`, `dotnet-roslyn-official`:
 
 ```shell
-	BUILD_ID=$(curl -fsS -H "Authorization: Bearer $TOKEN" \
-		'https://dnceng.visualstudio.com/internal/_apis/build/builds?definitions=327&branchName=refs/heads/main&statusFilter=completed&resultFilter=succeeded&$top=1&api-version=7.0' \
-		| jq -er '.value[0].id')
+BUILD_ID=$(curl -fsS -H "Authorization: Bearer $TOKEN" \
+	'https://dnceng.visualstudio.com/internal/_apis/build/builds?definitions=327&branchName=refs/heads/main&statusFilter=completed&resultFilter=succeeded&$top=1&api-version=7.0' \
+	| jq -er '.value[0].id')
 ```
 
 Find the `Publish Assets` task log:
 
 ```shell
-	LOG_URL=$(curl -fsS -H "Authorization: Bearer $TOKEN" \
-		"https://dnceng.visualstudio.com/internal/_apis/build/builds/$BUILD_ID/timeline?api-version=7.0" \
-		| jq -er '[.records[] | select(.name == "Publish Assets" and .type == "Task") | .log.url | select(. != null)][0]')
+LOG_URL=$(curl -fsS -H "Authorization: Bearer $TOKEN" \
+	"https://dnceng.visualstudio.com/internal/_apis/build/builds/$BUILD_ID/timeline?api-version=7.0" \
+	| jq -er '[.records[] | select(.name == "Publish Assets" and .type == "Task") | .log.url | select(. != null)][0]')
 ```
 
 Read the log and extract the NuGet package version:
 
 ```shell
-	VERSION=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$LOG_URL" \
-		| jq -Rse 'capture("Microsoft\\.CodeAnalysis\\.(?<version>[0-9]+\\.[0-9]+\\.[0-9]+-[A-Za-z0-9_.]+)\\.nupkg").version')
-	echo "Discovered version: $VERSION"
+VERSION=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$LOG_URL" \
+	| jq -Rse 'capture("Microsoft\\.CodeAnalysis\\.(?<version>[0-9]+\\.[0-9]+\\.[0-9]+-[A-Za-z0-9_.]+)\\.nupkg").version')
+echo "Discovered version: $VERSION"
 ```
 
 Use the discovered value wherever the steps below show `<new-version>`.
@@ -80,7 +80,7 @@ Replace the placeholders in commands with the selected version, paths, and commi
 If the session already has a dedicated feature branch, use it. Otherwise, create an update branch:
 
 ```powershell
-	git switch -c update/roslyn-<version>
+git switch -c update/roslyn-<version>
 ```
 
 Replace `<version>` with the new version, using dashes instead of dots. Do not reset an existing branch.
@@ -96,7 +96,7 @@ Set `defaults.roslyn` to `<new-version>`.
 Run:
 
 ```powershell
-	npm run updateRoslynVersion
+npm run updateRoslynVersion
 ```
 
 The task downloads the platform-specific Roslyn NuGet packages, saves them to the consumption Azure DevOps artifacts feed, and runs `installDependencies`.
@@ -108,13 +108,13 @@ If package authentication fails, follow [Resolve package authentication errors](
 Restore the old package into the local cache:
 
 ```powershell
-	dotnet restore "msbuild\server" /p:PackageName=roslyn-language-server.osx-arm64 /p:PackageVersion=<old-version> --interactive
+dotnet restore "msbuild\server" /p:PackageName=roslyn-language-server.osx-arm64 /p:PackageVersion=<old-version> --interactive
 ```
 
 Read its repository metadata:
 
 ```powershell
-	Get-Content "out\.nuget\roslyn-language-server.osx-arm64\<old-version>\roslyn-language-server.osx-arm64.nuspec" | Select-String -Pattern "commit"
+Get-Content "out\.nuget\roslyn-language-server.osx-arm64\<old-version>\roslyn-language-server.osx-arm64.nuspec" | Select-String -Pattern "commit"
 ```
 
 Use the `commit` attribute of the `<repository>` element as `<old-commit-sha>`.
@@ -124,7 +124,7 @@ Use the `commit` attribute of the `<repository>` element as `<old-commit-sha>`.
 Read the metadata for the package downloaded in Step 3:
 
 ```powershell
-	Get-Content "out\.nuget\roslyn-language-server.osx-arm64\<new-version>\roslyn-language-server.osx-arm64.nuspec" | Select-String -Pattern "commit"
+Get-Content "out\.nuget\roslyn-language-server.osx-arm64\<new-version>\roslyn-language-server.osx-arm64.nuspec" | Select-String -Pattern "commit"
 ```
 
 Use the `commit` attribute of the `<repository>` element as `<new-commit-sha>`.
@@ -136,14 +136,14 @@ Use the local `.nuspec` files for both commits. Do not rely on the artifacts fee
 Switch to the local `dotnet/roslyn` clone and fetch the latest commits:
 
 ```powershell
-	Set-Location "<path-to-roslyn-repo>"
-	git fetch origin
+Set-Location "<path-to-roslyn-repo>"
+git fetch origin
 ```
 
 Run `pr-finder` through `dnx`. Pass the GitHub token with `--github-token`:
 
 ```powershell
-	dnx Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json -- pr-finder --github-token "$(gh auth token)" --start <old-commit-sha> --end <new-commit-sha> --format "o#"
+dnx Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json -- pr-finder --github-token "$(gh auth token)" --start <old-commit-sha> --end <new-commit-sha> --format "o#"
 ```
 
 Do not use a globally installed `roslyn-tools` executable.
@@ -191,8 +191,8 @@ If you cannot confirm both delivery and VS Code applicability, omit the entry fr
 Add an entry under the current version section in `CHANGELOG.md`. Include only the entries kept in Step 7. Preserve their PR links and formatting:
 
 ```markdown
-	* Update Roslyn to <new-version> (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
-	  * <PR title> (PR: [#<number>](https://github.com/dotnet/roslyn/pull/<number>))
+* Update Roslyn to <new-version> (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * <PR title> (PR: [#<number>](https://github.com/dotnet/roslyn/pull/<number>))
 ```
 
 Leave the update PR number blank as `[#]` until Step 11.
@@ -202,9 +202,9 @@ Leave the update PR number blank as `[#]` until Step 11.
 Commit the version and changelog changes:
 
 ```powershell
-	git add package.json CHANGELOG.md
-	git commit -m "Update Roslyn to <new-version>"
-	git push -u origin HEAD
+git add package.json CHANGELOG.md
+git commit -m "Update Roslyn to <new-version>"
+git push -u origin HEAD
 ```
 
 ### Step 10: Create the pull request
@@ -220,15 +220,15 @@ Use the raw, unfiltered `pr-finder` output from Step 6 as the body. Include the 
 Replace the update entry's blank PR number and URL with the new PR's number and URL:
 
 ```markdown
-	* Update Roslyn to <new-version> (PR: [#<number>](https://github.com/dotnet/vscode-csharp/pull/<number>))
+* Update Roslyn to <new-version> (PR: [#<number>](https://github.com/dotnet/vscode-csharp/pull/<number>))
 ```
 
 Commit and push:
 
 ```powershell
-	git add CHANGELOG.md
-	git commit -m "Update changelog with PR number"
-	git push
+git add CHANGELOG.md
+git commit -m "Update changelog with PR number"
+git push
 ```
 
 ## Resolve package authentication errors
