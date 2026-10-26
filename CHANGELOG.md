@@ -11,7 +11,6 @@
   * Suppress shebang directive errors in disabled regions (PR: [#86119](https://github.com/dotnet/roslyn/pull/86119))
   * don't throw when a conflicting linked file change ends inside a line break (PR: [#86084](https://github.com/dotnet/roslyn/pull/86084))
   * Preserve necessary union conversions when simplifying casts (PR: [#86145](https://github.com/dotnet/roslyn/pull/86145))
-  * Fix missing project information for Razor task list items (PR: [#86105](https://github.com/dotnet/roslyn/pull/86105))
   * Do not create LSP telemetry sessions when telemetry is off (PR: [#86130](https://github.com/dotnet/roslyn/pull/86130))
 
 # 11.7.x
