@@ -5,7 +5,7 @@
 
 # 11.9.x
 
-* Update Roslyn to 5.13.0-1.26526.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.13.0-1.26526.3 (PR: [#9913](https://github.com/dotnet/vscode-csharp/pull/9913))
   * Don't report CA1704 for numeric type parameter names (T1, T2, …) (PR: [#85162](https://github.com/dotnet/roslyn/pull/85162))
   * Fix lscache loading issues (PR: [#86148](https://github.com/dotnet/roslyn/pull/86148))
   * Suppress shebang directive errors in disabled regions (PR: [#86119](https://github.com/dotnet/roslyn/pull/86119))
