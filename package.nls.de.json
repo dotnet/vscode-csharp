@@ -69,6 +69,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "Aktiviert die automatische NuGet-Wiederherstellung, wenn die Erweiterung erkennt, dass Ressourcen fehlen.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "Aktiviert die Erfahrung „dateibasierte Programme“ (dotnet run app.cs).",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "Aktiviert die Funktion „dateibasierte Programme“ (dotnet run app.cs) in Dateien, bei denen der Editor nicht mit Sicherheit feststellen kann, ob es sich um ein dateibasiertes Programm handelt. Dies gilt nur, wenn „dotnet.projects.enableFileBasedPrograms“ auf WAHR gesetzt ist.",
+  "configuration.dotnet.projects.loadOnDemand": "Discovers and loads projects when you open C# files.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Beschreibungsinformationen beim Anzeigen des Symbols anzeigen.",
   "configuration.dotnet.server.componentPaths": "Ermöglicht das Überschreiben des Ordnerpfads für eingebaute Komponenten des Sprachservers (z. B. Überschreiben des Pfads .roslynDevKit im Erweiterungsverzeichnis, um lokal erstellte Komponenten zu verwenden). (Erfordert Neustart der Erweiterung)",
   "configuration.dotnet.server.componentPaths.razorExtension": "Überschreibt den Ordnerpfad für die Razor-Erweiterungskomponente des Sprachservers",

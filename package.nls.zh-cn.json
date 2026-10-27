@@ -69,6 +69,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "如果扩展检测到缺少资产，则启用“自动 NuGet 还原”。",
   "configuration.dotnet.projects.enableFileBasedPrograms": "启用“基于文件的项目”(dotnet run app.cs)体验。",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "在编辑器无法确切判断文件是否为基于文件的项目的场景下，为该文件启用“基于文件的项目”(dotnet run app.cs)体验。仅当 `dotnet.projects.enableFileBasedPrograms` 为 `true` 时生效。",
+  "configuration.dotnet.projects.loadOnDemand": "Discovers and loads projects when you open C# files.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "显示符号时显示备注信息。",
   "configuration.dotnet.server.componentPaths": "允许替代语言服务器内置组件的文件夹路径(例如，替代扩展目录中的 .roslynDevKit 路径以使用本地生成的组件)。(需要重启扩展)",
   "configuration.dotnet.server.componentPaths.razorExtension": "替代语言服务器的 Razor 扩展组件的文件夹路径",
