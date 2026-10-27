@@ -23,6 +23,7 @@ resources:
   - repository: VSCodeExtensionRepo
     type: git
     name: vs-green
+    ref: a51da83e979246d6c4c52970990ac721fc94d1f7 # refs/heads/main
 
 jobs:
 - job: npmpack
