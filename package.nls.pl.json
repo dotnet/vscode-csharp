@@ -69,6 +69,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "Włącza automatyczne przywracanie pakietu NuGet, jeśli rozszerzenie wykryje brak zasobów.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "Udostępnia środowisko „programów opartych na plikach\" (dotnet run app.cs).",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "Udostępnia środowisko „programów opartych na plikach” (dotnet run app.cs) w plikach, w których edytor nie może ustalić z pewnością, czy plik jest programem opartym na plikach. Cenione tylko wtedy, gdy ustawienie „dotnet.projects.enableFileBasedPrograms” jest skonfigurowane na wartość „true”.",
+  "configuration.dotnet.projects.loadOnDemand": "Discovers and loads projects when you open C# files.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Pokaż informacje o uwagach podczas wyświetlania symbolu.",
   "configuration.dotnet.server.componentPaths": "Umożliwia zastąpienie ścieżki folderu dla wbudowanych składników serwera języka (na przykład przesłonięcie ścieżki .roslynDevKit w katalogu rozszerzenia w celu użycia składników skompilowanych lokalnie). (Wymaga ponownego uruchomienia rozszerzenia)",
   "configuration.dotnet.server.componentPaths.razorExtension": "Zastępuje ścieżkę folderu składnika rozszerzenia Razor serwera języka",
