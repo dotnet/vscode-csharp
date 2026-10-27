@@ -11,6 +11,7 @@ jobs:
     uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@042024f31f9f89422bc172362a04b5a51ac17df9 # main
     with:
       configuration_file_path: '.config/snap-flow.json'
+      script_version: '042024f31f9f89422bc172362a04b5a51ac17df9'
 
   bump-main-version:
     needs: check-script
