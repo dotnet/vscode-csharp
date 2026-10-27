@@ -41,7 +41,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.13.0-1.26519.8",
+    "roslyn": "5.13.0-1.26526.5",
     "omniSharp": "1.39.14",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.10.12014.341",
@@ -1570,6 +1570,11 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.projects.enableAutomaticRestore%"
+          },
+          "dotnet.projects.loadOnDemand": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.projects.loadOnDemand%"
           },
           "dotnet.projects.enableFileBasedPrograms": {
             "type": "boolean",

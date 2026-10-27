@@ -98,8 +98,9 @@ export async function restartLanguageServer(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     // Register to wait for initialization events and restart the server.
     const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
-        csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (e) => {
+        const subscription = csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange((e) => {
             if (e.state === ServerState.ProjectInitializationComplete) {
+                subscription.dispose();
                 resolve();
             }
         });
