@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 import * as path from 'path';
-import { commonOptions } from '../../../src/shared/options';
+import { languageServerOptions } from '../../../src/shared/options';
 import { getWorkspaceConfiguration } from '../../fakes';
 
 describe('Options tests', () => {
@@ -15,23 +15,23 @@ describe('Options tests', () => {
     });
 
     test('Verify defaults', () => {
-        expect(commonOptions.serverPath).toEqual('');
-        expect(commonOptions.defaultSolution).toEqual('');
-        expect(commonOptions.waitForDebugger).toEqual(false);
-        expect(commonOptions.runSettingsPath).toEqual('');
+        expect(languageServerOptions.serverPath).toEqual('');
+        expect(languageServerOptions.defaultSolution).toEqual('');
+        expect(languageServerOptions.waitForDebugger).toEqual(false);
+        expect(languageServerOptions.runSettingsPath).toEqual('');
     });
 
     test('BACK-COMPAT: "csharp.unitTestDebuggingOptions" is used if "dotnet.unitTestDebuggingOptions" is not set', async () => {
         await vscode.workspace.getConfiguration().update('csharp.unitTestDebuggingOptions', { old: true });
 
-        expect(commonOptions.unitTestDebuggingOptions).toEqual({ old: true });
+        expect(languageServerOptions.unitTestDebuggingOptions).toEqual({ old: true });
     });
 
     test('BACK-COMPAT: "csharp.unitTestDebuggingOptions" is not used if "dotnet.unitTestDebuggingOptions" is set', async () => {
         await vscode.workspace.getConfiguration().update('dotnet.unitTestDebuggingOptions', { new: true });
         await vscode.workspace.getConfiguration().update('csharp.unitTestDebuggingOptions', { old: true });
 
-        expect(commonOptions.unitTestDebuggingOptions).toEqual({ new: true });
+        expect(languageServerOptions.unitTestDebuggingOptions).toEqual({ new: true });
     });
 
     test('"dotnet.defaultSolution" is resolved relative to the workspace folder', async () => {
@@ -42,7 +42,7 @@ describe('Options tests', () => {
 
         await vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'some_valid_solution.sln');
 
-        expect(commonOptions.defaultSolution).toEqual(
+        expect(languageServerOptions.defaultSolution).toEqual(
             path.join(workspaceFolderUri.fsPath, 'some_valid_solution.sln')
         );
     });
@@ -54,7 +54,7 @@ describe('Options tests', () => {
 
         await vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'disable');
 
-        expect(commonOptions.defaultSolution).toEqual('disable');
+        expect(languageServerOptions.defaultSolution).toEqual('disable');
     });
 
     test('"dotnet.unitTests.runSettingsPath" is used if set', async () => {
@@ -62,7 +62,7 @@ describe('Options tests', () => {
             .getConfiguration()
             .update('dotnet.unitTests.runSettingsPath', 'some_valid_path\\some_valid_runsettings_files.runsettings');
 
-        expect(commonOptions.runSettingsPath).toEqual(
+        expect(languageServerOptions.runSettingsPath).toEqual(
             'some_valid_path\\some_valid_runsettings_files.runsettings'
         );
     });

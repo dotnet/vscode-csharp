@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { DocumentSelector } from 'vscode-languageclient';
 import * as path from 'path';
 
-export interface CommonOptions {
+export interface LanguageServerOptions {
     readonly waitForDebugger: boolean;
     readonly serverPath: string;
 
@@ -16,9 +16,6 @@ export interface CommonOptions {
     readonly unitTestDebuggingOptions: object;
     readonly runSettingsPath: string;
     readonly disableAIFeatures: boolean;
-}
-
-export interface LanguageServerOptions {
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
     readonly preferCSharpExtension: boolean;
@@ -37,7 +34,7 @@ export interface LanguageServerOptions {
     readonly toolingRuntimePath: string;
 }
 
-class CommonOptionsImpl implements CommonOptions {
+class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get waitForDebugger() {
         return readOption<boolean>('dotnet.server.waitForDebugger', false);
     }
@@ -97,9 +94,6 @@ class CommonOptionsImpl implements CommonOptions {
     public get disableAIFeatures() {
         return readOption<boolean>('chat.disableAIFeatures', false);
     }
-}
-
-class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get documentSelector() {
         return readOption<DocumentSelector>('dotnet.server.documentSelector', ['csharp']);
     }
@@ -150,7 +144,6 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
 }
 
-export const commonOptions: CommonOptions = new CommonOptionsImpl();
 export const languageServerOptions: LanguageServerOptions = new LanguageServerOptionsImpl();
 
 /**
@@ -176,13 +169,10 @@ function readOption<T>(option: string, defaultValue: T, ...backCompatOptionNames
     return readOptionFromConfig(vscode.workspace.getConfiguration(), option, defaultValue, ...backCompatOptionNames);
 }
 
-export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
+export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
     'waitForDebugger',
     'serverPath',
     'disableAIFeatures',
-];
-
-export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
     'documentSelector',
     'preferCSharpExtension',
     'componentPaths',

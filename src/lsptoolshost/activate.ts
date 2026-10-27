@@ -17,7 +17,7 @@ import { registerLanguageServerOptionChanges } from './options/optionChanges';
 import { Observable } from 'rxjs';
 import { RoslynLanguageServerEvents } from './server/languageServerEvents';
 import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction';
-import { commonOptions, languageServerOptions } from '../shared/options';
+import { languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
 import { registerRestoreCommands } from './projectRestore/restore';
 import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier';
@@ -143,7 +143,7 @@ export function getServerPath(platformInfo: PlatformInformation) {
     if (serverPath) {
         _channel.appendLine(`Using server path override from DOTNET_ROSLYN_SERVER_PATH: ${serverPath}`);
     } else {
-        serverPath = commonOptions.serverPath;
+        serverPath = languageServerOptions.serverPath;
         if (!serverPath) {
             // Option not set, use the path from the extension.
             serverPath = getInstalledServerPath(platformInfo);

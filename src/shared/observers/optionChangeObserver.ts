@@ -6,12 +6,9 @@
 import { Observable } from 'rxjs';
 import Disposable from '../../disposable';
 import { isDeepStrictEqual } from 'util';
-import { CommonOptions, LanguageServerOptions, commonOptions, languageServerOptions } from '../options';
+import { LanguageServerOptions, languageServerOptions } from '../options';
 
-type RelevantOptionValues = {
-    commonOptions: Map<keyof CommonOptions, any>;
-    languageServerOptions: Map<keyof LanguageServerOptions, any>;
-};
+type RelevantOptionValues = Map<keyof LanguageServerOptions, unknown>;
 
 export function HandleOptionChanges(
     optionObservable: Observable<void>,
@@ -25,19 +22,14 @@ export function HandleOptionChanges(
             oldOptions = newOptions;
         }
 
-        const changedRelevantCommonOptions = changedKeys.changedCommonOptions.filter(
-            (key) => !isDeepStrictEqual(oldOptions.commonOptions.get(key), newOptions.commonOptions.get(key))
-        );
-        const changedRelevantLanguageServerOptions = changedKeys.changedLanguageServerOptions.filter(
-            (key) =>
-                !isDeepStrictEqual(oldOptions.languageServerOptions.get(key), newOptions.languageServerOptions.get(key))
+        const changedRelevantOptions = changedKeys.changedLanguageServerOptions.filter(
+            (key) => !isDeepStrictEqual(oldOptions.get(key), newOptions.get(key))
         );
         oldOptions = newOptions;
 
-        if (changedRelevantCommonOptions.length > 0 || changedRelevantLanguageServerOptions.length > 0) {
+        if (changedRelevantOptions.length > 0) {
             optionChangeObserver.handleOptionChanges({
-                changedCommonOptions: changedRelevantCommonOptions,
-                changedLanguageServerOptions: changedRelevantLanguageServerOptions,
+                changedLanguageServerOptions: changedRelevantOptions,
             });
         }
     });
@@ -51,15 +43,9 @@ export interface OptionChangeObserver {
 }
 
 export interface OptionChanges {
-    changedCommonOptions: ReadonlyArray<keyof CommonOptions>;
     changedLanguageServerOptions: ReadonlyArray<keyof LanguageServerOptions>;
 }
 
 function getLatestRelevantOptions(changedKeys: OptionChanges): RelevantOptionValues {
-    return {
-        commonOptions: new Map(changedKeys.changedCommonOptions.map((key) => [key, commonOptions[key]])),
-        languageServerOptions: new Map(
-            changedKeys.changedLanguageServerOptions.map((key) => [key, languageServerOptions[key]])
-        ),
-    };
+    return new Map(changedKeys.changedLanguageServerOptions.map((key) => [key, languageServerOptions[key]]));
 }

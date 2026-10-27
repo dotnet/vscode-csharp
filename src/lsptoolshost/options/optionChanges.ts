@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs';
-import { CommonOptionsThatTriggerReload, LanguageServerOptionsThatTriggerReload } from '../../shared/options';
+import { LanguageServerOptionsThatTriggerReload } from '../../shared/options';
 import { HandleOptionChanges, OptionChangeObserver, OptionChanges } from '../../shared/observers/optionChangeObserver';
 import Disposable from '../../disposable';
 import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage';
@@ -14,7 +14,6 @@ export function registerLanguageServerOptionChanges(optionObservable: Observable
     const optionChangeObserver: OptionChangeObserver = {
         getRelevantOptions: () => {
             return {
-                changedCommonOptions: CommonOptionsThatTriggerReload,
                 changedLanguageServerOptions: LanguageServerOptionsThatTriggerReload,
             };
         },
@@ -28,7 +27,7 @@ export function registerLanguageServerOptionChanges(optionObservable: Observable
 }
 
 function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void {
-    if (changedOptions.changedCommonOptions.length == 0 && changedOptions.changedLanguageServerOptions.length == 0) {
+    if (changedOptions.changedLanguageServerOptions.length == 0) {
         // No changes to relevant options, do nothing.
         return;
     }

@@ -21,7 +21,7 @@ import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { MigrateOptions } from './shared/migrateOptions';
 import { CSharpExtensionExports, LimitedExtensionExports } from './csharpExtensionExports';
 import { getCSharpDevKit } from './utils/getCSharpDevKit';
-import { commonOptions } from './shared/options';
+import { languageServerOptions } from './shared/options';
 import { TelemetryEventNames } from './shared/telemetryEventNames';
 import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion';
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
@@ -77,7 +77,7 @@ export async function activate(
     const csharpDevkitExtension = getCSharpDevKit();
     await checkCSharpDevKitVersion(csharpDevkitExtension);
     requiredPackageIds.push('VSWebAssemblyBridge');
-    if (csharpDevkitExtension && !commonOptions.disableAIFeatures) {
+    if (csharpDevkitExtension && !languageServerOptions.disableAIFeatures) {
         requiredPackageIds.push('RoslynCopilot');
     }
 

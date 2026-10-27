@@ -210,7 +210,6 @@
   "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.": "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.",
   "Unexpected RuntimeId '{0}'.": "Unexpected RuntimeId '{0}'.",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "Ignoring non-parseable lines in envFile {0}: {1}.",
-  "Unexpected message received from debugger.": "Unexpected message received from debugger.",
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERROR]: C# Extension failed to install the debugger package.",
   "Could not find a process id to attach.": "Could not find a process id to attach.",
   "Unable to launch Attach to Process dialog: ": "Unable to launch Attach to Process dialog: ",
