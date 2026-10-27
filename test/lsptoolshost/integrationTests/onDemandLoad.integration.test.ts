@@ -65,8 +65,8 @@ describeIfCSharp('On-demand project loading', () => {
         await waitForAllAsyncOperationsAsync(exports);
         await waitForExpectedResult(
             async () => getLoadedProjectPaths(exports),
-            5000,
-            100,
+            /* duration */ 5000,
+            /* step */ 100,
             (projects) => expect(projects).toEqual(expectedProjects)
         );
     });
@@ -91,8 +91,8 @@ describeIfCSharp('On-demand project loading', () => {
         await waitForAllAsyncOperationsAsync(exports);
         await waitForExpectedResult(
             async () => getLoadedProjectPaths(exports),
-            5000,
-            100,
+            /* duration */ 5000,
+            /* step */ 100,
             (projects) => expect(projects).toEqual(expectedProjects)
         );
     });
