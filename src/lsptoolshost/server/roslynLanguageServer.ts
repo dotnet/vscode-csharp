@@ -51,7 +51,6 @@ import { CommandOption, showInformationMessage } from '../../shared/observers/ut
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
 import { getProfilingEnvVars } from '../logging/profiling';
 import { getServerPath } from '../activate';
-import { UriConverter } from '../utils/uriConverter';
 import { ProjectContextFeature } from '../projectContext/projectContextFeature';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
@@ -299,15 +298,6 @@ export class RoslynLanguageServer {
             },
             traceOutputChannel: traceChannel,
             outputChannel: channel,
-            uriConverters: {
-                // VSCode encodes the ":" as "%3A" in file paths, for example "file:///c%3A/Users/dabarbet/source/repos/ConsoleApp8/ConsoleApp8/Program.cs".
-                // System.Uri does not decode the LocalPath property correctly into a valid windows path, instead you get something like
-                // "/c:/Users/dabarbet/source/repos/ConsoleApp8/ConsoleApp8/Program.cs" (note the incorrect forward slashes and prepended "/").
-                // Properly decoded, it would look something like "c:\Users\dabarbet\source\repos\ConsoleApp8\ConsoleApp8\Program.cs"
-                // So instead we decode the URI here before sending to the server.
-                code2Protocol: UriConverter.serialize,
-                protocol2Code: UriConverter.deserialize,
-            },
             middleware: {
                 provideDiagnostics,
                 provideWorkspaceDiagnostics,
@@ -509,13 +499,13 @@ export class RoslynLanguageServer {
     private async sendOpenSolutionAndProjectsNotifications(): Promise<void> {
         if (this._languageClient.isRunning()) {
             if (this._solutionFile !== undefined) {
-                const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
+                const protocolUri = this._languageClient.code2ProtocolConverter.asUri(this._solutionFile);
                 await this._languageClient.sendNotification(RoslynProtocol.OpenSolutionNotification.type, {
                     solution: protocolUri,
                 });
             } else if (this._projectFiles.length > 0) {
                 const projectProtocolUris = this._projectFiles.map((uri) =>
-                    this._languageClient.clientOptions.uriConverters!.code2Protocol(uri)
+                    this._languageClient.code2ProtocolConverter.asUri(uri)
                 );
                 await this._languageClient.sendNotification(RoslynProtocol.OpenProjectNotification.type, {
                     projects: projectProtocolUris,
