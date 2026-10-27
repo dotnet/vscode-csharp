@@ -10,13 +10,11 @@ import * as path from 'path';
 export interface CommonOptions {
     readonly waitForDebugger: boolean;
     readonly serverPath: string;
-    readonly excludePaths: string[];
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
     readonly defaultSolution: string;
     readonly unitTestDebuggingOptions: object;
     readonly runSettingsPath: string;
-    readonly organizeImportsOnFormat: boolean;
     readonly disableAIFeatures: boolean;
 }
 
@@ -45,9 +43,6 @@ class CommonOptionsImpl implements CommonOptions {
     }
     public get serverPath() {
         return readOption<string>('dotnet.server.path', '');
-    }
-    public get excludePaths() {
-        return getExcludedPaths();
     }
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
@@ -98,9 +93,6 @@ class CommonOptionsImpl implements CommonOptions {
     }
     public get runSettingsPath() {
         return readOption<string>('dotnet.unitTests.runSettingsPath', '');
-    }
-    public get organizeImportsOnFormat() {
-        return readOption<boolean>('dotnet.formatting.organizeImportsOnFormat', false);
     }
     public get disableAIFeatures() {
         return readOption<boolean>('chat.disableAIFeatures', false);
@@ -160,20 +152,6 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
 
 export const commonOptions: CommonOptions = new CommonOptionsImpl();
 export const languageServerOptions: LanguageServerOptions = new LanguageServerOptionsImpl();
-
-function getExcludedPaths(): string[] {
-    const workspaceConfig = vscode.workspace.getConfiguration();
-
-    const excludePaths = getExcludes(workspaceConfig, 'files.exclude');
-    return excludePaths;
-
-    function getExcludes(config: vscode.WorkspaceConfiguration, option: string): string[] {
-        const optionValue = config.get<{ [i: string]: boolean }>(option, {});
-        return Object.entries(optionValue)
-            .filter(([_, value]) => value)
-            .map(([key, _]) => key);
-    }
-}
 
 /**
  * Reads an option from the vscode config with an optional back compat parameter.
