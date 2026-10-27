@@ -5800,11 +5800,5 @@
         "*.xaml": "${capture}.xaml.cs"
       }
     }
-  },
-  "allowScripts": {
-    "@vscode/vsce-sign@2.0.4": true,
-    "esbuild@0.28.1": true,
-    "fsevents@2.3.2": true,
-    "keytar@7.9.0": true
   }
 }
