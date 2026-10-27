@@ -116,5 +116,5 @@ async function getLoadedProjectPaths(exports: CSharpExtensionExports): Promise<s
         { workspacePath: vscode.workspace.workspaceFolders![0].uri.toString() },
         CancellationToken.None
     );
-    return result.map((project) => project.projectPath).sort();
+    return result.map((project) => vscode.Uri.file(project.projectPath).fsPath).sort();
 }
