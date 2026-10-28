@@ -69,7 +69,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "Abilita il ripristino automatico di NuGet se l'estensione rileva che mancano asset.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "Abilita l'esperienza di \"programmi basati su file\" (dotnet run app.cs).",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "Abilita l'esperienza di \"programmi basati su file\" (dotnet run app.cs) nei file che l'editor non riesce a identificare con certezza come programmi basati su file. Rispettato solo quando `dotnet.projects.enableFileBasedPrograms` è 'true'.",
-  "configuration.dotnet.projects.loadOnDemand": "Discovers and loads projects when you open C# files.",
+  "configuration.dotnet.projects.loadOnDemand": "Individua e carica i progetti all'apertura dei file C#.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Mostra le informazioni sulle note quando viene visualizzato il simbolo.",
   "configuration.dotnet.server.componentPaths": "Consente di eseguire l'override del percorso cartella per i componenti predefiniti del server di linguaggio (ad esempio, eseguire l'override del percorso .roslynDevKit nella directory delle estensioni per usare componenti compilati in locale). (Richiede il riavvio dell'estensione)",
   "configuration.dotnet.server.componentPaths.razorExtension": "Esegue l'override del percorso della cartella per il componente di estensione Razor del server di linguaggio",
