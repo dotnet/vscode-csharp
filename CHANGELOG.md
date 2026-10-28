@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
+* Update Roslyn to 5.14.0-1.26528.1 (PR: [#9925](https://github.com/dotnet/vscode-csharp/pull/9925))
+  * Razor formatting options (PR: [#86173](https://github.com/dotnet/roslyn/pull/86173))
+  * Cache aggregated tag helper diagnostics (PR: [#86218](https://github.com/dotnet/roslyn/pull/86218))
+  * Avoid reparsing qualified type names in Razor (PR: [#86202](https://github.com/dotnet/roslyn/pull/86202))
 * Add on-demand project loading setting (PR: [#9758](https://github.com/dotnet/vscode-csharp/pull/9758))
 * Update Roslyn to 5.13.0-1.26526.5 (PR: [#9758](https://github.com/dotnet/vscode-csharp/pull/9758))
   * Implement on-demand project loading (PR: [#85805](https://github.com/dotnet/roslyn/pull/85805))
