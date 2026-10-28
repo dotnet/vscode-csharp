@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
-* Update Roslyn to 5.14.0-1.26528.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.14.0-1.26528.1 (PR: [#9925](https://github.com/dotnet/vscode-csharp/pull/9925))
   * Razor formatting options (PR: [#86173](https://github.com/dotnet/roslyn/pull/86173))
   * Cache aggregated tag helper diagnostics (PR: [#86218](https://github.com/dotnet/roslyn/pull/86218))
   * Avoid reparsing qualified type names in Razor (PR: [#86202](https://github.com/dotnet/roslyn/pull/86202))
