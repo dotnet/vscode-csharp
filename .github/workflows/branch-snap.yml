@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   check-script:
-    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@042024f31f9f89422bc172362a04b5a51ac17df9 # main
+    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@25a7bbd6d67312a4e8ac898e99d6a01a74ff1cd9 # main
     with:
       configuration_file_path: '.config/snap-flow.json'
       script_version: '042024f31f9f89422bc172362a04b5a51ac17df9'
