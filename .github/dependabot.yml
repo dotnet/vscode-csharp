@@ -5,6 +5,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "wednesday"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
   - package-ecosystem: "dotnet-sdk"
     directory: "/msbuild"
     schedule:
