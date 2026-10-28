@@ -164,6 +164,10 @@ To add new packages, you must authenticate by running:
 
 To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the command `npm run vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
 
+For offline installation, use `npm run vsix:release:package -- --offline`. This additionally bundles the Roslyn Copilot component and, on supported platforms, VSWebAssemblyBridge, including their installation markers so activation does not attempt to download them. VSWebAssemblyBridge is not currently declared compatible with Alpine (`linux-musl`). Without `--offline`, these components remain runtime downloads.
+
+Creating these packages still requires network access to acquire dependencies. The target machine also needs the required .NET runtime and any prerequisite extension VSIXs; see [Installing without Internet connectivity](docs/Installing-without-Internet-connectivity.md). Offline and default packages have the same filenames, so use `--outputFolder` to keep them in separate directories.
+
 ## Updating the `Roslyn` Language Server Version
 
 In order to pull in new packages from upstreams into the msft_consumption feed we use for restoring, you will need to be a member of the 'CSharp VS Code Extension contributors' group in the [Azure Devops instance](https://dev.azure.com/azure-public/vside/_settings/teams).
