@@ -69,7 +69,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "확장에서 자산이 누락된 것을 감지하는 경우 자동 NuGet 복원을 사용하도록 설정합니다.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "\"파일 기반 프로그램\"(dotnet run app.cs) 환경을 활성화합니다.",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "편집기가 파일이 파일 기반 프로그램인지 확실히 판단할 수 없는 경우에도 \"파일 기반 프로그램\"(dotnet run app.cs) 기능을 사용할 수 있게 합니다. 'dotnet.projects.enableFileBasedPrograms'가 'true'인 경우에만 적용됩니다.",
-  "configuration.dotnet.projects.loadOnDemand": "Discovers and loads projects when you open C# files.",
+  "configuration.dotnet.projects.loadOnDemand": "C# 파일을 열 때 프로젝트를 검색하고 로드합니다.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "기호를 표시할 때 설명 정보를 표시합니다.",
   "configuration.dotnet.server.componentPaths": "언어 서버의 기본 제공 구성 요소에 대한 폴더 경로를 재정의할 수 있습니다(예: 로컬로 빌드된 구성 요소를 사용하도록 확장 디렉터리의 .roslynDevKit 경로 재정의). (확장을 다시 시작해야 함)",
   "configuration.dotnet.server.componentPaths.razorExtension": "언어 서버의 Razor 확장 구성 요소에 대한 폴더 경로를 재정의합니다.",
