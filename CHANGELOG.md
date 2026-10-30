@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
+* Update Roslyn to 5.14.0-1.26529.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Preserve text during conversion operator recovery (PR: [#86252](https://github.com/dotnet/roslyn/pull/86252))
+  * Add properties read by Hot Reload (PR: [#86200](https://github.com/dotnet/roslyn/pull/86200))
+  * File-based apps: keep ProjectRootElements alive (PR: [#86235](https://github.com/dotnet/roslyn/pull/86235))
+  * Fix ambiguous Razor component binding breaking the rest of the document (PR: [#86248](https://github.com/dotnet/roslyn/pull/86248))
+  * Don't follow directory symlinks in file-based app discovery (PR: [#86091](https://github.com/dotnet/roslyn/pull/86091))
 * Update Roslyn to 5.14.0-1.26528.1 (PR: [#9925](https://github.com/dotnet/vscode-csharp/pull/9925))
   * Razor formatting options (PR: [#86173](https://github.com/dotnet/roslyn/pull/86173))
   * Cache aggregated tag helper diagnostics (PR: [#86218](https://github.com/dotnet/roslyn/pull/86218))
