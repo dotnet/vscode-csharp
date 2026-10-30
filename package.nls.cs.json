@@ -69,7 +69,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "Povolí automatické obnovení balíčku NuGet, pokud rozšíření zjistí, že chybí prostředky.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "Umožňuje využívat prostředí „programů založených na souborech“ (dotnet run app.cs).",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "Umožňuje využívat prostředí „programů založených na souborech“ (dotnet run app.cs) v souborech, kde editor nedokáže s jistotou určit, zda je daný soubor programem založeným na souboru. Respektováno pouze v případě, že hodnota dotnet.projects.enableFileBasedPrograms je true.",
-  "configuration.dotnet.projects.loadOnDemand": "Discovers and loads projects when you open C# files.",
+  "configuration.dotnet.projects.loadOnDemand": "Při otevření souborů jazyka C# vyhledá a načte projekty.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Zobrazit informace o poznámkách při zobrazení symbolu.",
   "configuration.dotnet.server.componentPaths": "Umožňuje přepsat cestu ke složce pro integrované komponenty jazykového serveru (například přepsat cestu .roslynDevKit v adresáři rozšíření tak, aby používala místně sestavené komponenty). (Vyžaduje restartování rozšíření)",
   "configuration.dotnet.server.componentPaths.razorExtension": "Přepíše cestu ke složce pro komponentu rozšíření Razor jazykového serveru",
