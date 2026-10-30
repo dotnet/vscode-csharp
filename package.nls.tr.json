@@ -69,7 +69,7 @@
   "configuration.dotnet.projects.enableAutomaticRestore": "Uzantı varlıkların eksik olduğunu algılarsa otomatik NuGet geri yükleme işlemini etkinleştirir.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "\"Dosya tabanlı programlar\" (dotnet run app.cs) deneyimini etkinleştirir.",
   "configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous": "Düzenleyicinin, dosyanın bir dosya tabanlı program olup olmadığını kesin olarak belirleyemediği dosyalarda \"dosya tabanlı programlar\" (dotnet run app.cs) deneyimini etkinleştirir. Bu yalnızca `dotnet.projects.enableFileBasedPrograms` değeri `true` olduğunda geçerlidir.",
-  "configuration.dotnet.projects.loadOnDemand": "Discovers and loads projects when you open C# files.",
+  "configuration.dotnet.projects.loadOnDemand": "C# dosyalarını açtığınızda projeleri bulur ve yükler.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Simge görüntülendiğinde açıklama bilgilerini göster.",
   "configuration.dotnet.server.componentPaths": "Dil sunucusunun yerleşik bileşenleri için klasör yolunu geçersiz kılmaya izin verir (örneğin, yerel olarak oluşturulan bileşenleri kullanmak için uzantı dizinindeki .roslynDevKit yolunu geçersiz kılın). (Uzantının yeniden başlatılması gerekir)",
   "configuration.dotnet.server.componentPaths.razorExtension": "Dil sunucusundaki Razor uzantısı bileşeninin klasör yolunu geçersiz kılar",

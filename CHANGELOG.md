@@ -6,6 +6,7 @@
 # 11.9.x
 * Update Roslyn to 5.14.0-1.26529.6 (PR: [#9938](https://github.com/dotnet/vscode-csharp/pull/9938))
   * Preserve text during conversion operator recovery (PR: [#86252](https://github.com/dotnet/roslyn/pull/86252))
+* Update Roslyn to 5.14.0-1.26529.4 (PR: [#9937](https://github.com/dotnet/vscode-csharp/pull/9937))
   * Add properties read by Hot Reload (PR: [#86200](https://github.com/dotnet/roslyn/pull/86200))
   * File-based apps: keep ProjectRootElements alive (PR: [#86235](https://github.com/dotnet/roslyn/pull/86235))
   * Fix ambiguous Razor component binding breaking the rest of the document (PR: [#86248](https://github.com/dotnet/roslyn/pull/86248))
