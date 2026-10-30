@@ -6,7 +6,12 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from '../common';
-import { CoreClrDebugUtil, getTargetArchitecture, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util';
+import {
+    CoreClrDebugUtil,
+    getTargetArchitecture,
+    getTargetArchitectureFromHost,
+    MINIMUM_SUPPORT_MACOS_DISPLAY_NAME,
+} from './util';
 import { PlatformInformation } from '../shared/platform';
 import {
     DebuggerPrerequisiteWarning,
@@ -22,6 +27,13 @@ import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider'
 import { omnisharpOptions } from '../shared/options';
 import { ActionOption, CommandOption, showErrorMessage } from '../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import {
+    activateAndResolveWorkspaceDotnet,
+    ResolvedWorkspaceDotnet,
+    WorkspaceDotnetFailureReason,
+    WorkspaceDotnetResolutionError,
+} from '../lsptoolshost/dotnetRuntime/workspaceDotnetResolver';
+import { CSharpDevKitExports } from '../csharpDevKitExports';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -29,7 +41,8 @@ export async function activate(
     platformInformation: PlatformInformation,
     eventStream: EventStream,
     csharpOutputChannel: vscode.OutputChannel,
-    languageServerStartedPromise: Promise<any> | undefined
+    languageServerStartedPromise: Promise<any> | undefined,
+    csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined>
 ) {
     const disposables = new CompositeDisposable();
 
@@ -48,7 +61,9 @@ export async function activate(
             showInstallErrorMessage(eventStream);
         }
     } else if (!CoreClrDebugUtil.existsSync(debugUtil.installCompleteFilePath())) {
-        await completeDebuggerInstall(debugUtil, platformInformation, eventStream);
+        // C# Dev Kit waits for C# activation, so prerequisite completion must not await its exports
+        // on this activation stack. The deferred task still fails closed once the exports settle.
+        void completeDebuggerInstall(debugUtil, platformInformation, eventStream, csharpDevKitExportsPromise);
     }
 
     // register process picker for attach for legacy configurations.
@@ -101,7 +116,8 @@ export async function activate(
         platformInformation,
         eventStream,
         thisExtension.packageJSON,
-        thisExtension.extensionPath
+        thisExtension.extensionPath,
+        csharpDevKitExportsPromise
     );
     /** 'clr' type does not have a intial configuration provider, but we need to register it to support the common debugger features listed in {@link BaseVsDbgConfigurationProvider} */
     context.subscriptions.push(
@@ -174,13 +190,20 @@ async function checkIsValidArchitecture(
     return false;
 }
 
-async function completeDebuggerInstall(
+export async function completeDebuggerInstall(
     debugUtil: CoreClrDebugUtil,
     platformInformation: PlatformInformation,
-    eventStream: EventStream
+    eventStream: EventStream,
+    csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined> = getCSharpDevKitExports()
 ): Promise<boolean> {
     try {
-        await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
+        const workspaceDotnet = await resolveDebuggerWorkspaceDotnet(csharpDevKitExportsPromise);
+        if (workspaceDotnet) {
+            debugUtil.checkDotNetSdkVersion(workspaceDotnet.sdk.version);
+        } else {
+            await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
+        }
+
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
@@ -200,12 +223,24 @@ async function completeDebuggerInstall(
     } catch (err) {
         const error = err as Error;
 
-        // Check for dotnet tools failed. pop the UI
-        showDotnetToolsWarning(error.message);
+        if (!(error instanceof WorkspaceDotnetResolutionError)) {
+            showDotnetToolsWarning(error.message);
+        }
         eventStream.post(new DebuggerPrerequisiteWarning(error.message));
         // TODO: log telemetry?
         return false;
     }
+}
+
+async function resolveDebuggerWorkspaceDotnet(
+    csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined>
+): Promise<ResolvedWorkspaceDotnet | undefined> {
+    return await activateAndResolveWorkspaceDotnet(csharpDevKitExportsPromise);
+}
+
+async function getCSharpDevKitExports(): Promise<CSharpDevKitExports | undefined> {
+    const devKit = getCSharpDevKit();
+    return devKit ? devKit.activate() : Promise.resolve(undefined);
 }
 
 function showInstallErrorMessage(eventStream: EventStream) {
@@ -261,7 +296,8 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         private readonly platformInfo: PlatformInformation,
         private readonly eventStream: EventStream,
         private readonly packageJSON: any,
-        private readonly extensionPath: string
+        private readonly extensionPath: string,
+        private readonly csharpDevKitExportsPromise?: Promise<CSharpDevKitExports | undefined>
     ) {}
 
     async createDebugAdapterDescriptor(
@@ -301,7 +337,12 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             }
             // install.complete does not exist, check dotnetCLI to see if we can complete.
             else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-                const success = await completeDebuggerInstall(this.debugUtil, this.platformInfo, this.eventStream);
+                const success = await completeDebuggerInstall(
+                    this.debugUtil,
+                    this.platformInfo,
+                    this.eventStream,
+                    this.csharpDevKitExportsPromise ?? getCSharpDevKitExports()
+                );
                 if (!success) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());
                     throw new Error(
@@ -317,12 +358,60 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
-            const targetArchitecture = getTargetArchitecture(
-                this.platformInfo,
-                _session.configuration.targetArchitecture,
-                dotNetInfo
-            );
+            let targetArchitecture: string;
+            let options: vscode.DebugAdapterExecutableOptions | undefined;
+            let workspaceDotnet: ResolvedWorkspaceDotnet | undefined;
+            try {
+                workspaceDotnet = await resolveDebuggerWorkspaceDotnet(
+                    this.csharpDevKitExportsPromise ?? getCSharpDevKitExports()
+                );
+            } catch (error) {
+                if (error instanceof WorkspaceDotnetResolutionError) {
+                    this.eventStream.post(new DebuggerNotInstalledFailure());
+                    this.eventStream.post(new DebuggerPrerequisiteWarning(error.message));
+                    if (
+                        error.reason !== WorkspaceDotnetFailureReason.Resolving &&
+                        error.reason !== WorkspaceDotnetFailureReason.Blocked
+                    ) {
+                        throw new Error(
+                            vscode.l10n.t(
+                                'Unable to start the debugger because the workspace .NET SDK could not be resolved.'
+                            ),
+                            { cause: error }
+                        );
+                    }
+                }
+                throw error;
+            }
+            if (workspaceDotnet) {
+                targetArchitecture = getTargetArchitectureFromHost(
+                    this.platformInfo,
+                    _session.configuration.targetArchitecture,
+                    workspaceDotnet.sdk.version,
+                    workspaceDotnet.architecture
+                );
+                options = {
+                    env: createDebugAdapterEnvironment(workspaceDotnet.environment, this.platformInfo.isWindows()),
+                };
+            } else {
+                const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
+                targetArchitecture = getTargetArchitecture(
+                    this.platformInfo,
+                    _session.configuration.targetArchitecture,
+                    dotNetInfo
+                );
+
+                const dotnetRoot =
+                    process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+                if (dotnetRoot) {
+                    options = {
+                        env: {
+                            DOTNET_ROOT: dotnetRoot,
+                        },
+                    };
+                }
+            }
+
             const command = path.join(
                 common.getExtensionPath(),
                 '.debugger',
@@ -330,23 +419,34 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                 'vsdbg-ui' + CoreClrDebugUtil.getPlatformExeExtension()
             );
 
-            // Look to see if DOTNET_ROOT is set, then use dotnet cli path
-            const dotnetRoot: string =
-                process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
-
-            let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
-            if (dotnetRoot) {
-                options = {
-                    env: {
-                        DOTNET_ROOT: dotnetRoot,
-                    },
-                };
-            }
-
             executable = new vscode.DebugAdapterExecutable(command, [], options);
         }
 
         // make VS Code launch the DA executable
         return executable;
     }
+}
+
+function createDebugAdapterEnvironment(
+    contribution: Readonly<Record<string, string | null>>,
+    isWindows: boolean
+): { [key: string]: string } {
+    const knownKeys = new Set([...Object.keys(process.env), ...Object.keys(contribution)]);
+    const environment: { [key: string]: string } = {};
+
+    for (const [key, value] of Object.entries(contribution)) {
+        for (const knownKey of knownKeys) {
+            if (environmentVariableNamesEqual(knownKey, key, isWindows)) {
+                // DebugAdapterExecutableOptions is serialized across the extension-host boundary, which drops
+                // undefined properties. Empty strings survive that boundary and neutralize inherited values.
+                environment[knownKey] = value ?? '';
+            }
+        }
+    }
+
+    return environment;
+}
+
+function environmentVariableNamesEqual(left: string, right: string, isWindows: boolean): boolean {
+    return isWindows ? left.toUpperCase() === right.toUpperCase() : left === right;
 }
