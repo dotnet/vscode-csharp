@@ -3,6 +3,101 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 11.8.x
+
+This update improves C# navigation, test discovery, language server responsiveness, Razor editing, and Blazor WebAssembly debugging.
+
+## C# Language Support
+
+### Microsoft.Testing.Platform support
+
+You can now run and debug tests in Microsoft.Testing.Platform projects through the C# test CodeLens, including projects using newer test frameworks such as xUnit v3. ([dotnet/roslyn#85271](https://github.com/dotnet/roslyn/pull/85271))
+
+### Local functions in event accessors
+
+With C# Dev Kit, Solution Explorer now shows local functions declared in an event's `add` and `remove` accessors. ([dotnet/roslyn#85957](https://github.com/dotnet/roslyn/pull/85957))
+
+### More reliable navigation and refactoring
+
+- **Find All References** now finds cross-project references to partial members when projects target different frameworks or resolve different dependency versions. **Implement Explicitly** also updates call sites more reliably in linked files. ([dotnet/roslyn#85844](https://github.com/dotnet/roslyn/pull/85844))
+- **Go to Definition** no longer fails for XAML classes referenced in attributes, property types, and constructors. ([dotnet/roslyn#86041](https://github.com/dotnet/roslyn/pull/86041))
+- Renaming a type or interface no longer renames an unrelated ordinary method named `Finalize`. The **Use pattern matching** suggestion is no longer offered when an intervening local function changes the value being tested. ([dotnet/roslyn#85126](https://github.com/dotnet/roslyn/pull/85126), [dotnet/roslyn#85991](https://github.com/dotnet/roslyn/pull/85991))
+- New files created by refactorings no longer inherit generated-file banners from generated source documents. ([dotnet/roslyn#85682](https://github.com/dotnet/roslyn/pull/85682))
+
+### Completion and highlighting fixes
+
+Completion no longer fails when resolving type parameters in XML `cref` documentation or when linked copies of a document are out of sync. ([dotnet/roslyn#85840](https://github.com/dotnet/roslyn/pull/85840), [dotnet/roslyn#85134](https://github.com/dotnet/roslyn/pull/85134))
+
+Lambda parameter discards receive the correct keyword highlighting, and semantic highlighting waits for project information to be ready to reduce color changes during startup. ([dotnet/roslyn#85225](https://github.com/dotnet/roslyn/pull/85225), [dotnet/roslyn#85688](https://github.com/dotnet/roslyn/pull/85688))
+
+### More accurate diagnostics
+
+The **Use System.Threading.Lock** suggestion (IDE0330) now appears even when the containing type has fields declared together. Constants used by static local functions are no longer incorrectly reported as unused values (IDE0059). ([dotnet/roslyn#86077](https://github.com/dotnet/roslyn/pull/86077), [dotnet/roslyn#85994](https://github.com/dotnet/roslyn/pull/85994))
+
+### Formatting fixes
+
+Formatting with tabs preserves the `#!` shebang in file-based apps, keeping those files executable. Formatting also keeps commas beside closing braces in switch-expression arms instead of moving them to a separate line. ([dotnet/roslyn#86085](https://github.com/dotnet/roslyn/pull/86085), [dotnet/roslyn#85992](https://github.com/dotnet/roslyn/pull/85992))
+
+### More reliable project and document loading
+
+Project loading respects `DOTNET_ROOT` and `DOTNET_HOST_PATH` when selecting the .NET installation, and document URI handling now matches VS Code more closely to avoid failures with virtual documents. ([dotnet/roslyn#85195](https://github.com/dotnet/roslyn/pull/85195), [dotnet/roslyn#83593](https://github.com/dotnet/roslyn/pull/83593))
+
+File-based apps handle Git diff documents without duplicate-open errors, initialize their discovery cache correctly on Linux, and recognize restore output more reliably when a custom `ArtifactsPath` is configured. ([dotnet/roslyn#85942](https://github.com/dotnet/roslyn/pull/85942), [dotnet/roslyn#85763](https://github.com/dotnet/roslyn/pull/85763), [dotnet/roslyn#85204](https://github.com/dotnet/roslyn/pull/85204))
+
+## Performance
+
+### More responsive editing in large workspaces
+
+The language server consolidates file watchers to reduce the load on VS Code in large solutions. Analyzer work is also reused across repeated edits instead of being restarted unnecessarily after cancellation. ([dotnet/roslyn#85951](https://github.com/dotnet/roslyn/pull/85951), [dotnet/roslyn#85222](https://github.com/dotnet/roslyn/pull/85222))
+
+### Better project loading priorities
+
+Project loading prioritizes projects that need a full load over projects already available from cached information. Load progress and completion are tracked per project so operations can wait for the projects they need. ([dotnet/roslyn#85272](https://github.com/dotnet/roslyn/pull/85272), [dotnet/roslyn#85107](https://github.com/dotnet/roslyn/pull/85107))
+
+## Razor
+
+### Editing support for Razor documentation
+
+Projects using Razor 12 now get completion and a `<summary>` snippet for `@documentation` blocks, along with semantic highlighting, folding, and formatting of their XML contents. ([dotnet/roslyn#85727](https://github.com/dotnet/roslyn/pull/85727), [dotnet/roslyn#85724](https://github.com/dotnet/roslyn/pull/85724), [dotnet/roslyn#85725](https://github.com/dotnet/roslyn/pull/85725), [dotnet/roslyn#85726](https://github.com/dotnet/roslyn/pull/85726))
+
+New quick fixes help escape comment terminators, make legacy expressions explicit, and wrap plain text in `<summary>` elements. ([dotnet/roslyn#85728](https://github.com/dotnet/roslyn/pull/85728))
+
+### File navigation and component insertion
+
+**Go to Definition** now opens files referenced by `~/` paths in Razor markup and supports file types beyond Razor files. Dropping a component into the editor uses a fully qualified tag name when needed to avoid selecting a different component with the same name. ([dotnet/roslyn#86072](https://github.com/dotnet/roslyn/pull/86072), [dotnet/roslyn#86032](https://github.com/dotnet/roslyn/pull/86032))
+
+### JavaScript and CSS highlighting
+
+JavaScript and CSS inside Razor files retain their syntax highlighting when nested in C# blocks or following HTML comments inside those blocks. ([#9740](https://github.com/dotnet/vscode-csharp/pull/9740))
+
+### Safer formatting
+
+Formatting avoids repeatedly adding indentation inside script and style blocks containing complex Razor expressions, corrects over-indentation of nested script blocks, and no longer fails on multiline `@attribute` directives. Cleanup after code actions also uses the C# formatting preferences configured for the Razor file in `.editorconfig`. ([dotnet/roslyn#85142](https://github.com/dotnet/roslyn/pull/85142), [dotnet/roslyn#85289](https://github.com/dotnet/roslyn/pull/85289), [dotnet/roslyn#86028](https://github.com/dotnet/roslyn/pull/86028), [dotnet/roslyn#85128](https://github.com/dotnet/roslyn/pull/85128))
+
+### Completion fixes
+
+Closing-tag completion no longer removes unrelated content later in the document. HTML snippets are available when explicitly requested in empty documents and after a closing tag at the end of a file, without leaking suggestions between completion requests. ([dotnet/roslyn#85710](https://github.com/dotnet/roslyn/pull/85710), [dotnet/roslyn#85827](https://github.com/dotnet/roslyn/pull/85827))
+
+### Diagnostics and editing reliability
+
+Opening the historical side of a Razor Git diff no longer produces syntax errors caused by the document's URI. Incomplete `@rendermode` attributes also no longer crash the Razor source generator while you type. ([dotnet/roslyn#85886](https://github.com/dotnet/roslyn/pull/85886), [dotnet/roslyn#85693](https://github.com/dotnet/roslyn/pull/85693))
+
+## Debugging
+
+### Correct project selection for Blazor WebAssembly
+
+Browser debugging now uses the requested Blazor project's program and assets instead of an unrelated executable in the workspace, including when started from an Aspire dashboard. Explicit debugger `program` overrides are preserved. ([#9883](https://github.com/dotnet/vscode-csharp/pull/9883))
+
+## Editor Experience
+
+### Discover tests with custom attributes
+
+Enable `dotnet.testing.useSemanticTestDiscovery` to recognize test attributes derived from known framework attributes, such as a custom `FactAttribute`. This option is off by default, and enabling it can make test CodeLens take longer to resolve. ([#9752](https://github.com/dotnet/vscode-csharp/pull/9752), [dotnet/roslyn#85255](https://github.com/dotnet/roslyn/pull/85255))
+
+### C# Dev Kit compatibility
+
+When C# Dev Kit is installed, this release requires C# Dev Kit 11 or later. If an incompatible version is present, activation provides guidance instead of starting with an unsupported combination; standalone C# usage remains supported. ([#9776](https://github.com/dotnet/vscode-csharp/pull/9776))
+
 # 2.160.x
 
 This update improves C# and Razor editing, project loading performance, debugging, MAUI Hot Reload, and solution management.
