@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
+* Update Roslyn to 5.14.0-1.26552.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Improve syntax highlighting for C# declarations in hover tooltips (PR: [#86272](https://github.com/dotnet/roslyn/pull/86272))
+  * Fix Find References failures in files with malformed conversion operators (PR: [#86252](https://github.com/dotnet/roslyn/pull/86252))
 * Update Roslyn to 5.14.0-1.26529.4 (PR: [#9937](https://github.com/dotnet/vscode-csharp/pull/9937))
   * Add properties read by Hot Reload (PR: [#86200](https://github.com/dotnet/roslyn/pull/86200))
   * File-based apps: keep ProjectRootElements alive (PR: [#86235](https://github.com/dotnet/roslyn/pull/86235))
