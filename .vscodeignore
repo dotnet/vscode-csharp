@@ -3,6 +3,7 @@
 .nyc_output/**
 !.roslyn/**
 !.roslynDevKit/**
+!.roslynCopilot/**
 !.omnisharp/**
 !.razor/**
 !.razorDevKit/**

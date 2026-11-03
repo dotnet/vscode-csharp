@@ -36,6 +36,7 @@ interface VSIXPlatformInfo {
 
 export interface VsixReleasePackageOptions {
     prerelease: boolean;
+    offline: boolean;
     outputFolder: string;
     codeExtensionPath: string;
 }
@@ -408,6 +409,20 @@ async function buildVsix(packageJSON: any, options: VsixReleasePackageOptions, p
     if (platformInfo != null) {
         await installRazor(packageJSON, platformInfo.platformInfo, options.codeExtensionPath);
         await installDebugger(packageJSON, platformInfo.platformInfo, options.codeExtensionPath);
+        if (options.offline) {
+            await installPackageJsonDependency(
+                'RoslynCopilot',
+                packageJSON,
+                platformInfo.platformInfo,
+                options.codeExtensionPath
+            );
+            await installPackageJsonDependency(
+                'VSWebAssemblyBridge',
+                packageJSON,
+                platformInfo.platformInfo,
+                options.codeExtensionPath
+            );
+        }
     }
 
     const packageFileName = getPackageName(packageJSON, platformInfo?.vsceTarget);

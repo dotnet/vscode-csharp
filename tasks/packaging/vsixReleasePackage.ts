@@ -12,6 +12,7 @@ import { rootPath } from '../projectPaths';
 const { values } = parseArgs({
     options: {
         prerelease: { type: 'boolean' },
+        offline: { type: 'boolean' },
         outputFolder: { type: 'string', short: 'o' },
         codeExtensionPath: { type: 'string' },
     },
@@ -20,6 +21,7 @@ const { values } = parseArgs({
 
 const options: VsixReleasePackageOptions = {
     prerelease: values.prerelease ?? false,
+    offline: values.offline ?? false,
     outputFolder: path.resolve(values.outputFolder ?? path.join(rootPath, 'vsix')),
     codeExtensionPath: path.resolve(values.codeExtensionPath ?? rootPath),
 };
