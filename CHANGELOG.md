@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
+* Update Roslyn to 5.14.0-1.26553.1 (PR: [#9946](https://github.com/dotnet/vscode-csharp/pull/9946))
+  * Avoid language server stalls when source files are deleted (PR: [#86286](https://github.com/dotnet/roslyn/pull/86286))
+  * Fix speculative binding failures for top-level asynchronous local functions named Main (PR: [#86245](https://github.com/dotnet/roslyn/pull/86245))
 * Update Roslyn to 5.14.0-1.26552.2 (PR: [#9942](https://github.com/dotnet/vscode-csharp/pull/9942))
   * Improve syntax highlighting for C# declarations in hover tooltips (PR: [#86272](https://github.com/dotnet/roslyn/pull/86272))
   * Fix Find References failures in files with malformed conversion operators (PR: [#86252](https://github.com/dotnet/roslyn/pull/86252))
