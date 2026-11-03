@@ -702,7 +702,6 @@
       "platforms": [
         "win32",
         "linux",
-        "linux-musl",
         "darwin"
       ],
       "architectures": [

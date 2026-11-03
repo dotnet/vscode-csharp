@@ -79,17 +79,21 @@ describe('offline VSWebAssemblyBridge packaging', () => {
         { platform: 'win32', packageTask: vsixReleasePackageWindowsTask },
         { platform: 'linux', packageTask: vsixReleasePackageLinuxTask },
         { platform: 'darwin', packageTask: vsixReleasePackageDarwinTask },
-    ])('installs the bridge before packaging each $platform target', async ({ platform, packageTask }) => {
+    ])('bundles the bridge only for supported $platform targets', async ({ platform, packageTask }) => {
         const targets = platformSpecificPackages.filter((target) =>
             platform === 'linux' ? target.platformInfo.isLinux() : target.platformInfo.platform === platform
         );
         jest.mocked(createPackageAsync).mockImplementation(async (_output, _prerelease, _name, target) => {
             const downloads = jest.mocked(downloadAndInstallPackages).mock.calls;
             const packages = downloads[downloads.length - 1][0];
+            const platformInfo = targets.find((entry) => entry.vsceTarget === target)!.platformInfo;
+            if (platformInfo.platform === 'linux-musl') {
+                expect(packages).toHaveLength(0);
+                return 'test.vsix';
+            }
             expect(packages).toHaveLength(1);
             expect(packages[0].id).toBe('VSWebAssemblyBridge');
             expect(packages[0].installPath.value).toBe(path.join(options.codeExtensionPath, '.vswebassemblybridge'));
-            const platformInfo = targets.find((entry) => entry.vsceTarget === target)!.platformInfo;
             expect(packages[0].platforms).toContain(platformInfo.platform);
             expect(packages[0].architectures).toContain(platformInfo.architecture);
             return 'test.vsix';

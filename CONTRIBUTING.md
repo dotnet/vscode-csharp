@@ -164,7 +164,7 @@ To add new packages, you must authenticate by running:
 
 To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the command `npm run vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
 
-Platform-specific packages include the VSWebAssemblyBridge payload in `.vswebassemblybridge` for offline Blazor WebAssembly debugging, including Alpine Linux targets. Packaging downloads this dependency from the URL in `package.json`, so network access is required when creating the VSIX.
+Windows, Linux (glibc), and macOS platform-specific packages include the VSWebAssemblyBridge payload in `.vswebassemblybridge` for offline Blazor WebAssembly debugging. Packaging downloads this dependency from the URL in `package.json`, so network access is required when creating the VSIX.
 
 ## Updating the `Roslyn` Language Server Version
 
