@@ -13,14 +13,35 @@ import { IServiceBroker } from '@microsoft/servicehub-framework';
  */
 export type WorkspaceDotnetEnvironment = Readonly<Record<string, string | null>>;
 
-export type WorkspaceDotnetHost =
+export interface WorkspaceDotnetHost {
+    readonly executablePath: string;
+    readonly architecture: 'x86' | 'x64' | 'arm' | 'arm64';
+    readonly environment: WorkspaceDotnetEnvironment;
+}
+
+export interface WorkspaceDotnetSdk {
+    readonly path: string;
+    readonly version: string;
+}
+
+export type WorkspaceDotnetState =
+    | { readonly kind: 'resolving'; readonly revision: number }
     | {
-          readonly status: 'ready';
-          readonly dotnetPath: string;
-          readonly environment: WorkspaceDotnetEnvironment;
+          readonly kind: 'ready';
+          readonly revision: number;
+          readonly host: WorkspaceDotnetHost;
+          readonly sdk: WorkspaceDotnetSdk;
       }
-    | { readonly status: 'blocked' }
-    | { readonly status: 'not-applicable' };
+    | { readonly kind: 'blocked'; readonly revision: number }
+    | { readonly kind: 'notApplicable'; readonly revision: number };
+
+export interface WorkspaceDotnetStateService {
+    readonly version: '1.0';
+    /** Returns the current immutable authoritative workspace .NET state. */
+    getState(): WorkspaceDotnetState;
+    /** Fires after the authoritative workspace .NET state changes. */
+    readonly onDidChangeState: vscode.Event<WorkspaceDotnetState>;
+}
 
 export interface WorkspaceSdkInfo {
     readonly executablePath: string;
@@ -31,20 +52,11 @@ export interface WorkspaceSdkInfo {
 }
 
 export interface WorkspaceDotnetService {
-    /**
-     * Contract version 0.1. Consumers must feature-detect optional members so producers can add compatible 0.1
-     * capabilities without breaking older extensions.
-     */
     readonly version: '0.1';
     /** Returns the ready workspace SDK, or undefined while selection is unresolved or blocked. */
     getSdkInfo(): WorkspaceSdkInfo | undefined;
     /** Fires when a selection becomes ready or refreshed SDK metadata is available for the same host. */
     readonly onDidChangeSdkInfo: vscode.Event<WorkspaceSdkInfo>;
-    /**
-     * Resolves the settled workspace host state when supported by the service producer. A ready result identifies
-     * the exact executable and environment that consumers must use together.
-     */
-    getWorkspaceDotnetHost?(): Promise<WorkspaceDotnetHost>;
 }
 
 export interface CSharpDevKitExports {
@@ -54,6 +66,8 @@ export interface CSharpDevKitExports {
     hasServerProcessLoaded: () => boolean;
     serverProcessLoaded: vscode.Event<void>;
     setupTelemetryEnvironmentAsync: (env: NodeJS.ProcessEnv) => Promise<string | undefined>;
-    /** The authoritative .NET SDK selected for this workspace. */
+    /** Legacy ready-only workspace SDK projection. */
     dotnet?: WorkspaceDotnetService;
+    /** The authoritative observable workspace .NET state. */
+    workspaceDotnet?: WorkspaceDotnetStateService;
 }
