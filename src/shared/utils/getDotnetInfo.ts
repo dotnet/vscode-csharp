@@ -11,12 +11,44 @@ import { DotnetInfo, RuntimeInfo } from './dotnetInfo';
 import { EOL } from 'os';
 
 // This function calls `dotnet --info` and returns the result as a DotnetInfo object.
-export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInfo> {
-    const dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
+export async function getDotnetInfo(
+    dotNetCliPaths: string[],
+    options?: {
+        dotnetExecutablePath?: string;
+        environment?: Readonly<Record<string, string | null>>;
+        architecture?: 'x86' | 'x64' | 'arm' | 'arm64';
+    }
+): Promise<DotnetInfo> {
+    const dotnetExecutablePath = options?.dotnetExecutablePath ?? getDotNetExecutablePath(dotNetCliPaths);
+    const environment = applyEnvironmentOverlay(process.env, options?.environment ?? {});
 
-    const data = await runDotnetInfo(dotnetExecutablePath);
-    const dotnetInfo = await parseDotnetInfo(data, dotnetExecutablePath);
+    const data = await runDotnetInfo(dotnetExecutablePath, environment);
+    const dotnetInfo = await parseDotnetInfo(data, dotnetExecutablePath, environment, options?.architecture);
     return dotnetInfo;
+}
+
+export function applyEnvironmentOverlay(
+    inheritedEnvironment: NodeJS.ProcessEnv,
+    overlay: Readonly<Record<string, string | null>>,
+    platform: NodeJS.Platform = process.platform
+): NodeJS.ProcessEnv {
+    const environment = { ...inheritedEnvironment };
+
+    for (const [name, value] of Object.entries(overlay)) {
+        for (const existingName of Object.keys(environment)) {
+            const namesMatch =
+                platform === 'win32' ? existingName.toUpperCase() === name.toUpperCase() : existingName === name;
+            if (namesMatch) {
+                delete environment[existingName];
+            }
+        }
+
+        if (value !== null) {
+            environment[name] = value;
+        }
+    }
+
+    return environment;
 }
 
 export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined {
@@ -33,14 +65,17 @@ export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | unde
     return dotnetExecutablePath;
 }
 
-async function runDotnetInfo(dotnetExecutablePath: string | undefined): Promise<string> {
+async function runDotnetInfo(
+    dotnetExecutablePath: string | undefined,
+    environment: NodeJS.ProcessEnv
+): Promise<string> {
     try {
-        const env = {
-            ...process.env,
+        const infoEnvironment = {
+            ...environment,
             DOTNET_CLI_UI_LANGUAGE: 'en-US',
         };
         const command = dotnetExecutablePath ? `"${dotnetExecutablePath}"` : 'dotnet';
-        const data = await execChildProcess(`${command} --info`, process.cwd(), env);
+        const data = await execChildProcess(`${command} --info`, process.cwd(), infoEnvironment);
         return data;
     } catch (error) {
         const message = error instanceof Error ? error.message : `${error}`;
@@ -48,7 +83,12 @@ async function runDotnetInfo(dotnetExecutablePath: string | undefined): Promise<
     }
 }
 
-async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string | undefined): Promise<DotnetInfo> {
+async function parseDotnetInfo(
+    dotnetInfo: string,
+    dotnetExecutablePath: string | undefined,
+    environment: NodeJS.ProcessEnv,
+    workspaceDotnetArchitecture?: 'x86' | 'x64' | 'arm' | 'arm64'
+): Promise<DotnetInfo> {
     try {
         const cliPath = dotnetExecutablePath;
         const fullInfo = dotnetInfo;
@@ -71,7 +111,7 @@ async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string 
 
         const runtimeVersions: { [runtime: string]: RuntimeInfo[] } = {};
         const command = dotnetExecutablePath ? `"${dotnetExecutablePath}"` : 'dotnet';
-        const listRuntimes = await execChildProcess(`${command} --list-runtimes`, process.cwd(), process.env);
+        const listRuntimes = await execChildProcess(`${command} --list-runtimes`, process.cwd(), environment);
         lines = listRuntimes.split(/\r?\n/);
         for (const line of lines) {
             let match: RegExpMatchArray | null;
@@ -100,7 +140,7 @@ async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string 
                 FullInfo: fullInfo,
                 Version: version,
                 RuntimeId: runtimeId,
-                Architecture: architecture,
+                Architecture: workspaceDotnetArchitecture ?? architecture,
                 Runtimes: runtimeVersions,
             };
             return dotnetInfo;

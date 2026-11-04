@@ -12,6 +12,12 @@ import { PlatformInformation } from '../shared/platform';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { DotnetInfo } from '../shared/utils/dotnetInfo';
 
+export interface DotnetCliCheckOptions {
+    dotnetExecutablePath: string;
+    environment?: Readonly<Record<string, string | null>>;
+    architecture?: 'x86' | 'x64' | 'arm' | 'arm64';
+}
+
 const MINIMUM_SUPPORTED_DOTNET_CLI = '1.0.0';
 
 // .NET 8 requires macOS 12+, however the build machines are on macOS 13, which is Darwin 22.0+
@@ -65,9 +71,9 @@ export class CoreClrDebugUtil {
 
     // This function checks for the presence of dotnet on the path and ensures the Version
     // is new enough for us.
-    public async checkDotNetCli(dotNetCliPaths: string[]): Promise<void> {
+    public async checkDotNetCli(dotNetCliPaths: string[], options?: DotnetCliCheckOptions): Promise<void> {
         try {
-            const dotnetInfo = await getDotnetInfo(dotNetCliPaths);
+            const dotnetInfo = await getDotnetInfo(dotNetCliPaths, options);
             if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
                 throw new Error(
                     vscode.l10n.t(
@@ -120,7 +126,8 @@ const MINIMUM_SUPPORTED_ARM64_DOTNET_CLI = '6.0.0';
 export function getTargetArchitecture(
     platformInfo: PlatformInformation,
     launchJsonTargetArchitecture: string | undefined,
-    dotnetInfo: DotnetInfo
+    dotnetInfo: DotnetInfo,
+    workspaceDotnetArchitecture?: 'x86' | 'x64' | 'arm' | 'arm64'
 ): string {
     if (!platformInfo.isMacOS() && !platformInfo.isWindows()) {
         // Nothing to do here.
@@ -140,6 +147,19 @@ export function getTargetArchitecture(
             );
         }
         return launchJsonTargetArchitecture;
+    }
+
+    if (workspaceDotnetArchitecture) {
+        if (workspaceDotnetArchitecture === 'arm64') {
+            return 'arm64';
+        }
+        if (workspaceDotnetArchitecture === 'x64' || workspaceDotnetArchitecture === 'x86') {
+            return 'x86_64';
+        }
+
+        throw new Error(
+            vscode.l10n.t("The debugger does not support the workspace .NET host architecture '{0}'.", 'arm')
+        );
     }
 
     // If we are lower than .NET 6, use 'x86_64' since 'arm64' was not supported until .NET 6.

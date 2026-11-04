@@ -227,6 +227,7 @@
   "The .NET SDK located on the path is too old. .NET debugging will not be enabled. The minimum supported version is {0}.": "The .NET SDK located on the path is too old. .NET debugging will not be enabled. The minimum supported version is {0}.",
   "The .NET SDK cannot be located: {0}. .NET debugging will not be enabled. Make sure the .NET SDK is installed and is on the path.": "The .NET SDK cannot be located: {0}. .NET debugging will not be enabled. Make sure the .NET SDK is installed and is on the path.",
   "The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.": "The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.",
+  "The debugger does not support the workspace .NET host architecture '{0}'.": "The debugger does not support the workspace .NET host architecture '{0}'.",
   "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.": "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.",
   "Unexpected RuntimeId '{0}'.": "Unexpected RuntimeId '{0}'.",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "Ignoring non-parseable lines in envFile {0}: {1}.",
@@ -243,5 +244,6 @@
   "Get the SDK": "Get the SDK",
   "Disable message in settings": "Disable message in settings",
   "Help": "Help",
-  "The C# extension is still downloading packages. Please see progress in the output window below.": "The C# extension is still downloading packages. Please see progress in the output window below."
+  "The C# extension is still downloading packages. Please see progress in the output window below.": "The C# extension is still downloading packages. Please see progress in the output window below.",
+  "The workspace .NET SDK is not currently available.": "The workspace .NET SDK is not currently available."
 }
