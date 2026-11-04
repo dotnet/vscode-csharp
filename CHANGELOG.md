@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
-* Update Roslyn to 5.14.0-1.26554.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.14.0-1.26554.1 (PR: [#9948](https://github.com/dotnet/vscode-csharp/pull/9948))
   * File-based apps: allow metadata on `#:include` (PR: [#86260](https://github.com/dotnet/roslyn/pull/86260))
   * Fix Razor using directive sorting in the presence of aliases and statics (PR: [#86254](https://github.com/dotnet/roslyn/pull/86254))
   * Reduce allocations for large Razor tag helper collections (PR: [#86217](https://github.com/dotnet/roslyn/pull/86217))
