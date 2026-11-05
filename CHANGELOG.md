@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
+* Update Roslyn to 5.14.0-1.26554.1 (PR: [#9948](https://github.com/dotnet/vscode-csharp/pull/9948))
+  * File-based apps: allow metadata on `#:include` (PR: [#86260](https://github.com/dotnet/roslyn/pull/86260))
+  * Fix Razor using directive sorting in the presence of aliases and statics (PR: [#86254](https://github.com/dotnet/roslyn/pull/86254))
+  * Reduce allocations for large Razor tag helper collections (PR: [#86217](https://github.com/dotnet/roslyn/pull/86217))
 * Update Roslyn to 5.14.0-1.26553.1 (PR: [#9946](https://github.com/dotnet/vscode-csharp/pull/9946))
   * Avoid language server stalls when source files are deleted (PR: [#86286](https://github.com/dotnet/roslyn/pull/86286))
   * Fix speculative binding failures for top-level asynchronous local functions named Main (PR: [#86245](https://github.com/dotnet/roslyn/pull/86245))
