@@ -168,7 +168,7 @@ describe('getTargetArchitecture Tests', () => {
             };
 
             expect(fn).toThrow(
-                "The value 'x64' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'."
+                "The value 'x64' for 'targetArchitecture' in launch configuration is invalid. Expected 'x86_64' or 'arm64'."
             );
         });
 
