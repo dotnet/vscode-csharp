@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update Roslyn to 5.14.0-1.26555.5 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.14.0-1.26555.5 (PR: [#9955](https://github.com/dotnet/vscode-csharp/pull/9955))
   * Support `@layout null` in Razor v12 (PR: [#86300](https://github.com/dotnet/roslyn/pull/86300))
   * Clear inherited MSBuildSDKsPath when launching dotnet (PR: [#86314](https://github.com/dotnet/roslyn/pull/86314))
   * Project loading performance improvements (PR: [#86298](https://github.com/dotnet/roslyn/pull/86298))
