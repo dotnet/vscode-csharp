@@ -22,5 +22,17 @@ export default async function spawnGit(args?: string[], options?: SpawnSyncOptio
 
     const buffer = spawnSync('git', args, optionsWithFullEnvironment);
 
-    return { code: buffer.status, signal: buffer.signal };
+    // Surface Git failures so workspace cleanup can retry instead of silently leaving fixtures in an invalid state.
+    if (buffer.error) {
+        throw buffer.error;
+    }
+    if (buffer.status !== 0) {
+        throw new Error(
+            `git ${args?.join(' ')} failed (exit code ${buffer.status}, signal ${buffer.signal}).
+${buffer.stdout?.toString() ?? ''}
+${buffer.stderr?.toString() ?? ''}`
+        );
+    }
+
+    return { code: buffer.status, signal: buffer.signal, stdout: buffer.stdout?.toString() ?? '' };
 }
