@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 
 export class UriConverter {
     public static serialize(uri: vscode.Uri): string {
-        return uri.toString(true);
+        return uri.toString();
     }
 
     public static deserialize(value: string): vscode.Uri {
