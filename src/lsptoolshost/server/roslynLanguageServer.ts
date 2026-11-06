@@ -53,6 +53,7 @@ import { getProfilingEnvVars } from '../logging/profiling';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
 import { ProjectContextFeature } from '../projectContext/projectContextFeature';
+import { HoverFeature } from '../hover/hoverFeature';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -347,6 +348,7 @@ export class RoslynLanguageServer {
 
         client.registerFeature(server._onAutoInsertFeature);
         client.registerFeature(server._projectContextFeature);
+        client.registerFeature(new HoverFeature());
 
         // Start the client. This will also launch the server process.
         await client.start();

@@ -150,6 +150,9 @@ extends:
         value: $[ stageDependencies.PublishStage.PublishToMarketplace.outputs['PublishToMarketplace.PublishToMarketplaceStep.isPrerelease'] ]
       jobs:
       - job: 'Tag'
+        templateContext:
+          type: releaseJob
+          isProduction: true
         pool:
           name: netcore1espool-internal
           image: 1es-ubuntu-2204

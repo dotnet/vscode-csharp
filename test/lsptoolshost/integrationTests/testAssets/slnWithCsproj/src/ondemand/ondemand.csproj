@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(LowestSupportedTargetFramework)</TargetFramework>
+  </PropertyGroup>
+</Project>
