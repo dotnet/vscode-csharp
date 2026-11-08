@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Update xamlTools to 18.14.12407.18 (PR: [#9956](https://github.com/dotnet/vscode-csharp/pull/9956))
+  * Align dependencies with the current C# extension (PR: AzDO#803419)
+  * Improve MAUI Hot Reload saved-file and time tracking (PR: AzDO#761751, AzDO#764008)
+  * Use AOT-compatible Hot Reload services (PR: AzDO#780095)
+  * Improve XAML Hot Reload session isolation and commit reliability (PR: AzDO#785261, AzDO#801279)
+  * Fix XAML IntelliSense for x:Object and Uno x:Bind (PR: AzDO#765670)
+  * Decouple XAML completion and snippets from Visual Studio editor services (PR: AzDO#792810, AzDO#794857)
 
 # 11.9.x
 * Update Roslyn to 5.14.0-1.26554.1 (PR: [#9948](https://github.com/dotnet/vscode-csharp/pull/9948))
