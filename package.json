@@ -64,6 +64,7 @@
     }
   ],
   "scripts": {
+    "cacheComponents": "node tasks/packaging/componentCache.ts",
     "compile": "tsc -p tsconfig.json && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compileDev": "tsc -p tsconfig.json && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
