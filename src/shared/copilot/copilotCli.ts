@@ -15,6 +15,7 @@ export type CopilotCliSource = 'standalone' | 'app';
 export interface CopilotCli {
     command: string;
     source: CopilotCliSource;
+    isVSCodeShim?: boolean;
 }
 
 export interface CopilotPlugin {
@@ -130,19 +131,36 @@ async function discoverAppCli(directories: readonly string[]): Promise<CopilotCl
     }
 }
 
-export async function findCopilotCli(): Promise<CopilotCli | undefined> {
+export async function* findCopilotCliCandidates(): AsyncGenerator<CopilotCli> {
     const path = platformPath();
     const platform = os.platform();
     const directories = pathDirectories();
 
     for (const directory of new Set(directories)) {
         const names = platform === 'win32' ? ['copilot.exe', 'copilot.cmd', 'copilot.bat'] : ['copilot'];
-        if (names.some((name) => existsSync(path.join(directory, name)))) {
-            return { command: 'copilot', source: 'standalone' };
+        for (const name of names) {
+            const command = path.join(directory, name);
+            if (!existsSync(command)) {
+                continue;
+            }
+
+            // VS Code can put its launcher on PATH even when the real CLI is installed.
+            // Keep it as a candidate because it forwards to the CLI when available.
+            // Resolve symlinks to recognize the shim, but execute the original discovered path.
+            // See https://github.com/microsoft/vscode/blob/main/copilot_shim/REQUIREMENTS.md#product-integration.
+            const resolved = await fs.realpath(command);
+            const parent = path.dirname(resolved);
+            const isVSCodeShim =
+                path.basename(parent).toLowerCase() === 'copilot-shim' &&
+                path.basename(path.dirname(parent)).toLowerCase() === 'bin';
+            yield { command, source: 'standalone', isVSCodeShim };
         }
     }
 
-    return await discoverAppCli(directories);
+    const app = await discoverAppCli(directories);
+    if (app) {
+        yield app;
+    }
 }
 
 export async function runCopilotCli(
@@ -159,13 +177,14 @@ export async function runCopilotCli(
         }
 
         controller.signal.throwIfAborted();
+        const shell = os.platform() === 'win32' && /\.(cmd|bat)$/i.test(cli.command);
         return await new Promise<string>((resolve, reject) => {
             const child = execFile(
-                cli.command,
+                shell ? `"${cli.command}"` : cli.command,
                 [...args],
                 {
                     windowsHide: true,
-                    shell: cli.source === 'standalone',
+                    shell,
                     cwd: os.homedir(),
                     env: process.env,
                     signal: controller.signal,

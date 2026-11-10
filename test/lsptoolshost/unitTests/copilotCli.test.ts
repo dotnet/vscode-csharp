@@ -10,12 +10,17 @@ import * as os from 'os';
 import * as path from 'path';
 import { PassThrough } from 'stream';
 import type { CancellationToken } from 'vscode';
-import { CopilotCli, findCopilotCli, parsePluginList, runCopilotCli } from '../../../src/shared/copilot/copilotCli';
+import {
+    CopilotCli,
+    findCopilotCliCandidates,
+    parsePluginList,
+    runCopilotCli,
+} from '../../../src/shared/copilot/copilotCli';
 
 jest.mock('fs', () => ({
     ...jest.requireActual<typeof import('fs')>('fs'),
     existsSync: jest.fn(),
-    promises: { readFile: jest.fn() },
+    promises: { readFile: jest.fn(), realpath: jest.fn() },
 }));
 jest.mock('os', () => ({
     ...jest.requireActual<typeof import('os')>('os'),
@@ -27,6 +32,7 @@ jest.mock('child_process', () => ({ execFile: jest.fn() }));
 const files = new Map<string, string>();
 const exists = jest.mocked(existsSync);
 const readFile = jest.mocked<(file: PathLike, encoding: 'utf8') => Promise<string>>(fs.readFile);
+const realpath = jest.mocked<(file: PathLike) => Promise<string>>(fs.realpath);
 type ExecFileCallback = (error: ExecFileException | null, stdout: string, stderr: string) => void;
 const execFileMock =
     jest.mocked<
@@ -40,7 +46,7 @@ const execFileMock =
 const home = 'C:\\Users\\fixture';
 const local = `${home}\\AppData\\Local`;
 const roaming = `${home}\\AppData\\Roaming`;
-const runtime: CopilotCli = { command: 'copilot', source: 'standalone' };
+const runtime: CopilotCli = { command: 'C:\\Tools\\copilot.exe', source: 'standalone' };
 const appRuntime: CopilotCli = { command: 'C:\\Tools\\copilot.exe', source: 'app' };
 let stdin: PassThrough;
 
@@ -120,6 +126,13 @@ function completeExecution(error: ExecFileException | null, stdout = '', stderr 
     execFileMock.mock.calls[0][3](error, stdout, stderr);
 }
 
+async function firstCandidate(): Promise<CopilotCli | undefined> {
+    for await (const cli of findCopilotCliCandidates()) {
+        return cli;
+    }
+    return undefined;
+}
+
 beforeEach(() => {
     jest.resetAllMocks();
     jest.replaceProperty(process, 'env', {
@@ -134,6 +147,7 @@ beforeEach(() => {
     files.clear();
     exists.mockImplementation((file) => files.has(String(file)));
     readFile.mockImplementation(async (file) => files.get(String(file))!);
+    realpath.mockImplementation(async (file) => String(file));
     stdin = new PassThrough();
     execFileMock.mockReturnValue({ stdin } as unknown as ChildProcess);
 });
@@ -148,9 +162,10 @@ describe('Copilot CLI filesystem discovery', () => {
         process.env.PATH = 'C:\\First;C:\\Second';
         addFile('C:\\First\\copilot.exe');
         addFile('C:\\Second\\copilot.exe');
-        await expect(findCopilotCli()).resolves.toEqual({
-            command: 'copilot',
+        await expect(firstCandidate()).resolves.toEqual({
+            command: 'C:\\First\\copilot.exe',
             source: 'standalone',
+            isVSCodeShim: false,
         });
         expect(readFile).not.toHaveBeenCalled();
         expect(execFileMock).not.toHaveBeenCalled();
@@ -162,7 +177,7 @@ describe('Copilot CLI filesystem discovery', () => {
             process.env.PATH = `;.;tools;C:tools;;"${directory}"`;
             const cliPath = path.win32.join(directory, 'copilot.exe');
             addFile(cliPath);
-            await expect(findCopilotCli()).resolves.toMatchObject({ command: 'copilot' });
+            await expect(firstCandidate()).resolves.toMatchObject({ command: cliPath });
             expect(exists.mock.calls.map((call) => String(call[0]))).toEqual([cliPath]);
         }
     );
@@ -170,7 +185,11 @@ describe('Copilot CLI filesystem discovery', () => {
     test.each(['copilot.exe', 'copilot.cmd', 'copilot.bat'])('recognizes %s on PATH', async (name) => {
         process.env.PATH = 'C:\\Tools';
         addFile(`C:\\Tools\\${name}`);
-        await expect(findCopilotCli()).resolves.toEqual({ command: 'copilot', source: 'standalone' });
+        await expect(firstCandidate()).resolves.toEqual({
+            command: `C:\\Tools\\${name}`,
+            source: 'standalone',
+            isVSCodeShim: false,
+        });
         expect(readFile).not.toHaveBeenCalled();
     });
 
@@ -178,9 +197,10 @@ describe('Copilot CLI filesystem discovery', () => {
         setPlatform('linux');
         process.env.PATH = ':.:relative:/opt/copilot/bin';
         addFile('/opt/copilot/bin/copilot', '#!/usr/bin/env node');
-        await expect(findCopilotCli()).resolves.toEqual({
-            command: 'copilot',
+        await expect(firstCandidate()).resolves.toEqual({
+            command: '/opt/copilot/bin/copilot',
             source: 'standalone',
+            isVSCodeShim: false,
         });
         expect(execFileMock).not.toHaveBeenCalled();
     });
@@ -193,7 +213,7 @@ describe('Copilot CLI filesystem discovery', () => {
             `${local}\\Programs\\GitHub Copilot\\copilot.exe`,
         ];
         commands.forEach((command) => addFile(command));
-        await expect(findCopilotCli()).resolves.toBeUndefined();
+        await expect(firstCandidate()).resolves.toBeUndefined();
         for (const command of commands) {
             expect(exists).not.toHaveBeenCalledWith(command);
         }
@@ -201,20 +221,80 @@ describe('Copilot CLI filesystem discovery', () => {
 
     test.each(['win32', 'darwin', 'linux'] as const)('uses the installed app runtime on %s', async (platform) => {
         const command = appFixture(platform);
-        await expect(findCopilotCli()).resolves.toEqual({ command, source: 'app' });
+        await expect(firstCandidate()).resolves.toEqual({ command, source: 'app' });
     });
 
     test('requires installed app evidence instead of accepting a stale runtime cache', async () => {
         const command = appFixture('win32');
         files.delete(`${local}\\Programs\\GitHub Copilot\\github.exe`);
-        await expect(findCopilotCli()).resolves.toBeUndefined();
+        await expect(firstCandidate()).resolves.toBeUndefined();
         expect(exists).not.toHaveBeenCalledWith(command);
+        expect(readFile).not.toHaveBeenCalled();
+    });
+
+    test.each(['win32', 'darwin', 'linux'] as const)('recognizes the VS Code shim on %s', async (platform) => {
+        setPlatform(platform);
+        const directory = platform === 'win32' ? 'C:\\VS Code\\bin\\copilot-shim' : '/opt/code/bin/copilot-shim';
+        const command = platform === 'win32' ? `${directory}\\copilot.exe` : `${directory}/copilot`;
+        process.env.PATH = directory;
+        addFile(command);
+
+        await expect(firstCandidate()).resolves.toEqual({
+            command,
+            source: 'standalone',
+            isVSCodeShim: true,
+        });
+    });
+
+    test('recognizes a symlink to the VS Code shim without changing its invocation path', async () => {
+        setPlatform('linux');
+        process.env.PATH = '/usr/bin';
+        addFile('/usr/bin/copilot');
+        realpath.mockResolvedValue('/usr/share/code/bin/copilot-shim/copilot');
+
+        await expect(firstCandidate()).resolves.toEqual({
+            command: '/usr/bin/copilot',
+            source: 'standalone',
+            isVSCodeShim: true,
+        });
+    });
+
+    test('yields PATH candidates once in order, followed by the app', async () => {
+        const appCommand = appFixture('win32');
+        process.env.PATH = 'C:\\Code\\bin\\copilot-shim;C:\\Tools;C:\\Code\\bin\\copilot-shim';
+        const shim = 'C:\\Code\\bin\\copilot-shim\\copilot.exe';
+        addFile(shim);
+        addFile(runtime.command);
+        addFile('C:\\Tools\\copilot.cmd');
+        const candidates: CopilotCli[] = [];
+        for await (const cli of findCopilotCliCandidates()) {
+            candidates.push(cli);
+        }
+
+        expect(candidates).toEqual([
+            { command: shim, source: 'standalone', isVSCodeShim: true },
+            { ...runtime, isVSCodeShim: false },
+            { command: 'C:\\Tools\\copilot.cmd', source: 'standalone', isVSCodeShim: false },
+            { command: appCommand, source: 'app' },
+        ]);
+        expect(realpath.mock.calls).toEqual([[shim], [runtime.command], ['C:\\Tools\\copilot.cmd']]);
+    });
+
+    test('does not inspect later candidates or app metadata after iteration stops', async () => {
+        appFixture('win32');
+        process.env.PATH = 'C:\\First;C:\\Second';
+        addFile('C:\\First\\copilot.exe');
+        addFile('C:\\Second\\copilot.exe');
+        readFile.mockRejectedValue(new Error('app metadata unavailable'));
+
+        await expect(firstCandidate()).resolves.toMatchObject({ command: 'C:\\First\\copilot.exe' });
+        expect(realpath.mock.calls).toEqual([['C:\\First\\copilot.exe']]);
         expect(readFile).not.toHaveBeenCalled();
     });
 });
 
 describe('Copilot CLI process execution', () => {
-    test('uses the shell for a standalone CLI with an argument array and closed stdin', async () => {
+    test('executes a standalone binary directly with an argument array and closed stdin', async () => {
         const args = ['plugin', 'install', 'dotnet@dotnet-agent-skills'];
         const promise = runCopilotCli(runtime, args, token());
         expect(execFileMock).toHaveBeenCalledWith(
@@ -224,7 +304,7 @@ describe('Copilot CLI process execution', () => {
                 cwd: home,
                 env: process.env,
                 windowsHide: true,
-                shell: true,
+                shell: false,
                 signal: expect.any(AbortSignal),
             },
             expect.any(Function)
@@ -233,6 +313,35 @@ describe('Copilot CLI process execution', () => {
         completeExecution(null, 'installed\n', 'diagnostic');
         await expect(promise).resolves.toBe('installed\n');
         expect(process.env.COPILOT_HOME).toBe('C:\\Copilot Home');
+    });
+
+    test.each(['cmd', 'bat', 'CMD'])('quotes Windows .%s wrappers when invoking the shell', async (extension) => {
+        const cli: CopilotCli = { command: `C:\\CLI & Tools\\copilot.${extension}`, source: 'standalone' };
+        const promise = runCopilotCli(cli, ['--version'], token());
+
+        expect(execFileMock).toHaveBeenCalledWith(
+            `"${cli.command}"`,
+            ['--version'],
+            expect.objectContaining({ shell: true }),
+            expect.any(Function)
+        );
+        completeExecution(null, 'version');
+        await expect(promise).resolves.toBe('version');
+    });
+
+    test('runs POSIX scripts directly, including names with a Windows script extension', async () => {
+        setPlatform('linux');
+        const cli: CopilotCli = { command: '/opt/CLI Tools/copilot.cmd', source: 'standalone' };
+        const promise = runCopilotCli(cli, ['--version'], token());
+
+        expect(execFileMock).toHaveBeenCalledWith(
+            cli.command,
+            ['--version'],
+            expect.objectContaining({ shell: false }),
+            expect.any(Function)
+        );
+        completeExecution(null);
+        await expect(promise).resolves.toBe('');
     });
 
     test('executes an app runtime directly', async () => {
