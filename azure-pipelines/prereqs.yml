@@ -38,6 +38,30 @@ steps:
 - script: $(Agent.BuildDirectory)/nbgv cloud
   displayName: Set pipeline build number
 
+- script: npm run cacheComponents -- prepare
+  displayName: Prepare component cache
+  env:
+    COMPONENT_CACHE_PATH: $(Pipeline.Workspace)/component-cache
+
+- task: Cache@2
+  displayName: Restore component cache
+  inputs:
+    key: '"components-v1" | "$(ComponentCacheKey)"'
+    path: $(Pipeline.Workspace)/component-cache
+    cacheHitVar: COMPONENT_CACHE_HIT
+
+- script: npm run cacheComponents -- restore
+  displayName: Restore cached components
+  condition: and(succeeded(), eq(variables.COMPONENT_CACHE_HIT, 'true'))
+  env:
+    COMPONENT_CACHE_PATH: $(Pipeline.Workspace)/component-cache
+
 - script: |
     npm ci
   displayName: 'Install dependencies'
+
+- script: npm run cacheComponents -- save
+  displayName: Stage component cache
+  condition: and(succeeded(), ne(variables.COMPONENT_CACHE_HIT, 'true'))
+  env:
+    COMPONENT_CACHE_PATH: $(Pipeline.Workspace)/component-cache
