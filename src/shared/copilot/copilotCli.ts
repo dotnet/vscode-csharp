@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { execFile } from 'child_process';
-import { existsSync, promises as fs } from 'fs';
+import { constants, existsSync, promises as fs } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { stripVTControlCharacters } from 'util';
@@ -142,6 +142,25 @@ export async function* findCopilotCliCandidates(): AsyncGenerator<CopilotCli> {
             const command = path.join(directory, name);
             if (!existsSync(command)) {
                 continue;
+            }
+
+            if (platform !== 'win32') {
+                try {
+                    // Match shell PATH lookup when selecting executable candidates.
+                    if (!(await fs.stat(command)).isFile()) {
+                        continue;
+                    }
+                    await fs.access(command, constants.X_OK);
+                } catch (error) {
+                    if (
+                        error instanceof Error &&
+                        'code' in error &&
+                        (error.code === 'EACCES' || error.code === 'ENOENT')
+                    ) {
+                        continue;
+                    }
+                    throw error;
+                }
             }
 
             // VS Code can put its launcher on PATH even when the real CLI is installed.

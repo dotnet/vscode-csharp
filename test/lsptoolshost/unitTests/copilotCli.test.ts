@@ -5,7 +5,7 @@
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { ChildProcess, execFile, ExecFileException, ExecFileOptionsWithStringEncoding } from 'child_process';
-import { existsSync, promises as fs, PathLike } from 'fs';
+import { existsSync, promises as fs, PathLike, Stats } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { PassThrough } from 'stream';
@@ -20,7 +20,7 @@ import {
 jest.mock('fs', () => ({
     ...jest.requireActual<typeof import('fs')>('fs'),
     existsSync: jest.fn(),
-    promises: { readFile: jest.fn(), realpath: jest.fn() },
+    promises: { readFile: jest.fn(), realpath: jest.fn(), stat: jest.fn(), access: jest.fn() },
 }));
 jest.mock('os', () => ({
     ...jest.requireActual<typeof import('os')>('os'),
@@ -33,6 +33,8 @@ const files = new Map<string, string>();
 const exists = jest.mocked(existsSync);
 const readFile = jest.mocked<(file: PathLike, encoding: 'utf8') => Promise<string>>(fs.readFile);
 const realpath = jest.mocked<(file: PathLike) => Promise<string>>(fs.realpath);
+const stat = jest.mocked<(file: PathLike) => Promise<Pick<Stats, 'isFile'>>>(fs.stat);
+const access = jest.mocked(fs.access);
 type ExecFileCallback = (error: ExecFileException | null, stdout: string, stderr: string) => void;
 const execFileMock =
     jest.mocked<
@@ -148,6 +150,8 @@ beforeEach(() => {
     exists.mockImplementation((file) => files.has(String(file)));
     readFile.mockImplementation(async (file) => files.get(String(file))!);
     realpath.mockImplementation(async (file) => String(file));
+    stat.mockResolvedValue({ isFile: () => true });
+    access.mockResolvedValue(undefined);
     stdin = new PassThrough();
     execFileMock.mockReturnValue({ stdin } as unknown as ChildProcess);
 });
