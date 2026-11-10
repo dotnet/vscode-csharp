@@ -65,6 +65,7 @@ function copyComponents(source: string, destination: string): void {
 
 switch (process.argv[2]) {
     case 'prepare':
+        fs.rmSync(cachePath, { recursive: true, force: true });
         fs.mkdirSync(cachePath, { recursive: true });
         console.log(`##vso[task.setvariable variable=ComponentCacheKey]${getCacheKey()}`);
         break;
