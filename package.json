@@ -1141,6 +1141,11 @@
             "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
             "default": false
           },
+          "csharp.debug.enableAutomaticDeoptimization": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription%",
+            "default": true
+          },
           "csharp.debug.symbolOptions.searchPaths": {
             "type": "array",
             "items": {
@@ -1225,7 +1230,7 @@
           },
           "csharp.debug.terminateChildProcesses": {
             "type": "boolean",
-            "description": "%generateOptionsSchema.terminateChildProcesses.description%",
+            "markdownDescription": "%generateOptionsSchema.terminateChildProcesses.markdownDescription%",
             "default": false
           },
           "csharp.wasm.debug.useVSDbg": {
@@ -1297,6 +1302,11 @@
                 "type": "boolean",
                 "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
+              },
+              "enableAutomaticDeoptimization": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription%",
+                "default": true
               },
               "symbolOptions": {
                 "description": "%generateOptionsSchema.symbolOptions.description%",
@@ -2228,7 +2238,10 @@
               "env": {
                 "type": "object",
                 "additionalProperties": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "description": "%generateOptionsSchema.env.description%",
                 "default": {}
@@ -2634,6 +2647,11 @@
                 "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
               },
+              "enableAutomaticDeoptimization": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription%",
+                "default": true
+              },
               "symbolOptions": {
                 "description": "%generateOptionsSchema.symbolOptions.description%",
                 "default": {
@@ -2786,7 +2804,7 @@
               },
               "terminateChildProcesses": {
                 "type": "boolean",
-                "description": "%generateOptionsSchema.terminateChildProcesses.description%",
+                "markdownDescription": "%generateOptionsSchema.terminateChildProcesses.markdownDescription%",
                 "default": false
               }
             }
@@ -3170,6 +3188,11 @@
                 "type": "boolean",
                 "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
+              },
+              "enableAutomaticDeoptimization": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription%",
+                "default": true
               },
               "symbolOptions": {
                 "description": "%generateOptionsSchema.symbolOptions.description%",
@@ -3573,7 +3596,10 @@
               "env": {
                 "type": "object",
                 "additionalProperties": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "description": "%generateOptionsSchema.env.description%",
                 "default": {}
@@ -3979,6 +4005,11 @@
                 "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
               },
+              "enableAutomaticDeoptimization": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription%",
+                "default": true
+              },
               "symbolOptions": {
                 "description": "%generateOptionsSchema.symbolOptions.description%",
                 "default": {
@@ -4131,7 +4162,7 @@
               },
               "terminateChildProcesses": {
                 "type": "boolean",
-                "description": "%generateOptionsSchema.terminateChildProcesses.description%",
+                "markdownDescription": "%generateOptionsSchema.terminateChildProcesses.markdownDescription%",
                 "default": false
               }
             }
@@ -4515,6 +4546,11 @@
                 "type": "boolean",
                 "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
+              },
+              "enableAutomaticDeoptimization": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription%",
+                "default": true
               },
               "symbolOptions": {
                 "description": "%generateOptionsSchema.symbolOptions.description%",

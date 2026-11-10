@@ -297,7 +297,7 @@ function convertStringsToLocalizeKeys(path: string, options: any, keyToLocString
     }
 }
 
-function writeToFile(objToWrite: any, filename: string) {
+function writeToFile(objToWrite: any, filename: string, trailingNewline: boolean) {
     let content = JSON.stringify(objToWrite, null, 2);
     if (os.platform() === 'win32') {
         content = content.replace(/\n/gm, '\r\n');
@@ -306,13 +306,18 @@ function writeToFile(objToWrite: any, filename: string) {
     // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
     // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
     content = content.replace(/\u200b/gm, '\\u200b');
+    if (trailingNewline) {
+        content += os.platform() === 'win32' ? '\r\n' : '\n';
+    }
 
     fs.writeFileSync(filename, content);
 }
 
 export function GenerateOptionsSchema() {
-    const packageNlsJSON: any = JSON.parse(fs.readFileSync('package.nls.json').toString());
-    const packageJSON: any = JSON.parse(fs.readFileSync('package.json').toString());
+    const packageNlsText = fs.readFileSync('package.nls.json').toString();
+    const packageText = fs.readFileSync('package.json').toString();
+    const packageNlsJSON: any = JSON.parse(packageNlsText);
+    const packageJSON: any = JSON.parse(packageText);
     const schemaJSON: any = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
     const symbolSettingsJSON: any = JSON.parse(fs.readFileSync('src/tools/VSSymbolSettings.json').toString());
     mergeReferences(schemaJSON.definitions, symbolSettingsJSON.definitions);
@@ -322,8 +327,10 @@ export function GenerateOptionsSchema() {
     // #region Generate package.nls.json keys/values
 
     // Delete old generated loc keys
+    const originalLocStrings: any = {};
     const originalLocKeys = Object.keys(packageNlsJSON).filter((x) => x.startsWith('generateOptionsSchema'));
     for (const key of originalLocKeys) {
+        originalLocStrings[key] = packageNlsJSON[key];
         delete packageNlsJSON[key];
     }
 
@@ -340,11 +347,6 @@ export function GenerateOptionsSchema() {
         schemaJSON.definitions.AttachOptions.properties,
         keyToLocString
     );
-
-    // Override existing package.nls.json key/values with ones from OptionsSchema.
-    Object.assign(packageNlsJSON, keyToLocString);
-
-    writeToFile(packageNlsJSON, 'package.nls.json');
 
     // #endregion
 
@@ -380,8 +382,8 @@ export function GenerateOptionsSchema() {
     unitTestDebuggingOptions['type'] = {
         type: 'string',
         enum: ['coreclr', 'clr'],
-        description:
-            "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+        markdownDescription:
+            'Type type of code to debug. Can be either `coreclr` for .NET Core debugging, or `clr` for Desktop .NET Framework. `clr` only works on Windows as the Desktop framework is Windows-only.',
         default: 'coreclr',
     };
     unitTestDebuggingOptions['debugServer'] = {
@@ -390,6 +392,12 @@ export function GenerateOptionsSchema() {
             'For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode',
         default: 4711,
     };
+    generateLocForProperty('generateOptionsSchema.type', unitTestDebuggingOptions['type'], keyToLocString);
+    generateLocForProperty(
+        'generateOptionsSchema.debugServer',
+        unitTestDebuggingOptions['debugServer'],
+        keyToLocString
+    );
 
     let debuggerConfiguration = null;
     for (const configuration of packageJSON.contributes.configuration) {
@@ -445,6 +453,19 @@ export function GenerateOptionsSchema() {
     debuggerConfiguration.properties['dotnet.unitTestDebuggingOptions'].properties = unitTestDebuggingOptions;
     // #endregion
 
+    // Override existing package.nls.json key/values with ones from OptionsSchema.
+    Object.assign(packageNlsJSON, keyToLocString);
+
+    // Restore previously generated keys that are still referenced by settings preserved above
+    // (e.g. 'csharp.wasm.debug.useVSDbg'), since they are not regenerated from OptionsSchema.json.
+    const packageJSONText = JSON.stringify(packageJSON);
+    for (const key in originalLocStrings) {
+        if (!(key in packageNlsJSON) && packageJSONText.includes(`"%${key}%"`)) {
+            packageNlsJSON[key] = originalLocStrings[key];
+        }
+    }
+
     // Write package.json and package.nls.json to disk
-    writeToFile(packageJSON, 'package.json');
+    writeToFile(packageNlsJSON, 'package.nls.json', packageNlsText.endsWith('\n'));
+    writeToFile(packageJSON, 'package.json', packageText.endsWith('\n'));
 }
