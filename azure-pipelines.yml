@@ -74,42 +74,6 @@ stages:
 - template: azure-pipelines/validate-build.yml
 
 - stage:
-  displayName: Test Linux (.NET 8)
-  dependsOn: []
-  variables:
-    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
-  jobs:
-  - template: azure-pipelines/test-matrix.yml
-    parameters:
-      os: linux
-      # Prefer the dotnet from the container.
-      installDotNet: false
-      runDevKitTests: false
-      testVSCodeVersion: $(testVSCodeVersion)
-      pool:
-        name: NetCore-Public
-        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04-net8.0-vscode-csharp-amd64
-
-- stage:
-  displayName: Test Linux (.NET 9)
-  dependsOn: []
-  variables:
-    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
-  jobs:
-  - template: azure-pipelines/test-matrix.yml
-    parameters:
-      os: linux
-      # Prefer the dotnet from the container.
-      installDotNet: false
-      runDevKitTests: false
-      testVSCodeVersion: $(testVSCodeVersion)
-      pool:
-        name: NetCore-Public
-        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04-net9.0-vscode-csharp-amd64
-
-- stage:
   displayName: Test Linux (.NET 10)
   dependsOn: []
   jobs:
