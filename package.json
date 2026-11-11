@@ -67,7 +67,6 @@
     "compile": "tsc -p tsconfig.json && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compileDev": "tsc -p tsconfig.json && npm run lint && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
-    "createTags": "npx ts-node tasks/tags/createTags.ts",
     "fixLocUrls": "npx ts-node tasks/debugger/fixLocUrls.ts",
     "generateOptionsSchema": "npx ts-node tasks/debugger/generateOptionsSchema.ts",
     "incrementVersion": "npx ts-node tasks/snap/incrementVersion.ts",

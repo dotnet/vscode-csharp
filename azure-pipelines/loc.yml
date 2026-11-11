@@ -93,19 +93,11 @@ extends:
             LclPackageId: 'LCL-JUNO-PROD-VSCODECS'
         - pwsh: npm run l10nDevImportXlf
           displayName: 'Import xlf to json.'
-        - task: AzureCLI@2
-          displayName: 'Get GitHub App installation token'
-          inputs:
+        - template: /azure-pipelines/get-github-app-token.yml@self
+          parameters:
             azureSubscription: 'dnceng-oneloc-githubapp'
-            scriptType: pscore
-            scriptLocation: inlineScript
-            inlineScript: |
-              & "$(Build.SourcesDirectory)/azure-pipelines/Get-GitHubAppToken.ps1" `
-                -KeyVaultName 'EngKeyVault' `
-                -AppIdSecretName 'oneloc-localization-app-app-id' `
-                -AppPrivateKeySecretName 'oneloc-localization-app-app-private-key' `
-                -InstallationOwner 'dotnet' `
-                -OutputVariableName 'GitHubAppInstallationToken'
+            appIdSecretName: 'oneloc-localization-app-app-id'
+            appPrivateKeySecretName: 'oneloc-localization-app-app-private-key'
         - pwsh: npm run publishLocalizationContent -- --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
           displayName: 'Create PR in GitHub.'
           env:
