@@ -6,8 +6,6 @@
 # 11.11.x
 * Update Roslyn to 5.14.0-1.26561.1 (PR: [#9971](https://github.com/dotnet/vscode-csharp/pull/9971))
   * Remove duplicate Razor references and highlights for generic type parameters (PR: [#86363](https://github.com/dotnet/roslyn/pull/86363))
-  * Prevent false nullable warnings for generic Razor component parameters (PR: [#86311](https://github.com/dotnet/roslyn/pull/86311))
-  * Support `@layout null` in Razor 12 (PR: [#86300](https://github.com/dotnet/roslyn/pull/86300))
   * Prevent project-loading hangs caused by inherited `MSBuildSDKsPath` (PR: [#86314](https://github.com/dotnet/roslyn/pull/86314))
   * Prioritize cached projects to improve project-load responsiveness (PR: [#86298](https://github.com/dotnet/roslyn/pull/86298))
   * Fix Razor rename for using aliases (PR: [#86243](https://github.com/dotnet/roslyn/pull/86243))
