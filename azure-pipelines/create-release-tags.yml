@@ -1,0 +1,120 @@
+parameters:
+- name: releaseVersion
+  type: string
+- name: releaseCommit
+  type: string
+- name: prerelease
+  type: string
+- name: dryRun
+  type: boolean
+  default: false
+
+steps:
+- pwsh: |
+    $ErrorActionPreference = 'Stop'
+
+    $releaseVersion = $env:RELEASE_VERSION
+    $releaseCommit = $env:RELEASE_COMMIT
+    if ($releaseCommit -notmatch '^[0-9a-fA-F]{40}$') {
+      throw "Invalid release commit '$releaseCommit'."
+    }
+    if ([string]::IsNullOrWhiteSpace($releaseVersion)) {
+      throw 'The release version is empty.'
+    }
+    $prerelease = [bool]::Parse($env:PRERELEASE)
+    $dryRun = [bool]::Parse($env:DRY_RUN)
+    if ([string]::IsNullOrWhiteSpace($env:SYSTEM_ACCESSTOKEN)) {
+      throw 'System.AccessToken is required to read the build source.'
+    }
+    if ([string]::IsNullOrWhiteSpace($env:GITHUB_TOKEN)) {
+      throw 'A GitHub App installation token is required.'
+    }
+
+    # Read the selected build's source, not the pipeline revision or a new build artifact.
+    $sourceUri = "https://dev.azure.com/dnceng/internal/_apis/git/repositories/dotnet-vscode-csharp/items?path=/package.json&versionDescriptor.version=$releaseCommit&versionDescriptor.versionType=commit&includeContent=true&api-version=7.1"
+    $sourceItem = Invoke-RestMethod -Uri $sourceUri -Headers @{
+      Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN"
+      Accept = 'application/json'
+    }
+    if ([string]::IsNullOrWhiteSpace($sourceItem.content)) {
+      throw "No package.json content returned for $releaseCommit."
+    }
+    $packageJson = $sourceItem.content | ConvertFrom-Json
+    $roslynVersion = $packageJson.defaults.roslyn
+    if ([string]::IsNullOrWhiteSpace($roslynVersion)) {
+      throw "Can't find the Roslyn version in package.json at $releaseCommit."
+    }
+
+    # NuGet's service index supplies the package-content endpoint without downloading the package.
+    $feed = Invoke-RestMethod -Uri 'https://pkgs.dev.azure.com/azure-public/vside/_packaging/msft_consumption/nuget/v3/index.json'
+    $packageBaseAddress = $feed.resources | Where-Object { $_.'@type' -eq 'PackageBaseAddress/3.0.0' } | Select-Object -First 1
+    if ([string]::IsNullOrWhiteSpace($packageBaseAddress.'@id')) {
+      throw 'The NuGet feed has no package-content endpoint.'
+    }
+    $packageName = 'roslyn-language-server.linux-x64'
+    Write-Host "$packageName version is $roslynVersion"
+    $versionPath = [Uri]::EscapeDataString($roslynVersion.ToLowerInvariant())
+    $nuspecUri = "$($packageBaseAddress.'@id'.TrimEnd('/'))/$packageName/$versionPath/$packageName.nuspec"
+    $nuspecResponse = Invoke-WebRequest -Uri $nuspecUri
+    [xml] $nuspec = $nuspecResponse.Content.TrimStart([char] 0xFEFF)
+    $repository = $nuspec.SelectSingleNode("/*[local-name()='package']/*[local-name()='metadata']/*[local-name()='repository']")
+    $roslynCommit = if ($repository) { $repository.GetAttribute('commit') } else { '' }
+    if ($roslynCommit -notmatch '^[0-9a-fA-F]{40}$') {
+      throw "No valid repository commit in $packageName $roslynVersion."
+    }
+
+    $headers = @{
+      Authorization = "Bearer $env:GITHUB_TOKEN"
+      Accept = 'application/vnd.github+json'
+      'X-GitHub-Api-Version' = '2022-11-28'
+      'User-Agent' = 'vscode-csharp-publisher'
+    }
+    $prereleaseText = if ($prerelease) { '-prerelease' } else { '' }
+    $tags = @(
+      @{
+        Repo = 'roslyn'
+        Commit = $roslynCommit
+        Tag = "VSCode-CSharp-$releaseVersion$prereleaseText"
+        Message = "$releaseVersion VSCode C# extension $prereleaseText"
+      }
+      @{
+        Repo = 'vscode-csharp'
+        Commit = $releaseCommit
+        Tag = "v$releaseVersion$prereleaseText"
+        Message = $releaseVersion
+      }
+    )
+    foreach ($tag in $tags) {
+      Write-Host "Tag dotnet/$($tag.Repo): $($tag.Tag), commit: $($tag.Commit), message: $($tag.Message)"
+      if ($dryRun) {
+        Write-Host 'Tagging is skipped in dry run mode.'
+        continue
+      }
+      $repoUri = "https://api.github.com/repos/dotnet/$($tag.Repo)/git"
+      $tagBody = @{
+        tag = $tag.Tag
+        message = $tag.Message
+        object = $tag.Commit
+        type = 'commit'
+      } | ConvertTo-Json -Compress
+      Invoke-RestMethod -Uri "$repoUri/tags" -Headers $headers -Method Post -ContentType 'application/json' -Body $tagBody -StatusCodeVariable tagStatus | Out-Null
+      if ($tagStatus -ne 201) {
+        throw "Failed to create tag for dotnet/$($tag.Repo): HTTP $tagStatus."
+      }
+      # Preserve the existing lightweight ref, which points at the commit rather than the tag object.
+      $refBody = @{ ref = "refs/tags/$($tag.Tag)"; sha = $tag.Commit } | ConvertTo-Json -Compress
+      $response = Invoke-WebRequest -Uri "$repoUri/refs" -Headers $headers -Method Post -ContentType 'application/json' -Body $refBody -SkipHttpErrorCheck
+      if ([int] $response.StatusCode -eq 422 -and ($response.Content | ConvertFrom-Json).message -clike '*Reference already exists*') {
+        Write-Host "##vso[task.logissue type=warning]Reference for tag '$($tag.Tag)' already exists in dotnet/$($tag.Repo)."
+      } elseif ([int] $response.StatusCode -ne 201) {
+        throw "Failed to create reference for dotnet/$($tag.Repo): HTTP $($response.StatusCode). $($response.Content)"
+      }
+    }
+  displayName: 'Create release tags'
+  env:
+    RELEASE_VERSION: ${{ parameters.releaseVersion }}
+    RELEASE_COMMIT: ${{ parameters.releaseCommit }}
+    PRERELEASE: ${{ parameters.prerelease }}
+    DRY_RUN: ${{ parameters.dryRun }}
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    GITHUB_TOKEN: $(GitHubAppInstallationToken)
