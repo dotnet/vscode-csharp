@@ -250,7 +250,7 @@
   },
   "generateOptionsSchema.launchBrowser.windows.command.description": "The executable which will start the web browser.",
   "generateOptionsSchema.launchBrowser.windows.args.description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
-  "generateOptionsSchema.env.description": "Environment variables passed to the program.",
+  "generateOptionsSchema.env.description": "Environment variables passed to the program. Null or empty values remove variables from the inherited environment.",
   "generateOptionsSchema.envFile.markdownDescription": {
     "message": "Environment variables passed to the program by a file. E.g. `${workspaceFolder}/.env`",
     "comment": [
@@ -418,6 +418,12 @@
   "generateOptionsSchema.pipeTransport.linux.quoteArgs.description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
   "generateOptionsSchema.pipeTransport.linux.pipeEnv.description": "Environment variables passed to the pipe program.",
   "generateOptionsSchema.suppressJITOptimizations.markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
+  "generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription": {
+    "message": "When true (the default), automatically deoptimize debugged functions when possible. The debugger will deoptimize methods targeted by breakpoints or supported step-in operations. Requires .NET 8 or newer. Unlike `suppressJITOptimizations`, this applies to individual methods.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
   "generateOptionsSchema.symbolOptions.description": "Options to control how symbols (.pdb files) are found and loaded.",
   "generateOptionsSchema.symbolOptions.searchPaths.description": {
     "message": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
@@ -478,22 +484,13 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.type.markdownDescription": {
-    "message": "Type type of code to debug. Can be either `coreclr` for .NET Core debugging, or `clr` for Desktop .NET Framework. `clr` only works on Windows as the Desktop framework is Windows-only.",
-    "comment": [
-      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
-    ]
-  },
-  "generateOptionsSchema.debugServer.description": {
-    "message": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode"
-  },
   "generateOptionsSchema.checkForDevCert.description": {
     "message": "If you are launching a web project on Windows or macOS and this is enabled, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.terminateChildProcesses.description": {
+  "generateOptionsSchema.terminateChildProcesses.markdownDescription": {
     "message": "When the debug session ends, if this is set to `true`, the debugger will terminate the debuggee and all child processes it spawned. If set to `false`, only the debuggee itself is terminated and child processes are left running. This option defaults to `false`.\n\nOn Windows, child processes are tracked using a Job Object. Processes that need to outlive the debug session can opt out by passing the `CREATE_BREAKAWAY_FROM_JOB` flag when calling `CreateProcess`.",
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
@@ -517,5 +514,12 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
+  "generateOptionsSchema.type.markdownDescription": {
+    "message": "Type type of code to debug. Can be either `coreclr` for .NET Core debugging, or `clr` for Desktop .NET Framework. `clr` only works on Windows as the Desktop framework is Windows-only.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
   "generateOptionsSchema.useVSDbg.description": "Enable new .NET 9+ Wasm Debugger (preview)"
 }
