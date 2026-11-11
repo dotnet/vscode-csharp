@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   check-script:
-    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@25a7bbd6d67312a4e8ac898e99d6a01a74ff1cd9 # main
+    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@305558e284ce35e7b35ac9ebd75802915394fd3e # main
     with:
       configuration_file_path: '.config/snap-flow.json'
       script_version: '042024f31f9f89422bc172362a04b5a51ac17df9'
@@ -29,7 +29,7 @@ jobs:
       - name: Update version.json
         run: npm run incrementVersion
       - name: Create version update PR
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        uses: peter-evans/create-pull-request@15733dbdfeedb4f7fdb73d13c6f5ac83b710fab8 # v8.1.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update main version
