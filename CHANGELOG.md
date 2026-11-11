@@ -66,7 +66,27 @@ File-based app discovery no longer follows directory symlinks or junctions, avoi
 
 ### Load projects on demand
 
-Enable `dotnet.projects.loadOnDemand` to load a file's nearest projects and their referenced projects when language features need them. The setting is off by default and is not used when C# Dev Kit features are active. ([#9758](https://github.com/dotnet/vscode-csharp/pull/9758), [dotnet/roslyn#85805](https://github.com/dotnet/roslyn/pull/85805))
+You can work with C# files from multiple projects in a workspace without loading each solution manually. Enable `dotnet.projects.loadOnDemand` to load projects as needed for IntelliSense and other language features. ([#9758](https://github.com/dotnet/vscode-csharp/pull/9758), [dotnet/roslyn#85805](https://github.com/dotnet/roslyn/pull/85805))
+
+When a file isn't part of a loaded project, the language server searches upward from the file's directory to the workspace root. It loads the projects in the nearest directory containing supported project files, along with their transitive project references. The setting defaults to `false` and has no effect when C# Dev Kit features are active.
+
+Combine it with `dotnet.defaultSolution` to choose when projects are loaded ([#6008](https://github.com/dotnet/vscode-csharp/issues/6008#issuecomment-6447954295)):
+
+| `dotnet.defaultSolution` | `dotnet.projects.loadOnDemand` | Behavior |
+| --- | --- | --- |
+| A solution path | `false` | Load that solution at startup; do not load other projects on demand. |
+| A solution path | `true` | Load that solution at startup and load projects outside it on demand. |
+| `disable` | `false` | Skip startup loading; use **.NET: Open Solution** to select a solution. |
+| `disable` | `true` | Skip startup loading and load projects on demand. |
+
+For example, to load projects on demand without loading a solution at startup, add this to your workspace settings:
+
+```json
+{
+  "dotnet.defaultSolution": "disable",
+  "dotnet.projects.loadOnDemand": true
+}
+```
 
 ### More responsive editing in large workspaces
 
