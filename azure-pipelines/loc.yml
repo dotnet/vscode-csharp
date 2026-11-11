@@ -102,8 +102,8 @@ extends:
             inlineScript: |
               & "$(Build.SourcesDirectory)/azure-pipelines/Get-GitHubAppToken.ps1" `
                 -KeyVaultName 'EngKeyVault' `
-                -KeyName 'oneloc-localization-app-key' `
-                -AppClientId 'Iv23lijBU8x3gc9lDOc9' `
+                -AppIdSecretName 'oneloc-localization-app-app-id' `
+                -AppPrivateKeySecretName 'oneloc-localization-app-app-private-key' `
                 -InstallationOwner 'dotnet' `
                 -OutputVariableName 'GitHubAppInstallationToken'
         - pwsh: npm run publishLocalizationContent -- --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
