@@ -14,7 +14,7 @@ BeforeAll {
     function Invoke-TokenHelper {
         try {
             $output = & $script:helperPath -KeyVaultName TestVault -KeyName test-app-key `
-                -AppClientId public-client-id -InstallationOwner dotnet -OutputVariableName TestToken *>&1
+                -AppIdSecretName test-app-app-id -InstallationOwner dotnet -OutputVariableName TestToken *>&1
             [pscustomobject]@{ Success = ($LASTEXITCODE -eq 0); Output = ($output | Out-String) }
         }
         catch {
@@ -35,11 +35,16 @@ Describe 'GitHub App Key Vault signing' {
             Rsa = [System.Security.Cryptography.RSA]::Create(2048)
             SignArguments = $null
             Jwt = $null
+            AppId = 'projected-app-id'
         }
         Mock az {
+            if (($Arguments[0..1] -join ' ') -eq 'account get-access-token') {
+                $global:LASTEXITCODE = 0
+                return 'mock-vault-access-token'
+            }
             $global:GitHubAppSigningTestState.SignArguments = $Arguments
             if (($Arguments[0..2] -join ' ') -ne 'keyvault key sign') {
-                throw "Forbidden Azure CLI command: $($Arguments -join ' '). Expected digest-only keyvault key sign."
+                throw "Forbidden Azure CLI command: $($Arguments -join ' '). Only App-ID access and digest-only signing are permitted."
             }
             $digestIndex = [Array]::IndexOf($Arguments, '--digest') + 1
             $digest = [Convert]::FromBase64String($Arguments[$digestIndex])
@@ -49,6 +54,10 @@ Describe 'GitHub App Key Vault signing' {
                 [System.Security.Cryptography.RSASignaturePadding]::Pkcs1))
         }
         Mock Invoke-RestMethod {
+            if ($Method -eq 'Get' -and $Uri -eq 'https://TestVault.vault.azure.net/secrets/test-app-app-id?api-version=7.4') {
+                $Headers.Authorization | Should -Be 'Bearer mock-vault-access-token'
+                return @{ value = $global:GitHubAppSigningTestState.AppId; attributes = @{ exp = 253402300799 } }
+            }
             if ($Method -eq 'Get' -and $Uri -like 'https://api.github.com/app/installations*') {
                 $global:GitHubAppSigningTestState.Jwt = $Headers.Authorization.Substring('Bearer '.Length)
                 return @([pscustomobject]@{ id = 42; account = @{ login = 'dotnet' } })
@@ -65,7 +74,12 @@ Describe 'GitHub App Key Vault signing' {
         Remove-Variable GitHubAppSigningTestState -Scope Global
     }
 
-    It 'signs only the SHA-256 digest remotely and masks the installation token' {
+    It 'reads the configured App ID <AppId>, signs remotely and masks the token' -TestCases @(
+        @{ AppId = 'Iv23configured-client-id' }
+        @{ AppId = '1234567' }
+    ) {
+        param($AppId)
+        $global:GitHubAppSigningTestState.AppId = $AppId
         $result = Invoke-TokenHelper
         $result.Success | Should -BeTrue -Because $result.Output
         ($global:GitHubAppSigningTestState.SignArguments[0..2] -join ' ') | Should -Be 'keyvault key sign'
@@ -73,14 +87,50 @@ Describe 'GitHub App Key Vault signing' {
         $global:GitHubAppSigningTestState.SignArguments | Should -Contain 'test-app-key'
         $parts = $global:GitHubAppSigningTestState.Jwt.Split('.')
         $payload = [Text.Encoding]::UTF8.GetString((ConvertFrom-Base64Url $parts[1])) | ConvertFrom-Json
-        $payload.iss | Should -Be 'public-client-id'
+        $payload.iss | Should -Be $AppId
         ($payload.exp - $payload.iat) | Should -Be 360
         $global:GitHubAppSigningTestState.Rsa.VerifyData([Text.Encoding]::UTF8.GetBytes("$($parts[0]).$($parts[1])"),
             (ConvertFrom-Base64Url $parts[2]), [Security.Cryptography.HashAlgorithmName]::SHA256,
             [Security.Cryptography.RSASignaturePadding]::Pkcs1) | Should -BeTrue
         $result.Output | Should -Match 'variable=TestToken;issecret=true'
-        Should -Invoke az -Times 1 -Exactly
-        Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Uri -like '*vault.azure.net*' }
+        $result.Output | Should -Not -Match 'mock-vault-access-token'
+        Should -Invoke az -Times 2 -Exactly
+        Should -Invoke Invoke-RestMethod -Times 1 -Exactly -ParameterFilter {
+            $Method -eq 'Get' -and $Uri -eq 'https://TestVault.vault.azure.net/secrets/test-app-app-id?api-version=7.4'
+        }
+        Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Uri -like '*private-key*' }
+    }
+
+    It 'stops when App-ID token acquisition returns exit <Code> and token <Token>' -TestCases @(
+        @{ Code = 1; Token = 'not-a-successful-token' }
+        @{ Code = 0; Token = '' }
+    ) {
+        param($Code, $Token)
+        $global:GitHubAppSigningTestState.TokenExitCode = $Code
+        $global:GitHubAppSigningTestState.AccessToken = $Token
+        Mock az {
+            $global:LASTEXITCODE = $global:GitHubAppSigningTestState.TokenExitCode
+            $global:GitHubAppSigningTestState.AccessToken
+        } -ParameterFilter { ($Arguments[0..1] -join ' ') -eq 'account get-access-token' }
+        (Invoke-TokenHelper).Success | Should -BeFalse
+        Should -Invoke Invoke-RestMethod -Times 0 -Exactly
+        Should -Invoke az -Times 0 -Exactly -ParameterFilter { ($Arguments[0..2] -join ' ') -eq 'keyvault key sign' }
+    }
+
+    It 'surfaces an App-ID secret read failure without signing or contacting GitHub' {
+        Mock Invoke-RestMethod { throw 'App-ID read denied' } -ParameterFilter { $Uri -like '*vault.azure.net*' }
+        $result = Invoke-TokenHelper
+        $result.Success | Should -BeFalse
+        $result.Output | Should -Match 'App-ID read denied'
+        Should -Invoke az -Times 0 -Exactly -ParameterFilter { ($Arguments[0..2] -join ' ') -eq 'keyvault key sign' }
+        Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Uri -like 'https://api.github.com/*' }
+    }
+
+    It 'rejects an empty App-ID projection without signing' {
+        Mock Invoke-RestMethod { @{ value = '' } } -ParameterFilter { $Uri -like '*vault.azure.net*' }
+        (Invoke-TokenHelper).Success | Should -BeFalse
+        Should -Invoke az -Times 0 -Exactly -ParameterFilter { ($Arguments[0..2] -join ' ') -eq 'keyvault key sign' }
+        Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Uri -like 'https://api.github.com/*' }
     }
 
     It 'finds the requested installation after a full first page' {
@@ -96,26 +146,28 @@ Describe 'GitHub App Key Vault signing' {
     }
 
     It 'stops before GitHub when signing fails' {
-        Mock az { $global:LASTEXITCODE = 1; 'not-a-successful-signature' }
+        Mock az { $global:LASTEXITCODE = 1; 'not-a-successful-signature' } -ParameterFilter { ($Arguments[0..2] -join ' ') -eq 'keyvault key sign' }
         (Invoke-TokenHelper).Success | Should -BeFalse
-        Should -Invoke Invoke-RestMethod -Times 0 -Exactly
+        Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Uri -like 'https://api.github.com/*' }
     }
 
     It 'rejects an empty signing response' {
-        Mock az { $global:LASTEXITCODE = 0; '' }
+        Mock az { $global:LASTEXITCODE = 0; '' } -ParameterFilter { ($Arguments[0..2] -join ' ') -eq 'keyvault key sign' }
         (Invoke-TokenHelper).Success | Should -BeFalse
-        Should -Invoke Invoke-RestMethod -Times 0 -Exactly
+        Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Uri -like 'https://api.github.com/*' }
     }
 
     It 'does not fall back when the signing operation throws' {
-        Mock az { throw 'Signing denied' }
+        Mock az { throw 'Signing denied' } -ParameterFilter { ($Arguments[0..2] -join ' ') -eq 'keyvault key sign' }
         (Invoke-TokenHelper).Success | Should -BeFalse
-        Should -Invoke az -Times 1 -Exactly
-        Should -Invoke Invoke-RestMethod -Times 0 -Exactly
+        Should -Invoke az -Times 2 -Exactly
+        Should -Invoke Invoke-RestMethod -Times 1 -Exactly
+        Should -Invoke az -Times 1 -Exactly -ParameterFilter { ($Arguments[0..2] -join ' ') -eq 'keyvault key sign' }
+        Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Uri -like 'https://api.github.com/*' }
     }
 
     It 'does not mint a token when the owner is absent' {
-        Mock Invoke-RestMethod { @() } -ParameterFilter { $Method -eq 'Get' }
+        Mock Invoke-RestMethod { @() } -ParameterFilter { $Method -eq 'Get' -and $Uri -like 'https://api.github.com/*' }
         (Invoke-TokenHelper).Success | Should -BeFalse
         Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Method -eq 'Post' }
     }
@@ -124,7 +176,7 @@ Describe 'GitHub App Key Vault signing' {
         Mock Invoke-RestMethod {
             @([pscustomobject]@{ id = 42; account = @{ login = 'dotnet' } },
               [pscustomobject]@{ id = 43; account = @{ login = 'dotnet' } })
-        } -ParameterFilter { $Method -eq 'Get' }
+        } -ParameterFilter { $Method -eq 'Get' -and $Uri -like 'https://api.github.com/*' }
         (Invoke-TokenHelper).Success | Should -BeFalse
         Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Method -eq 'Post' }
     }
@@ -137,7 +189,7 @@ Describe 'GitHub App Key Vault signing' {
     }
 
     It 'surfaces GitHub installation lookup errors without minting a token' {
-        Mock Invoke-RestMethod { throw 'GitHub unavailable' } -ParameterFilter { $Method -eq 'Get' }
+        Mock Invoke-RestMethod { throw 'GitHub unavailable' } -ParameterFilter { $Method -eq 'Get' -and $Uri -like 'https://api.github.com/*' }
         $result = Invoke-TokenHelper
         $result.Success | Should -BeFalse
         $result.Output | Should -Match 'GitHub unavailable'
