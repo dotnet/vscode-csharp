@@ -96,7 +96,7 @@ extends:
         - template: /azure-pipelines/get-github-app-token.yml@self
           parameters:
             azureSubscription: 'dnceng-oneloc-githubapp'
-            appClientId: 'Iv23lijBU8x3gc9lDOc9'
+            appIdSecretName: 'oneloc-localization-app-app-id'
             keyName: 'oneloc-localization-app-key'
         - pwsh: npm run publishLocalizationContent -- --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
           displayName: 'Create PR in GitHub.'

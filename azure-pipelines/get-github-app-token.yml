@@ -1,7 +1,7 @@
 parameters:
 - name: azureSubscription
   type: string
-- name: appClientId
+- name: appIdSecretName
   type: string
 - name: keyName
   type: string
@@ -26,13 +26,50 @@ steps:
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       $KeyVaultName = $env:KEY_VAULT_NAME
-      $AppClientId = $env:APP_CLIENT_ID
+      $AppIdSecretName = $env:APP_ID_SECRET_NAME
       $KeyName = $env:KEY_NAME
       $InstallationOwner = $env:INSTALLATION_OWNER
       $OutputVariableName = $env:OUTPUT_VARIABLE_NAME
 
       function ConvertTo-Base64Url([byte[]] $bytes) {
           return [Convert]::ToBase64String($bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_')
+      }
+
+      function Get-GitHubAppIdFromKeyVault([string] $VaultName, [string] $SecretName) {
+          if ($VaultName -notmatch '^[A-Za-z][A-Za-z0-9-]{1,22}[A-Za-z0-9]$' -or $VaultName.Contains('--')) {
+              throw "KeyVaultName '$VaultName' is not a valid Azure Key Vault name."
+          }
+          $previousNativeCommandErrorPreference = $PSNativeCommandUseErrorActionPreference
+          try {
+              $PSNativeCommandUseErrorActionPreference = $false
+              $accessToken = az account get-access-token `
+                  --resource https://vault.azure.net `
+                  --query accessToken `
+                  --output tsv `
+                  --only-show-errors
+              $tokenExitCode = $LASTEXITCODE
+          }
+          finally {
+              $PSNativeCommandUseErrorActionPreference = $previousNativeCommandErrorPreference
+          }
+          if ($tokenExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($accessToken)) {
+              throw "'az account get-access-token' failed with exit code $tokenExitCode while acquiring an Azure Key Vault access token."
+          }
+          $escapedSecretName = [Uri]::EscapeDataString($SecretName)
+          try {
+              # Read only the ID value: CLI secret deserialization fails on year-9999 expiry metadata.
+              $response = Invoke-RestMethod `
+                  -Uri "https://$VaultName.vault.azure.net/secrets/${escapedSecretName}?api-version=7.4" `
+                  -Headers @{ Authorization = "Bearer $accessToken" } `
+                  -Method Get
+          }
+          catch {
+              throw "Failed to read App ID secret '$SecretName' from vault '$VaultName': $_. Verify the service connection can read this App-ID projection."
+          }
+          if ([string]::IsNullOrWhiteSpace($response.value)) {
+              throw "App ID secret '$SecretName' in vault '$VaultName' is empty."
+          }
+          return [string] $response.value
       }
 
       function New-GitHubAppSignatureFromKeyVaultKey(
@@ -73,6 +110,7 @@ steps:
           return $signature.Trim().TrimEnd('=').Replace('+', '-').Replace('/', '_')
       }
 
+      $appId = Get-GitHubAppIdFromKeyVault $KeyVaultName $AppIdSecretName
       $jwtHeader = [ordered]@{
           alg = 'RS256'
           typ = 'JWT'
@@ -81,7 +119,7 @@ steps:
       $jwtPayload = [ordered]@{
           iat = $now.AddMinutes(-1).ToUnixTimeSeconds()
           exp = $now.AddMinutes(5).ToUnixTimeSeconds()
-          iss = $AppClientId
+          iss = $appId
       }
 
       $headerEncoded = ConvertTo-Base64Url ([System.Text.Encoding]::UTF8.GetBytes(($jwtHeader | ConvertTo-Json -Compress)))
@@ -126,7 +164,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=$OutputVariableName;issecret=true]$($tokenResponse.token)"
   env:
     KEY_VAULT_NAME: ${{ parameters.keyVaultName }}
-    APP_CLIENT_ID: ${{ parameters.appClientId }}
+    APP_ID_SECRET_NAME: ${{ parameters.appIdSecretName }}
     KEY_NAME: ${{ parameters.keyName }}
     INSTALLATION_OWNER: ${{ parameters.installationOwner }}
     OUTPUT_VARIABLE_NAME: ${{ parameters.outputVariableName }}
