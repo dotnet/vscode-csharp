@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.9.x
-* Update Roslyn to 5.14.0-1.26561.8 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.14.0-1.26561.8 (PR: [#9977](https://github.com/dotnet/vscode-csharp/pull/9977))
   * Remove duplicate Find References results for Razor generic type parameters (PR: [#86363](https://github.com/dotnet/roslyn/pull/86363))
   * Avoid inherited SDK paths causing dotnet commands to hang or use the wrong SDK (PR: [#86314](https://github.com/dotnet/roslyn/pull/86314))
   * Improve project loading responsiveness when cached project data is available (PR: [#86298](https://github.com/dotnet/roslyn/pull/86298))
