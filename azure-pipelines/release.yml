@@ -166,8 +166,8 @@ extends:
         - template: /azure-pipelines/get-github-app-token.yml@self
           parameters:
             azureSubscription: 'dnceng-dotnet-vscode-csharp-release-githubapp'
-            appIdSecretName: 'dotnet-vscode-csharp-release-tags-app-id'
-            appPrivateKeySecretName: 'dotnet-vscode-csharp-release-tags-app-private-key'
+            appClientId: '5128492'
+            keyName: 'dotnet-vscode-csharp-release-tags-app-key'
         - template: /azure-pipelines/create-release-tags.yml@self
           parameters:
             releaseVersion: $(resources.pipeline.officialBuildCI.runName)
