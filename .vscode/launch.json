@@ -63,12 +63,13 @@
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "TEST_FILE_FILTER": "${file}",
-                "RoslynWaiterEnabled": "true"
+                "RoslynWaiterEnabled": "true",
+                "ROSLYN_TEST_PREPARED_WORKSPACE": "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj"
             },
             "sourceMaps": true,
             "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
-            "preLaunchTask": "packageDev",
+            "preLaunchTask": "prepareCSharpIntegrationTests",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {

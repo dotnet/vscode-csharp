@@ -52,6 +52,19 @@
             "problemMatcher": "$tsc",
         },
         {
+            "label": "restoreCSharpTestWorkspace",
+            "command": "npm",
+            "type": "shell",
+            "args": ["run", "test:integration:csharp:prepare"],
+            "problemMatcher": []
+        },
+        {
+            "label": "prepareCSharpIntegrationTests",
+            "dependsOrder": "sequence",
+            "dependsOn": ["packageDev", "restoreCSharpTestWorkspace"],
+            "problemMatcher": []
+        },
+        {
             "label": "test",
             "command": "echo",
             "group": {

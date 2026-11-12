@@ -14,14 +14,16 @@ import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';
 import { WaitForAsyncOperationsRequest } from './testHooks';
 
-export async function activateCSharpExtension(): Promise<CSharpExtensionExports> {
+function getCSharpExtension(): vscode.Extension<CSharpExtensionExports> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
+    return csharpExtension;
+}
 
-    let shouldRestart = false;
-
+export async function ensureCSharpExtensionActivated(): Promise<CSharpExtensionExports> {
+    const csharpExtension = getCSharpExtension();
     const csDevKitExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csdevkit');
     if (usingDevKit()) {
         if (!csDevKitExtension) {
@@ -34,15 +36,6 @@ export async function activateCSharpExtension(): Promise<CSharpExtensionExports>
         if (semver.lt(version, minimumVersion)) {
             throw new Error(`C# Dev Kit version ${version} is below required minimum of ${minimumVersion}`);
         }
-    } else {
-        // Run a restore manually to make sure the project is up to date since we don't have automatic restore.
-        await testAssetWorkspace.restoreLspToolsHostAsync();
-
-        // If the extension is already active, we need to restart it to ensure we start with a clean server state.
-        // For example, a previous test may have changed configs, deleted restored packages or made other changes that would put it in an invalid state.
-        if (csharpExtension.isActive) {
-            shouldRestart = true;
-        }
     }
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
@@ -51,12 +44,27 @@ export async function activateCSharpExtension(): Promise<CSharpExtensionExports>
     console.log('ms-dotnettools.csharp activated');
     console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
 
+    return csharpExtension.exports;
+}
+
+export async function resetCSharpTestWorkspace(): Promise<CSharpExtensionExports> {
+    const csharpExtension = getCSharpExtension();
+    let shouldRestart = false;
+    if (!usingDevKit()) {
+        await testAssetWorkspace.restoreLspToolsHostAsync();
+        // A previous suite may have changed configuration or loaded projects outside the default solution.
+        shouldRestart = csharpExtension.isActive;
+    }
+
+    const exports = await ensureCSharpExtensionActivated();
     if (shouldRestart) {
         await restartLanguageServer();
     }
-
-    return csharpExtension.exports;
+    return exports;
 }
+
+// Existing suites retain their reset-on-activation behavior until explicitly migrated.
+export const activateCSharpExtension = resetCSharpTestWorkspace;
 
 export function usingDevKit(): boolean {
     return vscode.workspace.getConfiguration().get<boolean>('dotnet.preferCSharpExtension') !== true;

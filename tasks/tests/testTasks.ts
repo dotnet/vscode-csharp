@@ -9,16 +9,37 @@ import { jestArtifactTestsProjectName } from '../../test/lsptoolshost/artifactTe
 import { jestUnitTestProjectName } from '../../test/lsptoolshost/unitTests/jest.config';
 import { razorTestProjectName } from '../../test/razor/razorTests/jest.config';
 import { jestTasksTestProjectName } from '../../test/tasks/jest.config';
+import { rootPath } from '../projectPaths';
+import { execChildProcess } from '../../src/common';
 
+const csharpIntegrationTestFolder = path.join('lsptoolshost', 'integrationTests');
 const razorIntegrationTestProjects = ['RazorApp'];
 
 export async function testArtifacts(): Promise<void> {
     await runJestTest(jestArtifactTestsProjectName);
 }
 
+export async function prepareCSharpTestWorkspace(projectName: string): Promise<string> {
+    const workspaceRoot = path.join(rootPath, 'test', csharpIntegrationTestFolder, 'testAssets', projectName);
+    // Restore before VS Code launches so Roslyn can load the projects immediately.
+    console.log(await execChildProcess(`dotnet restore "${workspaceRoot}"`, workspaceRoot, process.env));
+    return workspaceRoot;
+}
+
 export async function testIntegrationCSharp(): Promise<void> {
     for (const projectName of integrationTestProjects) {
-        await runIntegrationTest(projectName, path.join('lsptoolshost', 'integrationTests'), `CSharp-${projectName}`);
+        const workspaceRoot = await prepareCSharpTestWorkspace(projectName);
+        // Mark the workspace as prepared so test setup preserves and reuses the restore outputs.
+        await runIntegrationTest(
+            projectName,
+            csharpIntegrationTestFolder,
+            `CSharp-${projectName}`,
+            undefined,
+            undefined,
+            {
+                ROSLYN_TEST_PREPARED_WORKSPACE: workspaceRoot,
+            }
+        );
     }
 }
 
