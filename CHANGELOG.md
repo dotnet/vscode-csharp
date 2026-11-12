@@ -4,11 +4,6 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update Roslyn to 5.14.0-1.26561.1 (PR: [#9971](https://github.com/dotnet/vscode-csharp/pull/9971))
-  * Remove duplicate Razor references and highlights for generic type parameters (PR: [#86363](https://github.com/dotnet/roslyn/pull/86363))
-  * Prevent project-loading hangs caused by inherited `MSBuildSDKsPath` (PR: [#86314](https://github.com/dotnet/roslyn/pull/86314))
-  * Prioritize cached projects to improve project-load responsiveness (PR: [#86298](https://github.com/dotnet/roslyn/pull/86298))
-  * Fix Razor rename for using aliases (PR: [#86243](https://github.com/dotnet/roslyn/pull/86243))
 * Update xamlTools to 18.14.12407.18 (PR: [#9956](https://github.com/dotnet/vscode-csharp/pull/9956))
   * Align dependencies with the current C# extension (PR: AzDO#803419)
   * Improve MAUI Hot Reload saved-file and time tracking (PR: AzDO#761751, AzDO#764008)
@@ -18,6 +13,11 @@
   * Decouple XAML completion and snippets from Visual Studio editor services (PR: AzDO#792810, AzDO#794857)
 
 # 11.9.x
+* Update Roslyn to 5.14.0-1.26561.8 (PR: [#9977](https://github.com/dotnet/vscode-csharp/pull/9977))
+  * Remove duplicate Find References results for Razor generic type parameters (PR: [#86363](https://github.com/dotnet/roslyn/pull/86363))
+  * Avoid inherited SDK paths causing dotnet commands to hang or use the wrong SDK (PR: [#86314](https://github.com/dotnet/roslyn/pull/86314))
+  * Improve project loading responsiveness when cached project data is available (PR: [#86298](https://github.com/dotnet/roslyn/pull/86298))
+  * Fix renaming using aliases in Razor files (PR: [#86243](https://github.com/dotnet/roslyn/pull/86243))
 * Update Roslyn to 5.14.0-1.26554.1 (PR: [#9948](https://github.com/dotnet/vscode-csharp/pull/9948))
   * File-based apps: allow metadata on `#:include` (PR: [#86260](https://github.com/dotnet/roslyn/pull/86260))
   * Fix Razor using directive sorting in the presence of aliases and statics (PR: [#86254](https://github.com/dotnet/roslyn/pull/86254))
