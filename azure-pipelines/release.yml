@@ -168,8 +168,8 @@ extends:
             inlineScript: |
               & "$(Build.SourcesDirectory)/azure-pipelines/Get-GitHubAppToken.ps1" `
                 -KeyVaultName 'EngKeyVault' `
-                -AppIdSecretName 'dotnet-vscode-csharp-release-tags-app-id' `
-                -AppPrivateKeySecretName 'dotnet-vscode-csharp-release-tags-app-private-key' `
+                -AppClientId '5128492' `
+                -KeyName 'dotnet-vscode-csharp-release-tags-app-key' `
                 -InstallationOwner 'dotnet' `
                 -OutputVariableName 'GitHubAppInstallationToken'
         - pwsh: |
