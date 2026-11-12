@@ -12,7 +12,7 @@ import {
     CopilotCli,
     CopilotCliSource,
     CopilotPlugin,
-    findCopilotCli,
+    findCopilotCliCandidates,
     parsePluginList,
     runCopilotCli,
 } from './copilotCli';
@@ -152,17 +152,54 @@ export async function registerDotnetPlugin(
             return { outcome: cached.outcome, source: cached.source, cached: true };
         }
 
-        // 3. Find a compatible Copilot CLI from either the standalone install or Copilot app.
+        // 3. Validate the CLI before inventory; a VS Code shim may have no real CLI to launch.
         operation = 'discovery';
-        const cli = await findCopilotCli();
+        source = 'none';
+        let cli: CopilotCli | undefined;
+        for await (const candidate of findCopilotCliCandidates()) {
+            throwIfCancellationRequested(cancellation.token);
+            source = candidate.source;
+            host.channel.trace(`Copilot .NET plugin: Using ${source} Copilot CLI source.`);
+
+            operation = 'version';
+            let output: string;
+            try {
+                output = await runCopilotCli(candidate, ['--version'], cancellation.token);
+            } catch (error) {
+                throwIfCancellationRequested(cancellation.token);
+                // The shim exits 127 when no CLI is available, or forwards that code from the CLI.
+                // Either makes this --version probe unusable. Try other candidates without matching diagnostic text.
+                if (candidate.isVSCodeShim && error instanceof Error && 'code' in error && error.code === 127) {
+                    host.channel.trace('Copilot .NET plugin: VS Code shim could not launch a usable CLI (exit 127).');
+                    operation = 'discovery';
+                    source = 'none';
+                    continue;
+                }
+                throw error;
+            }
+
+            throwIfCancellationRequested(cancellation.token);
+            operation = 'versionParse';
+            // CLI output starts with a line such as "GitHub Copilot CLI 1.0.85.".
+            const versionMatch = /^GitHub Copilot CLI (\S+?)\.?\r?$/m.exec(output);
+            const version = parseVersion(versionMatch?.[1] ?? '');
+            if (!version) {
+                throw new Error('Unrecognized Copilot CLI version');
+            }
+            if (lt(version, minimumCliVersion)) {
+                host.channel.info(
+                    `Skipping Copilot .NET plugin installation: Copilot CLI ${version.version} is incompatible. Update the Copilot CLI or app to use CLI ${minimumCliVersion} or newer.`
+                );
+                return { outcome: 'incompatibleCli', source, cached: false };
+            }
+            cli = candidate;
+            break;
+        }
         throwIfCancellationRequested(cancellation.token);
         if (!cli) {
             host.channel.trace('Copilot .NET plugin: No compatible Copilot CLI found.');
             return { outcome: 'copilotNotAvailable', source: 'none', cached: false };
         }
-
-        source = cli.source;
-        host.channel.trace(`Copilot .NET plugin: Using ${source} Copilot CLI source.`);
 
         // 4. Check for an existing supported plugin or a conflicting plugin with the same name.
         operation = 'pluginList';
@@ -178,25 +215,7 @@ export async function registerDotnetPlugin(
             outcome = 'conflictingPlugin';
             host.channel.info('Skipping Copilot .NET plugin installation: a plugin by that name is already installed.');
         } else {
-            // 5. Check compatibility only when installation is needed, avoiding an extra CLI launch otherwise.
-            operation = 'version';
-            const output = await runCopilotCli(cli, ['--version'], cancellation.token);
-            throwIfCancellationRequested(cancellation.token);
-            operation = 'versionParse';
-            // CLI output starts with a line such as "GitHub Copilot CLI 1.0.85.".
-            const versionMatch = /^GitHub Copilot CLI (\S+?)\.?\r?$/m.exec(output);
-            const version = parseVersion(versionMatch?.[1] ?? '');
-            if (!version) {
-                throw new Error('Unrecognized Copilot CLI version');
-            }
-            if (lt(version, minimumCliVersion)) {
-                host.channel.info(
-                    `Skipping Copilot .NET plugin installation: Copilot CLI ${version.version} is incompatible. Update the Copilot CLI or app to use CLI ${minimumCliVersion} or newer.`
-                );
-                return { outcome: 'incompatibleCli', source, cached: false };
-            }
-
-            // 6. Validate or register the expected marketplace, then install the plugin.
+            // 5. Validate or register the expected marketplace, then install the plugin.
             if (!(await ensureMarketplace(cli))) {
                 outcome = 'conflictingMarketplace';
             } else {
@@ -208,7 +227,7 @@ export async function registerDotnetPlugin(
             }
         }
 
-        // 7. Cache the stable result before returning it to the caller.
+        // 6. Cache the stable result before returning it to the caller.
         operation = 'cache';
         await host.context.globalState.update(dotnetPluginCacheKey, {
             extensionVersion: host.context.extension.packageJSON.version,
