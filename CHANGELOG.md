@@ -18,6 +18,11 @@
   * Decouple XAML completion and snippets from Visual Studio editor services (PR: AzDO#792810, AzDO#794857)
 
 # 11.9.x
+* Update Roslyn to 5.14.0-1.26561.8 (PR: [#9977](https://github.com/dotnet/vscode-csharp/pull/9977))
+  * Remove duplicate Find References results for Razor generic type parameters (PR: [#86363](https://github.com/dotnet/roslyn/pull/86363))
+  * Avoid inherited SDK paths causing dotnet commands to hang or use the wrong SDK (PR: [#86314](https://github.com/dotnet/roslyn/pull/86314))
+  * Improve project loading responsiveness when cached project data is available (PR: [#86298](https://github.com/dotnet/roslyn/pull/86298))
+  * Fix renaming using aliases in Razor files (PR: [#86243](https://github.com/dotnet/roslyn/pull/86243))
 * Update Roslyn to 5.14.0-1.26554.1 (PR: [#9948](https://github.com/dotnet/vscode-csharp/pull/9948))
   * File-based apps: allow metadata on `#:include` (PR: [#86260](https://github.com/dotnet/roslyn/pull/86260))
   * Fix Razor using directive sorting in the presence of aliases and statics (PR: [#86254](https://github.com/dotnet/roslyn/pull/86254))
