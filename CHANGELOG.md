@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Update Roslyn to 5.14.0-1.26562.5 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Register the project-specific Hot Reload event subscriber service for XAML tools (PR: [#86418](https://github.com/dotnet/roslyn/pull/86418))
+  * Fix Razor formatting of attributes following a multiline C# attribute value (PR: [#86310](https://github.com/dotnet/roslyn/pull/86310))
+  * Honor `.editorconfig` `indent_size` when formatting Razor files (PR: [#86307](https://github.com/dotnet/roslyn/pull/86307))
+  * Fix Razor formatting indentation after end tags that don't start a line (PR: [#86308](https://github.com/dotnet/roslyn/pull/86308))
+  * Fix hang when a parameter default value uses the natural type of its own method group (PR: [#86367](https://github.com/dotnet/roslyn/pull/86367))
 * Update xamlTools to 18.14.12407.18 (PR: [#9956](https://github.com/dotnet/vscode-csharp/pull/9956))
   * Align dependencies with the current C# extension (PR: AzDO#803419)
   * Improve MAUI Hot Reload saved-file and time tracking (PR: AzDO#761751, AzDO#764008)
