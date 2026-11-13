@@ -169,7 +169,7 @@
   "generateOptionsSchema.debugServer.description": "僅限偵錯延伸模組開發: 如果指定了連接埠，VS Code 會嘗試連線至以伺服器模式執行的偵錯配接器",
   "generateOptionsSchema.enableAutomaticDeoptimization.markdownDescription": "若為 true，(預設)，則盡可能自動取消最佳化偵錯函式。偵錯工具會取消最佳化以中斷點或支援的逐步執行作業為目標的方法。需要 .NET 8 或更新版本。與 'suppressJITOptimizations' 不同，這適用於個別方法。",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "要啟用逐步執行屬性和運算子的旗標。此選項預設為 'true'。",
-  "generateOptionsSchema.env.description": "Environment variables passed to the program. Null or empty values remove variables from the inherited environment.",
+  "generateOptionsSchema.env.description": "傳遞至程式的環境變數。Null 或空值會從繼承的環境中移除變數。",
   "generateOptionsSchema.envFile.markdownDescription": "檔案傳遞給程式的環境變數。例如 '${workspaceFolder}/.env'",
   "generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description": "當 true (預設狀態) 時，偵錯工具會模擬簡單屬性和方法的執行，以嘗試更快評估。",
   "generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description": "當為 true (預設狀態) 時，偵錯工具會自動呼叫屬性 'get' 方法及其他隱含函式呼叫。",
