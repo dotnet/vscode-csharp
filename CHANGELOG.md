@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Fix Copilot plugin setup when VS Code's Copilot CLI shim appears on the PATH (PR: [#9958](https://github.com/dotnet/vscode-csharp/pull/9958))
+* Add the `enableAutomaticDeoptimization` debugger launch option and allow `null` `env` values to remove inherited environment variables (PR: [#9961](https://github.com/dotnet/vscode-csharp/pull/9961))
 * Update xamlTools to 18.14.12407.18 (PR: [#9956](https://github.com/dotnet/vscode-csharp/pull/9956))
   * Align dependencies with the current C# extension (PR: AzDO#803419)
   * Improve MAUI Hot Reload saved-file and time tracking (PR: AzDO#761751, AzDO#764008)
