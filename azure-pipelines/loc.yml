@@ -97,7 +97,7 @@ extends:
           parameters:
             azureSubscription: 'dnceng-oneloc-githubapp'
             appIdSecretName: 'oneloc-localization-app-app-id'
-            appPrivateKeySecretName: 'oneloc-localization-app-app-private-key'
+            keyName: 'oneloc-localization-app-key'
         - pwsh: npm run publishLocalizationContent -- --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
           displayName: 'Create PR in GitHub.'
           env:
