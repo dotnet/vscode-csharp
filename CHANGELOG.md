@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update Roslyn to 5.14.0-1.26562.5 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.14.0-1.26562.5 (PR: [#9986](https://github.com/dotnet/vscode-csharp/pull/9986))
   * Register the project-specific Hot Reload event subscriber service for XAML tools (PR: [#86418](https://github.com/dotnet/roslyn/pull/86418))
   * Fix Razor formatting of attributes following a multiline C# attribute value (PR: [#86310](https://github.com/dotnet/roslyn/pull/86310))
   * Honor `.editorconfig` `indent_size` when formatting Razor files (PR: [#86307](https://github.com/dotnet/roslyn/pull/86307))
