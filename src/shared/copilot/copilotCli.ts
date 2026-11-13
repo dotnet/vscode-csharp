@@ -38,6 +38,11 @@ function environmentPath(name: string): string | undefined {
     return absolute(value) ? value : undefined;
 }
 
+// Windows can run .cmd and .bat files only through cmd.exe.
+function runsThroughCmd(command: string): boolean {
+    return os.platform() === 'win32' && /\.(cmd|bat)$/i.test(command);
+}
+
 function pathDirectories(): string[] {
     return (process.env.PATH ?? '')
         .split(platformPath().delimiter)
@@ -140,34 +145,32 @@ export async function* findCopilotCliCandidates(): AsyncGenerator<CopilotCli> {
         const names = platform === 'win32' ? ['copilot.exe', 'copilot.cmd', 'copilot.bat'] : ['copilot'];
         for (const name of names) {
             const command = path.join(directory, name);
-            if (!existsSync(command)) {
+            // cmd.exe expands %VAR%, and !VAR! when delayed expansion is on, even inside quotes.
+            // runCopilotCli cannot escape these characters, so skip batch files whose path contains them.
+            if (runsThroughCmd(command) && /[%!]/.test(command)) {
                 continue;
             }
 
-            if (platform !== 'win32') {
-                try {
-                    // Match shell PATH lookup when selecting executable candidates.
-                    if (!(await fs.stat(command)).isFile()) {
-                        continue;
-                    }
-                    await fs.access(command, constants.X_OK);
-                } catch (error) {
-                    if (
-                        error instanceof Error &&
-                        'code' in error &&
-                        (error.code === 'EACCES' || error.code === 'ENOENT')
-                    ) {
-                        continue;
-                    }
-                    throw error;
+            let resolved: string;
+            try {
+                // Match shell PATH lookup: skip entries that are missing, are not files, or
+                // cannot be executed, and keep searching later PATH directories.
+                if (!(await fs.stat(command)).isFile()) {
+                    continue;
                 }
+                if (platform !== 'win32') {
+                    await fs.access(command, constants.X_OK);
+                }
+                // The CLI may be a symlink, for example /usr/bin/copilot pointing into a VS Code install.
+                resolved = await fs.realpath(command);
+            } catch {
+                continue;
             }
 
             // VS Code can put its launcher on PATH even when the real CLI is installed.
             // Keep it as a candidate because it forwards to the CLI when available.
             // Resolve symlinks to recognize the shim, but execute the original discovered path.
             // See https://github.com/microsoft/vscode/blob/main/copilot_shim/REQUIREMENTS.md#product-integration.
-            const resolved = await fs.realpath(command);
             const parent = path.dirname(resolved);
             const isVSCodeShim =
                 path.basename(parent).toLowerCase() === 'copilot-shim' &&
@@ -196,7 +199,11 @@ export async function runCopilotCli(
         }
 
         controller.signal.throwIfAborted();
-        const shell = os.platform() === 'win32' && /\.(cmd|bat)$/i.test(cli.command);
+        // With `shell`, Node passes the command and arguments to cmd.exe without escaping.
+        // Quoting the path makes spaces and characters such as & and ^ literal, and Windows paths
+        // cannot contain quotes. Discovery skips paths with % or !, which cmd.exe expands even inside
+        // quotes. Callers pass only fixed arguments without spaces or cmd.exe metacharacters.
+        const shell = runsThroughCmd(cli.command);
         return await new Promise<string>((resolve, reject) => {
             const child = execFile(
                 shell ? `"${cli.command}"` : cli.command,
