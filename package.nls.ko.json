@@ -94,6 +94,7 @@
   "configuration.dotnet.unitTests.runSettingsPath": "단위 테스트를 실행할 때 사용해야 하는 .runsettings 파일의 경로입니다.",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Razor 파일에서 모든 C# 코드 작업을 표시합니다. 이러한 작업은 Razor에서 테스트되지 않았으며 적용하면 구문 오류가 발생할 수 있습니다. 이런 경우 버그를 보고해 주세요.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "태그 도우미 및 구성 요소를 공백으로 커밋할지 여부를 지정합니다.",
+  "configuration.razor.razor.format.enable": "기본 Razor 포맷터를 사용하거나 사용하지 않도록 설정합니다.",
   "configuration.razor.razor.format.attributeIndentStyle": "Razor 파일에서 HTML과 구성 요소 태그 속성의 들여쓰기 스타일을 지정합니다.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "@code 또는 @functions 지시문 뒤의 여는 중괄호를 다음 줄에 강제로 배치합니다.",
   "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "true이면 Razor 문, 블록, 지시문, 주석, 템플릿 또는 독립 실행형 식이 포함된 스크립트 및 스타일 블록 내부에서 원본 들여쓰기를 유지합니다.",

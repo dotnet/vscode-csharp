@@ -55,7 +55,7 @@ export default class MockHttpsServer {
     }
 
     /**
-     * Creates an HTTPS server listening on an available localhost port, so baseUrl is usable immediately.
+     * Creates an HTTPS server listening on an available loopback port, so baseUrl is usable immediately.
      */
     public static async CreateMockHttpsServer(): Promise<MockHttpsServer> {
         const server = https.createServer({
@@ -65,14 +65,14 @@ export default class MockHttpsServer {
 
         await new Promise<void>((resolve, reject) => {
             server.once('error', reject);
-            server.listen(0, 'localhost', () => {
+            server.listen(0, '127.0.0.1', () => {
                 server.off('error', reject);
                 resolve();
             });
         });
 
         const { port } = server.address() as AddressInfo;
-        return new MockHttpsServer(server, `https://localhost:${port}`);
+        return new MockHttpsServer(server, `https://127.0.0.1:${port}`);
     }
 
     private static getKey(method: string, urlPath: string): string {

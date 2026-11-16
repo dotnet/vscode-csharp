@@ -1264,6 +1264,12 @@
         "id": "ms-dotnettools.csharp.razor",
         "order": 10,
         "properties": {
+          "razor.format.enable": {
+            "type": "boolean",
+            "scope": "window",
+            "default": true,
+            "description": "%configuration.razor.razor.format.enable%"
+          },
           "razor.format.codeBlockBraceOnNextLine": {
             "type": "boolean",
             "scope": "window",

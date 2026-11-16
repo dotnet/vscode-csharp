@@ -94,6 +94,7 @@
   "configuration.dotnet.unitTests.runSettingsPath": "Путь к файлу RUNSETTINGS, который следует использовать при выполнении модульных тестов.",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Показывать все действия кода C# в файлах Razor. Эти действия не тестировались в Razor и могут привести к синтаксическим ошибкам при применении. Если это произойдет, сообщите об ошибке.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Указывает, следует ли зафиксировать вспомогательное приложение тегов и элементы компонентов с пробелом.",
+  "configuration.razor.razor.format.enable": "Включить/отключить форматировщик Razor по умолчанию.",
   "configuration.razor.razor.format.attributeIndentStyle": "Указывает стиль отступа для атрибутов HTML и тегов компонентов в файлах Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Принудительно добавляет открывающую фигурную скобку после директивы @code или @functions на следующей строке.",
   "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "Если ИСТИНА, сохраняются исходные отступы внутри блоков сценария и стиля, содержащих инструкции Razor, блоки, директивы, комментарии, шаблоны или отдельные выражения",

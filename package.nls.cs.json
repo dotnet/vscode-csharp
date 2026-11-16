@@ -94,6 +94,7 @@
   "configuration.dotnet.unitTests.runSettingsPath": "Cesta k souboru .runsettings, který by se měl použít při spouštění testů jednotek",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Zobrazit všechny akce kódu C# v souborech Razor. Tyto akce nejsou v Razoru otestované a po použití můžou způsobit syntaktické chyby. Pokud k tomu dojde, nahlaste prosím chybu.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Určuje, jestli se má potvrdit pomocný element značky a elementy komponenty s mezerou.",
+  "configuration.razor.razor.format.enable": "Umožňuje povolit nebo zakázat výchozí formátovací modul Razor.",
   "configuration.razor.razor.format.attributeIndentStyle": "Určuje styl odsazení pro atributy HTML a značek komponent v souborech Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Vynutí, aby levá složená závorka za direktivou @code nebo @functions byla na následujícím řádku.",
   "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "Pokud je hodnota true, zachová odsazení zdrojového kódu uvnitř bloků skriptu a stylů, které obsahují příkazy, bloky, direktivy, komentáře, šablony nebo samostatné výrazy Razor.",

@@ -94,6 +94,7 @@
   "configuration.dotnet.unitTests.runSettingsPath": "运行单元测试时应使用的 .runsettings 文件的路径。",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "在 Razor 文件中显示所有 C# 代码操作。这些操作在 Razor 中未测试，应用时可能会引入语法错误。如果发生这种情况，请报告 Bug。",
   "configuration.razor.razor.completion.commitElementsWithSpace": "指定是否提交带有空格的标记帮助程序和组件元素。",
+  "configuration.razor.razor.format.enable": "启用/禁用默认 Razor 格式化程序。",
   "configuration.razor.razor.format.attributeIndentStyle": "指定 Razor 文件中 HTML 和组件标签属性的缩进样式。",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "强制将 @code 或 @functions 指令后的开括号放在下一行。",
   "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "如果为 true，则保留包含 Razor 语句、块、指令、注释、模板或独立表达式的脚本和样式块内的源缩进。",

@@ -94,6 +94,7 @@
   "configuration.dotnet.unitTests.runSettingsPath": "Caminho para o arquivo .runsettings que deve ser usado ao executar os testes unitários.",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Mostrar todas as ações de código C# em arquivos Razor. Estas ações não foram testadas no Razor e podem introduzir erros de sintaxe quando aplicadas. Se isso acontecer, relate um bug.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Especifica se o auxiliar de marca e os elementos de componente devem ser confirmados com um espaço.",
+  "configuration.razor.razor.format.enable": "Habilitar/desabilitar o formatador padrão do Razor.",
   "configuration.razor.razor.format.attributeIndentStyle": "Especifica o estilo de recuo para atributos de rótulo HTML e de componente em arquivos Razor.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Força a chave de abertura após uma diretiva @code ou @functions a estar na linha seguinte.",
   "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "Se verdadeiro, preserva o recuo de origem em blocos de script e estilo que contêm instruções, blocos, diretivas, comentários, modelos ou expressões independentes do Razor.",

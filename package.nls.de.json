@@ -94,6 +94,7 @@
   "configuration.dotnet.unitTests.runSettingsPath": "Pfad zur „.runsettings“-Datei, die beim Ausführen von Komponententests verwendet werden soll.",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Alle C#-Codeaktionen in Razor-Dateien anzeigen. Diese Aktionen werden in Razor nicht getestet und können beim Anwenden Syntaxfehler verursachen. Melden Sie in diesem Fall einen Fehler.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Gibt an, ob ein Commit für das Taghilfsprogramm und Komponentenelemente mit einem Leerzeichen ausgeführt werden soll.",
+  "configuration.razor.razor.format.enable": "Razor-Standardformatierer aktivieren/deaktivieren.",
   "configuration.razor.razor.format.attributeIndentStyle": "Legt den Einrückungsstil für HTML- und Komponenten-Tag-Attribute in Razor-Dateien fest.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Erzwingt, dass die öffnende geschweifte Klammer nach einer @code- oder @functions-Anweisung in der folgenden Zeile steht.",
   "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "Bei „true“ wird der Quelleinzug innerhalb von Skript- und Stilblöcken beibehalten, die Razor-Anweisungen, -Blöcke, -Direktiven, -Kommentare, -Vorlagen oder eigenständige Ausdrücke enthalten.",

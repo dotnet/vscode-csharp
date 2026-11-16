@@ -94,6 +94,7 @@
   "configuration.dotnet.unitTests.runSettingsPath": "Birim testlerini çalıştırırken kullanılması gereken .runsettings dosyasının yolu.",
   "configuration.razor.razor.advanced.showAllCSharpCodeActions": "Razor dosyalarındaki tüm C# kod eylemlerini gösterin. Bu eylemler Razor'da test edilmedi ve uygulandıklarında söz dizimi hatalarına neden olabilir. Bu durum oluşursa lütfen bir hata bildirin.",
   "configuration.razor.razor.completion.commitElementsWithSpace": "Etiket yardımcısı ve bileşen öğelerinin bir boşlukla işlenip işlenmeyeceğini belirtir.",
+  "configuration.razor.razor.format.enable": "Varsayılan Razor biçimlendiricisini etkinleştirin/devre dışı bırakın.",
   "configuration.razor.razor.format.attributeIndentStyle": "Razor dosyalarındaki Html ve bileşen etiketi özniteliklerinin girinti stilini belirtir.",
   "configuration.razor.razor.format.codeBlockBraceOnNextLine": "Açık küme ayracını bir @code veya @functions yönergesinden sonra aşağıdaki satırda olmaya zorlar.",
   "configuration.razor.razor.format.ignoreIndentationInScriptOrStyleBlocksWithComplexRazor": "True ise Razor deyimleri, blokları, yönergeleri, yorumları, şablonları veya tek başına ifadeleri içeren betik ve stil bloklarındaki kaynak girintisini korur.",
