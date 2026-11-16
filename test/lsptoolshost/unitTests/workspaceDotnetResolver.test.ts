@@ -5,7 +5,7 @@
 
 import { describe, expect, jest, test } from '@jest/globals';
 import * as vscode from 'vscode';
-import { WorkspaceDotnetStateServiceV1, WorkspaceDotnetStateV1 } from '../../../src/csharpDevKitExports';
+import { WorkspaceDotnetStateService, WorkspaceDotnetState } from '../../../src/csharpDevKitExports';
 import {
     resolveWorkspaceDotnet,
     WorkspaceDotnetResolutionError,
@@ -14,14 +14,14 @@ import {
 describe('workspace .NET resolver', () => {
     test('uses standalone resolution when the service is absent or unsupported', () => {
         expect(resolveWorkspaceDotnet(undefined)).toBeUndefined();
-        expect(resolveWorkspaceDotnet({ version: '2.0' } as unknown as WorkspaceDotnetStateServiceV1)).toBeUndefined();
+        expect(resolveWorkspaceDotnet({ version: '2.0' } as unknown as WorkspaceDotnetStateService)).toBeUndefined();
     });
 
     test('reads exact ready metadata without subscribing', () => {
         const service = createService(readyState());
         service.onDidChangeState = (() => {
             throw new Error('must not subscribe');
-        }) as vscode.Event<WorkspaceDotnetStateV1>;
+        }) as vscode.Event<WorkspaceDotnetState>;
 
         expect(resolveWorkspaceDotnet(service)).toEqual({
             architecture: 'arm64',
@@ -41,14 +41,14 @@ describe('workspace .NET resolver', () => {
     });
 
     test.each([
-        [{ kind: 'resolving', revision: 1 } as WorkspaceDotnetStateV1, 'still resolving'],
-        [{ kind: 'blocked', revision: 1 } as WorkspaceDotnetStateV1, 'blocked'],
+        [{ kind: 'resolving', revision: 1 } as WorkspaceDotnetState, 'still resolving'],
+        [{ kind: 'blocked', revision: 1 } as WorkspaceDotnetState, 'blocked'],
     ])('fails closed immediately for %s', (state, message) => {
         expect(() => resolveWorkspaceDotnet(createService(state))).toThrow(message);
     });
 
     test('rereads the current state on every attempt', () => {
-        let state: WorkspaceDotnetStateV1 = { kind: 'resolving', revision: 1 };
+        let state: WorkspaceDotnetState = { kind: 'resolving', revision: 1 };
         const service = createService(state);
         service.getState = () => state;
 
@@ -88,7 +88,7 @@ describe('workspace .NET resolver', () => {
     });
 });
 
-function readyState(revision = 1): WorkspaceDotnetStateV1 {
+function readyState(revision = 1): WorkspaceDotnetState {
     return {
         kind: 'ready',
         revision,
@@ -107,10 +107,10 @@ function readyState(revision = 1): WorkspaceDotnetStateV1 {
     };
 }
 
-function createService(initialState: WorkspaceDotnetStateV1): WorkspaceDotnetStateServiceV1 {
+function createService(initialState: WorkspaceDotnetState): WorkspaceDotnetStateService {
     return {
         version: '1.0',
         getState: jest.fn(() => initialState),
-        onDidChangeState: (() => ({ dispose: () => {} })) as vscode.Event<WorkspaceDotnetStateV1>,
+        onDidChangeState: (() => ({ dispose: () => {} })) as vscode.Event<WorkspaceDotnetState>,
     };
 }

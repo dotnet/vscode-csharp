@@ -8,8 +8,8 @@ import * as vscode from 'vscode';
 import * as common from '../../../../src/common';
 import {
     CSharpDevKitExports,
-    WorkspaceDotnetStateServiceV1,
-    WorkspaceDotnetStateV1,
+    WorkspaceDotnetStateService,
+    WorkspaceDotnetState,
 } from '../../../../src/csharpDevKitExports';
 import {
     activate,
@@ -307,6 +307,49 @@ describe('DebugAdapterExecutableFactory workspace .NET state', () => {
         }
     });
 
+    test.each([
+        ['absent or bypassed', undefined],
+        [
+            'older exports',
+            {
+                activate: async () => ({}) as CSharpDevKitExports,
+            } as unknown as vscode.Extension<CSharpDevKitExports>,
+        ],
+        ['not applicable', createProvider({ kind: 'notApplicable', revision: 1 }).extension],
+    ])('retains standalone launch behavior when the provider is %s', async (_name, extension) => {
+        const originalDotnetRoot = process.env.DOTNET_ROOT;
+        const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockReturnValue(true);
+        const getExtensionPath = jest.spyOn(common, 'getExtensionPath').mockReturnValue('/extension');
+        const dotNetCliPaths = jest.spyOn(omnisharpOptions, 'dotNetCliPaths', 'get').mockReturnValue(['/dotnet']);
+        delete process.env.DOTNET_ROOT;
+        getCSharpDevKitMock.mockReturnValue(extension);
+        getDotnetInfoMock.mockResolvedValue({
+            CliPath: '/usr/share/dotnet/dotnet',
+            FullInfo: '',
+            Version: '10.0.100',
+            RuntimeId: 'linux-x64',
+            Runtimes: {},
+        });
+
+        try {
+            const factory = createFactory(new PlatformInformation('linux', 'x64'));
+            const executable = (await factory.createDebugAdapterDescriptor(
+                { configuration: {} } as vscode.DebugSession,
+                undefined
+            )) as vscode.DebugAdapterExecutable;
+
+            expect(getDotnetInfoMock).toHaveBeenCalledWith(['/dotnet']);
+            expect(executable.options?.env).toEqual({ DOTNET_ROOT: '/usr/share/dotnet' });
+        } finally {
+            restoreEnvironment('DOTNET_ROOT', originalDotnetRoot);
+            existsSync.mockRestore();
+            getExtensionPath.mockRestore();
+            dotNetCliPaths.mockRestore();
+            getCSharpDevKitMock.mockReset();
+            getDotnetInfoMock.mockReset();
+        }
+    });
+
     test('waits for pending prerequisite completion before launching the debug adapter', async () => {
         const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockReturnValue(true);
         const getExtensionPath = jest.spyOn(common, 'getExtensionPath').mockReturnValue('/extension');
@@ -372,7 +415,7 @@ function createFactory(
     );
 }
 
-function readyState(environment: Readonly<Record<string, string | null>> = {}): WorkspaceDotnetStateV1 {
+function readyState(environment: Readonly<Record<string, string | null>> = {}): WorkspaceDotnetState {
     return {
         kind: 'ready',
         revision: 1,
@@ -389,7 +432,7 @@ function readyState(environment: Readonly<Record<string, string | null>> = {}): 
 }
 
 function createProvider(
-    state: WorkspaceDotnetStateV1 | undefined,
+    state: WorkspaceDotnetState | undefined,
     version: string = '1.0'
 ): {
     extension: vscode.Extension<CSharpDevKitExports>;
@@ -404,7 +447,7 @@ function createProvider(
                 disposed = true;
             },
         }),
-    } as unknown as WorkspaceDotnetStateServiceV1;
+    } as unknown as WorkspaceDotnetStateService;
     return {
         extension: {
             activate: async () => ({ workspaceDotnet: service }) as CSharpDevKitExports,

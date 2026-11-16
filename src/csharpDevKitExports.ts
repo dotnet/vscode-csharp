@@ -7,32 +7,32 @@ import * as vscode from 'vscode';
 
 import { IServiceBroker } from '@microsoft/servicehub-framework';
 
-export interface WorkspaceDotnetHostV1 {
+export interface WorkspaceDotnetHost {
     executablePath: string;
     architecture: string;
     environment: Readonly<Record<string, string | null>>;
 }
 
-export interface WorkspaceDotnetSdkV1 {
+export interface WorkspaceDotnetSdk {
     path: string;
     version: string;
 }
 
-export type WorkspaceDotnetStateV1 =
+export type WorkspaceDotnetState =
     | { kind: 'resolving'; revision: number }
     | {
           kind: 'ready';
           revision: number;
-          host: WorkspaceDotnetHostV1;
-          sdk: WorkspaceDotnetSdkV1;
+          host: WorkspaceDotnetHost;
+          sdk: WorkspaceDotnetSdk;
       }
     | { kind: 'blocked'; revision: number }
     | { kind: 'notApplicable'; revision: number };
 
-export interface WorkspaceDotnetStateServiceV1 {
+export interface WorkspaceDotnetStateService {
     version: '1.0';
-    getState(): WorkspaceDotnetStateV1;
-    onDidChangeState: vscode.Event<WorkspaceDotnetStateV1>;
+    getState(): WorkspaceDotnetState;
+    onDidChangeState: vscode.Event<WorkspaceDotnetState>;
 }
 
 export interface CSharpDevKitExports {
@@ -42,5 +42,5 @@ export interface CSharpDevKitExports {
     hasServerProcessLoaded: () => boolean;
     serverProcessLoaded: vscode.Event<void>;
     setupTelemetryEnvironmentAsync: (env: NodeJS.ProcessEnv) => Promise<string | undefined>;
-    workspaceDotnet?: WorkspaceDotnetStateServiceV1;
+    workspaceDotnet?: WorkspaceDotnetStateService;
 }

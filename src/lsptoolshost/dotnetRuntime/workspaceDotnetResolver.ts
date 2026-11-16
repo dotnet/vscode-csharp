@@ -5,10 +5,10 @@
 
 import {
     CSharpDevKitExports,
-    WorkspaceDotnetHostV1,
-    WorkspaceDotnetSdkV1,
-    WorkspaceDotnetStateServiceV1,
-    WorkspaceDotnetStateV1,
+    WorkspaceDotnetHost,
+    WorkspaceDotnetSdk,
+    WorkspaceDotnetStateService,
+    WorkspaceDotnetState,
 } from '../../csharpDevKitExports';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
@@ -16,7 +16,7 @@ import * as vscode from 'vscode';
 export interface ResolvedWorkspaceDotnet {
     architecture: string;
     environment: Readonly<Record<string, string | null>>;
-    sdk: WorkspaceDotnetSdkV1;
+    sdk: WorkspaceDotnetSdk;
 }
 
 export const WorkspaceDotnetFailureReason = {
@@ -65,7 +65,7 @@ export async function activateAndResolveWorkspaceDotnet(
 }
 
 export function resolveWorkspaceDotnet(
-    service: WorkspaceDotnetStateServiceV1 | undefined
+    service: WorkspaceDotnetStateService | undefined
 ): ResolvedWorkspaceDotnet | undefined {
     if (!service || service.version !== '1.0') {
         return undefined;
@@ -86,7 +86,7 @@ export function resolveWorkspaceDotnet(
     }
 }
 
-function resolveSupportedWorkspaceDotnet(service: WorkspaceDotnetStateServiceV1): ResolvedWorkspaceDotnet | undefined {
+function resolveSupportedWorkspaceDotnet(service: WorkspaceDotnetStateService): ResolvedWorkspaceDotnet | undefined {
     const state = validateState(service.getState());
     if (state.kind === 'notApplicable') {
         return undefined;
@@ -113,7 +113,7 @@ function resolveSupportedWorkspaceDotnet(service: WorkspaceDotnetStateServiceV1)
     };
 }
 
-function validateState(state: WorkspaceDotnetStateV1): WorkspaceDotnetStateV1 {
+function validateState(state: WorkspaceDotnetState): WorkspaceDotnetState {
     if (
         !state ||
         !Number.isSafeInteger(state.revision) ||
@@ -133,7 +133,7 @@ function validateState(state: WorkspaceDotnetStateV1): WorkspaceDotnetStateV1 {
     return state;
 }
 
-function validateReadyState(host: WorkspaceDotnetHostV1, sdk: WorkspaceDotnetSdkV1): void {
+function validateReadyState(host: WorkspaceDotnetHost, sdk: WorkspaceDotnetSdk): void {
     const hasValidHost =
         isNonEmptyString(host?.executablePath) &&
         isNonEmptyString(host?.architecture) &&
