@@ -307,6 +307,35 @@ describe('DebugAdapterExecutableFactory workspace .NET state', () => {
         }
     });
 
+    test('waits for pending prerequisite completion before launching the debug adapter', async () => {
+        const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockReturnValue(true);
+        const getExtensionPath = jest.spyOn(common, 'getExtensionPath').mockReturnValue('/extension');
+        getCSharpDevKitMock.mockReturnValue(createProvider(readyState()).extension);
+        let completeInstall!: (success: boolean) => void;
+        const pendingInstall = new Promise<boolean>((resolve) => (completeInstall = resolve));
+
+        try {
+            const factory = createFactory(new PlatformInformation('linux', 'x64'), pendingInstall);
+            let launched = false;
+            const descriptor = factory
+                .createDebugAdapterDescriptor({ configuration: {} } as vscode.DebugSession, undefined)
+                .then((result) => {
+                    launched = true;
+                    return result;
+                });
+
+            await new Promise((resolve) => setImmediate(resolve));
+            expect(launched).toBe(false);
+
+            completeInstall(false);
+            await expect(descriptor).resolves.toBeInstanceOf(vscode.DebugAdapterExecutable);
+        } finally {
+            existsSync.mockRestore();
+            getExtensionPath.mockRestore();
+            getCSharpDevKitMock.mockReset();
+        }
+    });
+
     test('leaves an explicitly supplied debug adapter executable unchanged', async () => {
         const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockReturnValue(true);
         const getExtensionPath = jest.spyOn(common, 'getExtensionPath').mockReturnValue('/extension');
@@ -328,13 +357,18 @@ describe('DebugAdapterExecutableFactory workspace .NET state', () => {
     });
 });
 
-function createFactory(platformInfo: PlatformInformation): DebugAdapterExecutableFactory {
+function createFactory(
+    platformInfo: PlatformInformation,
+    pendingDebuggerInstall?: Promise<boolean>
+): DebugAdapterExecutableFactory {
     return new DebugAdapterExecutableFactory(
         new CoreClrDebugUtil('/extension'),
         platformInfo,
         new EventStream(),
         {},
-        '/extension'
+        '/extension',
+        undefined,
+        pendingDebuggerInstall
     );
 }
 

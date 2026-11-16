@@ -47,6 +47,7 @@ export async function activate(
     const disposables = new CompositeDisposable();
 
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
+    let pendingDebuggerInstall: Promise<boolean> | undefined;
 
     if (!CoreClrDebugUtil.existsSync(debugUtil.debugAdapterDir())) {
         const isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
@@ -62,8 +63,14 @@ export async function activate(
         }
     } else if (!CoreClrDebugUtil.existsSync(debugUtil.installCompleteFilePath())) {
         // C# Dev Kit waits for C# activation, so prerequisite completion must not await its exports
-        // on this activation stack. The deferred task still fails closed once the exports settle.
-        void completeDebuggerInstall(debugUtil, platformInformation, eventStream, csharpDevKitExportsPromise);
+        // on this activation stack. Debug adapter launches wait for this task instead, preserving the
+        // ordering activation previously provided.
+        pendingDebuggerInstall = completeDebuggerInstall(
+            debugUtil,
+            platformInformation,
+            eventStream,
+            csharpDevKitExportsPromise
+        );
     }
 
     // register process picker for attach for legacy configurations.
@@ -117,7 +124,8 @@ export async function activate(
         eventStream,
         thisExtension.packageJSON,
         thisExtension.extensionPath,
-        csharpDevKitExportsPromise
+        csharpDevKitExportsPromise,
+        pendingDebuggerInstall
     );
     /** 'clr' type does not have a intial configuration provider, but we need to register it to support the common debugger features listed in {@link BaseVsDbgConfigurationProvider} */
     context.subscriptions.push(
@@ -197,7 +205,7 @@ export async function completeDebuggerInstall(
     csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined> = getCSharpDevKitExports()
 ): Promise<boolean> {
     try {
-        const workspaceDotnet = await resolveDebuggerWorkspaceDotnet(csharpDevKitExportsPromise);
+        const workspaceDotnet = await activateAndResolveWorkspaceDotnet(csharpDevKitExportsPromise);
         if (workspaceDotnet) {
             debugUtil.checkDotNetSdkVersion(workspaceDotnet.sdk.version);
         } else {
@@ -230,12 +238,6 @@ export async function completeDebuggerInstall(
         // TODO: log telemetry?
         return false;
     }
-}
-
-async function resolveDebuggerWorkspaceDotnet(
-    csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined>
-): Promise<ResolvedWorkspaceDotnet | undefined> {
-    return await activateAndResolveWorkspaceDotnet(csharpDevKitExportsPromise);
 }
 
 async function getCSharpDevKitExports(): Promise<CSharpDevKitExports | undefined> {
@@ -297,13 +299,17 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         private readonly eventStream: EventStream,
         private readonly packageJSON: any,
         private readonly extensionPath: string,
-        private readonly csharpDevKitExportsPromise?: Promise<CSharpDevKitExports | undefined>
+        private readonly csharpDevKitExportsPromise?: Promise<CSharpDevKitExports | undefined>,
+        private readonly pendingDebuggerInstall?: Promise<boolean>
     ) {}
 
     async createDebugAdapterDescriptor(
         _session: vscode.DebugSession,
         executable: vscode.DebugAdapterExecutable | undefined
     ): Promise<vscode.DebugAdapterDescriptor> {
+        // Prerequisite failures are reported by the task itself and, as before, do not block launch.
+        await this.pendingDebuggerInstall;
+
         const util = new CoreClrDebugUtil(common.getExtensionPath());
 
         // Check for .debugger folder. Handle if it does not exist.
@@ -362,7 +368,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             let options: vscode.DebugAdapterExecutableOptions | undefined;
             let workspaceDotnet: ResolvedWorkspaceDotnet | undefined;
             try {
-                workspaceDotnet = await resolveDebuggerWorkspaceDotnet(
+                workspaceDotnet = await activateAndResolveWorkspaceDotnet(
                     this.csharpDevKitExportsPromise ?? getCSharpDevKitExports()
                 );
             } catch (error) {

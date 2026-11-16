@@ -22,7 +22,6 @@ export interface ResolvedWorkspaceDotnet {
 export const WorkspaceDotnetFailureReason = {
     Activation: 'activation',
     Provider: 'provider',
-    InvalidContract: 'invalidContract',
     Resolving: 'resolving',
     Blocked: 'blocked',
     InvalidState: 'invalidState',
