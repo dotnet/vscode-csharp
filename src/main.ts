@@ -26,6 +26,7 @@ import { TelemetryEventNames } from './shared/telemetryEventNames';
 import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion';
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateRoslyn } from './activateRoslyn';
+import { CSharpDevKitExports } from './csharpDevKitExports';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
 import { registerDotnetPlugin } from './shared/copilot/dotnetPlugin';
 import { checkCSharpDevKitVersion } from './checkCSharpDevKitVersion';
@@ -126,7 +127,10 @@ export async function activate(
             })
         );
     } else {
-        const getCoreClrDebugPromise = async (languageServerStartedPromise: Promise<void>) => {
+        const getCoreClrDebugPromise = async (
+            languageServerStartedPromise: Promise<void>,
+            csharpDevKitExportsPromise: Promise<CSharpDevKitExports | undefined> = Promise.resolve(undefined)
+        ) => {
             let coreClrDebugPromise = Promise.resolve();
             if (runtimeDependenciesExist['Debugger']) {
                 // activate coreclr-debug
@@ -136,7 +140,8 @@ export async function activate(
                     platformInfo,
                     eventStream,
                     csharpChannel,
-                    languageServerStartedPromise
+                    languageServerStartedPromise,
+                    csharpDevKitExportsPromise
                 );
             }
 
