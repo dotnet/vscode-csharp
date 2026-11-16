@@ -307,9 +307,6 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         _session: vscode.DebugSession,
         executable: vscode.DebugAdapterExecutable | undefined
     ): Promise<vscode.DebugAdapterDescriptor> {
-        // Prerequisite failures are reported by the task itself and, as before, do not block launch.
-        await this.pendingDebuggerInstall;
-
         const util = new CoreClrDebugUtil(common.getExtensionPath());
 
         // Check for .debugger folder. Handle if it does not exist.
@@ -364,6 +361,9 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
+            // Prerequisite failures are reported by the task itself and, as before, do not block launch.
+            await this.pendingDebuggerInstall;
+
             let targetArchitecture: string;
             let options: vscode.DebugAdapterExecutableOptions | undefined;
             let workspaceDotnet: ResolvedWorkspaceDotnet | undefined;

@@ -336,10 +336,10 @@ describe('DebugAdapterExecutableFactory workspace .NET state', () => {
         }
     });
 
-    test('leaves an explicitly supplied debug adapter executable unchanged', async () => {
+    test('leaves an explicitly supplied debug adapter executable unchanged without waiting for prerequisites', async () => {
         const existsSync = jest.spyOn(CoreClrDebugUtil, 'existsSync').mockReturnValue(true);
         const getExtensionPath = jest.spyOn(common, 'getExtensionPath').mockReturnValue('/extension');
-        const factory = createFactory(new PlatformInformation('win32', 'arm64'));
+        const factory = createFactory(new PlatformInformation('win32', 'arm64'), new Promise<boolean>(() => {}));
         const supplied = new vscode.DebugAdapterExecutable('/custom/adapter', ['--custom'], {
             env: { CUSTOM: 'value' },
         });

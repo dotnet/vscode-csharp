@@ -55,7 +55,7 @@ export async function activateAndResolveWorkspaceDotnet(
         devKitExports = exports;
     } catch (error) {
         throw new WorkspaceDotnetResolutionError(
-            'Failed to activate the C# Dev Kit workspace .NET provider.',
+            vscode.l10n.t('Failed to activate the C# Dev Kit workspace .NET provider.'),
             WorkspaceDotnetFailureReason.Activation,
             { cause: error }
         );
@@ -79,7 +79,7 @@ export function resolveWorkspaceDotnet(
         }
 
         throw new WorkspaceDotnetResolutionError(
-            'The C# Dev Kit workspace .NET provider failed.',
+            vscode.l10n.t('The C# Dev Kit workspace .NET provider failed.'),
             WorkspaceDotnetFailureReason.Provider,
             { cause: error }
         );
@@ -121,7 +121,7 @@ function validateState(state: WorkspaceDotnetStateV1): WorkspaceDotnetStateV1 {
         !['resolving', 'ready', 'blocked', 'notApplicable'].includes(state.kind)
     ) {
         throw new WorkspaceDotnetResolutionError(
-            'The C# Dev Kit workspace .NET service version 1.0 returned an invalid state.',
+            vscode.l10n.t('The C# Dev Kit workspace .NET service version 1.0 returned an invalid state.'),
             WorkspaceDotnetFailureReason.InvalidState
         );
     }
@@ -142,7 +142,7 @@ function validateReadyState(host: WorkspaceDotnetHostV1, sdk: WorkspaceDotnetSdk
     const hasValidSdk = isNonEmptyString(sdk?.path) && isNonEmptyString(sdk?.version) && semver.valid(sdk.version);
     if (!hasValidHost || !hasValidSdk) {
         throw new WorkspaceDotnetResolutionError(
-            'The C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.',
+            vscode.l10n.t('The C# Dev Kit workspace .NET service version 1.0 returned invalid ready metadata.'),
             WorkspaceDotnetFailureReason.InvalidMetadata
         );
     }
@@ -150,7 +150,9 @@ function validateReadyState(host: WorkspaceDotnetHostV1, sdk: WorkspaceDotnetSdk
     for (const value of Object.values(host.environment)) {
         if (value !== null && typeof value !== 'string') {
             throw new WorkspaceDotnetResolutionError(
-                'The C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.',
+                vscode.l10n.t(
+                    'The C# Dev Kit workspace .NET service version 1.0 returned an invalid environment overlay.'
+                ),
                 WorkspaceDotnetFailureReason.InvalidEnvironment
             );
         }
