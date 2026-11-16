@@ -12,6 +12,11 @@ import { PlatformInformation } from '../shared/platform';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { DotnetInfo } from '../shared/utils/dotnetInfo';
 
+export interface DotnetCliCheckOptions {
+    dotnetExecutablePath: string;
+    environment?: Readonly<Record<string, string | null>>;
+}
+
 const MINIMUM_SUPPORTED_DOTNET_CLI = '1.0.0';
 
 // .NET 8 requires macOS 12+, however the build machines are on macOS 13, which is Darwin 22.0+
@@ -65,9 +70,9 @@ export class CoreClrDebugUtil {
 
     // This function checks for the presence of dotnet on the path and ensures the Version
     // is new enough for us.
-    public async checkDotNetCli(dotNetCliPaths: string[]): Promise<void> {
+    public async checkDotNetCli(dotNetCliPaths: string[], options?: DotnetCliCheckOptions): Promise<void> {
         try {
-            const dotnetInfo = await getDotnetInfo(dotNetCliPaths);
+            const dotnetInfo = await getDotnetInfo(dotNetCliPaths, options);
             if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
                 throw new Error(
                     vscode.l10n.t(
