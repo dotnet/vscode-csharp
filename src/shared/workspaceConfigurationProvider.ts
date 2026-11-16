@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { promises as fs } from 'fs';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 import {
@@ -101,22 +102,52 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
         }
     }
 
-    async getAssetsPathAndProgram(folder: vscode.WorkspaceFolder): Promise<[string, string]> {
-        const info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
-        if (!info) {
+    async getAssetsPathAndProgram(folder: vscode.WorkspaceFolder, projectPath?: string): Promise<[string, string]> {
+        const generator = await this.getWasmAssetGenerator(folder, projectPath);
+        if (!generator) {
             return ['', ''];
         }
-        const generator = new AssetGenerator(info, folder);
         return generator.getAssetsPathAndProgram();
     }
 
-    async getNet9WasmAssetsPathAndProgram(folder: vscode.WorkspaceFolder): Promise<[string, string] | undefined> {
+    async getNet9WasmAssetsPathAndProgram(
+        folder: vscode.WorkspaceFolder,
+        projectPath?: string
+    ): Promise<[string, string] | undefined> {
+        const generator = await this.getWasmAssetGenerator(folder, projectPath);
+        if (!generator) {
+            return undefined;
+        }
+        return generator.getNet9WasmAssetsPathAndProgram();
+    }
+
+    private async getWasmAssetGenerator(
+        folder: vscode.WorkspaceFolder,
+        projectPath?: string
+    ): Promise<AssetGenerator | undefined> {
         const info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
         if (!info) {
             return undefined;
         }
-        const generator = new AssetGenerator(info, folder);
-        return generator.getNet9WasmAssetsPathAndProgram();
+
+        const normalizePath = (value: string) => {
+            const fullPath = path.resolve(folder.uri.fsPath, value.replace(/[\\/]/g, path.sep));
+            return process.platform === 'win32' ? fullPath.toLowerCase() : fullPath;
+        };
+        const normalizedProjectPath = projectPath && normalizePath(projectPath);
+        const projects = normalizedProjectPath
+            ? info.filter((project) => normalizePath(project.projectPath) === normalizedProjectPath)
+            : info;
+
+        const generator = new AssetGenerator(projects, folder);
+        if (projectPath && !generator.getAssetsPathAndProgram()[1]) {
+            // An invalid explicit project should report an error, not silently cancel debugging.
+            throw new Error(
+                vscode.l10n.t("Unable to determine WebAssembly debug settings for project '{0}'.", projectPath)
+            );
+        }
+
+        return generator;
     }
 
     async isDotNet9OrNewer(folder: vscode.WorkspaceFolder): Promise<boolean> {

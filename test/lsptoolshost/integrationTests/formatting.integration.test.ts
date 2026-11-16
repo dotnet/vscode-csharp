@@ -7,153 +7,186 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import {
-    activateCSharpExtension,
+    ensureCSharpExtensionActivated,
     closeAllEditorsAsync,
     expectText,
     openFileInWorkspaceAsync,
+    resetCSharpTestWorkspace,
+    revertActiveFile,
+    usingDevKit,
 } from './integrationHelpers';
-import { describe, beforeEach, afterAll, test, afterEach } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, afterEach, expect } from '@jest/globals';
 import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
 
 describe(`Formatting Tests`, () => {
-    beforeEach(async () => {
-        await setOrganizeImportsOnFormat(undefined);
-        await activateCSharpExtension();
+    let originalOrganizeImportsOnFormat: boolean | undefined;
+    let serverProcessId: number | undefined;
 
+    beforeAll(() => {
+        originalOrganizeImportsOnFormat = vscode.workspace
+            .getConfiguration('dotnet')
+            .inspect<boolean>('formatting.organizeImportsOnFormat')?.workspaceValue;
+    });
+
+    beforeEach(async () => {
+        const extension = await ensureCSharpExtensionActivated();
+        if (!usingDevKit()) {
+            expect(extension.languageServerProcessId()).toBe(serverProcessId);
+        }
         await openFileInWorkspaceAsync(path.join('src', 'app', 'Formatting.cs'));
     });
 
     afterAll(async () => {
-        await setOrganizeImportsOnFormat(undefined);
-        await testAssetWorkspace.cleanupWorkspace();
+        try {
+            await testAssetWorkspace.cleanupWorkspace();
+        } finally {
+            await setOrganizeImportsOnFormat(originalOrganizeImportsOnFormat);
+        }
     });
 
     afterEach(async () => {
+        await revertActiveFile();
         await closeAllEditorsAsync();
     });
 
-    test('Document formatting formats the entire document', async () => {
-        await formatDocumentAsync();
+    describe('Organize imports disabled', () => {
+        beforeAll(async () => {
+            await prepareFormattingWorkspace(false);
+        });
 
-        const expectedText = [
-            'using Options;',
-            'using System;',
-            'namespace Formatting;',
-            '',
-            'class DocumentFormatting',
-            '{',
-            '    public int Property1',
-            '    {',
-            '        get; set;',
-            '    }',
-            '',
-            '    public void Method1()',
-            '    {',
-            '        System.Console.Write("");',
-            '    }',
-            '}',
-        ];
-        await expectText(vscode.window.activeTextEditor!.document, expectedText);
+        test('Document formatting formats the entire document', async () => {
+            await formatDocumentAsync();
+
+            const expectedText = [
+                'using Options;',
+                'using System;',
+                'namespace Formatting;',
+                '',
+                'class DocumentFormatting',
+                '{',
+                '    public int Property1',
+                '    {',
+                '        get; set;',
+                '    }',
+                '',
+                '    public void Method1()',
+                '    {',
+                '        System.Console.Write("");',
+                '    }',
+                '}',
+            ];
+            await expectText(vscode.window.activeTextEditor!.document, expectedText);
+        });
+
+        test('Document range formatting formats only the range', async () => {
+            await formatRangeAsync(new vscode.Range(5, 0, 7, 0));
+
+            const expectedText = [
+                'using Options;',
+                'using System;',
+                'namespace Formatting;',
+                'class DocumentFormatting',
+                '{',
+                '    public int Property1',
+                '    {',
+                '        get; set;',
+                '    }',
+                '',
+                '    public void Method1() {',
+                '            System.Console.Write("");',
+                '    }',
+                '}',
+            ];
+            await expectText(vscode.window.activeTextEditor!.document, expectedText);
+        });
+
+        test('Document on type formatting formats the typed location', async () => {
+            // The server expects the position to be the position after the inserted character `;`
+            await formatOnTypeAsync(new vscode.Position(9, 37), ';');
+
+            const expectedText = [
+                'using Options;',
+                'using System;',
+                'namespace Formatting;',
+                'class DocumentFormatting',
+                '{',
+                '    public int Property1 {',
+                '        get; set; }',
+                '',
+                '    public void Method1() {',
+                '        System.Console.Write("");',
+                '    }',
+                '}',
+            ];
+            await expectText(vscode.window.activeTextEditor!.document, expectedText);
+        });
     });
 
-    test('Document range formatting formats only the range', async () => {
-        await formatRangeAsync(new vscode.Range(5, 0, 7, 0));
+    describe('Organize imports enabled', () => {
+        beforeAll(async () => {
+            await prepareFormattingWorkspace(true);
+        });
 
-        const expectedText = [
-            'using Options;',
-            'using System;',
-            'namespace Formatting;',
-            'class DocumentFormatting',
-            '{',
-            '    public int Property1',
-            '    {',
-            '        get; set;',
-            '    }',
-            '',
-            '    public void Method1() {',
-            '            System.Console.Write("");',
-            '    }',
-            '}',
-        ];
-        await expectText(vscode.window.activeTextEditor!.document, expectedText);
+        test('Document formatting can organize imports', async () => {
+            await formatDocumentAsync();
+
+            const expectedText = [
+                'using System;',
+                'using Options;',
+                'namespace Formatting;',
+                '',
+                'class DocumentFormatting',
+                '{',
+                '    public int Property1',
+                '    {',
+                '        get; set;',
+                '    }',
+                '',
+                '    public void Method1()',
+                '    {',
+                '        System.Console.Write("");',
+                '    }',
+                '}',
+            ];
+            await expectText(vscode.window.activeTextEditor!.document, expectedText);
+        });
+
+        test('Document range formatting does not organize imports', async () => {
+            await formatRangeAsync(new vscode.Range(0, 0, 7, 0));
+
+            const expectedText = [
+                'using Options;',
+                'using System;',
+                'namespace Formatting;',
+                '',
+                'class DocumentFormatting',
+                '{',
+                '    public int Property1',
+                '    {',
+                '        get; set;',
+                '    }',
+                '',
+                '    public void Method1() {',
+                '            System.Console.Write("");',
+                '    }',
+                '}',
+            ];
+            await expectText(vscode.window.activeTextEditor!.document, expectedText);
+        });
     });
 
-    test('Document on type formatting formats the typed location', async () => {
-        // The server expects the position to be the position after the inserted character `;`
-        await formatOnTypeAsync(new vscode.Position(9, 37), ';');
-
-        const expectedText = [
-            'using Options;',
-            'using System;',
-            'namespace Formatting;',
-            'class DocumentFormatting',
-            '{',
-            '    public int Property1 {',
-            '        get; set; }',
-            '',
-            '    public void Method1() {',
-            '        System.Console.Write("");',
-            '    }',
-            '}',
-        ];
-        await expectText(vscode.window.activeTextEditor!.document, expectedText);
-    });
-
-    test('Document formatting can organize imports', async () => {
-        await setOrganizeImportsOnFormat(true);
-        await activateCSharpExtension();
-
-        await formatDocumentAsync();
-
-        const expectedText = [
-            'using System;',
-            'using Options;',
-            'namespace Formatting;',
-            '',
-            'class DocumentFormatting',
-            '{',
-            '    public int Property1',
-            '    {',
-            '        get; set;',
-            '    }',
-            '',
-            '    public void Method1()',
-            '    {',
-            '        System.Console.Write("");',
-            '    }',
-            '}',
-        ];
-        await expectText(vscode.window.activeTextEditor!.document, expectedText);
-    });
-
-    test('Document range formatting does not organize imports', async () => {
-        await setOrganizeImportsOnFormat(true);
-        await activateCSharpExtension();
-
-        await formatRangeAsync(new vscode.Range(0, 0, 7, 0));
-
-        const expectedText = [
-            'using Options;',
-            'using System;',
-            'namespace Formatting;',
-            '',
-            'class DocumentFormatting',
-            '{',
-            '    public int Property1',
-            '    {',
-            '        get; set;',
-            '    }',
-            '',
-            '    public void Method1() {',
-            '            System.Console.Write("");',
-            '    }',
-            '}',
-        ];
-        await expectText(vscode.window.activeTextEditor!.document, expectedText);
-    });
+    async function prepareFormattingWorkspace(organizeImports: boolean) {
+        await setOrganizeImportsOnFormat(organizeImports);
+        // Keep one reset per configuration group until configuration changes have an explicit completion barrier.
+        const extension = await resetCSharpTestWorkspace();
+        serverProcessId = extension.languageServerProcessId();
+        if (!usingDevKit()) {
+            expect(serverProcessId).toBeDefined();
+        }
+    }
 
     async function setOrganizeImportsOnFormat(value: boolean | undefined) {
         const dotnetConfig = vscode.workspace.getConfiguration('dotnet');
-        await dotnetConfig.update('formatting.organizeImportsOnFormat', value, true);
+        await dotnetConfig.update('formatting.organizeImportsOnFormat', value, vscode.ConfigurationTarget.Workspace);
     }
 });

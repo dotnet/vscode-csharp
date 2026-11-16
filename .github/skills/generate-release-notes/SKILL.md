@@ -11,13 +11,13 @@ This skill describes how to generate release notes for a stable release of the C
 
 ### Versioning Scheme
 
-The extension uses a tiered versioning scheme: `2.<minor>.x`.
+The extension uses a versioning scheme: `<major>.<minor>.x`.
 
-- **Release versions** have a minor version ending in `0` (e.g., `2.120.x`, `2.130.x`).
-- **Prerelease versions** have a minor version that does **not** end in `0` (e.g., `2.121.x`, `2.122.x`, ..., `2.129.x`).
-- When a new stable release is created, the minor version **increments to the next ten** (e.g., `2.120` → `2.130`).
+- **Release versions** have an even minor version (e.g., `11.2.x`, `11.4.x`).
+- **Prerelease versions** have an odd minor version (e.g., `11.3.x`, `11.5.x`).
+- A stable release advances to the next even minor version (e.g., `11.3` → `11.4`).
 
-So for a release at version `2.130`, the prerelease entries are `2.121.x` through `2.129.x`. For `2.140`, they are `2.131.x` through `2.139.x`.
+For a release at `11.4`, the preceding prerelease is `11.3.x`. Use the release branch to determine the previous stable version, especially during the transition from older versioning schemes.
 
 ### Branch Structure
 
@@ -29,15 +29,15 @@ So for a release at version `2.130`, the prerelease entries are `2.121.x` throug
 
 ## Input Required
 
-- **Target release version** (optional): The stable version being released (e.g., `2.130`). If not provided, determine it from the current `version.json` on `prerelease` by rounding up the minor version to the next ten.
+- **Target release version** (optional): The stable version being released (e.g., `11.4`). If not provided, determine it from the current `version.json` on `prerelease` by advancing to the next even minor.
 
 ## Process
 
 ### Step 1: Determine the version range
 
-1. Identify the **target release version**. If not given, read `version.json` on `prerelease` to get the current minor version, and round up to the next ten (e.g., if current is `2.131`, the next release is `2.140`).
-2. Calculate the **previous release version** by subtracting 10 from the target minor (e.g., target `2.140` → previous `2.130`).
-3. The prerelease sections to gather are all minor versions **after** the previous release and **before** the target release. For example, for target `2.140`: sections `2.131.x`, `2.132.x`, ..., `2.139.x`.
+1. Identify the **target release version**. If not given, read `version.json` on `prerelease` to get the current minor version, and advance to the next even minor (e.g., if current is `11.3`, the next release is `11.4`).
+2. Read `version.json` on the `release` branch to find the **previous release version**. Do not assume it is two minors below the target during the transition from the old scheme.
+3. Gather every CHANGELOG section **after** the previous release and **before** the target release. For example, if the last stable release is `11.2` and the target is `11.4`, include `11.3.x`.
 
 ### Step 2: Fetch the CHANGELOG from the prerelease branch
 
@@ -143,27 +143,27 @@ gh auth status || gh auth login
 
    ```bash
    git fetch origin release
-   git checkout -b changelog/v2.<VERSION> origin/release
+   git checkout -b changelog/v11.<VERSION> origin/release
    ```
 
    If a conflicting branch name exists (e.g., a stale `changelog` branch), delete it first with `git branch -D <conflicting-branch>`.
 
-3. **Edit `CHANGELOG.md`** — insert the generated release notes as a new `# 2.<VERSION>.x` section immediately after the `## Known Issues` block and before the previous release section. The format should be:
+3. **Edit `CHANGELOG.md`** — insert the generated release notes as a new `# 11.<VERSION>.x` section immediately after the `## Known Issues` block and before the previous release section. The format should be:
 
    ```markdown
-   # 2.<VERSION>.x
+   # 11.<VERSION>.x
 
    <generated release notes content>
 
-   # 2.<PREVIOUS_VERSION>.x
+   # 11.<PREVIOUS_VERSION>.x
    ```
 
 4. **Commit and push**:
 
    ```bash
    git add CHANGELOG.md
-   git commit -m "Release notes for version 2.<VERSION>.x"
-   git push -u origin changelog/v2.<VERSION>
+   git commit -m "Release notes for version 11.<VERSION>.x"
+   git push -u origin changelog/v11.<VERSION>
    ```
 
 5. **Create the PR** targeting the `release` branch. Write the PR body to a temp file first to avoid shell quoting issues with markdown content:
@@ -177,7 +177,7 @@ gh auth status || gh auth login
    gh pr create \
      --repo dotnet/vscode-csharp \
      --base release \
-     --title "Release notes for version 2.<VERSION>.x" \
+     --title "Release notes for version 11.<VERSION>.x" \
      --body-file /tmp/pr-body.md
 
    rm /tmp/pr-body.md
@@ -195,16 +195,16 @@ gh auth status || gh auth login
 #### PR conventions
 
 - **Target branch**: `release` (not `main`)
-- **Title**: `Release notes for version 2.<VERSION>.x`
+- **Title**: `Release notes for version 11.<VERSION>.x`
 - **Body**: A brief summary of the key themes (e.g., "This update includes improvements to reliability, diagnostics tooling, language server performance, and Razor editing."). Always use `--body-file` to avoid shell quoting issues.
 - **Only `CHANGELOG.md` should be modified** in the PR.
 
 ## Example
 
-For a release at version `2.130`, using CHANGELOG sections `2.121.x`, `2.122.x`, and `2.123.x`, the PR would insert a section like this into `CHANGELOG.md` on the `release` branch:
+For a release at version `11.4`, using CHANGELOG section `11.3.x`, the PR would insert a section like this into `CHANGELOG.md` on the `release` branch:
 
 ```markdown
-# 2.130.x
+# 11.4.x
 
 This update brings significant improvements to reliability, diagnostics tooling,
 language server performance, and Razor editing.

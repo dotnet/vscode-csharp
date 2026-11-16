@@ -164,6 +164,8 @@ To add new packages, you must authenticate by running:
 
 To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the command `npm run vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
 
+Windows, Linux (glibc), and macOS platform-specific packages include the VSWebAssemblyBridge payload in `.vswebassemblybridge` for offline Blazor WebAssembly debugging. Packaging downloads this dependency from the URL in `package.json`, so network access is required when creating the VSIX.
+
 ## Updating the `Roslyn` Language Server Version
 
 In order to pull in new packages from upstreams into the msft_consumption feed we use for restoring, you will need to be a member of the 'CSharp VS Code Extension contributors' group in the [Azure Devops instance](https://dev.azure.com/azure-public/vside/_settings/teams).
@@ -177,37 +179,37 @@ To update the version of the roslyn server used by the extension do the followin
 
 ## Updating the `Roslyn` Copilot Language Server version
 
-In order to pull in the latest version of Roslyn Copilot bits from the VS Conversations repo, follow these steps:
-1. Trigger [this pipeline](https://devdiv.visualstudio.com/DevDiv/_build?definitionId=27222) which should automatically publish bits to the storage account and then create an insertion PR like [this](https://github.com/dotnet/vscode-csharp/pull/8597)
-2. Build and test the change to ensure the roslyn copilot language server bits are downloaded correctly. You'll see log entries like the below in the Output->C# pane:
+In order to pull in Roslyn Copilot bits from the VS repo, follow these steps:
+1. Find the version of the `Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer` NuGet package published to the `vs-impl` feed that you want to use.
+2. Run the [publishing pipeline](https://devdiv.visualstudio.com/DevDiv/_build?definitionId=27222) and set **Roslyn Copilot NuGet package version** to that version. The pipeline creates the .zip and publishes it.
+3. Update the `RoslynCopilot` runtime dependency in `package.json` to use the published zip, including its version and integrity hash.
+4. Build and test the change, then submit a PR. Ensure the roslyn copilot language server bits are downloaded correctly. You'll see log entries like the below in the Output->C# pane:
 ```
 [info] Installing package 'Language server for Roslyn Copilot integration'
 [info] Finished
 ```
-More details for this are [here] (https://devdiv.visualstudio.com/DevDiv/_git/VisualStudio.Conversations?path=/src/Copilot.Roslyn.LanguageServer/README.md)
+More details are in the [Roslyn Copilot component README](https://devdiv.visualstudio.com/DevDiv/_git/VS?path=/src/Copilot/src/Copilot.Roslyn.LanguageServer/README.md).
 
 ## Snapping for releases
 Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.
 
 ### Versioning Scheme
 The extension follows a specific versioning scheme for releases:
-- **Prerelease versions**: Use standard minor version increments (e.g., 2.74, 2.75, 2.76...)
-- **Stable release versions**: Use the next tens version (e.g., 2.74 prerelease becomes 2.80 stable)
-- **Main branch after RC snap**: Jumps to one above the next stable version (e.g., if snapping 2.74 as RC, main becomes 2.81)
+- **Prerelease versions**: Use odd minor versions (e.g., 11.1, 11.3, 11.5).
+- **Stable release versions**: Use even minor versions (e.g., 11.3 prerelease becomes 11.4 stable).
+- **Main branch after a snap**: Advances to the next odd minor version (e.g., 11.3 becomes 11.5), leaving the intervening even minor available for a stable release.
 
 ### Snap main -> prerelease
 The snap is done via the "Branch snap" github action.  To run the snap from main -> prerelease, run the action via "Run workflow" and choose main as the base branch.
 ![branch snap action](./docs/images/main_snap.png)
 
-When running the snap action, you can optionally check the "Is this a release candidate snap" checkbox. If checked:
-- The prerelease branch will receive the snapped code with the current version (e.g., 2.74)
-- The main branch version will be updated to be higher than the next stable release (e.g., 2.81, since the next stable would be 2.80)
+When running the snap action, the prerelease branch receives the snapped code with the current version (e.g., 11.3). The main branch advances to the next odd minor (e.g., 11.5), leaving 11.4 available for the stable release. Main must already have an odd minor version; the version update fails otherwise.
 
 This will generate two PRs that must be merged.  One merging the main branch into prerelease, and the other bumps the version in main.
 ![generated prs](./docs/images/generated_prs.png)
 
 ### Snap prerelease -> release
-To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a PR merging from prerelease to release, and automatically update the version to the next stable release version (e.g., 2.74 -> 2.80) on the merge branch before the PR is merged.
+To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a PR merging from prerelease to release, and automatically update the version to the next even minor (e.g., 11.3 -> 11.4) on the merge branch before the PR is merged. The prerelease version must have an odd minor; the version update fails otherwise.
 
 ### Marketplace release
 The marketplace release is managed by an internal AzDo pipeline.  On the pipeline page, hit run pipeline.  This will bring up the pipeline parameters to fill out:

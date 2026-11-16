@@ -1,0 +1,194 @@
+---
+name: update-changelog
+description: Generate and curate CHANGELOG updates from recent pull requests, then create a ready-for-review PR. Use this when asked to update, refresh, or generate the development changelog.
+---
+
+# Update the CHANGELOG
+
+Run the repository's existing changelog generator, curate its candidate entries
+for user impact, and create a pull request containing only `CHANGELOG.md`.
+
+## Input
+
+- **Target branch** (optional): The branch whose changelog should be updated.
+  Default to `main` unless the user specifies another branch.
+
+## Prerequisites
+
+1. Ensure `gh` is installed and authenticated:
+
+   ```shell
+   gh auth status
+   ```
+
+2. Check the Node.js version:
+
+   ```shell
+   node --version
+   ```
+
+   Prefer Node.js 24 for parity with repository CI. The current dependencies
+   also support Node.js 22.13 or newer, so a compatible Node.js 22 installation
+   is not a reason to stop. If `npm ci` reports an engine incompatibility,
+   switch to Node.js 24 with an installed version manager such as `nvm`, `fnm`,
+   or Volta.
+3. Ensure `roslyn-tools` is available. If it is not installed, run:
+
+   ```shell
+   dotnet tool install -g Microsoft.RoslynTools --prerelease --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+   ```
+
+4. Run `git status --short --untracked-files=all`. Require a clean worktree and
+   index before switching branches or generating entries. If there are any
+   changes, stop and ask the user to commit, stash, or move that work rather
+   than carrying it onto the changelog branch.
+
+## Generate candidate entries
+
+1. Identify the remote for the canonical `dotnet/vscode-csharp` repository.
+   Do not assume `origin` is canonical because contributor checkouts commonly
+   use `origin` for a fork. Inspect the configured remotes:
+
+   ```shell
+   git remote -v
+   ```
+
+   Prefer an existing remote such as `upstream` whose URL points to
+   `dotnet/vscode-csharp`. If none exists, add one:
+
+   ```shell
+   git remote add upstream https://github.com/dotnet/vscode-csharp.git
+   ```
+
+2. Fetch the target branch and all release tags from that canonical remote. The
+   generator uses the newest tag matching the previous changelog version:
+
+   ```shell
+   git fetch <canonical-remote> <target-branch> --tags
+   ```
+
+3. Before installing dependencies or running the generator, switch to the
+   dedicated changelog branch based on the fetched target revision:
+
+   ```shell
+   git switch -c merge/update-<target-branch>-changelog FETCH_HEAD
+   ```
+
+   If that branch already exists, switch to it and rebase it onto the fetched
+   target revision instead of recreating or resetting it:
+
+   ```shell
+   git switch merge/update-<target-branch>-changelog
+   git rebase FETCH_HEAD
+   ```
+
+   Stop if the existing branch contains unrelated work or the rebase conflicts.
+   Do not run the generator until this check succeeds:
+
+   ```shell
+   git merge-base --is-ancestor FETCH_HEAD HEAD
+   ```
+
+   This ensures that both the checked-out `CHANGELOG.md` and the generator's
+   `HEAD` range reflect the requested target branch.
+
+4. Install the repository dependencies exactly as CI does:
+
+   ```shell
+   npm ci
+   ```
+
+5. Run the existing generator:
+
+   ```shell
+   npm run updateChangelog
+   ```
+
+If the generator cannot find a tag for the previous version, stop and report
+the missing version. Do not guess a tag or manually choose an unrelated tag.
+
+## Curate the generated entries
+
+Inspect only the changes introduced by the generator:
+
+```shell
+git diff -- CHANGELOG.md
+```
+
+For every newly added pull request, use its description and diff to determine
+whether it has clear impact on C# extension users:
+
+```shell
+gh pr view <number> --repo dotnet/vscode-csharp --json title,body,files,url
+gh pr diff <number> --repo dotnet/vscode-csharp
+```
+
+Keep entries for user-visible features, fixes, diagnostics, editor behavior,
+debugging, reliability, or performance. When the impact is ambiguous, omit the
+entry.
+
+Exclude:
+
+- Component updates or insertions for Roslyn, Razor, OmniSharp, the debugger,
+  the Copilot language server, and xamlTools. Their update process already
+  curates relevant nested changelog notes.
+- Infrastructure, build, pipeline, packaging, or dependency-maintenance work.
+- Documentation-only or test-only changes.
+- Internal refactoring without clear user-visible impact.
+
+Reword retained entries as concise, factual, user-facing notes while preserving
+the existing bullet and PR-link format. Do not change any pre-existing
+changelog line, version header, component insertion note, or older section.
+
+## Handle a no-op result
+
+If the generator made no change, or no generated entries remain after
+curation, restore `CHANGELOG.md` to its pre-generation state and do not create a
+commit or pull request. Report that there were no relevant user-facing changes.
+
+## Validate the update
+
+Before committing:
+
+1. Run `git diff --check`.
+2. Confirm that `CHANGELOG.md` is the only modified file intended for the pull
+   request.
+3. Review the final diff once more to ensure all existing content is preserved.
+
+## Create the pull request
+
+Remain on the dedicated `merge/update-<target-branch>-changelog` branch
+prepared before generation.
+
+Commit only `CHANGELOG.md`:
+
+```shell
+git add CHANGELOG.md
+git commit --only --message "Update <target-branch> CHANGELOG" -- CHANGELOG.md
+git push -u <push-remote> <work-branch>
+```
+
+Before creating a pull request, check for an existing open automated changelog
+PR targeting the same branch. Do not create a duplicate; update the existing
+PR when possible, or close it only after its replacement is ready.
+
+Create a ready-for-review pull request with:
+
+- **Repository:** `dotnet/vscode-csharp`
+- **Base:** `<target-branch>`
+- **Title:** `[automated] Update <target-branch> CHANGELOG`
+- **Body:** Briefly summarize the retained user-facing changes.
+- **Files:** Only `CHANGELOG.md`
+
+Use the GitHub CLI and a body file:
+
+```shell
+gh pr create \
+  --repo dotnet/vscode-csharp \
+  --base <target-branch> \
+  --title "[automated] Update <target-branch> CHANGELOG" \
+  --body-file <pr-body-file>
+```
+
+When pushing from a fork, pass `--head <fork-owner>:<work-branch>`. Do not use
+`--draft`; the changelog pull request should be ready for review.

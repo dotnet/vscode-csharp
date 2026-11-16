@@ -26,6 +26,9 @@ parameters:
   - real
   - auto
   default: auto
+- name: PMEOverride
+  type: boolean
+  default: false
 
 resources:
   repositories:
@@ -63,3 +66,4 @@ extends:
         isOfficial: true
         channel: ${{ parameters.channel }}
         signType: ${{ parameters.signType }}
+        PMEOverride: ${{ parameters.PMEOverride }}

@@ -350,18 +350,16 @@ export class AssetGenerator {
     }
 
     public getAssetsPathAndProgram(): [string, string] {
-        if (this.executableProjects.length === 0) {
+        const wasmProjects = this.executableProjects.filter((project) => project.isWebAssemblyProject);
+        if (wasmProjects.length === 0) {
             return ['', ''];
         }
-        let assetsPath = ``;
-        this.executableProjects.forEach((project) => {
-            if (project.isWebAssemblyProject) {
-                assetsPath += path.join(path.dirname(project.outputPath), path.sep);
-                assetsPath += ';';
-            }
-        });
-        assetsPath = assetsPath.slice(0, -1);
-        return [assetsPath, this.executableProjects[0].outputPath];
+
+        const assetsPath = wasmProjects
+            .map((project) => path.join(path.dirname(project.outputPath), path.sep))
+            .join(';');
+
+        return [assetsPath, wasmProjects[0].outputPath];
     }
 
     /**

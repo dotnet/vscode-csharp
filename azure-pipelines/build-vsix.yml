@@ -16,6 +16,9 @@ parameters:
   - real
   - auto
   default: auto
+- name: PMEOverride
+  type: boolean
+  default: false
 
 stages:
 - stage: BuildVSIX
@@ -77,8 +80,8 @@ stages:
           zipSources: false
           feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
           azureSubscription: 'MicroBuild Signing Task (DevDiv)'
-          # ConnectedPMEServiceName is only required for CI builds. This service name is dependent on the AzDo org as well.
-          ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
+          # Set ConnectedPMEServiceName for CI, scheduled builds, or an explicit override. The service name depends on the AzDo org.
+          ${{ if or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'Schedule'), parameters.PMEOverride) }}:
             ConnectedPMEServiceName: c24de2a5-cc7a-493d-95e4-8e5ff5cad2bc
         env:
           SignType: $(signType)

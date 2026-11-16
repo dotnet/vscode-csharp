@@ -162,6 +162,7 @@
   "There are unresolved dependencies. Please execute the restore command to continue.": "Çözümlenmemiş bağımlılıklar var. Devam etmek için lütfen restore komutunu çalıştırın.",
   "Transport attach could not obtain processes list.": "Aktarım ekleme, işlemler listesini alamadı.",
   "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.": "RuntimeId belirlenemiyor. Lütfen launch.json yapılandırmanızda 'targetArchitecture' ayarını belirleyin.",
+  "Unable to determine WebAssembly debug settings for project '{0}'.": "'{0}' projesi için WebAssembly hata ayıklama ayarları belirlenemiyor.",
   "Unable to determine a configuration for '{0}'. Please generate C# debug assets instead.": "'{0}' için bir yapılandırma belirlenemiyor. Lütfen bunun yerine C# hata ayıklama varlıkları oluşturun.",
   "Unable to determine debug settings for project '{0}'": "'{0}' projesi için hata ayıklama ayarları belirlenemedi",
   "Unable to generate assets to build and debug. {0}.": "Derlemek ve hata ayıklamak için varlıklar oluşturulamıyor. {0}.",

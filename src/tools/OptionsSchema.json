@@ -357,9 +357,9 @@
         "env": {
           "type": "object",
           "additionalProperties": {
-            "type": "string"
+            "type": [ "string", "null" ]
           },
-          "description": "Environment variables passed to the program.",
+          "description": "Environment variables passed to the program. Null or empty values remove variables from the inherited environment.",
           "default": {}
         },
         "envFile": {
@@ -437,6 +437,11 @@
           "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
           "default": false
         },
+        "enableAutomaticDeoptimization": {
+          "type": "boolean",
+          "markdownDescription": "When true (the default), automatically deoptimize debugged functions when possible. The debugger will deoptimize methods targeted by breakpoints or supported step-in operations. Requires .NET 8 or newer. Unlike `suppressJITOptimizations`, this applies to individual methods.",
+          "default": true
+        },
         "symbolOptions": {
           "$ref": "#/definitions/VSSymbolOptions",
           "description": "Options to control how symbols (.pdb files) are found and loaded.",
@@ -475,7 +480,7 @@
         },
         "terminateChildProcesses": {
           "type": "boolean",
-          "description": "When the debug session ends, if this is set to `true`, the debugger will terminate the debuggee and all child processes it spawned. If set to `false`, only the debuggee itself is terminated and child processes are left running. This option defaults to `false`.\n\nOn Windows, child processes are tracked using a Job Object. Processes that need to outlive the debug session can opt out by passing the `CREATE_BREAKAWAY_FROM_JOB` flag when calling `CreateProcess`.",
+          "markdownDescription": "When the debug session ends, if this is set to `true`, the debugger will terminate the debuggee and all child processes it spawned. If set to `false`, only the debuggee itself is terminated and child processes are left running. This option defaults to `false`.\n\nOn Windows, child processes are tracked using a Job Object. Processes that need to outlive the debug session can opt out by passing the `CREATE_BREAKAWAY_FROM_JOB` flag when calling `CreateProcess`.",
           "default": false
         }
       }
@@ -537,6 +542,11 @@
           "type": "boolean",
           "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
           "default": false
+        },
+        "enableAutomaticDeoptimization": {
+          "type": "boolean",
+          "markdownDescription": "When true (the default), automatically deoptimize debugged functions when possible. The debugger will deoptimize methods targeted by breakpoints or supported step-in operations. Requires .NET 8 or newer. Unlike `suppressJITOptimizations`, this applies to individual methods.",
+          "default": true
         },
         "symbolOptions": {
           "$ref": "#/definitions/VSSymbolOptions",

@@ -1,12 +1,6 @@
 name: Branch snap
 on:
   workflow_dispatch:
-    inputs:
-      releaseCandidate:
-        description: 'Is this a release candidate snap from main? (Will increment main version to be higher than next stable release)'
-        required: false
-        default: 'false'
-        type: boolean
 
 permissions:
   contents: write
@@ -14,9 +8,10 @@ permissions:
 
 jobs:
   check-script:
-    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@main
+    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@305558e284ce35e7b35ac9ebd75802915394fd3e # main
     with:
       configuration_file_path: '.config/snap-flow.json'
+      script_version: '042024f31f9f89422bc172362a04b5a51ac17df9'
 
   bump-main-version:
     needs: check-script
@@ -24,22 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.x'
       - name: Install dependencies
         run: npm ci
       - name: Update version.json
-        run: |
-          if [ "${{ github.event.inputs.releaseCandidate }}" = "true" ]; then
-            npm run incrementVersion -- --releaseCandidate
-          else
-            npm run incrementVersion
-          fi
+        run: npm run incrementVersion
       - name: Create version update PR
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@15733dbdfeedb4f7fdb73d13c6f5ac83b710fab8 # v8.1.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update main version
@@ -52,12 +42,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out merge branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: merge/prerelease-to-release
           fetch-depth: 0
       - name: Install NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.x'
       - name: Install dependencies

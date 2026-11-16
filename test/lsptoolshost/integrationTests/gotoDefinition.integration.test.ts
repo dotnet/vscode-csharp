@@ -13,6 +13,7 @@ import {
     navigate,
     openFileInWorkspaceAsync,
     testIfCSharp,
+    testIfDevKit,
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
@@ -218,8 +219,7 @@ describe(`Go To Definition Tests`, () => {
         );
     });
 
-    // Re-enable when the C# Dev Kit v11 Source Link bug is fixed.
-    test.skip('Navigates to definition in source link', async () => {
+    testIfDevKit('Navigates to definition in source link', async () => {
         await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
 
         // Get definitions
@@ -245,8 +245,7 @@ describe(`Go To Definition Tests`, () => {
         expect(vscode.window.activeTextEditor?.document.uri.path.toLowerCase()).toContain('symbolcache');
     });
 
-    // Re-enable when the C# Dev Kit v11 Source Link bug is fixed.
-    test.skip('Navigates from definition in source link source goes to source link', async () => {
+    testIfDevKit('Navigates from definition in source link source goes to source link', async () => {
         await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
 
         // Get definitions

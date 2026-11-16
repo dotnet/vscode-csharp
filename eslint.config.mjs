@@ -23,7 +23,7 @@ const compatibleHeaderPlugin = fixupPluginRules({
 
 export default defineConfig([
     {
-        ignores: ['out/**', 'dist/**', 'wallaby.js', 'eslint.config.mjs', 'esbuild.js', '**/*.d.ts'],
+        ignores: ['out/**', 'dist/**', '.vscode-test/**', 'wallaby.js', 'eslint.config.mjs', 'esbuild.js', '**/*.d.ts'],
     },
     {
         files: ['**/*.ts'],

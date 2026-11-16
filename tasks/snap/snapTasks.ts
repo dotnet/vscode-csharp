@@ -10,19 +10,38 @@ import { rootPath } from '../projectPaths';
 
 /**
  * Calculate the next release (stable) version from the current version.
- * Rounds up the minor version to the next tens version.
- * @param currentVersion The current version in "major.minor" format (e.g., "2.74")
- * @returns The next stable release version (e.g., "2.80")
+ * Stable releases use even minor versions.
+ * @param currentVersion The current version in "major.minor" format (e.g., "11.3")
+ * @returns The next stable release version (e.g., "11.4")
  */
 export function getNextReleaseVersion(currentVersion: string): string {
-    const split = currentVersion.split('.');
-    const major = parseInt(split[0]);
-    const minor = parseInt(split[1]);
+    const [major, minor] = parseVersion(currentVersion);
+    if (minor % 2 === 0) {
+        throw new Error(`Cannot advance release from ${currentVersion}: prerelease must have an odd minor version.`);
+    }
+    return `${major}.${minor + 1}`;
+}
 
-    // Round up to the next tens version
-    const nextTensMinor = Math.ceil((minor + 1) / 10) * 10;
+/**
+ * Calculate the next prerelease version.
+ * Prereleases use odd minor versions.
+ */
+export function getNextPrereleaseVersion(currentVersion: string): string {
+    const [major, minor] = parseVersion(currentVersion);
+    if (minor % 2 === 0) {
+        throw new Error(`Cannot advance prerelease from ${currentVersion}: main must have an odd minor version.`);
+    }
+    return `${major}.${minor + 2}`;
+}
 
-    return `${major}.${nextTensMinor}`;
+function parseVersion(version: string): [number, number] {
+    const match = /^(\d+)\.(\d+)$/.exec(version);
+    const major = Number(match?.[1]);
+    const minor = Number(match?.[2]);
+    if (!match || !Number.isSafeInteger(major) || !Number.isSafeInteger(minor)) {
+        throw new Error(`Invalid version "${version}": expected "major.minor" with nonnegative integers.`);
+    }
+    return [major, minor];
 }
 
 /**
@@ -48,7 +67,7 @@ export function writeVersionJson(versionJson: { version: string; [key: string]: 
 
 /**
  * Add a new version section to the changelog
- * @param version The version to add (e.g., "2.75")
+ * @param version The version to add (e.g., "11.3")
  * @param additionalLines Optional additional lines to add after the version header
  */
 export function addChangelogSection(version: string, additionalLines?: string[]): void {

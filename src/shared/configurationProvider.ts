@@ -161,25 +161,23 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         ) {
             if (folder && debugConfiguration.monoDebuggerOptions.assetsPath == null) {
                 const csharpDevKitExtension = getCSharpDevKit();
-                if (csharpDevKitExtension === undefined) {
-                    const result = await this.getNet9WasmAssetsPathAndProgram(folder);
-                    if (!result) {
-                        return undefined;
-                    }
-                    const [assetsPath, programName] = result;
-                    debugConfiguration.monoDebuggerOptions.assetsPath = assetsPath;
-                    debugConfiguration.program = programName;
-                } else {
-                    const [assetsPath, programName] = await this.getAssetsPathAndProgram(folder);
-                    if (!assetsPath || !programName) {
-                        return undefined;
-                    }
-                    debugConfiguration.monoDebuggerOptions.assetsPath = assetsPath;
-                    debugConfiguration.program = programName;
-                }
-                if (debugConfiguration.program == null) {
+
+                const result =
+                    csharpDevKitExtension === undefined
+                        ? await this.getNet9WasmAssetsPathAndProgram(folder, debugConfiguration.projectPath)
+                        : await this.getAssetsPathAndProgram(folder, debugConfiguration.projectPath);
+
+                if (!result) {
                     return undefined;
                 }
+
+                const [assetsPath, programName] = result;
+                if (!assetsPath || !programName) {
+                    return undefined;
+                }
+
+                debugConfiguration.monoDebuggerOptions.assetsPath = assetsPath;
+                debugConfiguration.program ??= programName;
             }
         }
         return debugConfiguration;
@@ -335,11 +333,14 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
         return result;
     }
-    async getAssetsPathAndProgram(_: vscode.WorkspaceFolder): Promise<[string, string]> {
+    async getAssetsPathAndProgram(_: vscode.WorkspaceFolder, _projectPath?: string): Promise<[string, string]> {
         return ['', ''];
     }
 
-    async getNet9WasmAssetsPathAndProgram(_: vscode.WorkspaceFolder): Promise<[string, string] | undefined> {
+    async getNet9WasmAssetsPathAndProgram(
+        _: vscode.WorkspaceFolder,
+        _projectPath?: string
+    ): Promise<[string, string] | undefined> {
         return undefined;
     }
 

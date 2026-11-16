@@ -266,6 +266,14 @@ async function installDebugger(packageJSON: any, platformInfo: PlatformInformati
     return await installPackageJsonDependency('Debugger', packageJSON, platformInfo, codeExtensionPath);
 }
 
+async function installVSWebAssemblyBridge(
+    packageJSON: any,
+    platformInfo: PlatformInformation,
+    codeExtensionPath: string
+) {
+    return await installPackageJsonDependency('VSWebAssemblyBridge', packageJSON, platformInfo, codeExtensionPath);
+}
+
 async function installPackageJsonDependency(
     dependencyName: string,
     packageJSON: any,
@@ -408,6 +416,7 @@ async function buildVsix(packageJSON: any, options: VsixReleasePackageOptions, p
     if (platformInfo != null) {
         await installRazor(packageJSON, platformInfo.platformInfo, options.codeExtensionPath);
         await installDebugger(packageJSON, platformInfo.platformInfo, options.codeExtensionPath);
+        await installVSWebAssemblyBridge(packageJSON, platformInfo.platformInfo, options.codeExtensionPath);
     }
 
     const packageFileName = getPackageName(packageJSON, platformInfo?.vsceTarget);
