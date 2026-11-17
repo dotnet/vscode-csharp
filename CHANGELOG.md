@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Update Roslyn to 5.14.0-1.26563.2 (PR: [#9989](https://github.com/dotnet/vscode-csharp/pull/9989))
+  * Partial members: avoid missing diagnostics from implementation-only semantic models (PR: [#86324](https://github.com/dotnet/roslyn/pull/86324))
+  * Discard root compilation events in CompilationWithAnalyzers (PR: [#86347](https://github.com/dotnet/roslyn/pull/86347))
 * Fix Copilot plugin setup when VS Code's Copilot CLI shim appears on the PATH (PR: [#9958](https://github.com/dotnet/vscode-csharp/pull/9958))
 * Add the `enableAutomaticDeoptimization` debugger launch option and allow `null` `env` values to remove inherited environment variables (PR: [#9961](https://github.com/dotnet/vscode-csharp/pull/9961))
 * Update Roslyn to 5.14.0-1.26562.5 (PR: [#9986](https://github.com/dotnet/vscode-csharp/pull/9986))
