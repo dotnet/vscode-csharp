@@ -70,16 +70,6 @@ Note that, as of the time of this writing, there are also other incompatibilitie
 
 More information about this problem can be found in [dotnet/cli#12110](https://github.com/dotnet/cli/issues/12110).
 
-Another possible workaround is to add the following to `~/.omnisharp/omnisharp.json`.
-
-```json
-{
-    "MSBuild": {
-        "UseLegacySdkResolver": true
-    }
-}
-```
-
 Instead, you also may create a symbolic link to your dotnet install like so:
 
 `ln -s /snap/dotnet-sdk/current/dotnet /usr/local/bin/dotnet`

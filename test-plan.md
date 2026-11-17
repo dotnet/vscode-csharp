@@ -1,12 +1,7 @@
 # Validating C# Extension for VS Code
 
 ### Requirements
-- [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) or newer when `omnisharp.useModernNet` is set to `true` (the default value).
-- A Full Framework runtime and MSBuild tooling when `omnisharp.useModernNet` is set to `false`.
-  - Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
-  - MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/stable/)
-
-See [OmniSharp Options](https://github.com/dotnet/vscode-csharp/blob/main/test-plan.md#omnisharpusemodernnet-all-platforms) for more details.
+- A supported [.NET SDK](https://dotnet.microsoft.com/download) available on the system path.
 
 ### Validation
 
@@ -14,8 +9,8 @@ See [OmniSharp Options](https://github.com/dotnet/vscode-csharp/blob/main/test-p
 All the validations below should be performed on both Windows and at least one Unix platform (MacOS, Linux).  These can be done on x64 versions unless there are ARM specific changes to validate.
 
 #### Opening projects
-When you open a directory in VS Code, the C# extension should look for a .csproj, .sln, .slnx, or .slnf file in that directory and use "OmniSharp" to load it. If a .cs file is present and no .csproj, .sln, or .slnf file are present, Omnisharp should start but the intellisense should only appear when a change is made to the file.
-If you look in "Output > Omnisharp Log" a bunch of information should be printed about what copy of MSBuild was used and what projects were load
+When you open a directory in VS Code, the C# extension should look for a .csproj, .sln, .slnx, or .slnf file in that directory and load it with the language server. If a .cs file is present and no project or solution file is present, IntelliSense should appear after a change is made to the file.
+The "Output > C#" log should report project and solution loading information.
 
 Project types to test:
 * Standalone csproj
@@ -71,7 +66,7 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 
 #### Error squiggles
 * Introducing an error should show a squiggle in the editor and an error message in the "problems" window
-* Messages in the "problems" window should appear only once per unique error (see https://github.com/OmniSharp/omnisharp-vscode/issues/1830)
+* Messages in the "problems" window should appear only once per unique error
 
 #### Quick Fixes
 * Add using should be availble (does not currently suppport adding references)
@@ -107,7 +102,7 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * Add a new file and reference a type in it from a different file. Deleting from disk the file containing the referenced type  should produce error messages
 
 #### ASP.NET Core Razor
-The Razor experience is available when you open a .cshtml file in a valid OmniSharp project.
+The Razor experience is available when you open a .cshtml file in a valid C# project.
 
 To setup a test project to verify on you can do:
 1. Install the latest preview of the .NET Core 3.0 SDK by going to https://github.com/dotnet/core-sdk and picking the appropriate platform specific installer from the Release/3.0.1XX column. The version should be 3.0.0-preview4-nnnnnn.
@@ -190,7 +185,7 @@ Note that the pipe in the below examples indicates the cursor.
 - Error squiggles may be misaligned due to known issues.
 
 #### Blazor
-The Blazor experience is available when you open a .razor file in a valid OmniSharp/Blazor project.
+The Blazor experience is available when you open a .razor file in a valid Blazor project.
 
 To setup a test project to verify on you can do:
 1. Install the latest preview of the .NET Core 3.0 SDK by going to https://github.com/dotnet/core-sdk and picking the appropriate platform specific installer from the Release/3.0.1XX column. The version should be 3.0.0-preview4-nnnnnn.
@@ -358,42 +353,13 @@ $ dotnet run
 ##### Known issues:
 - Error squiggles may be misaligned due to known issues.
 
-#### Legacy Razor
-The Razor experience is degraded (but no errors) when you open a .cshtml file in a valid OmniSharp/Legacy Razor project. To setup a test project to verify on you can do:
-1. Open Visual Studio
-2. New Project
-3. ASP.NET Web Application (.NET Framework)
-4. Select MVC
-5. OK
-6. Open `Views/Home/Index.cshtml`
-
-##### C# Completion / IntelliSense
-* Typing `@DateTime.Now` does not result in any C# completion.
-* Typing `@{ var x = DateTime.Now; }` does not result in any C# completion.
-* Typing `@model` does not result in any Razor directive completion.
-
-##### C# Diagnostics
-* There are 0 .cshtml related errors on open.
-* Typing `@ThisDoesNotExist` does not result in an error being created.
-
-##### Html Completion
-Verifying Html is needed to ensure the Razor experience is still partially enabled.
-* Typing `<stron` results in Html completion with an entry for `strong`.
-* Typing `<strong>` results in a corresponding `</strong>` being appended
-* Hitting enter Typing `@{}` and then hitting enter inbetween the curly braces results in:
-```
-@{
-
-}
-```
-
 #### Razor Project level Information
 To verify the project level information for Razor do the following:
 1. Install the latest preview of the .NET Core 3.0 SDK by going to https://github.com/dotnet/core-sdk and picking the appropriate platform specific installer from the Release/3.0.1XX column. The version should be 3.0.0-preview4-nnnnnn.
 2. Verify the `obj/Debug/TheTFMOfTheProject` folder contains a `project.razor.json` file (once the project is restored)
 3. Verify the `project.razor.json`'s `Configuration` section is not set to `null`.
 
-Verify each of the test projects above's `project.razor.json` file (ASP.NET Core Razor, Blazor and Legacy Razor) looks something like the following:
+Verify each of the test projects above's `project.razor.json` file (ASP.NET Core Razor and Blazor) looks something like the following:
 
 ##### ASP.NET Core Razor
 ```JSON
@@ -439,28 +405,6 @@ Verify each of the test projects above's `project.razor.json` file (ASP.NET Core
 }
 ```
 
-##### Legacy Razor
-```JSON
-{
-  "ProjectFilePath": "c:\\Users\\JohnDoe\\Projects\\LegacyRazorTestApp\\LegacyRazorTestApp.csproj",
-  "Configuration": {
-    "ConfigurationName": "UnsupportedRazor",
-    "LanguageVersion": "1.0",
-    "Extensions": [
-      {
-        "ExtensionName": "UnsupportedRazorExtension"
-      }
-    ]
-  },
-  "ProjectWorkspaceState": {
-    "TagHelpers": [],
-    "CSharpLanguageVersion": 703 // This may be different
-  },
-  "RootNamespace": null,
-  "Documents": []
-}
-```
-
 #### Razor Options
 
 ##### Razor logging in the C# output window
@@ -470,31 +414,6 @@ The output window log level can be set to any of the following values:
   - "Info" - Limited messages will be shown, such as document lifecycle events.
   - "Debug" - Additional Razor debugging information will be shown.
   - "Trace" - The most verbose Razor logging will be shown.
-
-#### OmniSharp Options
-
-  ### omnisharp.useModernNet (all platforms)
-  This option is defaulted to `true`.
-
-  When this option is set to `false` a .NET Framework build of OmniSharp is downloaded and used for language services. This setting should only be used when working with older Full Framework projects (such as Unity) and would be expected to fail when trying to load .NET SDK-style projects (.NET Core, .NET).
-  * if the option is not set, the OmniSharp log should indicate that the registered MSBuild instance is either the Standalone MSBuild, a Visual Studio MSBuild instance, or a Mono MSBuild instance.
-  * if the option is set, the OmniSharp log should inlcude text like the following "OmniSharp server started with .NET 6.0.100" and "Registered MSBuild instance: .NET Core SDK 6.0.100 17.0.0 - "/usr/local/share/dotnet/sdk/6.0.100/". All language services should continue to work as expected when an SDK-style project is open.
-
-  #### omnisharp.path
-  Setting this path to any of the values as listed below, should start the OmniSharp server and display the correct OmniSharp path in the `OmniSharp Log`(View --> Output--> OmniSharp Log).
-  * undefined - OmniSharp server must start using the copy of omnisharp shipped with the extension, that is, the OmniSharp path must be the extension path, followed by .omnisharp followed by the default omnisharp version as present in the package.json and the platform-specific executable.
-  * Some absolute path - OmniSharp server must start using the local copy of OmniSharp pointed to by the path and the same must be displayed as the Omnisharp path. Example:C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe.
-  * "<version>" - The specified version must be downloaded and installed (The status of download/install can be seen in the `C#` log). If the installation is successful, the server must start and the OmniSharp path must include the .omnisharp folder followed by the version name and the executable. Eg: If the version is `1.29.2-beta.60`, the path displayed on Windows should be `.omnisharp/1.29.2-beta.60/OmniSharp.exe`.
-  * "latest" - The file containing the information about the latest CI build (https://roslynomnisharp.blob.core.windows.net/releases/versioninfo.txt), must be downloaded and accordingly the latest CI build from the "master" branch of omnisharp-roslyn should be downloaded and installed. If the installation is successful, the server must start and the OmniSharp path must include the .omnisharp folder followed by the version name and the executable. Eg: If the latest version is `1.29.2-beta.62`, the path displayed on Windows should be `.omnisharp/1.29.2-beta.62/OmniSharp.exe`.
-  * All the above configurations should work, with and without setting the useMono option on Linux
-  * The above behavior should be exhibited when a new vscode window is opened, as well as if the setting is modified and a "Restart OmniSharp"(Ctrl+Shift+P --> OmniSharp: Restart OmniSharp) is performed.
-
-####  Status Bar Item
-The status bar item(s) must appear on the left side of the VS Code's status bar
-* When the extension is setting up the dependencies, the status bar item should show "Downloading packages"/"Installing packages".
-* Once the server has started, there should be two status bar items:
-  * OmniSharp status Bar item - It should show a green flame (indicating that the OmniSharp server is running) and clicking on it should show the OmniSharp log channel
-  * Project status bar item  - It should show and a folder icon and the name of the currently selected project/solution. Clicking on this element should show a command palette menu to select other projects/solutions in the workspace.
 
 [1] For example,
 ```

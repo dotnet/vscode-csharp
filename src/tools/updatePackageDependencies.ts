@@ -143,7 +143,7 @@ export async function updatePackageDependencies(): Promise<void> {
             `  ${setEnvVarPrefix}NEW_DEPS_URLS=${setEnvVarQuote}https://example1/foo-osx.zip,https://example1/foo-win.zip,https://example1/foo-linux.zip${setEnvVarQuote}`
         );
         console.log('-or-');
-        console.log(`  ${setEnvVarPrefix}NEW_DEPS_ID=${setEnvVarQuote}OmniSharp${setEnvVarQuote}`);
+        console.log(`  ${setEnvVarPrefix}NEW_DEPS_ID=${setEnvVarQuote}Debugger${setEnvVarQuote}`);
         console.log('-and-');
         console.log(`  ${setEnvVarPrefix}NEW_DEPS_VERSION=${setEnvVarQuote}1.2.3${setEnvVarQuote}`);
         console.log(`-or, to update a package published through ESRP (${esrpPackageIds.join(', ')})-`);
@@ -347,15 +347,11 @@ function getLowercaseFileNameFromUrl(url: string): string {
     const index = url.lastIndexOf('/');
     let fileName = url.substr(index + 1).toLowerCase();
 
-    if (fileName.startsWith('omnisharp')) {
-        // Omnisharp versions are not contained in the file name.
-        return fileName;
-    } else if (fileName.startsWith('coreclr-debug')) {
+    if (fileName.startsWith('coreclr-debug')) {
         // Debugger versions are not contained in the file name.
         return fileName;
-    } else if (fileName.startsWith('razorlanguageserver') || fileName.startsWith('devkittelemetry')) {
-        // Razor versions are everything after the second to last dash.
-        // e.g. we want razorlanguageserver-win-x64 from razorlanguageserver-win-x64-7.0.0-preview.23067.5.zip
+    } else if (fileName.startsWith('devkittelemetry')) {
+        // Dev Kit telemetry versions are everything after the second to last dash.
         const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
         fileName = fileName.substr(0, secondToLastDash);
         return fileName;

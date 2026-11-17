@@ -129,7 +129,7 @@ entry.
 
 Exclude:
 
-- Component updates or insertions for Roslyn, Razor, OmniSharp, the debugger,
+- Component updates or insertions for Roslyn, Razor, the debugger,
   the Copilot language server, and xamlTools. Their update process already
   curates relevant nested changelog notes.
 - Infrastructure, build, pipeline, packaging, or dependency-maintenance work.

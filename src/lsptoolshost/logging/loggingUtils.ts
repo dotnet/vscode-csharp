@@ -413,7 +413,7 @@ export async function readLogFileContent(
 }
 
 /**
- * Gathers the current VS Code settings for dotnet, csharp, razor, and omnisharp namespaces.
+ * Gathers the current VS Code settings contributed by the C# extension.
  * Reads the setting keys from the extension's package.json to enumerate all available settings.
  * Returns a formatted JSON string.
  */

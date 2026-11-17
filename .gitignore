@@ -5,12 +5,9 @@ out
 .roslyn/
 .roslynDevKit/
 .xamlTools/
-.omnisharp/
-.omnisharp-*/
 .vs/
 .debugger/
 .razor/
-.razoromnisharp/
 .razortelemetry/
 .razorDevKit/
 .razorExtension/

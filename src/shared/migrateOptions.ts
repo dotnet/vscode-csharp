@@ -8,7 +8,6 @@ import * as path from 'path';
 import { types } from 'util';
 import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
-import { commonOptions } from './options';
 
 export interface IDotnetAcquisitionExistingPaths {
     extensionId: string;
@@ -69,14 +68,6 @@ export const migrateOptions = [
         newName: 'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation',
     },
     {
-        oldName: 'omnisharp.defaultLaunchSolution',
-        newName: 'dotnet.defaultSolution',
-    },
-    {
-        oldName: 'omnisharp.enableImportCompletion',
-        newName: 'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
-    },
-    {
         oldName: 'csharp.referencesCodeLens.enabled',
         newName: 'dotnet.codeLens.enableReferencesCodeLens',
     },
@@ -89,20 +80,12 @@ export const migrateOptions = [
         newName: 'dotnet.unitTestDebuggingOptions',
     },
     {
-        oldName: 'omnisharp.testRunSettings',
-        newName: 'dotnet.unitTests.runSettingsPath',
-    },
-    {
         oldName: 'dotnet.implementType.insertionBehavior',
         newName: 'dotnet.typeMembers.memberInsertionLocation',
     },
     {
         oldName: 'dotnet.implementType.propertyGenerationBehavior',
         newName: 'dotnet.typeMembers.propertyGenerationBehavior',
-    },
-    {
-        oldName: 'omnisharp.organizeImportsOnFormat',
-        newName: 'dotnet.formatting.organizeImportsOnFormat',
     },
 ];
 
@@ -134,57 +117,48 @@ export async function MigrateOptions(vscode: vscode): Promise<void> {
 async function migrateDotnetPathOption(vscode: vscode): Promise<void> {
     const configuration = vscode.workspace.getConfiguration();
 
-    if (commonOptions.useOmnisharpServer) {
-        // Migrate to O# specific option.
-        await MoveOptionsValue(dotnetPathOption, 'omnisharp.dotnetPath', configuration);
-    } else {
-        const oldOptionInspect = configuration.inspect<string>(dotnetPathOption);
-        if (
-            !oldOptionInspect ||
-            (!oldOptionInspect.globalValue &&
-                !oldOptionInspect.workspaceValue &&
-                !oldOptionInspect.workspaceFolderValue)
-        ) {
-            // No value is set, nothing to migrate.
-            return;
-        }
+    const oldOptionInspect = configuration.inspect<string>(dotnetPathOption);
+    if (
+        !oldOptionInspect ||
+        (!oldOptionInspect.globalValue && !oldOptionInspect.workspaceValue && !oldOptionInspect.workspaceFolderValue)
+    ) {
+        // No value is set, nothing to migrate.
+        return;
+    }
 
-        const newOptionInspect = configuration.inspect<IDotnetAcquisitionExistingPaths[]>(
-            dotnetAcquisitionExtensionOption
+    const newOptionInspect = configuration.inspect<IDotnetAcquisitionExistingPaths[]>(dotnetAcquisitionExtensionOption);
+
+    if (oldOptionInspect.globalValue) {
+        await migrateSingleDotnetPathValue(
+            dotnetPathOption,
+            oldOptionInspect.globalValue,
+            dotnetAcquisitionExtensionOption,
+            newOptionInspect?.globalValue,
+            configuration,
+            ConfigurationTarget.Global
         );
+    }
 
-        if (oldOptionInspect.globalValue) {
-            await migrateSingleDotnetPathValue(
-                dotnetPathOption,
-                oldOptionInspect.globalValue,
-                dotnetAcquisitionExtensionOption,
-                newOptionInspect?.globalValue,
-                configuration,
-                ConfigurationTarget.Global
-            );
-        }
+    if (oldOptionInspect.workspaceValue) {
+        await migrateSingleDotnetPathValue(
+            dotnetPathOption,
+            oldOptionInspect.workspaceValue,
+            dotnetAcquisitionExtensionOption,
+            newOptionInspect?.workspaceValue,
+            configuration,
+            ConfigurationTarget.Workspace
+        );
+    }
 
-        if (oldOptionInspect.workspaceValue) {
-            await migrateSingleDotnetPathValue(
-                dotnetPathOption,
-                oldOptionInspect.workspaceValue,
-                dotnetAcquisitionExtensionOption,
-                newOptionInspect?.workspaceValue,
-                configuration,
-                ConfigurationTarget.Workspace
-            );
-        }
-
-        if (oldOptionInspect.workspaceFolderValue) {
-            await migrateSingleDotnetPathValue(
-                dotnetPathOption,
-                oldOptionInspect.workspaceFolderValue,
-                dotnetAcquisitionExtensionOption,
-                newOptionInspect?.workspaceFolderValue,
-                configuration,
-                ConfigurationTarget.WorkspaceFolder
-            );
-        }
+    if (oldOptionInspect.workspaceFolderValue) {
+        await migrateSingleDotnetPathValue(
+            dotnetPathOption,
+            oldOptionInspect.workspaceFolderValue,
+            dotnetAcquisitionExtensionOption,
+            newOptionInspect?.workspaceFolderValue,
+            configuration,
+            ConfigurationTarget.WorkspaceFolder
+        );
     }
 }
 

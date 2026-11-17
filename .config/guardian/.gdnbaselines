@@ -14,7 +14,7 @@
     "26445e3e484940d2d58c2ffc32ab3895fca4b1589d66e2f2dee2fa01f2c479fb": {
       "signature": "26445e3e484940d2d58c2ffc32ab3895fca4b1589d66e2f2dee2fa01f2c479fb",
       "alternativeSignatures": [],
-      "target": "test/omnisharp/omnisharpUnitTests/testAssets/private.pem",
+      "target": "test/lsptoolshost/packageManager/testAssets/private.pem",
       "line": 1,
       "memberOf": [
         "default"
