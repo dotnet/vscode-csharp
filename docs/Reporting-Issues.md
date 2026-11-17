@@ -6,10 +6,7 @@ The extension supports the command that populates the necessary information from
 * Fill in all the fields like "Expected Behavior", "Actual Behavior", "Steps to Reproduce".
 * Paste the "C#" log (if any) and hit "Submit"
 
-    ##### OmniSharp and C# log
+    ##### C# logs
     * In VSCode, navigate to View-->Output or press Ctrl+Shift+U
-    * In the output pane on the right, you should see an "OmniSharp log" in the drop-down
-    * Paste the output from here to the "OmniSharp log" section
-
-    ![OmniSharp log](./images/omnisharp_log.png)
-    * The C# log can also be found in the same window.
+    * Select "C#" in the output channel drop-down.
+    * Paste the relevant output into the issue.

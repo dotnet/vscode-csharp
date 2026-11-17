@@ -76,13 +76,7 @@ function registerExtensionCommands(
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
-            reportIssue(
-                context,
-                getDotnetInfo,
-                /*shouldIncludeMonoInfo:*/ false,
-                [outputChannel, csharpTraceChannel],
-                hostExecutableResolver
-            )
+            reportIssue(context, getDotnetInfo, [outputChannel, csharpTraceChannel], hostExecutableResolver)
         )
     );
     context.subscriptions.push(

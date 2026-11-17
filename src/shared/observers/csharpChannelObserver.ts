@@ -15,11 +15,7 @@ export class CsharpChannelObserver extends BaseChannelObserver {
             case EventType.InstallationFailure:
             case EventType.DebuggerNotInstalledFailure:
             case EventType.DebuggerPrerequisiteFailure:
-            case EventType.ProjectJsonDeprecatedWarning:
                 this.showChannel(true);
-                break;
-            case EventType.ShowChannel:
-                this.showChannel(false);
                 break;
         }
     };

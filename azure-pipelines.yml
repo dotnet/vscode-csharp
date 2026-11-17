@@ -133,23 +133,3 @@ stages:
       pool:
         name: Azure Pipelines
         vmImage: macOS-15-arm64
-
-- stage: Test_OmniSharp
-  displayName: Test OmniSharp
-  dependsOn: []
-  jobs:
-  - job: Test
-    strategy:
-      matrix:
-        linux:
-          demandsName: build.ubuntu.2204.amd64.open
-        windows:
-          demandsName: 1es-windows-2022-open
-    pool:
-      name: NetCore-Public
-      demands: ImageOverride -equals $(demandsName)
-    steps:
-    - template: azure-pipelines/test-omnisharp.yml
-      parameters:
-        installDotNet: true
-        testVSCodeVersion: $(testVSCodeVersion)

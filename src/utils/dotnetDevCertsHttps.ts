@@ -5,16 +5,15 @@
 
 import * as cp from 'child_process';
 import { getExtensionPath } from '../common';
-import { commonOptions, omnisharpOptions } from '../shared/options';
 
 // Will return true if `dotnet dev-certs https --check` succesfully finds a trusted development certificate.
 export async function hasDotnetDevCertsHttps(): Promise<ExecReturnData> {
-    return await execChildProcess(`${getDotnetCommand()} dev-certs https --check --trust`, process.cwd(), process.env);
+    return await execChildProcess('dotnet dev-certs https --check --trust', process.cwd(), process.env);
 }
 
 // Will run `dotnet dev-certs https --trust` to prompt the user to create a trusted self signed certificates. Retruns true if sucessfull.
 export async function createSelfSignedCert(): Promise<ExecReturnData> {
-    return await execChildProcess(`${getDotnetCommand()} dev-certs https --trust`, process.cwd(), process.env);
+    return await execChildProcess('dotnet dev-certs https --trust', process.cwd(), process.env);
 }
 
 async function execChildProcess(
@@ -27,14 +26,6 @@ async function execChildProcess(
             resolve({ error, stdout, stderr });
         });
     });
-}
-
-function getDotnetCommand(): string {
-    if (commonOptions.useOmnisharpServer) {
-        return omnisharpOptions.dotnetPath ?? 'dotnet';
-    } else {
-        return 'dotnet';
-    }
 }
 
 interface ExecReturnData {
