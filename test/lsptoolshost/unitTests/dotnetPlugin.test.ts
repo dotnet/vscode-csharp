@@ -11,7 +11,7 @@ import {
     dotnetPluginCacheKey,
     registerDotnetPlugin,
 } from '../../../src/shared/copilot/dotnetPlugin';
-import { commonOptions } from '../../../src/shared/options';
+import { languageServerOptions } from '../../../src/shared/options';
 import { TelemetryEventNames } from '../../../src/shared/telemetryEventNames';
 
 jest.mock('vscode', () => {
@@ -67,7 +67,7 @@ jest.mock('vscode', () => {
     };
 });
 jest.mock('../../../src/shared/options', () => ({
-    commonOptions: {
+    languageServerOptions: {
         get disableAIFeatures() {
             return false;
         },
@@ -482,7 +482,7 @@ describe('Copilot .NET plugin installation', () => {
                         section === dotnetPluginAutoInstallKey ? false : defaultValue,
                 } as vscode.WorkspaceConfiguration);
             } else if (outcome === 'aiDisabled') {
-                jest.spyOn(commonOptions, 'disableAIFeatures', 'get').mockReturnValue(true);
+                jest.spyOn(languageServerOptions, 'disableAIFeatures', 'get').mockReturnValue(true);
             } else {
                 jest.spyOn(vscode.workspace, 'isTrusted', 'get').mockReturnValue(false);
             }

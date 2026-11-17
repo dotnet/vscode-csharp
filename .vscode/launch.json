@@ -128,77 +128,12 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "[O#] Run Current File Integration Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                // Launch VSCode using a specific profile to ensure that user settings are not used.
-                // This profile must be imported into vscode before running this launch configuration.
-                // The profile can be found under /test/csharp-test-profile.
-                "--profile",
-                "csharp-test-profile",
-                "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
-            ],
-            "env": {
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "${input:omnisharpAssetName}",
-                "TEST_FILE_FILTER": "${file}"
-            },
-            "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
-            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
-            "preLaunchTask": "packageDev"
-        },
-        {
-            "name": "[O# LSP] Run Current File Integration Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                // Launch VSCode using a specific profile to ensure that user settings are not used.
-                // This profile must be imported into vscode before running this launch configuration.
-                // The profile can be found under /test/csharp-test-profile.
-                "--profile",
-                "csharp-test-profile",
-                "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
-            ],
-            "env": {
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "${input:omnisharpAssetName}",
-                "TEST_FILE_FILTER": "${file}"
-            },
-            "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
-            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
-            "preLaunchTask": "packageDev"
-        },
-        {
             "type": "node",
             "request": "launch",
             "name": "Debug task",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
             "args": ["tasks/${input:taskScript}"],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Update OmniSharp package dependencies",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-            "args": ["tasks/debugger/updatePackageDependencies.ts"],
-            "env": {
-                "NEW_DEPS_ID": "OmniSharp",
-                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x86.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64-net6.0.zip",
-                "OLD_DEPS_VERSION": "1.39.12",
-                "NEW_DEPS_VERSION": "1.39.14"
-            },
             "cwd": "${workspaceFolder}"
         },
         {
@@ -235,12 +170,6 @@
         }
     ],
     "inputs": [
-        {
-            "id": "omnisharpAssetName",
-            "description": "The name of the asset folder to use for the OmniSharp integration test.",
-            "type": "pickString",
-            "options": ["singleCsproj", "RazorApp", "slnWithCsproj", "slnFilterWithCsproj", "slnWithGenerator"]
-        },
         {
             "id": "taskScript",
             "description": "The task script path under tasks (ex. `tests/testUnit.ts`)",

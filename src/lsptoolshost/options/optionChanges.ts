@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs';
-import { CommonOptionsThatTriggerReload, LanguageServerOptionsThatTriggerReload } from '../../shared/options';
+import { LanguageServerOptionsThatTriggerReload } from '../../shared/options';
 import { HandleOptionChanges, OptionChangeObserver, OptionChanges } from '../../shared/observers/optionChangeObserver';
 import Disposable from '../../disposable';
 import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage';
@@ -14,9 +14,7 @@ export function registerLanguageServerOptionChanges(optionObservable: Observable
     const optionChangeObserver: OptionChangeObserver = {
         getRelevantOptions: () => {
             return {
-                changedCommonOptions: CommonOptionsThatTriggerReload,
                 changedLanguageServerOptions: LanguageServerOptionsThatTriggerReload,
-                changedOmnisharpOptions: [],
             };
         },
         handleOptionChanges(optionChanges) {
@@ -29,7 +27,7 @@ export function registerLanguageServerOptionChanges(optionObservable: Observable
 }
 
 function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void {
-    if (changedOptions.changedCommonOptions.length == 0 && changedOptions.changedLanguageServerOptions.length == 0) {
+    if (changedOptions.changedLanguageServerOptions.length == 0) {
         // No changes to relevant options, do nothing.
         return;
     }
@@ -38,18 +36,6 @@ function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void 
         title: vscode.l10n.t('Reload Window'),
         command: 'workbench.action.reloadWindow',
     };
-    if (changedOptions.changedCommonOptions.find((key) => key === 'useOmnisharpServer')) {
-        // If the user has changed the useOmnisharpServer flag we need to reload the window.
-        showInformationMessage(
-            vscode,
-            vscode.l10n.t(
-                'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
-            ),
-            reloadTitle
-        );
-        return;
-    }
-
     // Typically when we have a regular config change, we can just restart the server, but due to
     // https://github.com/dotnet/vscode-csharp/issues/5882 we need to reload the window when using devkit.
     const message = vscode.l10n.t(

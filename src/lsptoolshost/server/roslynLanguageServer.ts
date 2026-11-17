@@ -40,7 +40,7 @@ import { DotnetInfo } from '../../shared/utils/dotnetInfo';
 import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents';
 import { registerShowToastNotification } from '../handlers/showToastNotification';
 import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
-import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
+import { languageServerOptions } from '../../shared/options';
 import { VSTextDocumentIdentifier } from './roslynProtocol';
 import { IDisposable } from '../../disposable';
 import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
@@ -60,6 +60,8 @@ import { HoverFeature } from '../hover/hoverFeature';
 let _wasActivatedWithCSharpDevkit: boolean | undefined;
 
 export class RoslynLanguageServer {
+    private static readonly _projectSearchResultLimit = 250;
+
     /**
      * The timeout for stopping the language server (in ms).
      */
@@ -558,7 +560,7 @@ export class RoslynLanguageServer {
     private async openDefaultSolutionOrProjects(): Promise<void> {
         // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
         // disabled it.
-        const defaultSolution = commonOptions.defaultSolution;
+        const defaultSolution = languageServerOptions.defaultSolution;
         if (!_wasActivatedWithCSharpDevkit && defaultSolution !== 'disable' && this._solutionFile === undefined) {
             if (defaultSolution !== '') {
                 await this.openSolution(vscode.Uri.file(defaultSolution));
@@ -600,7 +602,7 @@ export class RoslynLanguageServer {
                         const projectUris = await vscode.workspace.findFiles(
                             '**/*.csproj',
                             '**/node_modules/**',
-                            omnisharpOptions.maxProjectResults
+                            RoslynLanguageServer._projectSearchResultLimit
                         );
 
                         await this.openProjects(projectUris);
@@ -656,7 +658,7 @@ export class RoslynLanguageServer {
 
         let args: string[] = [];
 
-        if (commonOptions.waitForDebugger) {
+        if (languageServerOptions.waitForDebugger) {
             args.push('--debug');
         }
 
@@ -804,7 +806,7 @@ export class RoslynLanguageServer {
         this._languageClient.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
             RoslynProtocol.DebugAttachRequest.type,
             async (request) => {
-                const debugOptions = commonOptions.unitTestDebuggingOptions;
+                const debugOptions = languageServerOptions.unitTestDebuggingOptions;
                 const debugConfiguration: vscode.DebugConfiguration = {
                     ...debugOptions,
                     name: '.NET Debug Unit test',
@@ -897,7 +899,7 @@ export class RoslynLanguageServer {
     }
 
     private static setupCopilotEnvironment(additionalExtensionPaths: string[], channel: vscode.LogOutputChannel): void {
-        if (commonOptions.disableAIFeatures) {
+        if (languageServerOptions.disableAIFeatures) {
             channel.info('AI features are disabled (chat.disableAIFeatures). Skipping Roslyn Copilot component.');
             return;
         }

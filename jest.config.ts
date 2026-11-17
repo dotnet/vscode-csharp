@@ -9,8 +9,6 @@ const config: Config = {
         '<rootDir>/test/lsptoolshost/artifactTests/jest.config.ts',
         '<rootDir>/test/lsptoolshost/integrationTests/jest.config.ts',
         '<rootDir>/test/lsptoolshost/unitTests/jest.config.ts',
-        '<rootDir>/test/omnisharp/omnisharpIntegrationTests/jest.config.ts',
-        '<rootDir>/test/omnisharp/omnisharpUnitTests/jest.config.ts',
         '<rootDir>/test/razor/razorIntegrationTests/jest.config.ts',
         '<rootDir>/test/razor/razorTests/jest.config.ts',
         '<rootDir>/test/untrustedWorkspace/integrationTests/jest.config.ts',

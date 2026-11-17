@@ -10,10 +10,8 @@ import { publishBehavior } from 'rxjs/operators';
 export default function createOptionStream(vscode: vscode): Observable<void> {
     return Observable.create((observer: Observer<void>) => {
         const disposable = vscode.workspace.onDidChangeConfiguration((e) => {
-            //if the omnisharp or csharp configuration are affected only then read the options
             if (
                 e.affectsConfiguration('dotnet') ||
-                e.affectsConfiguration('omnisharp') ||
                 e.affectsConfiguration('csharp') ||
                 e.affectsConfiguration('chat')
             ) {

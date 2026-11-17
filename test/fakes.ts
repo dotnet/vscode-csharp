@@ -4,14 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../src/vscodeAdapter';
-import * as protocol from '../src/omnisharp/protocol';
 import { ITelemetryReporter } from '../src/shared/telemetryReporter';
-import {
-    OmnisharpServerMsBuildProjectDiagnostics,
-    OmnisharpServerOnError,
-    OmnisharpServerUnresolvedDependencies,
-    WorkspaceInformationUpdated,
-} from '../src/omnisharp/omnisharpLoggingEvents';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     const returnChannel: vscode.OutputChannel = {
@@ -126,59 +119,6 @@ export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
 
     return configuration;
 };
-
-export function getOmnisharpMSBuildProjectDiagnosticsEvent(
-    fileName: string,
-    warnings: protocol.MSBuildDiagnosticsMessage[],
-    errors: protocol.MSBuildDiagnosticsMessage[]
-): OmnisharpServerMsBuildProjectDiagnostics {
-    return new OmnisharpServerMsBuildProjectDiagnostics({
-        FileName: fileName,
-        Warnings: warnings,
-        Errors: errors,
-    });
-}
-
-export function getMSBuildDiagnosticsMessage(
-    logLevel: string,
-    fileName: string,
-    text: string,
-    startLine: number,
-    startColumn: number,
-    endLine: number,
-    endColumn: number
-): protocol.MSBuildDiagnosticsMessage {
-    return {
-        LogLevel: logLevel,
-        FileName: fileName,
-        Text: text,
-        StartLine: startLine,
-        StartColumn: startColumn,
-        EndLine: endLine,
-        EndColumn: endColumn,
-    };
-}
-
-export function getOmnisharpServerOnErrorEvent(
-    text: string,
-    fileName: string,
-    line: number,
-    column: number
-): OmnisharpServerOnError {
-    return new OmnisharpServerOnError({
-        Text: text,
-        FileName: fileName,
-        Line: line,
-        Column: column,
-    });
-}
-
-export function getUnresolvedDependenices(fileName: string): OmnisharpServerUnresolvedDependencies {
-    return new OmnisharpServerUnresolvedDependencies({
-        UnresolvedDependencies: [],
-        FileName: fileName,
-    });
-}
 
 class EventEmitter<T> implements vscode.EventEmitter<T> {
     private readonly listeners: { listener: (event: T) => any; thisArgs?: any }[] = [];
@@ -337,24 +277,6 @@ export function getFakeVsCode(): vscode.vscode {
             uri: undefined,
         },
     };
-}
-
-export function getMSBuildWorkspaceInformation(
-    msBuildSolutionPath: string,
-    msBuildProjects: protocol.MSBuildProject[]
-): protocol.MsBuildWorkspaceInformation {
-    return {
-        SolutionPath: msBuildSolutionPath,
-        Projects: msBuildProjects,
-    };
-}
-
-export function getWorkspaceInformationUpdated(
-    MsBuild: protocol.MsBuildWorkspaceInformation | undefined
-): WorkspaceInformationUpdated {
-    return new WorkspaceInformationUpdated({
-        MsBuild,
-    });
 }
 
 export function getVSCodeWithConfig(vscodeAdapter: vscode.vscode = getFakeVsCode()) {

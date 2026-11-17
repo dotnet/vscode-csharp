@@ -9,7 +9,6 @@ import { EventStream } from './eventStream';
 import { getRuntimeDependenciesPackages } from './tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';
 import { DependencyInstallationStatus, IInstallDependencies } from './packageManager/IInstallDependencies';
-import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
 
 export async function installRuntimeDependencies(
     packageJSON: any,
@@ -17,7 +16,6 @@ export async function installRuntimeDependencies(
     installDependencies: IInstallDependencies,
     eventStream: EventStream,
     platformInfo: PlatformInformation,
-    useFramework: boolean,
     requiredPackageIds: string[]
 ): Promise<DependencyInstallationStatus> {
     const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
@@ -31,8 +29,7 @@ export async function installRuntimeDependencies(
     );
     const installedPackagesResults = installedPackages.reduce((acc, id) => ({ ...acc, [id]: true }), {});
 
-    const filteredPackages = filterOmniSharpPackage(packagesToInstall, useFramework);
-    const filteredRequiredPackages = filteredRequiredPackage(requiredPackageIds, filteredPackages);
+    const filteredRequiredPackages = packagesToInstall.filter((pkg) => requiredPackageIds.includes(pkg.id));
 
     if (filteredRequiredPackages.length === 0) {
         return installedPackagesResults;
@@ -52,14 +49,4 @@ export async function installRuntimeDependencies(
     }
 
     return { ...installedPackagesResults, ...installationResults };
-}
-
-function filterOmniSharpPackage(packages: AbsolutePathPackage[], useFramework: boolean) {
-    // Since we will have more than one OmniSharp package defined for some platforms, we need
-    // to filter out the one that doesn't match which dotnet runtime is being used.
-    return packages.filter((pkg) => pkg.id !== 'OmniSharp' || pkg.isFramework === useFramework);
-}
-
-function filteredRequiredPackage(requiredPackageIds: string[], packages: AbsolutePathPackage[]) {
-    return packages.filter((pkg) => requiredPackageIds.includes(pkg.id));
 }

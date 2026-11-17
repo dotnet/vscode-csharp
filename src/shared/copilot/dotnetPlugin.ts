@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { lt, parse as parseVersion } from 'semver';
-import { commonOptions } from '../options';
+import { languageServerOptions } from '../options';
 import { ITelemetryReporter } from '../telemetryReporter';
 import { TelemetryEventNames } from '../telemetryEventNames';
 import {
@@ -282,7 +282,7 @@ function getDisabledOutcome(): DisabledOutcome | undefined {
     if (!vscode.workspace.getConfiguration().get(dotnetPluginAutoInstallKey, true)) {
         return 'autoInstallDisabled';
     }
-    if (commonOptions.disableAIFeatures) {
+    if (languageServerOptions.disableAIFeatures) {
         return 'aiDisabled';
     }
     if (!vscode.workspace.isTrusted) {
