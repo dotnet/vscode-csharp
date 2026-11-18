@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update Roslyn to 5.14.0-1.26568.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.14.0-1.26568.2 (PR: [#9998](https://github.com/dotnet/vscode-csharp/pull/9998))
   * Razor duplicate using cleanup and diagnostic de-dupe (PR: [#86424](https://github.com/dotnet/roslyn/pull/86424))
   * Fix Razor component discovery when a base component falls back (PR: [#86451](https://github.com/dotnet/roslyn/pull/86451))
   * Recognize both boolean flag polarities for labeled jumps (PR: [#86481](https://github.com/dotnet/roslyn/pull/86481))
