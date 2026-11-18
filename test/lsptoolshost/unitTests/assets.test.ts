@@ -59,6 +59,42 @@ describe('Asset generation: csproj', () => {
         expect(watchTask.args).toStrictEqual(['watch', 'run', '--project', '${workspaceFolder}/testApp.csproj']);
     });
 
+    test.each([
+        {
+            description: 'outside the workspace folder',
+            rootPath: path.resolve('testRoot'),
+            solutionPath: path.resolve('workspaceStorage', 'ms-dotnettools.csdevkit', 'testApp.sln'),
+        },
+        ...(process.platform === 'win32'
+            ? [
+                  {
+                      description: 'on a different drive',
+                      rootPath: 'C:\\testRoot',
+                      solutionPath: 'D:\\workspaceStorage\\ms-dotnettools.csdevkit\\testApp.sln',
+                  },
+              ]
+            : []),
+    ])(
+        "Generated 'build' and 'publish' tasks use the project path when the solution is $description",
+        ({ rootPath, solutionPath }) => {
+            const info = createMSBuildWorkspaceInformation(
+                path.join(rootPath, 'testApp.csproj'),
+                'testApp',
+                'netcoreapp1.0'
+            );
+            info[0].solutionPath = solutionPath;
+            const generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+            generator.setStartupProject(0);
+            const tasksJson = generator.createTasksConfiguration();
+
+            for (const label of ['build', 'publish']) {
+                const task = tasksJson.tasks!.find((task) => task.label === label);
+                isNotNull(task?.args);
+                expect(task.args[1]).toBe('${workspaceFolder}/testApp.csproj');
+            }
+        }
+    );
+
     test("Generated 'build' and 'publish' tasks have the property GenerateFullPaths set to true ", () => {
         const rootPath = path.resolve('testRoot');
         const info = createMSBuildWorkspaceInformation(

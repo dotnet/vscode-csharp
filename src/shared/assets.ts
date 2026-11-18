@@ -306,7 +306,9 @@ export class AssetGenerator {
             buildProject = this.fallbackBuildProject;
         }
         if (buildProject) {
-            if (useSolutionPath && buildProject.solutionPath) {
+            // C# Dev Kit can report a temporary solution stored outside the workspace, under VS Code's
+            // workspace storage. Persisting that path makes the task machine-specific, so use the project instead.
+            if (useSolutionPath && buildProject.solutionPath && this.isInWorkspaceFolder(buildProject.solutionPath)) {
                 return this.getBuildPath(buildProject.solutionPath);
             } else {
                 return this.getBuildPath(buildProject.projectPath);
@@ -314,6 +316,12 @@ export class AssetGenerator {
         }
 
         return null;
+    }
+
+    private isInWorkspaceFolder(absolutePath: string): boolean {
+        const relativePath = path.relative(this.workspaceFolder.uri.fsPath, absolutePath);
+        // path.relative returns an absolute path when the paths are on different Windows drives.
+        return relativePath !== '..' && !relativePath.startsWith('..' + path.sep) && !path.isAbsolute(relativePath);
     }
 
     private getBuildPath(absoluteBuildPath: string): string {
