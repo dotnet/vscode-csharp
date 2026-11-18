@@ -41,7 +41,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.14.0-1.26563.2",
+    "roslyn": "5.14.0-1.26568.2",
     "xamlTools": "18.14.12407.18",
     "testDiscovery": "11.0.59-g6f54c5"
   },

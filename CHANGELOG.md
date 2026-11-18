@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Update Roslyn to 5.14.0-1.26568.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Razor duplicate using cleanup and diagnostic de-dupe (PR: [#86424](https://github.com/dotnet/roslyn/pull/86424))
+  * Fix Razor component discovery when a base component falls back (PR: [#86451](https://github.com/dotnet/roslyn/pull/86451))
+  * Recognize both boolean flag polarities for labeled jumps (PR: [#86481](https://github.com/dotnet/roslyn/pull/86481))
+  * Classify CS8940 and CS8204 as build-only diagnostics (PR: [#86404](https://github.com/dotnet/roslyn/pull/86404))
+  * Better formatting of Html tags in Razor (PR: [#86454](https://github.com/dotnet/roslyn/pull/86454))
+  * Fix stale source generator diagnostics in Hot Reload (PR: [#86378](https://github.com/dotnet/roslyn/pull/86378))
 * Update Roslyn to 5.14.0-1.26563.2 (PR: [#9989](https://github.com/dotnet/vscode-csharp/pull/9989))
   * Partial members: avoid missing diagnostics from implementation-only semantic models (PR: [#86324](https://github.com/dotnet/roslyn/pull/86324))
   * Discard root compilation events in CompilationWithAnalyzers (PR: [#86347](https://github.com/dotnet/roslyn/pull/86347))
