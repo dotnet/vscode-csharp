@@ -42,34 +42,27 @@ steps:
           $previousNativeCommandErrorPreference = $PSNativeCommandUseErrorActionPreference
           try {
               $PSNativeCommandUseErrorActionPreference = $false
-              $accessToken = az account get-access-token `
+              # az rest avoids year-9999 expiry deserialization and keeps authentication in Azure CLI.
+              $escapedSecretName = [Uri]::EscapeDataString($SecretName)
+              $appId = az rest `
+                  --method get `
+                  --url "https://$VaultName.vault.azure.net/secrets/${escapedSecretName}?api-version=7.4" `
                   --resource https://vault.azure.net `
-                  --query accessToken `
+                  --query value `
                   --output tsv `
                   --only-show-errors
-              $tokenExitCode = $LASTEXITCODE
+              $secretExitCode = $LASTEXITCODE
+          }
+          catch {
+              throw "Failed to read App ID secret '$SecretName' from vault '$VaultName' with Azure CLI: $_"
           }
           finally {
               $PSNativeCommandUseErrorActionPreference = $previousNativeCommandErrorPreference
           }
-          if ($tokenExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($accessToken)) {
-              throw "'az account get-access-token' failed with exit code $tokenExitCode while acquiring an Azure Key Vault access token."
+          if ($secretExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($appId)) {
+              throw "'az rest' failed with exit code $secretExitCode while reading App ID secret '$SecretName' from vault '$VaultName'. Verify the service connection can read this App-ID projection."
           }
-          $escapedSecretName = [Uri]::EscapeDataString($SecretName)
-          try {
-              # Read only the ID value: CLI secret deserialization fails on year-9999 expiry metadata.
-              $response = Invoke-RestMethod `
-                  -Uri "https://$VaultName.vault.azure.net/secrets/${escapedSecretName}?api-version=7.4" `
-                  -Headers @{ Authorization = "Bearer $accessToken" } `
-                  -Method Get
-          }
-          catch {
-              throw "Failed to read App ID secret '$SecretName' from vault '$VaultName': $_. Verify the service connection can read this App-ID projection."
-          }
-          if ([string]::IsNullOrWhiteSpace($response.value)) {
-              throw "App ID secret '$SecretName' in vault '$VaultName' is empty."
-          }
-          return [string] $response.value
+          return [string] $appId
       }
 
       function New-GitHubAppSignatureFromKeyVaultKey(
