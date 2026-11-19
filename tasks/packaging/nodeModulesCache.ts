@@ -28,13 +28,6 @@ hash.update(
         npm: npmVersion,
         operatingSystem: process.platform === 'linux' ? fs.readFileSync('/etc/os-release', 'utf8') : os.version(),
         nodeEnv: process.env.NODE_ENV,
-        npmConfiguration: {
-            omit: process.env.npm_config_omit,
-            include: process.env.npm_config_include,
-            ignoreScripts: process.env.npm_config_ignore_scripts,
-            legacyPeerDeps: process.env.npm_config_legacy_peer_deps,
-            installLinks: process.env.npm_config_install_links,
-        },
         manifest,
     })
 );
