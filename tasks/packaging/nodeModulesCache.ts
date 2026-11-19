@@ -6,6 +6,7 @@
 // Node 24 runs this before npm dependencies have been installed.
 const fs: typeof import('node:fs') = require('node:fs');
 const path: typeof import('node:path') = require('node:path');
+const os: typeof import('node:os') = require('node:os');
 const { createHash }: typeof import('node:crypto') = require('node:crypto');
 
 const rootPath = process.cwd();
