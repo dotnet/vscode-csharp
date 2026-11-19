@@ -5,6 +5,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { pipeline } from 'stream/promises';
 import * as yauzl from 'yauzl';
 import { EventStream } from '../eventStream';
 import { InstallationStart, ZipError } from '../shared/loggingEvents';
@@ -54,19 +55,28 @@ export async function InstallZip(
 
                         try {
                             await fs.promises.mkdir(path.dirname(absoluteEntryPath), { recursive: true, mode: 0o775 });
-
-                            // Make sure executable files have correct permissions when extracted
-                            const binaryPaths = binaries?.map((binary) => binary.value);
-                            const fileMode = binaryPaths?.includes(absoluteEntryPath) ? 0o755 : 0o664;
-
-                            readStream.pipe(fs.createWriteStream(absoluteEntryPath, { mode: fileMode }));
-                            readStream.on('end', () => zipFile.readEntry());
                         } catch (err) {
                             return reject(
                                 new NestedError(
                                     'Error creating directory for zip file entry',
                                     err as NodeJS.ErrnoException
                                 )
+                            );
+                        }
+
+                        try {
+                            // Make sure executable files have correct permissions when extracted
+                            const binaryPaths = binaries?.map((binary) => binary.value);
+                            const fileMode = binaryPaths?.includes(absoluteEntryPath) ? 0o755 : 0o664;
+
+                            // createWriteStream opens asynchronously. readStream 'end' can fire before that
+                            // open finishes, so resolving there races on macOS: callers observe ENOENT, and
+                            // temp cleanup can throw ENOTEMPTY while the write is still creating the file.
+                            await pipeline(readStream, fs.createWriteStream(absoluteEntryPath, { mode: fileMode }));
+                            zipFile.readEntry();
+                        } catch (err) {
+                            return reject(
+                                new NestedError('Error extracting zip file entry', err as NodeJS.ErrnoException)
                             );
                         }
                     });
