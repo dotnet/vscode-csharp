@@ -21,6 +21,7 @@ hash.update(
         architecture: process.arch,
         node: process.version,
         npm: npmVersion,
+        operatingSystem: process.platform === 'linux' ? fs.readFileSync('/etc/os-release', 'utf8') : os.version(),
         keyVersion: 0, // Increment this value to force a cache rebuild
     })
 );
