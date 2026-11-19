@@ -41,9 +41,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.14.0-1.26561.1",
-    "omniSharp": "1.39.14",
-    "razorOmnisharp": "7.0.0-preview.23363.1",
+    "roslyn": "5.14.0-1.26563.2",
     "xamlTools": "18.14.12407.18",
     "testDiscovery": "11.0.59-g6f54c5"
   },
@@ -77,9 +75,6 @@
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
     "l10nDevImportXlf": "npx @vscode/l10n-dev import-xlf ./loc/vscode-csharp.*.xlf --outDir ./l10n && move l10n\\package.nls.*.json .",
     "lint": "npx eslint ./",
-    "omnisharptest": "npm run packageDev && npx ts-node tasks/tests/omnisharptest.ts",
-    "omnisharptest:integration": "npm run packageDev && npx ts-node tasks/tests/omnisharptestIntegration.ts",
-    "omnisharptest:unit": "npm run compileDev && npx ts-node tasks/tests/omnisharptestUnit.ts",
     "package": "npm run compile && npm run signJs && node esbuild.js --production",
     "packageDev": "npm run compileDev && node esbuild.js",
     "prepare": "npm run installDependencies",
@@ -116,7 +111,6 @@
     "http-proxy-agent": "7.0.0",
     "https-proxy-agent": "7.0.2",
     "jsonc-parser": "3.0.0",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/0af42abab690d5de903a4a814d6aedc1/microsoft.aspnetcore.razor.vscode-7.0.0-preview.23363.1.tgz",
     "node-machine-id": "1.1.12",
     "ps-list": "7.2.0",
     "rxjs": "6.6.7",
@@ -146,7 +140,6 @@
     "globals": "^17.8.0",
     "jest": "^29.6.2",
     "jest-junit": "^17.0.0",
-    "mock-http-server": "1.4.2",
     "nerdbank-gitversioning": "^3.6.79-alpha",
     "prettier": "3.9.6",
     "ts-jest": "^29.1.1",
@@ -168,248 +161,6 @@
     }
   },
   "runtimeDependencies": [
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Windows (.NET 4.7.2 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64.zip",
-      "installPath": ".omnisharp/1.39.14",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14/OmniSharp.exe",
-      "platformId": "win-x64",
-      "isFramework": true,
-      "integrity": "64B040ECD9390C1A595D764561653E80EE857298E1B079661081A234326B9B97"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Windows (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "win-x64",
-      "isFramework": false,
-      "integrity": "DA298BCBD471E9A8D2B5A007132B5F5CD567FE6A9C84BC97A7ABD4005AAD6A96"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Windows (.NET 4.7.2 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64.zip",
-      "installPath": ".omnisharp/1.39.14",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14/OmniSharp.exe",
-      "platformId": "win-arm64",
-      "isFramework": true,
-      "integrity": "D171EFE3D50D2C5E6F05AF124144E6DA3083866A867DE8E10C115E44F32A03F3"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Windows (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "win-arm64",
-      "isFramework": false,
-      "integrity": "60324F7482472E081AA560F5FB46BC8A286A38D327C76F7ECE2595994154D7F6"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for OSX (Mono / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx.zip",
-      "installPath": ".omnisharp/1.39.14",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "x86_64",
-        "arm64"
-      ],
-      "binaries": [
-        "./mono.osx",
-        "./run"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14/run",
-      "platformId": "osx",
-      "isFramework": true,
-      "integrity": "D1CD0A8A55E99BD8636D329946D69CDE3E0FEA518A3AB9F1A300C8C62FFD9980"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for OSX (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-x64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "osx-x64",
-      "isFramework": false,
-      "integrity": "C1DD5FB6A45420B55B1698F1A49DA056B643C834D57004BC65ED32EE9335F308"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for OSX (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-arm64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "osx-arm64",
-      "isFramework": false,
-      "integrity": "C3A345E07E6EDA5C6ADF9D4FC067640DABE0C1A75C2CAC49340AEC21F1687799"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Linux (Mono / x86)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x86.zip",
-      "installPath": ".omnisharp/1.39.14",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "x86",
-        "i686"
-      ],
-      "binaries": [
-        "./mono.linux-x86",
-        "./run"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14/run",
-      "platformId": "linux-x86",
-      "isFramework": true,
-      "integrity": "8A35A36FAE073E975F9D8C7F1DE58AFB07F504E12D7DBFFA95E4A52E2D0E6610"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Linux (Mono / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64.zip",
-      "installPath": ".omnisharp/1.39.14",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./mono.linux-x86_64",
-        "./run"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14/run",
-      "platformId": "linux-x64",
-      "isFramework": true,
-      "integrity": "4F146EB94A195A437361C0FEC527309F0AA31474C6D9B7B9E0BC9A1804BD8EAF"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Linux (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "linux-x64",
-      "isFramework": false,
-      "integrity": "EBA3F00A807517789BE0188F86F8B685D74359D6BD684D7A0B0125E33AD59D89"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Linux (Mono / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64.zip",
-      "installPath": ".omnisharp/1.39.14",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./mono.linux-arm64",
-        "./run"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14/run",
-      "platformId": "linux-arm64",
-      "isFramework": true,
-      "integrity": "B33419B089119D5327A228636BBA5713715D4D76B4B0FB4EFEFCBECE2F8F2D22"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Linux (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "linux-arm64",
-      "isFramework": false,
-      "integrity": "0E2C69F191268959D68A35E1CC8FD832A688AF516A9945EF25DC8C6EA014A7C2"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Linux musl (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-x64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "linux-musl-x64",
-      "isFramework": false,
-      "integrity": "098106AA7AA22FB427A5333B120916BD0C2FA8A303DA9653992E45F20BFD6AAF"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Linux musl (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-arm64-net6.0.zip",
-      "installPath": ".omnisharp/1.39.14-net6.0",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "installTestPath": "./.omnisharp/1.39.14-net6.0/OmniSharp.dll",
-      "platformId": "linux-musl-arm64",
-      "isFramework": false,
-      "integrity": "7CF8465D490D6D5362C0FBB5F9550C95FBCB8D306079185CC533D37A7A40F666"
-    },
     {
       "id": "RoslynCopilot",
       "description": "Language server for Roslyn Copilot integration",
@@ -581,120 +332,6 @@
       "integrity": "7D0E576AE4A5C53BE9A53C3F97D0ED3055D805823974F5EF2FDAD9B1B631D14A"
     },
     {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/8d42e62ea4051381c219b3e31bc4eced/razorlanguageserver-win-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86_64"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/4ef26e45cf32fe8d51c0e7dd21f1fef6/razorlanguageserver-win-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "arm64"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/6d4e23a3c7cf0465743950a39515a716/razorlanguageserver-linux-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./rzls"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/85deebd44647ebf65724cc291d722283/razorlanguageserver-linux-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./rzls"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/4f0caa94ae182785655efb15eafcef23/razorlanguageserver-linux-musl-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./rzls"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/0a24828206a6f3b4bc743d058ef88ce7/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./rzls"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/2afcafaf41082989efcc10405abb9314/razorlanguageserver-osx-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./rzls"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/8bf2ed2f00d481a5987e3eb5165afddd/razorlanguageserver-osx-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./rzls"
-      ]
-    },
-    {
       "id": "VSWebAssemblyBridge",
       "description": "VSWebAssemblyBridge (Platform Agnostic)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/7c7c246e-d1c9-4ff5-b951-1ac7801eb55f/vswebassemblybridge.zip",
@@ -726,7 +363,6 @@
     "onDebugResolve:dotnet",
     "onLanguage:csharp",
     "onCommand:o.showOutput",
-    "onCommand:omnisharp.registerLanguageMiddleware",
     "workspaceContains:**/*.{csproj,csx,cake}"
   ],
   "contributes": {
@@ -1628,6 +1264,12 @@
         "id": "ms-dotnettools.csharp.razor",
         "order": 10,
         "properties": {
+          "razor.format.enable": {
+            "type": "boolean",
+            "scope": "window",
+            "default": true,
+            "description": "%configuration.razor.razor.format.enable%"
+          },
           "razor.format.codeBlockBraceOnNextLine": {
             "type": "boolean",
             "scope": "window",
@@ -1663,215 +1305,6 @@
             "description": "%configuration.razor.razor.advanced.showAllCSharpCodeActions%"
           }
         }
-      },
-      {
-        "title": "OmniSharp",
-        "id": "ms-dotnettools.csharp.omniSharp",
-        "order": 11,
-        "properties": {
-          "dotnet.server.useOmnisharp": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.dotnet.server.useOmnisharp%",
-            "order": 0
-          },
-          "omnisharp.dotnetPath": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.omnisharp.dotnetPath%"
-          },
-          "csharp.format.enable": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.omnisharp.csharp.format.enable%"
-          },
-          "csharp.suppressDotnetInstallWarning": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.csharp.suppressDotnetInstallWarning%"
-          },
-          "csharp.suppressDotnetRestoreNotification": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.csharp.suppressDotnetRestoreNotification%"
-          },
-          "csharp.suppressProjectJsonWarning": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.csharp.suppressProjectJsonWarning%"
-          },
-          "csharp.suppressBuildAssetsNotification": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.csharp.suppressBuildAssetsNotification%"
-          },
-          "csharp.suppressHiddenDiagnostics": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.omnisharp.csharp.suppressHiddenDiagnostics%"
-          },
-          "csharp.referencesCodeLens.filteredSymbols": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "default": [],
-            "description": "%configuration.omnisharp.csharp.referencesCodeLens.filteredSymbols%"
-          },
-          "csharp.maxProjectFileCountForDiagnosticAnalysis": {
-            "type": "number",
-            "default": 1000,
-            "description": "%configuration.omnisharp.csharp.maxProjectFileCountForDiagnosticAnalysis%"
-          },
-          "csharp.semanticHighlighting.enabled": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.omnisharp.csharp.semanticHighlighting.enabled%",
-            "scope": "window"
-          },
-          "csharp.showOmnisharpLogOnError": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.omnisharp.csharp.showOmnisharpLogOnError%"
-          },
-          "omnisharp.useModernNet": {
-            "type": "boolean",
-            "default": true,
-            "scope": "window",
-            "title": "%configuration.omnisharp.useModernNet.title%",
-            "description": "%configuration.omnisharp.useModernNet.description%"
-          },
-          "omnisharp.sdkPath": {
-            "type": "string",
-            "scope": "window",
-            "description": "%configuration.omnisharp.sdkPath%"
-          },
-          "omnisharp.sdkVersion": {
-            "type": "string",
-            "scope": "window",
-            "description": "%configuration.omnisharp.sdkVersion%"
-          },
-          "omnisharp.sdkIncludePrereleases": {
-            "type": "boolean",
-            "scope": "window",
-            "default": true,
-            "description": "%configuration.omnisharp.sdkIncludePrereleases%"
-          },
-          "omnisharp.monoPath": {
-            "type": "string",
-            "scope": "machine",
-            "description": "%configuration.omnisharp.monoPath%"
-          },
-          "omnisharp.loggingLevel": {
-            "type": "string",
-            "default": "information",
-            "enum": [
-              "trace",
-              "debug",
-              "information",
-              "warning",
-              "error",
-              "critical"
-            ],
-            "description": "%configuration.omnisharp.loggingLevel%"
-          },
-          "omnisharp.autoStart": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.omnisharp.autoStart%"
-          },
-          "omnisharp.projectFilesExcludePattern": {
-            "type": "string",
-            "default": "**/node_modules/**,**/.git/**,**/bower_components/**",
-            "description": "%configuration.omnisharp.projectFilesExcludePattern%"
-          },
-          "omnisharp.projectLoadTimeout": {
-            "type": "number",
-            "default": 60,
-            "description": "%configuration.omnisharp.projectLoadTimeout%"
-          },
-          "omnisharp.maxProjectResults": {
-            "type": "number",
-            "default": 250,
-            "description": "%configuration.omnisharp.maxProjectResults%"
-          },
-          "omnisharp.useEditorFormattingSettings": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.omnisharp.useEditorFormattingSettings%"
-          },
-          "omnisharp.minFindSymbolsFilterLength": {
-            "type": "number",
-            "default": 0,
-            "description": "%configuration.omnisharp.minFindSymbolsFilterLength%"
-          },
-          "omnisharp.maxFindSymbolsItems": {
-            "type": "number",
-            "default": 1000,
-            "description": "%configuration.omnisharp.maxFindSymbolsItems%"
-          },
-          "omnisharp.disableMSBuildDiagnosticWarning": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.disableMSBuildDiagnosticWarning%"
-          },
-          "omnisharp.enableMsBuildLoadProjectsOnDemand": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.enableMsBuildLoadProjectsOnDemand%"
-          },
-          "omnisharp.enableEditorConfigSupport": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.omnisharp.enableEditorConfigSupport%"
-          },
-          "omnisharp.enableDecompilationSupport": {
-            "type": "boolean",
-            "default": false,
-            "scope": "machine",
-            "description": "%configuration.omnisharp.enableDecompilationSupport%"
-          },
-          "omnisharp.enableLspDriver": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.enableLspDriver%",
-            "tags": [
-              "experimental"
-            ]
-          },
-          "omnisharp.enableAsyncCompletion": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.enableAsyncCompletion%",
-            "tags": [
-              "experimental"
-            ]
-          },
-          "omnisharp.dotNetCliPaths": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "%configuration.omnisharp.dotNetCliPaths%",
-            "uniqueItems": true
-          },
-          "razor.plugin.path": {
-            "type": "string",
-            "scope": "machine",
-            "description": "%configuration.omnisharp.razor.plugin.path%"
-          },
-          "razor.devmode": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.razor.devmode%"
-          },
-          "razor.format.enable": {
-            "type": "boolean",
-            "scope": "window",
-            "default": true,
-            "description": "%configuration.omnisharp.razor.format.enable%"
-          }
-        }
       }
     ],
     "jsonValidation": [
@@ -1881,10 +1314,6 @@
           "appsettings.*.json"
         ],
         "url": "https://json.schemastore.org/appsettings"
-      },
-      {
-        "fileMatch": "omnisharp.json",
-        "url": "http://json.schemastore.org/omnisharp"
       },
       {
         "fileMatch": "global.json",
@@ -1897,70 +1326,28 @@
     ],
     "commands": [
       {
-        "command": "o.restart",
-        "title": "%command.o.restart%",
-        "category": "OmniSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
-        "command": "o.pickProjectAndStart",
-        "title": "%command.o.pickProjectAndStart%",
-        "category": "OmniSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
         "command": "dotnet.openSolution",
         "title": "%command.dotnet.openSolution%",
         "category": ".NET",
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
-        "command": "o.fixAll.solution",
-        "title": "%command.o.fixAll.solution%",
-        "category": "OmniSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
-        "command": "o.fixAll.project",
-        "title": "%command.o.fixAll.project%",
-        "category": "OmniSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
-        "command": "o.fixAll.document",
-        "title": "%command.o.fixAll.document%",
-        "category": "OmniSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
-        "command": "o.reanalyze.allProjects",
-        "title": "%command.o.reanalyze.allProjects%",
-        "category": "OmniSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
-        "command": "o.reanalyze.currentProject",
-        "title": "%command.o.reanalyze.currentProject%",
-        "category": "OmniSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
         "command": "dotnet.generateAssets",
         "title": "%command.dotnet.generateAssets.currentProject%",
         "category": ".NET",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'RoslynDevKit' || dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'RoslynDevKit' || dotnet.server.activationContext == 'Roslyn')"
       },
       {
         "command": "dotnet.restore.project",
         "title": "%command.dotnet.restore.project%",
         "category": ".NET",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "dotnet.restore.all",
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "csharp.changeProjectContext",
@@ -2019,12 +1406,6 @@
         "enablement": "isWorkspaceTrusted"
       },
       {
-        "command": "csharp.showDecompilationTerms",
-        "title": "%command.csharp.showDecompilationTerms%",
-        "category": "CSharp",
-        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
-      },
-      {
         "command": "csharp.collectLogs",
         "title": "%command.csharp.collectLogs%",
         "category": "CSharp",
@@ -2046,13 +1427,13 @@
         "command": "dotnet.test.runTestsInContext",
         "title": "%command.dotnet.test.runTestsInContext%",
         "category": ".NET",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "dotnet.test.debugTestsInContext",
         "title": "%command.dotnet.test.debugTestsInContext%",
         "category": ".NET",
-        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "dotnet.restartServer",
@@ -2061,13 +1442,7 @@
         "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       }
     ],
-    "keybindings": [
-      {
-        "command": "o.showOutput",
-        "key": "Ctrl+Shift+F9",
-        "mac": "Cmd+Shift+F9"
-      }
-    ],
+    "keybindings": [],
     "snippets": [
       {
         "language": "csharp",
@@ -5763,15 +5138,11 @@
       "commandPalette": [
         {
           "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn'"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
-        },
-        {
-          "command": "o.restart",
-          "when": "dotnet.server.activationContext == 'OmniSharp'"
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn'"
         },
         {
           "command": "csharp.listProcess",
@@ -5804,12 +5175,12 @@
         },
         {
           "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn'",
           "group": "3_dotnet@1"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn'",
           "group": "3_dotnet@2"
         }
       ],

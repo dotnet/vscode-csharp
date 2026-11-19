@@ -39,7 +39,7 @@ Some versions of MSTest will use an x86 worker process to run tests, which is no
 
 To fix this:
 1. Create a '.runsettings' file such as the following
-2. Add/modify a 'settings.json' file in the root of the workspace that points at the .runsettings file: `"omnisharp.testRunSettings": "C:\\My-workspace-root-here\\UseX64Worker.runsettings"`
+2. Add/modify a 'settings.json' file in the root of the workspace that points at the .runsettings file: `"dotnet.unitTests.runSettingsPath": "C:\\My-workspace-root-here\\UseX64Worker.runsettings"`
 
 #### Example .runsettings file
 ```xml

@@ -13,27 +13,13 @@ const CommonCommands = [
     'csharp.reportIssue',
 ];
 
-// Commands used by both O# and Roslyn standalone activation contexts.
+// Commands used in a Roslyn standalone activation context.
 const CommonStandaloneCommands = [
     'dotnet.restore.project',
     'dotnet.restore.all',
     'dotnet.test.runTestsInContext',
     'dotnet.test.debugTestsInContext',
 ];
-
-// Commands used only in an O# activation context.
-const OmniSharpOnlyCommands = [
-    'o.restart',
-    'o.pickProjectAndStart',
-    'o.fixAll.solution',
-    'o.fixAll.project',
-    'o.fixAll.document',
-    'o.reanalyze.allProjects',
-    'o.reanalyze.currentProject',
-];
-
-// All commands used in the O# activation context.
-export const OmniSharpCommands = [...OmniSharpOnlyCommands, ...CommonCommands, ...CommonStandaloneCommands];
 
 // Commands used only in a Roslyn activation context.
 const RoslynCommonCommands = ['dotnet.restartServer'];
@@ -52,15 +38,8 @@ export const RoslynStandaloneCommands = [
 // All commands used in a Roslyn + C# Dev Kit activation context.
 export const RoslynDevKitCommands = [...CommonCommands, ...RoslynCommonCommands];
 
-// All commands that should not be available in an O# activation context.
-export const UnexpectedOmniSharpCommands = [...RoslynStandaloneOnlyCommands, ...RoslynCommonCommands];
-
 // All commands that should not be available in a Roslyn standalone activation context.
-export const UnexpectedRoslynStandaloneCommands = [...OmniSharpOnlyCommands];
+export const UnexpectedRoslynStandaloneCommands: string[] = [];
 
 // All commands that should not be available in a Roslyn + C# Dev Kit activation context.
-export const UnexpectedRoslynDevKitCommands = [
-    ...CommonStandaloneCommands,
-    ...OmniSharpOnlyCommands,
-    ...RoslynStandaloneOnlyCommands,
-];
+export const UnexpectedRoslynDevKitCommands = [...CommonStandaloneCommands, ...RoslynStandaloneOnlyCommands];

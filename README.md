@@ -8,27 +8,18 @@ While it is possible to use the C# extension as a standalone extension, we highl
 2. Open a folder/workspace that contains a C# project (.csproj) and a C# solution (.sln/.slnx) and the extension will activate.
 3. Whether you install C# Dev Kit or just the C# extension, the [.NET Install Tool](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscode-dotnet-runtime) will be installed as a dependency.
 
-Note: If working on a solution that requires versions prior to .NET 6 or non-solution based projects, install a .NET Framework runtime and [MSBuild tooling](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
-  * Set omnisharp.useModernNet to false and set dotnet.server.useOmnisharp to true
-  * Uninstall or disable C# Dev Kit
-  * Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
-  * MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/preview/)
-
 ## Features
 Learn more about the rich features of the C# extension:
   * [Refactoring](https://code.visualstudio.com/docs/csharp/refactoring): Edit your code with code fixes and refactorings
   * [Navigation](https://code.visualstudio.com/docs/csharp/navigate-edit): Explore and navigate your code with features like Go To Definition and Find All References
   * [IntelliSense](https://code.visualstudio.com/docs/csharp/navigate-edit): Write code with auto-completion
   * [Formatting and Linting](https://code.visualstudio.com/docs/csharp/formatting-linting): Format and lint your code
-  * [GitHub Copilot C# LSP .NET plugin](docs/Copilot-Dotnet-Plugin.md): Automatic installation of .NET skills and C# language intelligence for Copilot, and how to uninstall
+  * [GitHub Copilot C# LSP .NET plugin](https://github.com/dotnet/vscode-csharp/blob/main/docs/Copilot-Dotnet-Plugin.md): Automatic installation of .NET skills and C# language intelligence for Copilot, and how to uninstall
 
 For more information you can:
 
 - [Follow our C# tutorial](https://code.visualstudio.com/docs/csharp/get-started) with step-by-step instructions for building a simple app.
 - Check out the [C# documentation](https://code.visualstudio.com/docs/languages/csharp) on the VS Code site for general information about using the extension.
-
-## How to use OmniSharp?
-If you don’t want to take advantage of the great Language Server features, you can revert back to using OmniSharp by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. Next, uninstall or disable C# Dev Kit. Finally, restart VS Code for this to take effect.
 
 ## Found a Bug?
 To file a new issue, follow the instructions at https://github.com/dotnet/vscode-csharp/blob/main/SUPPORT.md.

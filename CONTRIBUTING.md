@@ -64,7 +64,6 @@ To debug integration tests
 2.  Open any integration test file and <kbd>F5</kbd> launch with the correct launch configuration selected.
     - For integration tests inside `test/lsptoolshost`, use either `[Roslyn] Run Current File Integration Test` or `[DevKit] Launch Current File Integration Tests` (to run tests using C# + C# Dev Kit)
     - For integration tests inside `test/razor`, use `[Razor] Run Current File Integration Test`
-    - For integration tests inside `test/omnisharp`, use one of the `[O#] Run Current File Integration Test` current file profiles
 
 These will allow you to actually debug the test, but the 'Razor integration tests' configuration does not.
 

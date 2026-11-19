@@ -4,24 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Advisor } from './omnisharp/features/diagnosticsProvider';
-import { EventStream } from './eventStream';
-import TestManager from './omnisharp/features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents';
 import { PartialResultParams, ProtocolRequestType, RequestParam, RequestType } from 'vscode-languageclient';
 
 export interface LimitedExtensionExports {
     isLimitedActivation: true;
-}
-
-export interface OmnisharpExtensionExports {
-    isLimitedActivation: false;
-    initializationFinished: () => Promise<void>;
-    getAdvisor: () => Promise<Advisor>;
-    getTestManager: () => Promise<TestManager>;
-    eventStream: EventStream;
-    logDirectory: string;
 }
 
 export interface ActivityLogCapture extends vscode.Disposable {

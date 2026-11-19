@@ -171,21 +171,4 @@ describe('Migrate configurations', () => {
         expect(inspectAcquisitionPath?.workspaceFolderValue).toBeDefined();
         expect(inspectAcquisitionPath!.workspaceFolderValue![0].path).toEqual('workspaceFolder' + validDotnetPath);
     });
-
-    test(`dotnet.dotnetPath should migrate to omnisharp.dotnetPath when using O#`, async () => {
-        getVSCodeWithConfig(vscode);
-
-        vscode.workspace.getConfiguration().update(dotnetPathOption, validDotnetFolder);
-        vscode.workspace.getConfiguration().update('dotnet.server.useOmnisharp', true);
-
-        await MigrateOptions(vscode);
-
-        const updatedConfigurations = vscode.workspace.getConfiguration();
-        const acquisitionPath = updatedConfigurations.get<IDotnetAcquisitionExistingPaths[] | undefined>(
-            dotnetAcquisitionExtensionOption
-        );
-        expect(acquisitionPath).toBeUndefined();
-        expect(updatedConfigurations.get('omnisharp.dotnetPath')).toEqual(validDotnetFolder);
-        expect(updatedConfigurations.get(dotnetPathOption)).toBeUndefined();
-    });
 });

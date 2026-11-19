@@ -15,7 +15,6 @@ import { runTask } from '../runTask';
 
 runTask(test);
 
-// Overall test command that runs everything except O# tests.
 export async function test(): Promise<void> {
     await testArtifacts();
     await testUnit();
