@@ -3,9 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { stat } from 'fs/promises';
+import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import * as fs from 'fs';
+import { readFile, stat } from 'fs/promises';
 import * as path from 'path';
+import { Writable } from 'stream';
+
+// Necessary when spying on module members.
+jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
 import * as util from '../../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset';
 import { InstallZip } from '../../../../src/packageManager/zipInstaller';
@@ -43,6 +48,63 @@ describe('ZipInstaller', () => {
         for (const elem of testZip.files) {
             const filePath = path.join(installationPath.value, elem.path);
             expect(await util.fileExists(filePath)).toBe(true);
+        }
+    });
+
+    /**
+     * Validates that InstallZip does not resolve until every extracted file has been fully written and closed.
+     * Resolving on the read-stream end instead races with createWriteStream's async open, which failed macOS unit tests with ENOENT while reading an extracted file and ENOTEMPTY while deleting the temp directory.
+     */
+    test('The folder is unzipped only after extracted files are fully written', async () => {
+        const releases: Array<() => void> = [];
+        const createWriteStream = jest.spyOn(fs, 'createWriteStream').mockImplementation((filePath, options) => {
+            const chunks: Buffer[] = [];
+            const stream = new Writable({
+                write(chunk, _encoding, callback) {
+                    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+                    callback();
+                },
+                final(callback) {
+                    releases.push(() => {
+                        const mode =
+                            typeof options === 'object' && options !== null && 'mode' in options
+                                ? options.mode
+                                : undefined;
+                        fs.writeFileSync(filePath, Buffer.concat(chunks), { mode });
+                        callback();
+                    });
+                },
+            });
+            return stream as unknown as fs.WriteStream;
+        });
+
+        try {
+            let settled = false;
+            const install = InstallZip(testZip.buffer, fileDescription, installationPath, [], eventStream).then(() => {
+                settled = true;
+            });
+
+            // Hold the first write open. A correct installer stays pending; resolving on read-stream
+            // 'end' continues through the remaining entries and settles without this release.
+            await waitUntil(() => releases.length > 0 || settled);
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            expect(settled).toBe(false);
+            expect(releases).toHaveLength(1);
+
+            releases[0]();
+            for (let i = 1; i < testZip.files.length; i++) {
+                await waitUntil(() => releases.length > i || settled);
+                expect(settled).toBe(false);
+                releases[i]();
+            }
+
+            await install;
+            for (const elem of testZip.files) {
+                const filePath = path.join(installationPath.value, elem.path);
+                expect(await readFile(filePath, 'utf8')).toBe(elem.content);
+            }
+        } finally {
+            createWriteStream.mockRestore();
         }
     });
 
@@ -93,3 +155,13 @@ describe('ZipInstaller', () => {
         eventBus.dispose();
     });
 });
+
+async function waitUntil(predicate: () => boolean, timeoutMs = 2000): Promise<void> {
+    const start = Date.now();
+    while (!predicate()) {
+        if (Date.now() - start > timeoutMs) {
+            throw new Error('Timed out waiting for zip extraction to reach the write stream.');
+        }
+        await new Promise((resolve) => setImmediate(resolve));
+    }
+}
