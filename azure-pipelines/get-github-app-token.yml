@@ -132,12 +132,14 @@ steps:
       $installations = [System.Collections.Generic.List[object]]::new()
       $page = 1
       do {
-          $pageResponse = @(Invoke-RestMethod -Uri "https://api.github.com/app/installations?per_page=100&page=$page" -Headers $headers -Method Get)
+          $pageResponse = Invoke-RestMethod -Uri "https://api.github.com/app/installations?per_page=100&page=$page" -Headers $headers -Method Get
+          $pageInstallationCount = 0
           foreach ($installation in $pageResponse) {
               $installations.Add($installation)
+              $pageInstallationCount++
           }
           $page++
-      } while ($pageResponse.Count -eq 100)
+      } while ($pageInstallationCount -eq 100)
       $matchingInstallations = @($installations | Where-Object { $_.account.login -ieq $InstallationOwner })
       if ($matchingInstallations.Count -ne 1) {
           throw "Expected one GitHub App installation for '$InstallationOwner'; found $($matchingInstallations.Count)."
