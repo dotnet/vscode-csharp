@@ -6,7 +6,6 @@
 // Node 24 runs this before npm dependencies have been installed.
 const fs: typeof import('node:fs') = require('node:fs');
 const path: typeof import('node:path') = require('node:path');
-const os: typeof import('node:os') = require('node:os');
 const { createHash }: typeof import('node:crypto') = require('node:crypto');
 
 const rootPath = process.cwd();
@@ -15,10 +14,6 @@ if (!npmVersion) {
     throw new Error('Run this task through npm run cacheNodeModules to identify the npm version.');
 }
 
-// Component versions are validated separately; all other manifest inputs can affect npm installation.
-const { defaults: _defaults, ...manifest }: Record<string, unknown> = JSON.parse(
-    fs.readFileSync(path.join(rootPath, 'package.json'), 'utf8')
-);
 const hash = createHash('sha256');
 hash.update(
     JSON.stringify({
@@ -26,12 +21,9 @@ hash.update(
         architecture: process.arch,
         node: process.version,
         npm: npmVersion,
-        operatingSystem: process.platform === 'linux' ? fs.readFileSync('/etc/os-release', 'utf8') : os.version(),
-        nodeEnv: process.env.NODE_ENV,
-        manifest,
     })
 );
-for (const file of ['package-lock.json', '.npmrc', 'tasks/packaging/nodeModulesCache.ts']) {
+for (const file of ['package-lock.json', '.npmrc']) {
     hash.update(fs.readFileSync(path.join(rootPath, file)));
 }
 
