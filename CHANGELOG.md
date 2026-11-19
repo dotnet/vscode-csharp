@@ -4,7 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update xamlTools to 18.14.12418.92 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update xamlTools to 18.14.12418.92 (PR: [#10001](https://github.com/dotnet/vscode-csharp/pull/10001))
+  * Restore MAUI Hot Reload end-to-end reporting in VS Code through a typed brokered service (PR: AzDO#806988)
+  * Fix missing MAUI Hot Reload app confirmations in subsequent debug sessions (PR: AzDO#806988)
   * Fix false MAUI BindingContext errors for types in global XML namespaces (PR: AzDO#804942)
 * Update Roslyn to 5.14.0-1.26563.2 (PR: [#9989](https://github.com/dotnet/vscode-csharp/pull/9989))
   * Partial members: avoid missing diagnostics from implementation-only semantic models (PR: [#86324](https://github.com/dotnet/roslyn/pull/86324))
