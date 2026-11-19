@@ -17,7 +17,7 @@ Because there is no cross-repo tooling equivalent to `roslyn-tools pr-finder`, t
 
 - **New xamlTools Version** (required): The `Microsoft.VisualStudio.DesignToolsBase` NuGet package version to update to (e.g., `18.9.11921.35`). Ask the user to provide it.
   - The user is responsible for ensuring that version has been **saved from upstream into the `msft_consumption` feed** (see [Ensure the Package Is Available in the Feed](#optional-ensure-the-package-is-available-in-the-feed)). If a version is not in the feed, restoring it will fail.
-- **Changelog entries** (recommended): A short list of notable XAML/DesignTools changes between the previous and new version, with their AzDO PR numbers. These can be generated **fully automatically** from the VS repo via the Azure DevOps REST API — **no VS source enlistment is required** (see [Step 4](#step-4-gather-changelog-entries)). If you lack `az` access to that AzDO organization, ask the user to provide the list.
+- **Changelog entries** (recommended): A short list of notable XAML/DesignTools changes between the previous and new version, with their AzDO PR numbers. Candidate PRs can be gathered from the VS repo via the Azure DevOps REST API without a VS source enlistment, but their inclusion in the shipped assemblies requires verification (see [Step 4](#step-4-gather-changelog-entries)). If you lack `az` access to that AzDO organization, ask the user to provide the list.
 
 ## Prerequisites
 
@@ -72,11 +72,13 @@ npm run installDependencies
 
 ### Step 4: Gather Changelog Entries
 
-Because xamlTools lives in Azure DevOps, there is no `pr-finder` equivalent. The change list can be generated **fully automatically from the VS repo via the Azure DevOps REST API — no VS source enlistment is required** (Option A). If you lack `az` access to that AzDO organization, fall back to a user-provided list (Option B). Each entry references its AzDO PR number rather than a GitHub PR link.
+Because xamlTools lives in Azure DevOps, there is no `pr-finder` equivalent. Candidate changes can be gathered from the VS repo via the Azure DevOps REST API without a VS source enlistment, then verified and curated manually (Option A). If you lack `az` access to that AzDO organization, fall back to a user-provided list (Option B). Each entry references its AzDO PR number rather than a GitHub PR link.
 
 #### Option A (preferred): Generate from the VS repo automatically
 
-The flow is: (1) resolve the exact VS-repo commit that produced each package version, (2) list the `/src/Xaml` commits between them, (3) map those commits to their PRs, (4) trim to user/developer-facing changes.
+The flow is: (1) inventory the shipped assemblies and resolve each assembly's VS-repo commit in both package versions, (2) compare the histories for each distinct old/new assembly-commit pair, (3) map candidate commits to PRs, and (4) verify that each relevant change actually ships in the updated assembly before writing the changelog.
+
+**A package can contain assemblies built from different commits.** Never use the markup assembly's commit as a proxy for the entire package. In particular, inspect the CodeAnalysis.Diagnostics, DiagnosticsBase, DiagnosticsMobile, and nested Hot Reload runtime assemblies independently so MAUI Hot Reload changes are not missed. A single PR list from one assembly or a single package-wide boundary is not sufficient.
 
 All REST calls target the VS source repo and need an Azure DevOps bearer token.
 
@@ -96,16 +98,14 @@ $tok  = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975
 $hdr  = @{ Authorization = "Bearer $tok" }
 ```
 
-##### 4.1 Resolve each version's VS-repo commit from the DLL (not from a build)
+##### 4.1 Inventory assembly provenance in both packages
 
-The `Microsoft.VisualStudio.DesignToolsBase` **package/nuspec does not embed a commit SHA**, but its **assemblies do**. `Microsoft.VisualStudio.DesignTools.Markup.dll` (stamped by Nerdbank.GitVersioning) carries the commit two ways:
-- `ProductVersion` = `18.x.NNN+<short-10-char-sha>` — the short SHA.
-- internal const `ThisAssembly.GitCommitId` — the **full 40-char SHA**, which is what the REST API requires (short SHAs are rejected with HTTP 400).
+The `Microsoft.VisualStudio.DesignToolsBase` **package/nuspec does not embed a single authoritative commit SHA**. Its DesignTools assemblies carry their own build commit: `ProductVersion` contains a short SHA, and the internal `ThisAssembly.GitCommitId` contains the **full 40-char SHA** required by the REST API. Assemblies in the same package may have different SHAs.
 
-The **new** version's DLL is already in `./.xamlTools/` after Step 3. For the **old** version (the value in `package.json` *before* your Step 2 edit), restore it into a throwaway project first:
+The **new** package content is in `./.xamlTools/` after Step 3. Restore the **old** version (the value in `package.json` *before* Step 2) into an isolated throwaway project:
 ```powershell
 $old   = '<old-version>'
-$probe = Join-Path $env:TEMP 'xamlProbe'
+$probe = Join-Path $env:TEMP ("xamlProbe-" + [guid]::NewGuid())
 New-Item -ItemType Directory -Force $probe | Out-Null
 Copy-Item ./NuGet.config $probe -Force
 @"
@@ -114,58 +114,150 @@ Copy-Item ./NuGet.config $probe -Force
   <ItemGroup><PackageReference Include="Microsoft.VisualStudio.DesignToolsBase" Version="$old" /></ItemGroup>
 </Project>
 "@ | Set-Content (Join-Path $probe 'probe.csproj')
-dotnet restore (Join-Path $probe 'probe.csproj') --interactive | Out-Null
-```
-Read the full SHA from either DLL using an **isolated load context** (both DLLs share the same assembly identity, so a plain `Assembly.LoadFrom` of the second would just return the first):
-```powershell
-function Get-XamlCommit($dll) {
-    $alc = [System.Runtime.Loader.AssemblyLoadContext]::new([string][guid]::NewGuid(), $true)
-    try {
-        $asm = $alc.LoadFromStream([System.IO.MemoryStream]::new([System.IO.File]::ReadAllBytes($dll)))
-        $f = $asm.GetType('ThisAssembly').GetField('GitCommitId', [System.Reflection.BindingFlags]'NonPublic,Static,Public')
-        [string]$f.GetRawConstantValue()
-    } finally { $alc.Unload() }
-}
-$newCommit = Get-XamlCommit './.xamlTools/Microsoft.VisualStudio.DesignTools.Markup.dll'
-$oldCommit = Get-XamlCommit (Get-ChildItem $probe -Recurse -Filter 'Microsoft.VisualStudio.DesignTools.Markup.dll' | Select-Object -First 1).FullName
+dotnet restore (Join-Path $probe 'probe.csproj') --interactive
+if ($LASTEXITCODE -ne 0) { throw 'Failed to restore the previous xamlTools package.' }
+$oldRoot = Join-Path $probe "packages/microsoft.visualstudio.designtoolsbase/$old/content"
+$newRoot = (Resolve-Path './.xamlTools').Path
 ```
 
-##### 4.2 List the `/src/Xaml` commits between the two versions
+Inventory the package **recursively**, not just the root directory: Hot Reload components are also shipped under `runtime/` and `MSBuild/`. The following reads each DesignTools or Hot Reload DLL's full SHA from the bytes and cross-checks it against `ProductVersion`. It works in Windows PowerShell 5.1 as well as PowerShell 7, without loading assemblies with conflicting identities. Satellite resource DLLs are excluded from this provenance comparison.
 
-Do **not** use the obvious "commits between two commits" query (`searchCriteria.compareVersion` + `itemVersion`): the two build source commits frequently live on **divergent branches**, so that query returns 0. Instead, walk `/src/Xaml` history back from the new commit and stop at the old build's most-recent `/src/Xaml` commit (the "boundary", already shipped in the previous version):
+Some native or independently built DLLs may not have a commit suffix. The script explicitly lists these as unresolved; investigate their provenance and changes separately. Do not silently omit them or claim a complete changelog until they are accounted for.
 ```powershell
-function Get-XamlCommits($version, $top) {
-    $q = @{ 'searchCriteria.itemPath'='/src/Xaml'; 'searchCriteria.itemVersion.version'=$version;
-            'searchCriteria.itemVersion.versionType'='commit'; 'searchCriteria.$top'="$top"; 'api-version'='7.1' }
-    (Invoke-RestMethod -Uri "$repo/commits" -Headers $hdr -Body $q -Method Get).value
+function Get-XamlCommit([string]$dll) {
+    $item = Get-Item -LiteralPath $dll
+    if ($item.VersionInfo.ProductVersion -notmatch '\+([0-9a-fA-F]{10})') {
+        throw "Missing ProductVersion commit in $dll"
+    }
+    $short = $Matches[1].ToLowerInvariant()
+    $bytes = [System.IO.File]::ReadAllBytes($item.FullName)
+    $byteText = [System.Text.Encoding]::GetEncoding(28591).GetString($bytes)
+    $candidates = @([regex]::Matches($byteText, '(?:[0-9a-fA-F]\x00){40}') |
+        ForEach-Object { $_.Value.Replace("`0", '').ToLowerInvariant() } |
+        Where-Object { $_.StartsWith($short) } | Sort-Object -Unique)
+    if ($candidates.Count -ne 1) {
+        throw "Could not uniquely resolve the full commit in $dll (found $($candidates.Count))."
+    }
+    $candidates[0]
 }
-$boundary = (Get-XamlCommits $oldCommit 1)[0].commitId
-$range = New-Object System.Collections.Generic.List[object]
-$foundBoundary = $false
-foreach ($c in (Get-XamlCommits $newCommit 1000)) { if ($c.commitId -eq $boundary) { $foundBoundary = $true; break }; $range.Add($c) }
-if (-not $foundBoundary) { throw "Boundary commit not found in first page of /src/Xaml history. Increase `$top or page results (searchCriteria.`$skip) and retry." }
-"in-range /src/Xaml commits: $($range.Count)"
+
+function Get-XamlAssemblyMap([string]$root) {
+    $rootPath = (Resolve-Path -LiteralPath $root).Path.TrimEnd([char[]]@('\', '/'))
+    $files = @(Get-ChildItem -LiteralPath $rootPath -File -Recurse -Filter '*.dll' |
+        Where-Object { $_.Name -notlike '*.resources.dll' -and
+            ($_.Name -like 'Microsoft.VisualStudio.DesignTools*.dll' -or
+             $_.Name -like 'Microsoft.VisualStudio.HotReload*.dll' -or
+             $_.Name -like 'Microsoft.Maui.Controls.HotReload*.dll') })
+    if ($files.Count -eq 0) { throw "No DesignTools or Hot Reload assemblies found in $rootPath" }
+    $map = @{}
+    $unresolved = [System.Collections.Generic.List[string]]::new()
+    foreach ($file in $files) {
+        $relative = $file.FullName.Substring($rootPath.Length).TrimStart([char[]]@('\', '/'))
+        if ($file.VersionInfo.ProductVersion -notmatch '\+([0-9a-fA-F]{10})') {
+            $unresolved.Add($relative)
+        } else {
+            $map[$relative] = Get-XamlCommit $file.FullName
+        }
+    }
+    return [pscustomobject]@{ Resolved = $map; Unresolved = $unresolved.ToArray() }
+}
+$oldInventory = Get-XamlAssemblyMap $oldRoot
+$newInventory = Get-XamlAssemblyMap $newRoot
+$oldMap = $oldInventory.Resolved
+$newMap = $newInventory.Resolved
+"Previous package unresolved: $($oldInventory.Unresolved -join ', ')"
+"New package unresolved: $($newInventory.Unresolved -join ', ')"
+foreach ($name in @($oldMap.Keys + $newMap.Keys | Sort-Object -Unique)) {
+    [pscustomobject]@{ Assembly = $name; OldCommit = $oldMap[$name]; NewCommit = $newMap[$name] }
+}
 ```
-Use the *list* API as above; the single-commit `GET /commits/{sha}` endpoint is flaky in scripts and best avoided.
+
+Inspect other shipped DLLs too: identify any additional XAML/Hot Reload components with different names and add their relative paths and verified VS source commits to `$oldMap` and `$newMap` if applicable. Third-party dependencies and independently sourced components must not be assigned a VS commit by assumption. For unresolved components, either add independently verified VS source commits to both maps or document the separate comparison used to account for them. If an assembly was added, removed, renamed, or lacks usable provenance, investigate its source and package contents separately; do not treat it as unchanged or claim a complete changelog until it is accounted for.
+
+##### 4.2 Compare `/src/Xaml` history for every assembly-commit pair
+
+Group matching assembly names by their **old and new** SHAs. For each distinct pair, enumerate the reachable `/src/Xaml` history at both SHAs, then subtract the old history from the new history. Keep the assembly names associated with each pair for the shipping check in Step 4.4. Do not stop at the first old boundary: merged or divergent branches can interleave history and hide commits. Do not rely on the `compareVersion`/`itemVersion` query alone; it can return an empty range for divergent branches.
+
+The REST list API can be paged with `$skip`; the example reads both histories to exhaustion rather than assuming that a fixed-size first page is complete. This can be expensive in a large repository. Cache history by SHA and report any API or pagination failure rather than treating a truncated result as complete.
+```powershell
+function Get-XamlHistory($version) {
+    $commits = [System.Collections.Generic.List[object]]::new()
+    $seen = @{}
+    $skip = 0
+    while ($true) {
+        $q = @{ 'searchCriteria.itemPath'='/src/Xaml'; 'searchCriteria.itemVersion.version'=$version;
+                'searchCriteria.itemVersion.versionType'='commit'; 'searchCriteria.$top'='1000';
+                'searchCriteria.$skip'="$skip"; 'api-version'='7.1' }
+        $page = @((Invoke-RestMethod -Uri "$repo/commits" -Headers $hdr -Body $q -Method Get -ErrorAction Stop).value |
+            Where-Object { $null -ne $_ })
+        if ($page.Count -eq 0) { break }
+        foreach ($commit in $page) {
+            if ($seen.ContainsKey($commit.commitId)) { throw "Duplicate commit while paging history for $version" }
+            $seen[$commit.commitId] = $true
+            $commits.Add($commit)
+        }
+        $skip += $page.Count
+    }
+    return $commits.ToArray()
+}
+
+$historyCache = @{}
+$pairs = @{}
+foreach ($name in $newMap.Keys) {
+    if (-not $oldMap.ContainsKey($name)) { throw "New assembly needs separate investigation: $name" }
+    $oldCommit = $oldMap[$name]
+    $newCommit = $newMap[$name]
+    $key = "$oldCommit/$newCommit"
+    if (-not $pairs.ContainsKey($key)) {
+        $pairs[$key] = [pscustomobject]@{ OldCommit = $oldCommit; NewCommit = $newCommit; Assemblies = @() }
+    }
+    $pairs[$key].Assemblies += $name
+}
+foreach ($name in $oldMap.Keys) {
+    if (-not $newMap.ContainsKey($name)) { throw "Removed assembly needs separate investigation: $name" }
+}
+
+$ranges = @{}
+foreach ($key in $pairs.Keys) {
+    $pair = $pairs[$key]
+    foreach ($sha in @($pair.OldCommit, $pair.NewCommit)) {
+        if (-not $historyCache.ContainsKey($sha)) { $historyCache[$sha] = @(Get-XamlHistory $sha) }
+    }
+    $oldIds = @{}
+    foreach ($commit in $historyCache[$pair.OldCommit]) { $oldIds[$commit.commitId] = $true }
+    $ranges[$key] = @($historyCache[$pair.NewCommit] | Where-Object { -not $oldIds.ContainsKey($_.commitId) })
+    "Assemblies: $($pair.Assemblies -join ', '); candidate commits: $($ranges[$key].Count)"
+}
+```
+An empty or suspicious range is not proof that nothing changed. Check the assembly inventory, source histories, and actual package content; investigate newly introduced or partially merged changes separately. Use the *list* API above; the single-commit `GET /commits/{sha}` endpoint is flaky in scripts and best avoided.
 
 ##### 4.3 Map the in-range commits to PRs — cover **both** completion styles
 
-Parsing `Merged PR <id>: <title>` out of commit messages only finds **squash-completed** PRs. **Merge-completed** PRs instead contribute their individual dev commits (whose messages are *not* `Merged PR ...`), and their merge commit doesn't change the path so it never shows up in the filtered list. Missing these is the single most common cause of an incomplete changelog — so combine both detections:
+For **each** range in `$ranges`, parse squash-completed PRs from commit messages and query PR associations for the individual commits. Merge-completed PRs can contribute individual dev commits whose messages are not `Merged PR ...`; their merge commit may not appear in the path-filtered list. Retain the pair key and assembly names alongside each candidate PR so it can be checked against the correct shipped assembly. Batch large `pullRequestQuery` requests and deduplicate only after recording all associated pairs.
+
+For example, for one nonempty range:
 ```powershell
-# (a) squash-completed PRs — from "Merged PR <id>: <title>" commit messages
+$key = '<old-sha>/<new-sha>' # one of $ranges.Keys
+$range = @($ranges[$key])
 $squash = foreach ($c in $range) {
     $m = [regex]::Match($c.comment.Split([char]10)[0], '^Merged PR (\d+): (.*)$')
     if ($m.Success) { [pscustomobject]@{ Id = $m.Groups[1].Value; Title = $m.Groups[2].Value.Trim() } }
 }
-# (b) merge-completed PRs — map the in-range commit ids to their PRs
-$body = @{ queries = @(@{ type = 'commit'; items = @($range.commitId) }) } | ConvertTo-Json -Depth 4
-$res  = Invoke-RestMethod -Uri "$repo/pullRequestQuery?api-version=7.1" -Headers $hdr -Method Post -Body $body -ContentType 'application/json'
-$merged = foreach ($p in $res.results[0].PSObject.Properties) { foreach ($pr in $p.Value) { [pscustomobject]@{ Id = "$($pr.pullRequestId)"; Title = $pr.title } } }
-# union both, de-duplicated
-@($squash + $merged) | Sort-Object Id -Unique | ForEach-Object { "  * $($_.Title) (PR: AzDO#$($_.Id))" }
+$merged = for ($offset = 0; $offset -lt $range.Count; $offset += 100) {
+    $batch = @($range | Select-Object -Skip $offset -First 100)
+    $body = @{ queries = @(@{ type = 'commit'; items = @($batch.commitId) }) } | ConvertTo-Json -Depth 4
+    $res = Invoke-RestMethod -Uri "$repo/pullRequestQuery?api-version=7.1" -Headers $hdr -Method Post -Body $body -ContentType 'application/json' -ErrorAction Stop
+    foreach ($p in $res.results[0].PSObject.Properties) {
+        foreach ($pr in $p.Value) { [pscustomobject]@{ Id = "$($pr.pullRequestId)"; Title = $pr.title } }
+    }
+}
+@($squash) + @($merged) | Sort-Object Id -Unique |
+    ForEach-Object { "  * $($_.Title) (PR: AzDO#$($_.Id)); assemblies: $($pairs[$key].Assemblies -join ', ')" }
 ```
 
-##### 4.4 Trim to user/developer-facing changes
+##### 4.4 Verify shipped changes and trim to user/developer-facing entries
+
+PRs returned by the history query are **candidates**, not proof that the full PR shipped. Review their changed paths, individual commits, and the project/assembly each change belongs to. Confirm the relevant change is reachable from the new commit for its **own** shipped assembly, absent from that assembly's old version, and actually part of its packaged content. In particular, do not claim Visual Studio-only changes shipped in VS Code merely because another assembly was built from the same repo commit. For partial merges or squash commits, inspect the actual source or package contents; if inclusion cannot be verified, explicitly report the uncertainty rather than guessing.
 
 Keep features, fixes, telemetry, and Hot Reload behavior. **Drop** infrastructure noise — the `pullRequestQuery` step in particular sweeps in integration PRs that merely carried the commits along:
 - branch-sync / integration PRs: `Merge main into ...`, `Sync vscode -> ...`, `Merge for <build>`;
@@ -178,18 +270,17 @@ If you cannot reach the VS repo (no `az` access to that AzDO organization) or ca
 
 #### (Alternative) Local VS enlistment
 
-With a VS enlistment, `git log` is a convenient cross-check — but it does **not** replace step 4.3, because `--first-parent ... -- src/Xaml` only surfaces merge-commit PRs. Prefer the REST flow above as the source of truth.
+With a complete VS enlistment, Git can enumerate commits reachable from each new assembly SHA but not its old SHA. Repeat for every distinct pair and still map both squash and merge PRs as in Step 4.3. A shallow or incomplete enlistment cannot establish a complete range.
 ```powershell
-git log --first-parent "<old-commit>..<new-commit>" --pretty=format:"%s" -- src/Xaml |
-    Select-String -Pattern '^Merged PR (\d+): (.*)$' |
-    ForEach-Object { "  * $($_.Matches.Groups[2].Value) (PR: AzDO#$($_.Matches.Groups[1].Value))" }
+git -C <vs-enlistment> rev-list <new-commit> ^<old-commit> -- src/Xaml
 ```
 
 #### (Optional) Confirm a specific PR shipped in a version
 
-To check whether a given AzDO PR is part of a version, compare its **individual commits** against the `/src/Xaml` range (its *merge* commit will not appear in the range):
+To check a specific AzDO PR, compare its **individual commits** against the range for the assembly that contains the change, then verify its changed paths and packaged assembly as in Step 4.4. The example uses one `$key` from `$ranges`:
 ```powershell
 $id        = <pr-id>
+$range     = @($ranges[$key])
 $pr        = Invoke-RestMethod -Uri "$repo/pullRequests/$id?api-version=7.1" -Headers $hdr          # status / targetRefName / closedDate
 $last      = (Invoke-RestMethod -Uri "$repo/pullRequests/$id/iterations?api-version=7.1" -Headers $hdr).value[-1].id
 $paths     = (Invoke-RestMethod -Uri "$repo/pullRequests/$id/iterations/$last/changes?api-version=7.1" -Headers $hdr).changeEntries.item.path
@@ -197,7 +288,7 @@ $prCommits = (Invoke-RestMethod -Uri "$repo/pullRequests/$id/commits?api-version
 $inRange   = $prCommits | Where-Object { $range.commitId -contains $_ }
 "under /src/Xaml: $(@($paths | Where-Object { $_ -like '/src/Xaml*' }).Count)/$($paths.Count); in-range commits: $($inRange.Count)/$($prCommits.Count)"
 ```
-It is **included** when at least one of its commits is in `$range` **and** it changed files under `/src/Xaml` (a PR that touches no `/src/Xaml` files is not part of the package build).
+A matching commit and XAML path identify a candidate, not proof that every PR change is included: the PR may span multiple assemblies or contain VS-only changes. Squash completions also require checking the resulting merged commit or actual file contents.
 
 ### Step 5: Update CHANGELOG.md
 
@@ -292,9 +383,9 @@ The Azure DevOps feed web pages require authentication and may not load in autom
 
 ### Commit REST Query Returns HTTP 400 or an Empty Range (Step 4)
 
-- **HTTP 400 "object ID must be 40 characters"**: you passed a short SHA. The REST API needs the **full 40-char** commit id — take it from `ThisAssembly.GitCommitId` (Step 4.1), not from `ProductVersion` (which only has the short SHA).
-- **`compareVersion`/`itemVersion` range returns 0**: the two build source commits are on **divergent branches**. Don't use the compare query; use the boundary-walk in Step 4.2 instead.
+- **HTTP 400 "object ID must be 40 characters"**: you passed a short SHA. The REST API needs the **full 40-char** commit id from the assembly (Step 4.1), not just the short `ProductVersion` suffix.
+- **`compareVersion`/`itemVersion` range returns 0**: the two build source commits may be on **divergent branches**. Compare their complete reachable histories as in Step 4.2 instead.
 
 ### Changelog Is Missing PRs (Step 4)
 
-Almost always because only squash-completed PRs were detected. Re-run Step 4.3 and make sure you also run the `pullRequestQuery` (`type: commit`) mapping, which catches **merge-completed** PRs whose commits carry ordinary dev messages instead of `Merged PR ...`.
+Check every shipped assembly's provenance first: a package can combine older markup binaries with newer Hot Reload binaries. Re-run Steps 4.1-4.4 for every distinct old/new pair, including the `pullRequestQuery` (`type: commit`) mapping for **merge-completed** PRs. Verify the changed paths and the relevant packaged assembly rather than assuming a match in an unrelated assembly's history means the change shipped.
