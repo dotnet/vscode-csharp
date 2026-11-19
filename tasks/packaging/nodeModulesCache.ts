@@ -21,9 +21,10 @@ hash.update(
         architecture: process.arch,
         node: process.version,
         npm: npmVersion,
+        keyVersion: 0, // Increment this value to force a cache rebuild
     })
 );
-for (const file of ['package-lock.json', '.npmrc']) {
+for (const file of ['package-lock.json', '.npmrc', 'tasks/packaging/nodeModulesCache.ts']) {
     hash.update(fs.readFileSync(path.join(rootPath, file)));
 }
 
