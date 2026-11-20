@@ -38,6 +38,16 @@ steps:
 - script: $(Agent.BuildDirectory)/nbgv cloud
   displayName: Set pipeline build number
 
+- script: npm run cacheNodeModules
+  displayName: Prepare node_modules cache
+
+- task: Cache@2
+  displayName: Restore node_modules cache
+  inputs:
+    key: '"node-modules-v1" | "$(NodeModulesCacheKey)"'
+    path: $(Build.SourcesDirectory)/node_modules
+    cacheHitVar: NODE_MODULES_CACHE_HIT
+
 - script: npm run cacheComponents -- prepare
   displayName: Prepare component cache
   env:
@@ -59,6 +69,12 @@ steps:
 - script: |
     npm ci
   displayName: 'Install dependencies'
+  condition: and(succeeded(), ne(variables.NODE_MODULES_CACHE_HIT, 'true'))
+
+# npm ci normally invokes prepare, which installs or validates the component binaries.
+- script: npm run installDependencies
+  displayName: Install components using cached node_modules
+  condition: and(succeeded(), eq(variables.NODE_MODULES_CACHE_HIT, 'true'))
 
 - script: npm run cacheComponents -- save
   displayName: Stage component cache
