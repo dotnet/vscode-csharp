@@ -150,7 +150,12 @@ beforeEach(() => {
     exists.mockImplementation((file) => files.has(String(file)));
     readFile.mockImplementation(async (file) => files.get(String(file))!);
     realpath.mockImplementation(async (file) => String(file));
-    stat.mockResolvedValue({ isFile: () => true });
+    stat.mockImplementation(async (file) => {
+        if (!files.has(String(file))) {
+            throw Object.assign(new Error('not found'), { code: 'ENOENT' });
+        }
+        return { isFile: () => true };
+    });
     access.mockResolvedValue(undefined);
     stdin = new PassThrough();
     execFileMock.mockReturnValue({ stdin } as unknown as ChildProcess);
@@ -182,7 +187,7 @@ describe('Copilot CLI filesystem discovery', () => {
             const cliPath = path.win32.join(directory, 'copilot.exe');
             addFile(cliPath);
             await expect(firstCandidate()).resolves.toMatchObject({ command: cliPath });
-            expect(exists.mock.calls.map((call) => String(call[0]))).toEqual([cliPath]);
+            expect(stat.mock.calls.map((call) => String(call[0]))).toEqual([cliPath]);
         }
     );
 
@@ -219,7 +224,7 @@ describe('Copilot CLI filesystem discovery', () => {
         commands.forEach((command) => addFile(command));
         await expect(firstCandidate()).resolves.toBeUndefined();
         for (const command of commands) {
-            expect(exists).not.toHaveBeenCalledWith(command);
+            expect(stat).not.toHaveBeenCalledWith(command);
         }
     });
 
