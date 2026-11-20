@@ -31,12 +31,12 @@ function getCacheKey(): string {
             platform: process.platform,
             architecture: process.arch,
             defaults: Object.fromEntries(Object.entries(defaults).sort(([a], [b]) => a.localeCompare(b))),
+            keyVersion: 0 // Increment the version to force the cache to rebuild
         })
     );
     for (const file of [
         'tasks/packaging/componentCache.ts',
         'tasks/packaging/offlinePackagingTasks.ts',
-        'tasks/projectPaths.ts',
         'src/lsptoolshost/extensions/builtInComponents.ts',
     ]) {
         hash.update(fs.readFileSync(path.join(rootPath, file)));
