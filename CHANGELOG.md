@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update Roslyn to 5.15.0-1.26570.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.15.0-1.26570.2 (PR: [#10009](https://github.com/dotnet/vscode-csharp/pull/10009))
   * Filter static/instance overloads in QuickInfo overload count (PR: [#86410](https://github.com/dotnet/roslyn/pull/86410))
   * Fix file glob matching for watched files (PR: [#86535](https://github.com/dotnet/roslyn/pull/86535))
   * Fix Generate Constructor crash when inspecting properties in referenced projects (PR: [#86021](https://github.com/dotnet/roslyn/pull/86021))
