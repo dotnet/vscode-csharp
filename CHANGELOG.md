@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Remove OmniSharp support; the extension now uses only the Roslyn language server, and the `dotnet.server.useOmnisharp` and `omnisharp.*` settings are no longer available (PR: [#9991](https://github.com/dotnet/vscode-csharp/pull/9991))
+* Fix generated build and publish tasks pointing to C# Dev Kit's temporary solution file outside the workspace (PR: [#9992](https://github.com/dotnet/vscode-csharp/pull/9992))
 * Update Roslyn to 5.14.0-1.26568.2 (PR: [#9998](https://github.com/dotnet/vscode-csharp/pull/9998))
   * Razor duplicate using cleanup and diagnostic de-dupe (PR: [#86424](https://github.com/dotnet/roslyn/pull/86424))
   * Recognize both boolean flag polarities for labeled jumps (PR: [#86481](https://github.com/dotnet/roslyn/pull/86481))
