@@ -31,7 +31,7 @@ function getCacheKey(): string {
             platform: process.platform,
             architecture: process.arch,
             defaults: Object.fromEntries(Object.entries(defaults).sort(([a], [b]) => a.localeCompare(b))),
-            keyVersion: 0 // Increment the version to force the cache to rebuild
+            keyVersion: 0, // Increment the version to force the cache to rebuild
         })
     );
     for (const file of [
