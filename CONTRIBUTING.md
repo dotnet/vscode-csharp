@@ -216,3 +216,17 @@ The marketplace release is managed by an internal AzDo pipeline.  On the pipelin
 3.  In "Resources", choose "dotnet-vscode-csharp [officialBuildCI]", then check only the build that should be released, and then confirm with "Use selected run".  Based on the selected build, it will automatically determine if it is prerelease or release. ![release pipeline image](./docs/images/release_pipeline.png)
 4.  The pipeline parameters should then look something like the following image.  Hit "Run". ![release pipeline parameters image](./docs/images/release_pipeline_params.png)
 5.  After a bit, the pipeline will request approval from an authorized approver before it actually uploads to the marketplace.  Hit approve and it will continue.
+# C# Dev Kit package directive completion payload
+
+The `.testDiscovery` managed DevKit payload also contains
+`Microsoft.VisualStudio.CSharpDevKit.PackageCompletion.dll` and
+`CSDevKit.PackageCompletion.Contracts.dll`. The two independent MEF extensions are registered with
+Roslyn only when C# Dev Kit is enabled. The existing `dotnet.server.componentPaths.testDiscovery`
+override selects their common folder for local development.
+
+When inserting this feature, advance `defaults.testDiscovery` to the published vs-green payload and
+`defaults.roslyn` to a build supporting completion trigger metadata, dynamic-list retriggering, and
+the `Microsoft.CodeAnalysis.LanguageServer.ServiceBroker` MEF contract / NuGetCompletionService 0.1
+remote allowlist. The current pins precede the coordinated change; local validation must override
+the Roslyn executable and the component directory. Package IDs remain versionless when committed;
+versions are stable by default, with prereleases included after an explicitly typed `-`.

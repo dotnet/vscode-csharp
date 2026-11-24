@@ -936,6 +936,9 @@ export class RoslynLanguageServer {
         getComponentPaths('testDiscovery', languageServerOptions, channel).forEach((path) =>
             additionalExtensionPaths.push(path)
         );
+        getComponentPaths('packageCompletion', languageServerOptions, channel).forEach((path) =>
+            additionalExtensionPaths.push(path)
+        );
 
         return args;
     }

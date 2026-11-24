@@ -41,6 +41,12 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         componentDllPaths: ['Microsoft.VisualStudio.CSharpDevKit.SourceTestDiscovery.dll'],
         isOptional: true,
     },
+    packageCompletion: {
+        defaultFolderName: '.testDiscovery',
+        optionName: 'testDiscovery',
+        componentDllPaths: ['Microsoft.VisualStudio.CSharpDevKit.PackageCompletion.dll'],
+        isOptional: true,
+    },
 };
 
 export function getComponentPaths(
