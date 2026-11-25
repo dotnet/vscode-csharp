@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Update Roslyn to 5.15.0-1.26575.2 (PR: [#10013](https://github.com/dotnet/vscode-csharp/pull/10013))
+  * Do not report IDE0100 when the comparison performs a user-defined implicit conversion to bool (PR: [#86596](https://github.com/dotnet/roslyn/pull/86596))
+  * Fix GetAsyncIterationType for arrays (PR: [#86340](https://github.com/dotnet/roslyn/pull/86340))
+  * Respect the configured severity for IDE0320 (PR: [#86568](https://github.com/dotnet/roslyn/pull/86568))
+  * Map old symbols to baseline (PR: [#86453](https://github.com/dotnet/roslyn/pull/86453))
 * Update Roslyn to 5.15.0-1.26570.2 (PR: [#10009](https://github.com/dotnet/vscode-csharp/pull/10009))
   * Filter static/instance overloads in QuickInfo overload count (PR: [#86410](https://github.com/dotnet/roslyn/pull/86410))
   * Fix file glob matching for watched files (PR: [#86535](https://github.com/dotnet/roslyn/pull/86535))
