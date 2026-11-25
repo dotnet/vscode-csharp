@@ -14,8 +14,13 @@ import {
     openFileInWorkspaceAsync,
     testIfCSharp,
     testIfDevKit,
+    waitForExpectedResult,
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
+import { VSGetProjectContextsRequest } from '../../../src/lsptoolshost/server/roslynProtocol';
+import { UriConverter } from '../../../src/lsptoolshost/utils/uriConverter';
+import { CancellationToken } from 'vscode-languageclient';
 
 /**
  * For built-in library references, we can get different metadata results depending on the test project TFM and installed SDKs.
@@ -31,8 +36,20 @@ function expectDecompiledOrMetadata(): void {
 }
 
 describe(`Go To Definition Tests`, () => {
+    let exports: CSharpExtensionExports;
+
     beforeAll(async () => {
-        await activateCSharpExtension();
+        const uri = vscode.Uri.joinPath(
+            vscode.workspace.workspaceFolders![0].uri,
+            'src',
+            'app',
+            'uri encoding # %25.cs'
+        );
+        await vscode.workspace.fs.writeFile(
+            uri,
+            Buffer.from('class UriEncoding { public static int Value { get; set; } public int Read() => Value; }')
+        );
+        exports = await activateCSharpExtension();
     });
 
     beforeEach(async () => {
@@ -59,6 +76,39 @@ describe(`Go To Definition Tests`, () => {
         expect(definitionList.length).toEqual(1);
         expect(definitionList[0].uri.path).toContain('definition.cs');
         expect(definitionList[0].range).toStrictEqual(new vscode.Range(6, 29, 6, 32));
+    });
+
+    test('Round-trips encoded file URIs through standard and custom requests', async () => {
+        const uri = await openFileInWorkspaceAsync(path.join('src', 'app', 'uri encoding # %25.cs'));
+        const serializedUri = UriConverter.serialize(uri);
+        expect(serializedUri).toEqual(uri.toString());
+        expect(serializedUri).toContain('uri%20encoding%20%23%20%2525.cs');
+        expect(UriConverter.deserialize(serializedUri).fsPath).toEqual(uri.fsPath);
+
+        const ranges = findRangeOfString(vscode.window.activeTextEditor!, 'Value');
+        const definitions = await vscode.commands.executeCommand<vscode.Location[]>(
+            'vscode.executeDefinitionProvider',
+            uri,
+            ranges[1].start
+        );
+        expect(definitions).toHaveLength(1);
+        expect(definitions![0].uri.fsPath).toEqual(uri.fsPath);
+        expect(definitions![0].range).toStrictEqual(ranges[0]);
+
+        await waitForExpectedResult(
+            async () =>
+                exports.experimental.sendServerRequest(
+                    VSGetProjectContextsRequest.type,
+                    { _vs_textDocument: { uri: serializedUri } },
+                    CancellationToken.None
+                ),
+            10 * 1000,
+            100,
+            (contexts) => {
+                expect(contexts._vs_projectContexts.length).toBeGreaterThan(0);
+                expect(contexts._vs_projectContexts[contexts._vs_defaultIndex]._vs_is_miscellaneous).toBe(false);
+            }
+        );
     });
 
     test('Navigates to definition in different file', async () => {
