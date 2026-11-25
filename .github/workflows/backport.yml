@@ -15,7 +15,7 @@ permissions:
 jobs:
   backport:
     if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
-    uses: dotnet/arcade/.github/workflows/backport-base.yml@98052392d33e5b4e50a2590843dd70303a45324a # main
+    uses: dotnet/arcade/.github/workflows/backport-base.yml@0dfce309b4d4fcb02efb4f86463ec0780a9e63dd # main
     with:
       pr_description_template: |
         Backport of #%source_pr_number% to %target_branch%
