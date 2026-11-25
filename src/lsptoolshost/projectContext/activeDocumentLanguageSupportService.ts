@@ -67,8 +67,25 @@ export class ActiveDocumentLanguageSupportService implements IActiveDocumentLang
     }
 
     private updateCurrent(value: ActiveDocumentLanguageSupport | undefined): void {
+        // Project context is re-published for reasons that don't affect this snapshot (such as
+        // verification), so only notify listeners when the snapshot itself changes.
+        if (areSnapshotsEqual(this._current, value)) {
+            return;
+        }
+
         this._current = value;
         this._outputChannel?.debug('ActiveDocumentLanguageSupport changed to', value);
         this._onDidChangeEmitter.fire(value);
     }
+}
+
+function areSnapshotsEqual(
+    a: ActiveDocumentLanguageSupport | undefined,
+    b: ActiveDocumentLanguageSupport | undefined
+): boolean {
+    if (a === undefined || b === undefined) {
+        return a === b;
+    }
+
+    return a.documentUri === b.documentUri && a.state === b.state && a.projectLabel === b.projectLabel;
 }

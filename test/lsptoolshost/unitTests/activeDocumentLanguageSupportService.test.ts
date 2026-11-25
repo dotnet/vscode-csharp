@@ -5,6 +5,7 @@
 
 import { describe, expect, jest, test } from '@jest/globals';
 import * as vscode from 'vscode';
+import type { ActiveDocumentLanguageSupport } from '../../../src/csharpExtensionExports';
 import { ActiveDocumentLanguageSupportService } from '../../../src/lsptoolshost/projectContext/activeDocumentLanguageSupportService';
 import type { ProjectContextChangeEvent } from '../../../src/lsptoolshost/projectContext/projectContextService';
 import { ServerState } from '../../../src/lsptoolshost/server/languageServerEvents';
@@ -62,6 +63,61 @@ describe('ActiveDocumentLanguageSupportService', () => {
         service.dispose();
     });
 
+    test('fires only when the published snapshot changes', async () => {
+        let activeEditorChanged: (() => void) | undefined;
+        let projectContextChanged: ((event: ProjectContextChangeEvent) => void) | undefined;
+        (vscode.window as any).onDidChangeActiveTextEditor = (listener: () => void) => {
+            activeEditorChanged = listener;
+            return { dispose: jest.fn() };
+        };
+
+        const document = {
+            uri: { scheme: 'file', toString: () => 'file:///repo/Program.cs' },
+            languageId: 'csharp',
+        } as vscode.TextDocument;
+        (vscode.window as any).activeTextEditor = { document };
+        const languageServer = {
+            state: ServerState.ProjectInitializationComplete,
+            _projectContextService: {
+                onActiveFileContextChanged: (listener: (event: ProjectContextChangeEvent) => void) => {
+                    projectContextChanged = listener;
+                    return { dispose: jest.fn() };
+                },
+                refresh: async () => {},
+            },
+        };
+        const service = new ActiveDocumentLanguageSupportService(Promise.resolve(languageServer as any));
+        const fired: (ActiveDocumentLanguageSupport | undefined)[] = [];
+        service.onDidChange((value) => fired.push(value));
+        await Promise.resolve();
+
+        // A refresh publishes an unverified context followed by a verified one with the same classification.
+        projectContextChanged?.(createEvent(document, { isVerified: false, isMiscellaneous: false }));
+        projectContextChanged?.(createEvent(document, { isVerified: true, isMiscellaneous: false }));
+        projectContextChanged?.(createEvent(document, { isVerified: false, isMiscellaneous: false }));
+        projectContextChanged?.(createEvent(document, { isVerified: true, isMiscellaneous: false }));
+        expect(fired).toEqual([{ documentUri: 'file:///repo/Program.cs', state: 'full', projectLabel: 'Program.cs' }]);
+
+        projectContextChanged?.(
+            createEvent(document, { isVerified: true, isMiscellaneous: false, projectLabel: 'Other.csproj' })
+        );
+        projectContextChanged?.(createEvent(document, { isVerified: true, isMiscellaneous: true }));
+        expect(fired.slice(1)).toEqual([
+            { documentUri: 'file:///repo/Program.cs', state: 'full', projectLabel: 'Other.csproj' },
+            { documentUri: 'file:///repo/Program.cs', state: 'limited', projectLabel: 'Program.cs' },
+        ]);
+
+        activeEditorChanged?.();
+        activeEditorChanged?.();
+        expect(fired.slice(3)).toEqual([undefined]);
+
+        projectContextChanged?.(createEvent(document, { isVerified: true, isMiscellaneous: true }));
+        expect(fired.slice(4)).toEqual([
+            { documentUri: 'file:///repo/Program.cs', state: 'limited', projectLabel: 'Program.cs' },
+        ]);
+        service.dispose();
+    });
+
     test('logs a failure from the initial project context refresh', async () => {
         (vscode.window as any).onDidChangeActiveTextEditor = () => ({ dispose: jest.fn() });
         const error = new Error('refresh failed');
@@ -89,6 +145,7 @@ function createEvent(
         isVerified: boolean;
         isMiscellaneous: boolean;
         projectId?: string;
+        projectLabel?: string;
     }
 ): ProjectContextChangeEvent {
     return {
@@ -96,7 +153,7 @@ function createEvent(
         context: {
             _vs_id: args.projectId === undefined ? 'project' : args.projectId,
             _vs_kind: 'CSharp',
-            _vs_label: 'Program.cs',
+            _vs_label: args.projectLabel ?? 'Program.cs',
             _vs_is_miscellaneous: args.isMiscellaneous,
         },
         isVerified: args.isVerified,
