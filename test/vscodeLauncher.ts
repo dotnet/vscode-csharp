@@ -15,7 +15,7 @@ export async function prepareVSCodeAndExecuteTests(
     userDataDir: string,
     env: NodeJS.ProcessEnv
 ): Promise<number> {
-    let vscodeVersion = 'insiders';
+    let vscodeVersion = 'stable';
     if (process.env.CODE_VERSION) {
         console.log(`VSCode version overriden to ${process.env.CODE_VERSION}.`);
         vscodeVersion = process.env.CODE_VERSION;
