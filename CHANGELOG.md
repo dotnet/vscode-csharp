@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
+* Remove OmniSharp support; the extension now uses only the Roslyn language server, and the `dotnet.server.useOmnisharp` and `omnisharp.*` settings are no longer available (PR: [#9991](https://github.com/dotnet/vscode-csharp/pull/9991))
+* Fix generated build and publish tasks pointing to C# Dev Kit's temporary solution file outside the workspace (PR: [#9992](https://github.com/dotnet/vscode-csharp/pull/9992))
 * Update Roslyn to 5.15.0-1.26570.2 (PR: [#10009](https://github.com/dotnet/vscode-csharp/pull/10009))
   * Filter static/instance overloads in QuickInfo overload count (PR: [#86410](https://github.com/dotnet/roslyn/pull/86410))
   * Fix file glob matching for watched files (PR: [#86535](https://github.com/dotnet/roslyn/pull/86535))
