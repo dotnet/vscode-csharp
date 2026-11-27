@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update Roslyn to 5.15.0-1.26577.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.15.0-1.26577.1 (PR: [#10015](https://github.com/dotnet/vscode-csharp/pull/10015))
   * Do not report IDE0100 when the comparison performs a user-defined implicit conversion to bool (PR: [#86596](https://github.com/dotnet/roslyn/pull/86596))
   * Report the correct diagnostic for `await foreach` over arrays (PR: [#86340](https://github.com/dotnet/roslyn/pull/86340))
   * Respect the configured severity for IDE0320 (PR: [#86568](https://github.com/dotnet/roslyn/pull/86568))
