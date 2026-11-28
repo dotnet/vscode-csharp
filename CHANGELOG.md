@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 11.11.x
-* Update xamlTools to 18.14.12426.118 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update xamlTools to 18.14.12426.118 (PR: [#10016](https://github.com/dotnet/vscode-csharp/pull/10016))
   * Find the launched MAUI project for XAML Hot Reload using debugger project information (PR: AzDO#810375)
   * Report unclassified MAUI Hot Reload updates when diagnostics are unavailable (PR: AzDO#811229)
 * Update Roslyn to 5.15.0-1.26570.2 (PR: [#10009](https://github.com/dotnet/vscode-csharp/pull/10009))
