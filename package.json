@@ -42,7 +42,7 @@
   ],
   "defaults": {
     "roslyn": "5.15.0-1.26570.2",
-    "xamlTools": "18.14.12418.92",
+    "xamlTools": "18.14.12426.118",
     "testDiscovery": "11.0.59-g6f54c5"
   },
   "main": "./dist/extension",
